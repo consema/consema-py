@@ -280,30 +280,48 @@ class ValuePath:
         return cls()
 
     def to_value(self) -> PortableValue:
+        # The schema-less {"segments":[...]} wire form (query.rs:441-464):
+        # ObjectValue segments carry a String key, the index kinds an
+        # unsigned 64-bit index.
         items = []
         for kind, key in self.segments:
-            key_value = PortableValue.integer(key) if isinstance(key, int) else PortableValue.string(key)
-            items.append(PortableValue.object([("kind", PortableValue.string(kind)), ("key", key_value)]))
-        return PortableValue.object(
-            [
-                ("schema", PortableValue.string("core.value-path@1")),
-                ("segments", PortableValue.sequence(tuple(items))),
-            ]
-        )
+            if isinstance(key, int):
+                items.append(
+                    PortableValue.object(
+                        [("kind", PortableValue.string(kind)), ("index", PortableValue.integer(key))]
+                    )
+                )
+            else:
+                items.append(
+                    PortableValue.object(
+                        [("kind", PortableValue.string(kind)), ("key", PortableValue.string(key))]
+                    )
+                )
+        return PortableValue.object([("segments", PortableValue.sequence(tuple(items)))])
 
     @classmethod
     def from_value(cls, value: PortableValue) -> ValuePath:
-        fields = schema_fields(value, "core.value-path@1", ["schema", "segments"], "$")
+        """Strictly decodes the schema-less path record (query.rs:466-512)."""
+        fields = exact_fields(value, ["segments"], "$")
         segments = []
-        for item in sequence_of(fields[1], "$.segments"):
-            segment = exact_fields(item, ["kind", "key"], "$.segments")
-            kind = string_of(segment[0], "$.segments.kind")
-            if segment[1].kind is Kind.INTEGER:
-                key = segment[1].as_integer()
-            elif segment[1].kind is Kind.STRING:
-                key = segment[1].as_string()
+        for index, item in enumerate(sequence_of(fields[0], "$.segments")):
+            segment_path = f"$.segments[{index}]"
+            if item.kind is not Kind.OBJECT:
+                raise protocol_error(
+                    ProtocolErrorKind.WRONG_TYPE, segment_path, "expected path segment Object"
+                )
+            entries = item.as_object()
+            if not entries or entries[0][0] != "kind" or entries[0][1].kind is not Kind.STRING:
+                raise invalid(segment_path, "missing segment kind")
+            kind = entries[0][1].as_string()
+            if kind == "ObjectValue":
+                segment_fields = exact_fields(item, ["kind", "key"], segment_path)
+                key = string_of(segment_fields[1], segment_path + ".key")
+            elif kind in ("SequenceElement", "EntryKey", "EntryValue"):
+                segment_fields = exact_fields(item, ["kind", "index"], segment_path)
+                key = unsigned64(segment_fields[1], segment_path + ".index")
             else:
-                raise protocol_error(ProtocolErrorKind.WRONG_TYPE, "$.segments.key", "expected Integer or String")
+                raise invalid(segment_path, "unknown path segment")
             segments.append((kind, key))
         return cls(segments)
 

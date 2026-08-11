@@ -77,8 +77,11 @@ def test_edit_anchor_rename():
     assert result.document.render() == b"first: &renamed [one]\ncopy: *renamed\n"
     assert result.document.alias(0).name() == "renamed"
     # Dry-run and commit share the identical patch and target digest.
+    # target_digest is a dataclass FIELD on the Python SourcePatch
+    # (python/src/consema/document/source_patch.py:224), not a method as in
+    # Rust/Go/TS — the Python family chose the field form (RFC 0003 §10).
     plan = dry_run(document, transaction, EditPlanSourceId.new("config.yaml"))
-    assert plan.target_digest() == result.source_patch.target_digest()
+    assert plan.target_digest() == result.source_patch.target_digest
 
 
 def test_edit_structural_insert():

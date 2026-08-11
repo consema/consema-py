@@ -324,10 +324,18 @@ class ValuePath:
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """One PortableValue or association location (projection.rs:345-352)."""
+    """One PortableValue or association location (projection.rs:345-352).
+
+    An association location is identified by its container path plus the
+    entry ordinal and role (AssociationLocation, projection.rs:330-344):
+    distinct (path, ordinal, role) triples are distinct provenance
+    locations even when they share one container path.
+    """
 
     path: ValuePath
     association: bool = False
+    ordinal: int = 0
+    role: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -810,7 +818,12 @@ class _ValueContext:
 
     def add_mapping_origins(self, path: ValuePath, ordinal: int, entry, object_: bool):
         origin = self.add_origin(
-            ProjectedLocation(path, association=True),
+            ProjectedLocation(
+                path,
+                association=True,
+                ordinal=ordinal,
+                role="ObjectEntry" if object_ else "EntryMappingEntry",
+            ),
             self.document.authority.node_ref(entry.identity, NodeRole.YAML_MAPPING_ENTRY),
             entry.span,
             ProvenanceRelation.DIRECT,
@@ -818,7 +831,9 @@ class _ValueContext:
         if isinstance(origin, FailedValueProjection):
             return origin
         if object_:
-            key_location = ProjectedLocation(path, association=True)
+            key_location = ProjectedLocation(
+                path, association=True, ordinal=ordinal, role="ObjectKey"
+            )
             key = self.document.native.nodes[entry.key]
             origin = self.add_origin(
                 key_location,
@@ -865,7 +880,8 @@ class _ValueContext:
         return None
 
     def add_origin(self, projected, node, span, relation):
-        existing = self.provenance_index.get((projected.path, projected.association))
+        key = (projected.path, projected.association, projected.ordinal, projected.role)
+        existing = self.provenance_index.get(key)
         observed = self.provenance_units + (1 if existing is not None else 2)
         if observed > self.request.limits.max_provenance_entries:
             return self.fail(
@@ -881,7 +897,7 @@ class _ValueContext:
                 projected=prior.projected, origins=prior.origins + (origin,)
             )
         else:
-            self.provenance_index[(projected.path, projected.association)] = len(self.provenance)
+            self.provenance_index[key] = len(self.provenance)
             self.provenance.append(ProvenanceEntry(projected=projected, origins=(origin,)))
         return None
 

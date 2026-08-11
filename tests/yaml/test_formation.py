@@ -165,7 +165,11 @@ def test_syntax_styles_and_trivia():
     assert literal.decoded() == "a"
     assert literal.style() is YamlScalarStyle.LITERAL
     folded = root.mapping_entry(4).value().scalar()
-    assert folded.decoded() == "b"
+    # The folded scalar decodes with its trailing newline: ``>+`` keeps the
+    # final line break (decoded "b\n", not "b") — the Rust, Go, TS, and
+    # saphyr authorities agree; see test_block_scalar_keywords_are_strings
+    # for the same convention on ``>``.
+    assert folded.decoded() == "b\n"
     assert folded.style() is YamlScalarStyle.FOLDED
 
 

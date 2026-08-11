@@ -611,7 +611,9 @@ class _TagTable:
     at each document boundary)."""
 
     def __init__(self) -> None:
-        self.handles: dict[str, str] = {"!!": "tag:yaml.org,2002:", "!": ""}
+        # The default handles (saphyr resolve_tag: local tags keep the "!"
+        # prefix — "!suffix" resolves to "!suffix", never the bare suffix).
+        self.handles: dict[str, str] = {"!!": "tag:yaml.org,2002:", "!": "!"}
 
     def resolve(self, handle: str, suffix: str) -> str:
         prefix = self.handles.get(handle)

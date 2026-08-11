@@ -73,11 +73,29 @@ def test_query_alias_target():
 def test_query_syntax_comments():
     # Case query.syntax-comments (yaml-v1.json:60-63). The comment ordinals
     # are the zero-based source-piece ordinals of the Comment matches.
+    # yaml.syntax-kind-is@1 requires its kind argument: validation rejects a
+    # missing one with core.query.invalid-argument@1 (query.rs:604-610
+    # expects "validated kind argument"; consema.protocol.query
+    # _check_operator_arguments raises INVALID_ARGUMENT). The operator is
+    # therefore built with the argument flowing into the pipeline.
     document = parse_source("a: 1 # first\nb: 2 # second\n", YamlProfile.YAML12_CORE_V1)
-    operator = OperatorCall("yaml.syntax-kind-is", 1).with_argument(
-        "kind", PortableValue.string("Comment")
+    from consema.protocol.query import (
+        ExpressionKind,
+        QueryDefinition,
+        QueryDomain,
+        QueryExpression,
     )
-    executable = executable_from_pipeline(SYNTAX_DOMAIN, ["yaml.syntax-kind-is@1"])
+
+    definition = QueryDefinition(QueryDomain(SYNTAX_DOMAIN, 1))
+    expression = (
+        QueryExpression(ExpressionKind.INPUT)
+        .then(
+            OperatorCall("yaml.syntax-kind-is", 1).with_argument(
+                "kind", PortableValue.string("Comment")
+            )
+        )
+    )
+    executable = definition.with_expression(expression).validate().bind(_capabilities())
     execution = execute_yaml_syntax_query(executable, document, QUERY_LIMITS, cancellation())
     assert [match.ordinal for match in execution.matches] == [5, 12]
     assert all(match.kind is YamlSyntaxKind.COMMENT for match in execution.matches)
@@ -120,8 +138,12 @@ def test_query_cancellation_fails_without_prefix():
 
 def test_query_anchor_definition_and_node():
     # query.rs:524-549: yaml.anchor-definition exposes the exact &name span
-    # and yaml.anchor-node returns the anchored representation node.
-    document = parse_source("first: &x [one]\n", YamlProfile.YAML12_CORE_V1)
+    # and yaml.anchor-node returns the anchored representation node. The
+    # anchored node must be reachable by the pipeline: as in the Go twin
+    # (go/yaml/query_test.go:69-89) the anchor sits on the document root —
+    # a value anchor ("first: &x [one]") is never entered by the
+    # documents/document-root pipeline (0 matches in Python, Rust, and Go).
+    document = parse_source("&a [one]\n", YamlProfile.YAML12_CORE_V1)
     executable = executable_from_pipeline(
         NATIVE_DOMAIN, ["yaml.documents@1", "yaml.document-root@1", "yaml.anchor-definition@1"]
     )
@@ -129,9 +151,9 @@ def test_query_anchor_definition_and_node():
     assert len(execution.matches) == 1
     match = execution.matches[0]
     assert match.kind is YamlMatchKind.ANCHOR_DEFINITION
-    assert match.name == "x"
-    assert document.source.bytes()[match.span.start_byte : match.span.end_byte] == b"&x"
-    anchored = document.document(0).root().mapping_entry(0).value()
+    assert match.name == "a"
+    assert document.source.bytes()[match.span.start_byte : match.span.end_byte] == b"&a"
+    anchored = document.document(0).root()
     executable = executable_from_pipeline(
         NATIVE_DOMAIN,
         [

@@ -242,7 +242,8 @@ class ValuePathSegmentKind(enum.Enum):
 
 
 class ValuePath:
-    """The portable value path wire record (records_valuepath.go)."""
+    """The schema-less ``{"segments": [...]}`` value-path wire record
+    (query.rs:441-464; records_valuepath.go pathValue)."""
 
     __slots__ = ("segments",)
 
@@ -251,17 +252,27 @@ class ValuePath:
 
     @classmethod
     def from_value(cls, value: PortableValue) -> "ValuePath":
-        fields = schema_fields(value, "core.value-path@1", ["schema", "segments"], "$")
+        """Strictly decodes the schema-less path record (query.rs:466-512)."""
+        fields = exact_fields(value, ["segments"], "$")
         segments = []
-        for item in sequence_of(fields[1], "$.segments"):
-            segment = exact_fields(item, ["kind", "key"], "$.segments")
-            kind = string_of(segment[0], "$.segments.kind")
-            if segment[1].kind is Kind.INTEGER:
-                key = segment[1].as_integer()
-            elif segment[1].kind is Kind.STRING:
-                key = segment[1].as_string()
+        for index, item in enumerate(sequence_of(fields[0], "$.segments")):
+            segment_path = f"$.segments[{index}]"
+            if item.kind is not Kind.OBJECT:
+                raise protocol_error(
+                    ProtocolErrorKind.WRONG_TYPE, segment_path, "expected path segment Object"
+                )
+            entries = item.as_object()
+            if not entries or entries[0][0] != "kind" or entries[0][1].kind is not Kind.STRING:
+                raise invalid(segment_path, "missing segment kind")
+            kind = entries[0][1].as_string()
+            if kind == "ObjectValue":
+                segment_fields = exact_fields(item, ["kind", "key"], segment_path)
+                key = string_of(segment_fields[1], segment_path + ".key")
+            elif kind in ("SequenceElement", "EntryKey", "EntryValue"):
+                segment_fields = exact_fields(item, ["kind", "index"], segment_path)
+                key = unsigned64(segment_fields[1], segment_path + ".index")
             else:
-                raise protocol_error(ProtocolErrorKind.WRONG_TYPE, "$.segments.key", "expected Integer or String")
+                raise invalid(segment_path, "unknown path segment")
             segments.append((kind, key))
         return cls(segments)
 
@@ -284,15 +295,12 @@ class AssociationLocation:
 
     @classmethod
     def from_value(cls, value: PortableValue) -> "AssociationLocation":
-        fields = schema_fields(
-            value,
-            "core.association-location@1",
-            ["schema", "path", "ordinal", "role"],
-            "$",
-        )
-        path = ValuePath.from_value(fields[1])
-        ordinal = unsigned64(fields[2], "$.ordinal")
-        role_text = string_of(fields[3], "$.role")
+        # The schema-less {"container","ordinal","role"} record
+        # (query.rs:514-553; records_valuepath.go associationValue).
+        fields = exact_fields(value, ["container", "ordinal", "role"], "$")
+        path = ValuePath.from_value(fields[0])
+        ordinal = unsigned64(fields[1], "$.ordinal")
+        role_text = string_of(fields[2], "$.role")
         try:
             role = AssociationRole(role_text)
         except ValueError:
@@ -1694,6 +1702,8 @@ def _materialization_request_from_value(
     style_fields = exact_fields(fields[2], ["id", "version"], "$.style")
     style_id = string_of(style_fields[0], "$.style.id")
     style_version = unsigned32(style_fields[1], "$.style.version")
+    if style_version == 0:
+        raise invalid("$.contract.version", "version must be non-zero")
     encoding = encoding_parser(fields[3], "$.encoding")
     newline = string_of(fields[4], "$.newline")
     if newline not in ("None", "Lf", "CrLf"):
