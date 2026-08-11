@@ -12,11 +12,17 @@ from __future__ import annotations
 import inspect
 import json
 import sys
+from pathlib import Path
 
-sys.path.insert(0, r"C:\Users\franck\Documents\consema\python\src")
-sys.path.insert(0, r"C:\Users\franck\Documents\consema\python\tests\xml")
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "python" / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-VECTOR_PATH = r"C:\Users\franck\Documents\consema\conformance\vectors\xml-1-0-safe-v1.json"
+VECTOR_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "conformance"
+    / "vectors"
+    / "xml-1-0-safe-v1.json"
+)
 
 
 class _ExpectationFailed(Exception):

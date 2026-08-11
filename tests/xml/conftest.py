@@ -10,6 +10,7 @@ transcribed from its cases. Test ids cite the exact case ids.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -20,7 +21,12 @@ from consema.xml import (
     parse,
 )
 
-VECTOR_PATH = r"C:\Users\franck\Documents\consema\conformance\vectors\xml-1-0-safe-v1.json"
+VECTOR_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "conformance"
+    / "vectors"
+    / "xml-1-0-safe-v1.json"
+)
 
 
 @pytest.fixture(scope="session")

@@ -1,8 +1,9 @@
 """Blind-write smoke runner for the xml family (not a gate; intent check)."""
 import json
 import sys
+from pathlib import Path
 
-sys.path.insert(0, r"C:\Users\franck\Documents\consema\python\src")
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "python" / "src"))
 
 from consema.core.value import PortableValue
 from consema.document.ids import MaterializationStyleId, ProfileId
@@ -31,7 +32,12 @@ from consema.xml import (
 )
 from consema.xml.projection import ProjectionResult
 
-VECTOR_PATH = r"C:\Users\franck\Documents\consema\conformance\vectors\xml-1-0-safe-v1.json"
+VECTOR_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "conformance"
+    / "vectors"
+    / "xml-1-0-safe-v1.json"
+)
 
 _CAPABILITIES = None
 

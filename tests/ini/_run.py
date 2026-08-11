@@ -14,9 +14,10 @@ import inspect
 import sys
 import traceback
 import types
+from pathlib import Path
 
-sys.path.insert(0, r"C:\Users\franck\Documents\consema\python\src")
-sys.path.insert(0, r"C:\Users\franck\Documents\consema\python\tests")
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "python" / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 class _Raises:
