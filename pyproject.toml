@@ -1,0 +1,31 @@
+# Consema Python implementation — scaffold.
+# Authority: docs/multi-language-implementation-plan.md §0.2 (python/ = single
+# package `consema`, zero third-party runtime dependencies, pytest for tests).
+#
+# Build backend choice: hatchling. Justification: the package is pure-Python
+# with a src/ layout and no build steps, which is exactly the configuration
+# hatchling supports with a single declarative [build-system]+[project] pair
+# (no setup.py/setup.cfg, no legacy shims); setuptools would work but needs
+# more configuration for the same result. The backend is a build-time-only
+# requirement and does not affect the zero-runtime-dependency policy
+# (go.mod zero-require precedent, plan §0.2).
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "consema"
+version = "0.14.0"
+description = "Language-neutral Consema contracts: closed fifteen-kind PortableValue, PortableGraph, PVCE/1 and PGCE/1 codecs, protocol registries (L0 milestone)"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/consema"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
