@@ -4,7 +4,8 @@ docs/five-language-ci-design.md 搂3.3; the Go twin is
 go/conformance/differential/normalized/).
 
 The Python implementation runs the same data-driven input set
-(go/conformance/differential/normalized/cases.json) through its own
+(conformance/differential/normalized/cases.json, the shared single-authority
+case directory of the consema repository) through its own
 parse -> query/project/materialize/edit -> source pipeline and emits the
 same line-oriented ``key=value`` fact vocabulary the Rust example
 (crates/consema-conformance/examples/emit_normalized_results.rs) emits, so

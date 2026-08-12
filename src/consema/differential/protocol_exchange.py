@@ -3,8 +3,9 @@ Rust authority (milestone 0.19.0 G5.3; docs/five-language-ci-design.md §3.4;
 roadmap §16.6 line 1549; the Go twin:
 go/conformance/differential/protocol-exchange/exchange_test.go).
 
-The checked-in case set (go/conformance/differential/protocol-exchange/
-cases.json) carries one RFC 0015 machine record per case as canonical
+The checked-in case set (conformance/differential/protocol-exchange/
+cases.json, the shared single-authority case directory of the consema
+repository) carries one RFC 0015 machine record per case as canonical
 transport JSON plus the expected outcome (empty error code = accept,
 registered ``core.protocol.*@1`` code = reject). Both sides decode and
 re-encode every case; the Rust example

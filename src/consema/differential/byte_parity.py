@@ -3,7 +3,8 @@
 to Python per docs/five-language-ci-design.md §3.2).
 
 Rust is the byte authority (crates/consema-pvce, crates/consema-graph). The
-checked-in case set (go/conformance/differential/cases.json) is encoded by
+checked-in case set (conformance/differential/cases.json, the shared
+single-authority case directory of the consema repository) is encoded by
 both sides; the Rust encoder example
 (crates/consema-conformance/examples/emit_parity_bytes.rs) emits one
 ``<case-id>.hex`` golden file per case, and this module compares the Python

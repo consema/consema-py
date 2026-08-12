@@ -2,12 +2,12 @@
 (docs/five-language-ci-design.md §3.4/§3.5).
 
 The differential case sets are language-neutral (kind/format/profile/source/
-steps) and currently live under ``go/conformance/differential/`` (the shared
-``conformance/differential/`` migration is the second-language merge batch,
-five-language-ci-design.md §3.5). This module reads them read-only from the
-checked-in Go tree, exactly as the Go tests embed them, and applies the
-integrity guards (manifest id, case-count floor, unique ids) that every
-language harness pins.
+steps) and live at ``conformance/differential/`` of the consema repository —
+the shared single-authority directory (migrated from
+``go/conformance/differential/`` on 2026-08-12, five-language-ci-design.md
+§3.5 executed). This module reads them read-only, exactly as the Go tests
+read them at runtime, and applies the integrity guards (manifest id,
+case-count floor, unique ids) that every language harness pins.
 """
 
 from __future__ import annotations
@@ -38,8 +38,10 @@ def repository_root() -> str:
 
 
 def differential_dir() -> str:
-    """The checked-in differential case directory (the Go tree today)."""
-    return os.path.join(repository_root(), "go", "conformance", "differential")
+    """The checked-in differential case directory (conformance/differential
+    of the consema repository; single authority, five-language-ci-design.md
+    §3.5)."""
+    return os.path.join(repository_root(), "conformance", "differential")
 
 
 def case_file_path(name: str) -> str:
