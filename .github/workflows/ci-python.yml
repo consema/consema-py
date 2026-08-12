@@ -17,8 +17,9 @@
 #
 # This repository carries the Python implementation only, so every job uses
 # the multi-repo checkout mode: it checks out consema/consema (the spec
-# repository, whose conformance/vectors + conformance/differential case sets
-# and docs/fc-manifest-0.13.0.json are the single authority) beside this
+# repository, whose conformance/vectors + conformance/differential case sets,
+# docs/fc-manifest-0.13.0.json and the workspace Cargo.toml — the
+# toml.corpus.cargo-manifest case — are the single authority) beside this
 # repository and copies the conformance data into the workspace root (the
 # runner and the differential harnesses resolve conformance/* by
 # repository-relative path). The differential job additionally checks out
@@ -70,8 +71,16 @@ jobs:
             throw "fc-manifest not found in the consema checkout: $manifest"
           }
           Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+          # The toml.corpus.cargo-manifest case reads the workspace-root
+          # Cargo.toml by repository-relative path (toml_v1 suites in every
+          # runner), so the workspace manifest is provisioned too.
+          $cargoToml = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\Cargo.toml'
+          if (-not (Test-Path -LiteralPath $cargoToml)) {
+            throw "Cargo.toml not found in the consema checkout: $cargoToml"
+          }
+          Copy-Item -LiteralPath $cargoToml -Destination (Join-Path $env:GITHUB_WORKSPACE 'Cargo.toml') -Force
           $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
-          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
+          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json + Cargo.toml"
       - name: pip install -e '.[dev]' (editable install + pytest)
         working-directory: python
         run: python -m pip install -e '.[dev]'
@@ -134,8 +143,16 @@ jobs:
             throw "fc-manifest not found in the consema checkout: $manifest"
           }
           Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+          # The toml.corpus.cargo-manifest case reads the workspace-root
+          # Cargo.toml by repository-relative path (toml_v1 suites in every
+          # runner), so the workspace manifest is provisioned too.
+          $cargoToml = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\Cargo.toml'
+          if (-not (Test-Path -LiteralPath $cargoToml)) {
+            throw "Cargo.toml not found in the consema checkout: $cargoToml"
+          }
+          Copy-Item -LiteralPath $cargoToml -Destination (Join-Path $env:GITHUB_WORKSPACE 'Cargo.toml') -Force
           $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
-          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
+          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json + Cargo.toml"
       - name: pip install -e '.[dev]' (editable install + pytest)
         working-directory: python
         run: python -m pip install -e '.[dev]'
@@ -186,8 +203,16 @@ jobs:
             throw "fc-manifest not found in the consema checkout: $manifest"
           }
           Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+          # The toml.corpus.cargo-manifest case reads the workspace-root
+          # Cargo.toml by repository-relative path (toml_v1 suites in every
+          # runner), so the workspace manifest is provisioned too.
+          $cargoToml = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\Cargo.toml'
+          if (-not (Test-Path -LiteralPath $cargoToml)) {
+            throw "Cargo.toml not found in the consema checkout: $cargoToml"
+          }
+          Copy-Item -LiteralPath $cargoToml -Destination (Join-Path $env:GITHUB_WORKSPACE 'Cargo.toml') -Force
           $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
-          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
+          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json + Cargo.toml"
       - name: pip install -e '.[dev]' (pytest for the differential tests)
         shell: pwsh
         working-directory: python
