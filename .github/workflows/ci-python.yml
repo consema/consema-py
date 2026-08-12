@@ -7,7 +7,10 @@
 # runs the Python runner over the 18 shared suites / 519 cases (the
 # aggregate digest cfd6e296…, the 18/519 inventory and the per-suite counts
 # are pinned inside python/tests/conformance/test_runner.py, §2.2/§4.2);
-# python-differential runs the bidirectional scripts/python-verify-*.ps1
+# python-package runs the L5 packaging gate (pip wheel --no-deps — the
+# hatchling-built wheel must contain the consema package, §1.1 package row
+# / §5.3 L5 row); python-differential runs the bidirectional
+# scripts/python-verify-*.ps1
 # harnesses against the Rust emitters (byte parity + normalized + protocol
 # exchange). The verify scripts are Windows PowerShell 5.1 compatible and
 # pass native Windows paths to pytest, so the differential job runs on
@@ -367,6 +370,44 @@ jobs:
           PYTHONPATH: src
         run: python examples/sdk_chain.py
 
+  # L5 packaging gate (five-language-ci-design.md §1.1 package row / §5.3
+  # L5 row): `pip wheel --no-deps .` builds the wheel through the hatchling
+  # backend (pyproject.toml [build-system], python/pyproject.toml:12-14) and
+  # the wheel must actually contain the consema package (src/consema → wheel
+  # root consema/). Nothing is published here and no repository secrets are
+  # used; no conformance data is needed (packaging is data-independent).
+  python-package:
+    name: python package (pip wheel --no-deps, wheel built)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12.x'
+      - name: pip wheel --no-deps . (hatchling backend, wheel must build)
+        working-directory: python
+        run: python -m pip wheel --no-deps . -w dist
+      - name: verify wheel contains the consema package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dist = Join-Path $env:GITHUB_WORKSPACE 'python\dist'
+          $wheel = Get-ChildItem -LiteralPath $dist -Filter 'consema-*.whl' | Select-Object -First 1
+          if (-not $wheel) {
+            throw 'no wheel produced by pip wheel --no-deps .'
+          }
+          $listing = python -m zipfile -l $wheel.FullName
+          if ($LASTEXITCODE -ne 0) {
+            throw "zipfile listing failed (exit $LASTEXITCODE)"
+          }
+          if ($listing -notmatch 'consema/__init__') {
+            throw 'wheel must contain the consema package (src/consema → consema/)'
+          }
+          Write-Output "wheel verified: $($wheel.Name) ($($wheel.Length) bytes), contains consema/ package"
+
   # Alls-green aggregate gate (tokio/pydantic pattern): `check (all gates
   # green)` is the SINGLE required check for branch protection on this
   # repository; every other job stays non-required. `if: always()` is
@@ -378,7 +419,7 @@ jobs:
   check:
     name: check (all gates green)
     if: always()
-    needs: [python-gates, python-conformance, python-differential, coverage, check-version-consistency, examples]
+    needs: [python-gates, python-conformance, python-differential, coverage, check-version-consistency, examples, python-package]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
