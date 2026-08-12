@@ -11,7 +11,7 @@ dev extra only) and never imports or calls the other implementations.
 ```
 cd python
 python -m pytest                  # testpaths = tests (pyproject.toml:30-32)
-python -m consema.conformance.runner  # runner CLI (18 suites / 508 cases; __main__ at runner.py:392)
+python -m consema.conformance.runner  # runner CLI (18 suites / 519 cases; __main__ at runner.py:392)
 # CI runs `python -m pytest tests/conformance/` (ci-python.yml:92-94); the plain
 # `python -m consema.conformance` exits silently — the package has no __main__.py
 # differential tests live under tests/differential/ and require the
@@ -20,9 +20,9 @@ python -m consema.conformance.runner  # runner CLI (18 suites / 508 cases; __mai
 
 ## Conformance
 
-18 suites / 508 cases / aggregate digest `35bebc8d…` are pinned in
+18 suites / 519 cases / aggregate digest `cfd6e296…` are pinned in
 `tests/conformance/test_runner.py` (per-suite applicable surface
-(passed, 0, 0) for every suite — any documented skip fails); 508/508 pass
+(passed, 0, 0) for every suite — any documented skip fails); 519/519 pass
 in CI (ci-python.yml, python-conformance job).
 
 ## References

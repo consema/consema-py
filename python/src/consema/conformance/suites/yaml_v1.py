@@ -45,6 +45,8 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
         "syntax.styles-and-trivia": _syntax_facts,
         "native.arbitrary-duplicate-mapping": _mapping_facts,
         "formation.undefined-alias": _formation_rejection,
+        "formation.undefined-anchor-block": _formation_rejection,
+        "formation.version-directive-rejection": _formation_rejection,
         "graph.shared-cycle": _graph_facts,
         "query.mapping-entries": _native_query,
         "query.alias-target": _native_query,
@@ -62,7 +64,9 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
         "edit.structural-insert": _edit_structural,
         "edit.anchor-dependency": _edit_anchor_dependency,
         "resource.parse-source-bytes": _parse_limit,
+        "resource.parse-nesting-depth": _parse_depth_limit,
         "resource.graph-provenance": _graph_provenance_limit,
+        "projection.alias-amplification": _projection_amplification_limit,
         "regression.plain-property-characters": _plain_property_regression,
     }
     for vector in data.cases:
@@ -861,6 +865,50 @@ def _parse_limit(vector: runner.Case) -> str | None:
     return "parse limit unexpectedly succeeded"
 
 
+def _parse_depth_limit(vector: runner.Case) -> str | None:
+    source = compare.string_field(vector.input, "source")
+    max_nesting_depth = compare.integer_field(vector.input, "max_nesting_depth")
+    if source is None or max_nesting_depth is None:
+        return "missing input.source/max_nesting_depth"
+    profile_spelling = compare.string_field(vector.input, "profile")
+    profile = _yaml_profile(profile_spelling or "yaml.1.2-core@1")
+    if profile is None:
+        return f"unknown YAML profile {profile_spelling}"
+    expected_code = compare.string_field(vector.expected, "code")
+    if expected_code is None:
+        return "missing expected.code"
+    try:
+        yaml_parser.parse(
+            source.encode("utf-8"), profile, ParseLimits(max_nesting_depth=max_nesting_depth)
+        )
+    except yaml_errors.YamlFormationFailure as error:
+        if error.code != expected_code:
+            return f"parse depth limit code: expected {expected_code}, got {error.code}"
+        return None
+    return "parse depth limit unexpectedly succeeded"
+
+
+def _projection_amplification_limit(vector: runner.Case) -> str | None:
+    document, message = _parse_yaml_case(vector)
+    if message:
+        return message
+    ratio = compare.integer_field(vector.input, "max_amplification_ratio")
+    if ratio is None:
+        return "missing input.max_amplification_ratio"
+    limits = yaml_projection.ValueProjectionLimits(max_amplification_ratio=ratio)
+    result = yaml_projection.project_value(
+        document, yaml_projection.ValueProjectionRequest.best_exact_v1().with_limits(limits)
+    )
+    if not isinstance(result, yaml_projection.FailedValueProjection):
+        return "projection unexpectedly completed"
+    expected_code = compare.string_field(vector.expected, "code")
+    if expected_code is None:
+        return "missing expected.code"
+    if result.code != expected_code:
+        return f"projection amplification code: expected {expected_code}, got {result.code}"
+    return None
+
+
 def _plain_property_regression(vector: runner.Case) -> str | None:
     document, message = _parse_yaml_case(vector)
     if message:
@@ -884,4 +932,4 @@ def _plain_property_regression(vector: runner.Case) -> str | None:
     return None
 
 
-runner.register_suite("yaml-v1.json", "consema.yaml.conformance@1", "", 27, run)
+runner.register_suite("yaml-v1.json", "consema.yaml.conformance@1", "", 31, run)

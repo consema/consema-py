@@ -1,7 +1,7 @@
 """The Python conformance runner over the shared language-neutral vectors
 (RFC 0016 §7; docs/five-language-ci-design.md §2).
 
-The runner executes the 18 shared vector suites (508 cases) from the
+The runner executes the 18 shared vector suites (519 cases) from the
 repository ``conformance/vectors`` directory, verifies the aggregate digest
 against the Feature-Complete Manifest (fc-manifest-0.13.0.json:35-41), and
 reports per-suite pass/fail with documented skips (never silent). The
@@ -25,9 +25,9 @@ from consema.conformance import loader
 
 # The frozen aggregate digest and inventory pins (five-runner shared pin;
 # docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json:35-41).
-AGGREGATE_SHA256 = "35bebc8d384d71740f7c1a886bc50f4e095ff52fe05d2a407f04b842ee6922fa"
+AGGREGATE_SHA256 = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 EXPECTED_SUITES = 18
-EXPECTED_CASES = 508
+EXPECTED_CASES = 519
 
 
 @dataclass
@@ -311,7 +311,7 @@ def run_argv(argv: list[str] | None = None) -> int:
     (0 success, 1 usage, 2 data, 5 internal; RFC 0015 §5)."""
     parser = argparse.ArgumentParser(
         prog="python -m consema.conformance.runner",
-        description="Consema conformance runner (18 suites / 508 shared vectors)",
+        description="Consema conformance runner (18 suites / 519 shared vectors)",
     )
     default_vectors, default_fixtures = repository_paths()
     parser.add_argument("--vectors", default=default_vectors, help="conformance/vectors directory")

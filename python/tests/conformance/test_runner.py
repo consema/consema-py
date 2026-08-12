@@ -25,7 +25,7 @@ from consema.conformance.runner import (
 
 # The five-runner shared aggregate pin (docs/five-language-ci-design.md
 # 搂4.2; fc-manifest-0.13.0.json:38).
-RECORDED_AGGREGATE = "35bebc8d384d71740f7c1a886bc50f4e095ff52fe05d2a407f04b842ee6922fa"
+RECORDED_AGGREGATE = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 
 # Per-suite applicable surface {passed, skipped, failed} 鈥?the current L4
 # surface executes every case (go/conformance/conformance_test.go:60-97).
@@ -40,12 +40,12 @@ EXPECTED_SUITE_COUNTS = {
     "consema.json-family.conformance@2": (33, 0, 0),
     "consema.portable-graph.conformance@1": (10, 0, 0),
     "consema.semantic-model-v5.conformance@1": (22, 0, 0),
-    "consema.yaml.conformance@1": (27, 0, 0),
+    "consema.yaml.conformance@1": (31, 0, 0),
     "consema.semantic-model-v6.conformance@1": (25, 0, 0),
     "consema.ini.conformance@1": (20, 0, 0),
-    "consema.java-properties.conformance@1": (22, 0, 0),
+    "consema.java-properties.conformance@1": (25, 0, 0),
     "consema.xml-1-0-safe.conformance@1": (34, 0, 0),
-    "consema.plist.conformance@1": (45, 0, 0),
+    "consema.plist.conformance@1": (49, 0, 0),
     "consema.hcl.conformance@1": (57, 0, 0),
     "consema.cli.conformance@1": (40, 0, 0),
 }
@@ -61,14 +61,14 @@ def test_digest_algorithm_matches_manifest():
     assert digest.recorded == RECORDED_AGGREGATE
     assert digest.computed == RECORDED_AGGREGATE
     assert digest.suites == EXPECTED_SUITES == 18
-    assert digest.cases == EXPECTED_CASES == 508
+    assert digest.cases == EXPECTED_CASES == 519
     assert digest.ok
 
 
 def test_run_is_conformant():
     report = _repository_runner().run()
     assert report.digest.ok
-    assert report.total == 508
+    assert report.total == 519
     for suite in report.suites:
         assert suite.conformant(), f"suite {suite.suite} is not conformant"
         for failure in suite.failed:

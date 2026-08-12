@@ -20,7 +20,7 @@ from consema.document.materialization import (
     MaterializationRequest,
     NewlinePolicy,
 )
-from consema.document.source import SourceEncoding, SourceSnapshot, WindowsCodePage
+from consema.document.source import SourceEncoding, SourceError, SourceSnapshot, WindowsCodePage
 from consema.document.structural import AssociationPlacement, LocationError, LocationErrorKind, NodeRole
 from consema.properties import edit as properties_edit
 from consema.properties import errors as properties_errors
@@ -48,6 +48,9 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
         "formation.reader-explicit-encodings": _formation_reader_encodings,
         "formation.latin1-byte-and-bom-content": _formation_latin1,
         "formation.recovery-never-publishes-partial-operation": _recovered_atomic,
+        "formation.malformed-escape-in-key": _formation_malformed_escape_in_key,
+        "formation.invalid-encoding-sequence": _formation_fatal_encoding,
+        "formation.bom-conflict": _formation_fatal_encoding,
         "query.native-duplicates-and-escape-ownership": _native_query,
         "query.logical-and-syntax-order": _logical_syntax_query,
         "query.validation-limit-cancellation": _query_failures,
@@ -675,6 +678,63 @@ def _recovered_atomic(vector: runner.Case) -> str | None:
     if edit_code != edit_code_expected:
         return f"edit_code: expected {edit_code_expected}, got {edit_code}"
     return None
+
+
+def _formation_malformed_escape_in_key(vector: runner.Case) -> str | None:
+    r"""One malformed `\uXXXX` escape in the KEY position: the logical line
+    is recovered without a partial property and the error line carries the
+    family parse code (parser.rs:626-666)."""
+    document, message = _properties_parse_case(vector)
+    if message:
+        return message
+    formation = compare.string_field(vector.expected, "formation")
+    properties = compare.integer_field(vector.expected, "properties")
+    error_lines = compare.integer_field(vector.expected, "error_lines")
+    code = compare.string_field(vector.expected, "code")
+    if formation is None or properties is None or error_lines is None or code is None:
+        return "missing expected recovery facts"
+    if document.formation_status().value != formation:
+        return f"formation: expected {formation}, got {document.formation_status().value}"
+    if len(document.properties) != properties:
+        return f"properties: expected {properties}, got {len(document.properties)}"
+    if len(document.error_lines) != error_lines:
+        return f"error_lines: expected {error_lines}, got {len(document.error_lines)}"
+    if not document.error_lines or document.error_lines[0].code != code:
+        return f"error code: expected {code}, got {document.error_lines[0].code if document.error_lines else None}"
+    return None
+
+
+def _formation_fatal_encoding(vector: runner.Case) -> str | None:
+    """One fatal encoding failure of the Reader profile: bytes that cannot
+    be decoded under the explicit encoding (`core.source.invalid-sequence@1`)
+    or a BOM that contradicts it (`core.source.encoding-conflict@1`) fail the
+    whole parse before any document forms (parser.rs:24-33)."""
+    encoding_name = compare.string_field(vector.input, "encoding")
+    source_hex = compare.string_field(vector.input, "source_hex")
+    expected_code = compare.string_field(vector.expected, "code")
+    if encoding_name is None or source_hex is None or expected_code is None:
+        return "missing input.encoding/source_hex or expected.code"
+    encodings = {
+        "Utf8": SourceEncoding.utf8(),
+        "Utf16Le": SourceEncoding.utf16le(),
+        "Utf16Be": SourceEncoding.utf16be(),
+    }
+    encoding = encodings.get(encoding_name)
+    if encoding is None:
+        return f"unsupported encoding {encoding_name}"
+    try:
+        properties_parser.parse_reader(
+            bytes.fromhex(source_hex), encoding, properties_limits.PropertiesParseLimits()
+        )
+    except properties_errors.PropertiesFormationFailure as error:
+        if error.code != expected_code:
+            return f"fatal encoding code: expected {expected_code}, got {error.code}"
+        return None
+    except SourceError as error:
+        if error.code != expected_code:
+            return f"fatal encoding code: expected {expected_code}, got {error.code}"
+        return None
+    return "parse must fail fatally"
 
 
 # ---------------------------------------------------------------------------
@@ -1776,4 +1836,4 @@ def _operation_registry(vector: runner.Case) -> str | None:
     return None
 
 
-runner.register_suite("java-properties-v1.json", "consema.java-properties.conformance@1", "", 22, run)
+runner.register_suite("java-properties-v1.json", "consema.java-properties.conformance@1", "", 25, run)

@@ -1,12 +1,14 @@
-"""Suite ``consema.plist.conformance@1`` (plist-v1.json, 45 cases): plist XML
+"""Suite ``consema.plist.conformance@1`` (plist-v1.json, 49 cases): plist XML
 and binary formation with recovery, the three query domains, value-tree and
 require-object projection, both canonical materializations, cross-
-representation conversion, and the six structural edits. Dispatch is by the
-``capability`` field, mirroring go/conformance/plist_v1.go.
+representation conversion, the six structural edits, and the declared
+binary-limit matrix. Dispatch is by the ``capability`` field, mirroring
+go/conformance/plist_v1.go.
 """
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import struct
 
@@ -48,6 +50,8 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
             message = _xml_formation(vector)
         elif capability == "plist.binary-formation@1":
             message = _binary_formation(vector)
+        elif capability == "plist.limit@1":
+            message = _limit(vector)
         elif capability == "plist.query@1":
             message = _query(vector)
         elif capability == "plist.projection@1":
@@ -134,6 +138,47 @@ def _form_sample(vector: runner.Case, sample):
     if message:
         return None, message
     return _form_bytes(raw, profile)
+
+
+def _limits_of(value):
+    """Reads the `input.limits` object into a PlistParseLimits."""
+    declared = compare.object_field(value, "limits")
+    if declared is None:
+        return PlistParseLimits(), ""
+    fields = {}
+    for name, raw in declared.as_object():
+        if name not in ("max_container_depth", "max_object_count", "max_string_code_units", "max_data_bytes"):
+            return None, f"unknown plist limit {name}"
+        field_value = raw.as_integer()
+        if field_value is None or field_value < 0:
+            return None, f"limit {name} must be a non-negative integer"
+        fields[name] = field_value
+    return dataclasses.replace(PlistParseLimits(), **fields), ""
+
+
+def _limit(vector: runner.Case) -> str | None:
+    """One `plist.limit@1` case: the parse must fail fatally under the
+    declared limits and the failure must carry the expected plist.limit.*@1
+    code (RFC 0013 §11)."""
+    profile = _profile_of(vector.input)
+    if profile is None:
+        return "missing profile"
+    raw, message = _source_bytes(vector.input, profile)
+    if message:
+        return message
+    limits, message = _limits_of(vector.input)
+    if message:
+        return message
+    try:
+        parse(raw, profile, PlistEncodingSelection.profile_default(), limits)
+    except PlistFormationFailure as failure:
+        expected_code = compare.string_field(vector.expected, "diagnostic")
+        if expected_code is None:
+            return "missing expected.diagnostic"
+        if failure.code == expected_code:
+            return None
+        return f"diagnostic {expected_code} not found (got {failure.code})"
+    return "parse must fail fatally under the declared limits"
 
 
 def _status_name(document) -> str:
@@ -2194,4 +2239,4 @@ def _edit_conflicts(vector: runner.Case, samples) -> str | None:
     return None
 
 
-runner.register_suite("plist-v1.json", "consema.plist.conformance@1", "", 45, run)
+runner.register_suite("plist-v1.json", "consema.plist.conformance@1", "", 49, run)

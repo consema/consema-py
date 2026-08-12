@@ -20,7 +20,7 @@ check-version-consistency job 断言与 README 一致）。
   protocol exchange）。脚本构建 consema-rs 的 Rust emitter 并对拍 Python 实现；
   Rust 侧来自 consema-rs 仓 checkout（CI 多仓模式），conformance 数据来自规范仓 checkout。
 - `.github/workflows/ci-python.yml`：Python 门禁（editable install + pytest +
-  零依赖）、conformance runner 门禁（18 suites / 508 cases）与 Python-Rust 差分
+  零依赖）、conformance runner 门禁（18 suites / 519 cases）与 Python-Rust 差分
   门禁（windows-latest 多仓 checkout）。
 
 ## 构建与测试
