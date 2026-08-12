@@ -68,7 +68,9 @@ def _toml_fixture(conformance_runner: runner.Runner, name: str) -> str:
 
 
 def _cargo_manifest(conformance_runner: runner.Runner) -> str:
-    return conformance_runner.repo_root_bytes("Cargo.toml").decode("utf-8")
+    # The corpus case input is the committed fixture (single authority,
+    # consema repo): conformance/fixtures/toml/Cargo.toml.
+    return conformance_runner.fixture_bytes("toml", "Cargo.toml").decode("utf-8")
 
 
 def _parse_exact_roundtrip(conformance_runner: runner.Runner, vector: runner.Case) -> str | None:

@@ -3,9 +3,9 @@
 The conformance fixtures are read directly from the shared read-only
 authority tree (conformance/fixtures/toml/*.toml), matching the vector
 suite inputs (conformance/vectors/toml-v1.json). The corpus case
-``toml.corpus.cargo-manifest`` references the repository-root Cargo.toml,
-resolved the same way as the Go runner (go/conformance/toml_v1.go
-cargoManifestBytes: two directories up from the vectors directory).
+``toml.corpus.cargo-manifest`` reads the committed fixture
+conformance/fixtures/toml/Cargo.toml (single authority since the six-repo
+split; the workspace root no longer carries a Cargo.toml).
 Tests never modify fixtures.
 """
 
@@ -21,7 +21,7 @@ _FIXTURES = _ROOT / "conformance" / "fixtures"
 
 def _fixture_path(name: str) -> pathlib.Path:
     if name == "Cargo.toml":
-        path = _ROOT / "Cargo.toml"
+        path = _FIXTURES / "toml" / "Cargo.toml"
     else:
         path = _FIXTURES / name
     if not path.exists():
