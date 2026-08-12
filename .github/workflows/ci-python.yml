@@ -403,7 +403,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             throw "zipfile listing failed (exit $LASTEXITCODE)"
           }
-          if ($listing -notmatch 'consema/__init__') {
+          # -match on the listing array returns the matching lines (the
+          # zipfile -l table header lines must not count as a match).
+          if (-not ($listing -match 'consema/__init__')) {
             throw 'wheel must contain the consema package (src/consema → consema/)'
           }
           Write-Output "wheel verified: $($wheel.Name) ($($wheel.Length) bytes), contains consema/ package"
