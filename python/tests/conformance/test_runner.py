@@ -1,7 +1,7 @@
 ﻿"""Conformance runner test: pins the milestone gate (docs/go-implementation
 plan 搂4.2; docs/five-language-ci-design.md 搂4.2 鈥?the five-runner shared
 pin): the aggregate vector digest matches the Feature-Complete Manifest and
-the frozen constant, the inventory is exactly 18 suites / 508 cases, every
+the frozen constant, the inventory is exactly 18 suites / 519 cases, every
 suite is conformant (documented skips count as success), and each suite
 matches its frozen per-suite applicable surface.
 
