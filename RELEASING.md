@@ -1,0 +1,54 @@
+# Consema Python 发布流程（PyPI）
+
+本文件是 consema-py 仓库的发布操作手册（六仓统一纪律见 consema 仓库根
+`RELEASING.md`）。发布是**半自动**的：版本 bump、CHANGELOG、tag 由人完成；
+tag 推送后 `.github/workflows/release.yml` 自动构建 wheel + sdist 并发布
+`consema` 包到 PyPI。
+
+## 1. 发布步骤（人执行的部分）
+
+1. **版本 bump**：改 `python/pyproject.toml` 的 `version`，同时改仓根
+   `README.md` 的 `Version:` 行（`check-version-consistency` 门禁强制一致）。
+2. **CHANGELOG 策展**：记录本版本变更；跨语言变更同步到
+   consema 仓库 `docs/CHANGELOG.md`。
+3. **质量门禁全绿**：main 分支 CI `check (all gates green)` 通过
+   （python-gates / python-conformance / python-differential /
+   check-version-consistency）。
+4. **打 tag 并推送**（发布动作的唯一触发点）：
+   ```bash
+   git tag vX.Y.Z
+   git push origin vX.Y.Z
+   ```
+
+## 2. 凭证配置（用户侧一次性动作）—— trusted publishing
+
+PyPI 的 **trusted publishing**（OIDC）是标准做法且**支持首次发布**
+（与 crates.io 不同，无需先手动上传一次）。workflow 已按此编写
+（`pypa/gh-action-pypi-publish@release/v1` + `id-token: write`），
+**无需任何 token/密码 secret**。
+
+1. 在 PyPI 发布过包的账号注册后，进入
+   pypi.org → 项目（`consema`）→ **Manage → Publishing** →
+   **Add a new publisher**：
+   - **Publisher**：`GitHub`
+   - **Repository owner**：`consema`
+   - **Repository name**：`consema-py`
+   - **Workflow file name**：`release.yml`
+   - **Environment**：留空（workflow 未声明 environment）
+2. 保存后即完成——后续推 tag 由 workflow 用短期 OIDC token 自动发布。
+
+### 回退路径（可选）
+
+若暂时不想用 trusted publishing，可改 workflow 为：
+`pypa/gh-action-pypi-publish@release/v1` + `with: password:
+${{ secrets.PYPI_API_TOKEN }}`（PyPI 账号 → API tokens 生成，写入 GitHub
+仓库 secrets）。推荐直接 trusted publishing，无长期凭证。
+
+## 3. 发布后核对
+
+1. pypi.org/project/consema 确认新版本可见，描述（README）、
+   classifiers、项目链接（Homepage/Repository）渲染正常。
+2. GitHub Actions release workflow 全部步骤成功（build 步骤产出
+   `python/dist/consema-<version>*.whl` + `.tar.gz`）。
+3. 跨语言同步：按 consema 仓 RELEASING.md 的检查单核对其他语言仓的发布
+   状态。

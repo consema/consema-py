@@ -17,9 +17,26 @@ build-backend = "hatchling.build"
 name = "consema"
 version = "0.14.0"
 description = "Language-neutral Consema contracts: closed fifteen-kind PortableValue, PortableGraph, PVCE/1 and PGCE/1 codecs, protocol registries (L0 milestone)"
+readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
+keywords = ["consema", "configuration", "language-neutral", "portable-value"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/consema/consema-py"
+Repository = "https://github.com/consema/consema-py"
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]

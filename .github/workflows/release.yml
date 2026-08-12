@@ -1,0 +1,43 @@
+# Consema Python release: tag-triggered PyPI publish of the `consema`
+# package (top-tier bar: 半自动发布, pydantic precedent).
+#
+# Credentials — PyPI trusted publishing (OIDC), the standard PyPI pattern:
+# no passwords or tokens in GitHub; the pypa/gh-action-pypi-publish action
+# exchanges the GitHub OIDC token (id-token: write) for a short-lived PyPI
+# upload token. User-side one-time setup per package (see RELEASING.md §2):
+# PyPI → project settings → Publishing → "Add a new publisher" with
+#   - publisher: GitHub
+#   - owner: consema
+#   - repository: consema-py
+#   - workflow file: release.yml
+# (PyPI's trusted publishing works for the first release too, unlike
+# crates.io — no manual first upload is required.)
+name: Release to PyPI
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: build wheel+sdist and publish to PyPI
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.x'
+      - name: build wheel + sdist (python -m build, hatchling backend)
+        working-directory: python
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+      - name: publish to PyPI (trusted publishing, OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist
