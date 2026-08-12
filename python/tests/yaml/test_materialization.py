@@ -147,6 +147,63 @@ def test_materialization_unrepresentable_value_fails():
     assert result.failure.code == "core.materialization.unrepresentable@1"
 
 
+def test_materialization_internal_errors_propagate_not_swallowed(monkeypatch):
+    # Audit P1: the reparse step previously caught `except Exception`, which
+    # disguised real bugs (RecursionError, ValueError from a genuine defect)
+    # as normal materialization failures. Only the typed failures map — the
+    # untyped ones must propagate.
+    import consema.yaml.materialization as materialization
+
+    document = parse_source("{a: 1}\n", YamlProfile.YAML12_CORE_V1)
+    graph = project_graph(document)
+
+    # A non-typed internal error in the reparse parse step propagates.
+    def boom_parse(raw, profile, limits):
+        raise RecursionError("injected internal error")
+
+    monkeypatch.setattr(materialization, "parse", boom_parse)
+    with pytest.raises(RecursionError):
+        materialize_graph(graph, _flow_request())
+    monkeypatch.undo()
+
+    # A non-typed internal error in the reprojection step propagates too.
+    def boom_project(graph, *args, **kwargs):
+        raise RecursionError("injected internal error")
+
+    monkeypatch.setattr(materialization, "project_graph", boom_project)
+    with pytest.raises(RecursionError):
+        materialize_graph(graph, _flow_request())
+    monkeypatch.undo()
+
+    # The typed failures still map to their frozen attempts
+    # (materialization.rs:223-227).
+    from consema.yaml.errors import (
+        YamlFormationFailure,
+        YamlFormationFailureKind,
+        YamlGraphProjectionError,
+        YamlGraphProjectionErrorKind,
+    )
+
+    def formation_failure(raw, profile, limits):
+        raise YamlFormationFailure(YamlFormationFailureKind.SYNTAX)
+
+    monkeypatch.setattr(materialization, "parse", formation_failure)
+    result = materialize_graph(graph, _flow_request())
+    assert isinstance(result, FailedGraphMaterializationAttempt)
+    assert result.failure.code == "core.materialization.formation-failed@1"
+    monkeypatch.undo()
+
+    def projection_failure(graph, *args, **kwargs):
+        raise YamlGraphProjectionError(YamlGraphProjectionErrorKind.GRAPH)
+
+    monkeypatch.setattr(materialization, "project_graph", projection_failure)
+    result = materialize_graph(graph, _flow_request())
+    assert isinstance(result, FailedGraphMaterializationAttempt)
+    assert result.failure.kind is YamlGraphMaterializationFailureKind.ROUND_TRIP_MISMATCH
+    assert result.failure.code == "yaml.materialization.round-trip-mismatch@1"
+    monkeypatch.undo()
+
+
 def test_materialization_float_canonical_e0():
     # materialization.rs:719-728: a float canonical without "."/"e"/"E"
     # gains "e0" so the tag and content reparse exactly.

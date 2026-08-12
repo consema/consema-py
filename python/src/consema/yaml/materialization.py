@@ -61,8 +61,10 @@ from consema.graph import (
 )
 from consema.yaml.errors import (
     YamlDiagnostic,
+    YamlFormationFailure,
     YamlGraphMaterializationFailure,
     YamlGraphMaterializationFailureKind,
+    YamlGraphProjectionError,
     YamlSeverity,
 )
 from consema.yaml.kinds import YamlProfile
@@ -522,11 +524,17 @@ def _materialize_graph_complete(graph, request: MaterializationRequest, analyzed
     raw = _encode_output(text, request.encoding, request.limits.max_output_bytes)
     try:
         document = parse(raw, profile, _parse_limits(request.limits))
-    except Exception:
+    except YamlFormationFailure:
+        # materialization.rs:223-224: a reparse formation failure is a
+        # MaterializationFailure (the typed failure carries the frozen code);
+        # any other exception (RecursionError, a real bug) propagates instead
+        # of being disguised as a normal failure (audit P1).
         raise MaterializationFailure(MaterializationFailureKind.FORMATION_FAILED) from None
     try:
         reparsed = project_graph(document)
-    except Exception:
+    except YamlGraphProjectionError:
+        # materialization.rs:225-227: an exact graph projection failure maps
+        # to ROUND_TRIP_MISMATCH; any other exception propagates.
         raise YamlGraphMaterializationFailure(
             YamlGraphMaterializationFailureKind.ROUND_TRIP_MISMATCH
         ) from None
