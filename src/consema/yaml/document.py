@@ -60,7 +60,7 @@ from consema.yaml.parser import (
 )
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class Document:
     """Complete immutable YAML stream snapshot (lib.rs:322-333)."""
 
