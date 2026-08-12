@@ -1,0 +1,11 @@
+# Dependabot version updates: pip ecosystem. The Python package lives at
+# python/ (pyproject.toml is the manifest; hatchling build backend). Weekly
+# cadence, at most 5 open PRs. Update PRs run the full CI gate
+# (ci-python.yml, including the 3.12/3.13/3.14 python-gates matrix).
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /python
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
