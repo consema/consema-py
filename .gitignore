@@ -4,3 +4,10 @@ __pycache__/
 .venv/
 .pytest_cache/
 *.egg-info/
+
+# IDE / OS artifacts
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

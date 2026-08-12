@@ -1,5 +1,9 @@
 # Consema Python（consema-py）
 
+![CI](https://img.shields.io/github/actions/workflow/status/consema/consema-py/ci-python.yml?branch=main)
+![Version](https://img.shields.io/github/v/tag/consema/consema-py)
+![License](https://img.shields.io/github/license/consema/consema-py)
+
 Consema 语言中立契约（RFC 0016）的 **Python 实现**仓库。本仓库是 Consema 六仓
 拆分中的 Python 仓：规范权威（RFC、docs、路线图、跨语言 conformance suites）在
 [github.com/consema/consema](https://github.com/consema/consema)；本仓承载
