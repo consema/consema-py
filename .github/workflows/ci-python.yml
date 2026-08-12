@@ -1,0 +1,221 @@
+# Consema Python CI (docs/five-language-ci-design.md §1.2, §7.1): the
+# Python implementation joins the release gate with three explicit jobs
+# (the design rejects a single shared matrix, §5.2). python-gates runs the
+# editable install, the full pytest suite and the zero-runtime-dependency
+# policy (pyproject.toml dependencies = [] + pip check); python-conformance
+# runs the Python runner over the 18 shared suites / 508 cases (the
+# aggregate digest 35bebc8d…, the 18/508 inventory and the per-suite counts
+# are pinned inside python/tests/conformance/test_runner.py, §2.2/§4.2);
+# python-differential runs the bidirectional scripts/python-verify-*.ps1
+# harnesses against the Rust emitters (byte parity + normalized + protocol
+# exchange). The verify scripts are Windows PowerShell 5.1 compatible and
+# pass native Windows paths to pytest, so the differential job runs on
+# windows-latest. The shared-conformance script
+# (scripts/python-verify-shared-conformance.ps1, §3.6/§7.2) lands with the
+# runner-CLI batch and slots in as a fourth differential step. No
+# repository secrets are required.
+#
+# This repository carries the Python implementation only, so every job uses
+# the multi-repo checkout mode: it checks out consema/consema (the spec
+# repository, whose conformance/vectors + conformance/differential case sets
+# and docs/fc-manifest-0.13.0.json are the single authority) beside this
+# repository and copies the conformance data into the workspace root (the
+# runner and the differential harnesses resolve conformance/* by
+# repository-relative path). The differential job additionally checks out
+# consema/consema-rs (the Rust emitter workspace; the python-verify-*.ps1
+# scripts default to <repo root>\consema-rs) and the scripts build the
+# pinned emitter examples (cargo build --locked -p consema-conformance
+# --example …) there.
+name: Python CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: python-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  python-gates:
+    name: python gates (fmt/type + unit tests + zero-dep)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: consema/consema
+          path: consema-repo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.x'
+      - name: provision conformance data from the consema spec repository
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\conformance'
+          $target = Join-Path $env:GITHUB_WORKSPACE 'conformance'
+          if (-not (Test-Path -LiteralPath $source)) {
+            throw "conformance data not found in the consema checkout: $source"
+          }
+          Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
+          New-Item -ItemType Directory -Force (Join-Path $env:GITHUB_WORKSPACE 'docs') | Out-Null
+          $manifest = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\docs\fc-manifest-0.13.0.json'
+          if (-not (Test-Path -LiteralPath $manifest)) {
+            throw "fc-manifest not found in the consema checkout: $manifest"
+          }
+          Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+          $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
+      - name: pip install -e '.[dev]' (editable install + pytest)
+        working-directory: python
+        run: python -m pip install -e '.[dev]'
+      # Full suite via --import-mode=importlib: several test files share
+      # basenames across directories (tests/document/test_formation.py vs
+      # tests/hcl/test_formation.py, …), which breaks pytest's default
+      # prepend import mode on a clean checkout (import file mismatch);
+      # importlib mode imports each module under a unique name. The xml
+      # tests import their conftest as a module (`from conftest import …`),
+      # so tests/xml is put on PYTHONPATH (the only directory using that
+      # pattern). Differential tests without their golden env vars report
+      # documented skips.
+      - name: pytest (full test suite, importlib mode)
+        working-directory: python
+        env:
+          PYTHONPATH: tests/xml
+        run: python -m pytest --import-mode=importlib
+      # Zero-runtime-dependency policy (§1.3): pyproject.toml:22 declares
+      # dependencies = [] and pip check must be clean.
+      - name: zero-dependency assertion (dependencies = [] + pip check)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $pyproject = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'python\pyproject.toml') -Raw
+          if ($pyproject -notmatch '(?m)^dependencies\s*=\s*\[\s*\]\s*$') {
+            throw 'pyproject.toml must declare dependencies = [] (zero runtime dependencies policy)'
+          }
+          python -m pip check
+          if ($LASTEXITCODE -ne 0) {
+            throw "pip check failed (exit $LASTEXITCODE)"
+          }
+          Write-Output 'zero runtime dependencies: pyproject.toml dependencies = [] and pip check clean'
+
+  python-conformance:
+    name: python conformance runner (18 suites / 508 cases)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: consema/consema
+          path: consema-repo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.x'
+      - name: provision conformance data from the consema spec repository
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\conformance'
+          $target = Join-Path $env:GITHUB_WORKSPACE 'conformance'
+          if (-not (Test-Path -LiteralPath $source)) {
+            throw "conformance data not found in the consema checkout: $source"
+          }
+          Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
+          New-Item -ItemType Directory -Force (Join-Path $env:GITHUB_WORKSPACE 'docs') | Out-Null
+          $manifest = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\docs\fc-manifest-0.13.0.json'
+          if (-not (Test-Path -LiteralPath $manifest)) {
+            throw "fc-manifest not found in the consema checkout: $manifest"
+          }
+          Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+          $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
+      - name: pip install -e '.[dev]' (editable install + pytest)
+        working-directory: python
+        run: python -m pip install -e '.[dev]'
+      # The runner test (python/tests/conformance/test_runner.py) verifies
+      # the aggregate digest
+      # 35bebc8d384d71740f7c1a886bc50f4e095ff52fe05d2a407f04b842ee6922fa
+      # (fc-manifest-0.13.0.json:38), the 18 suites / 508 cases inventory,
+      # the per-suite counts, and a fully conformant run (zero failures,
+      # documented skips only) — the §4.2 hard pins live in the runner.
+      - name: run the conformance runner (pytest tests/conformance/)
+        working-directory: python
+        run: python -m pytest tests/conformance/
+
+  python-differential:
+    name: python differential vs Rust (byte parity + normalized + protocol exchange)
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: consema/consema-rs
+          path: consema-rs
+      - uses: actions/checkout@v4
+        with:
+          repository: consema/consema
+          path: consema-repo
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: consema-rs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.x'
+      - name: provision conformance data from the consema spec repository
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\conformance'
+          $target = Join-Path $env:GITHUB_WORKSPACE 'conformance'
+          if (-not (Test-Path -LiteralPath $source)) {
+            throw "conformance data not found in the consema checkout: $source"
+          }
+          Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
+          New-Item -ItemType Directory -Force (Join-Path $env:GITHUB_WORKSPACE 'docs') | Out-Null
+          $manifest = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\docs\fc-manifest-0.13.0.json'
+          if (-not (Test-Path -LiteralPath $manifest)) {
+            throw "fc-manifest not found in the consema checkout: $manifest"
+          }
+          Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+          $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+          Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
+      - name: pip install -e '.[dev]' (pytest for the differential tests)
+        shell: pwsh
+        working-directory: python
+        run: python -m pip install -e '.[dev]'
+      # Each script builds the pinned Rust emitter inside the consema-rs
+      # checkout (cargo build --locked -p consema-conformance --example …;
+      # the scripts default to <repo root>\consema-rs), provisions the
+      # golden/evidence directories, runs the Python side with the golden
+      # env vars set, closes the reverse direction, and asserts the tests
+      # RAN (not skipped).
+      - name: scripts/python-verify-byte-parity.ps1
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $script = Join-Path $env:GITHUB_WORKSPACE 'scripts/python-verify-byte-parity.ps1'
+          & $script
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: scripts/python-verify-normalized-differential.ps1
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $script = Join-Path $env:GITHUB_WORKSPACE 'scripts/python-verify-normalized-differential.ps1'
+          & $script
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: scripts/python-verify-protocol-exchange.ps1
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $script = Join-Path $env:GITHUB_WORKSPACE 'scripts/python-verify-protocol-exchange.ps1'
+          & $script
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

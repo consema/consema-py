@@ -1,32 +1,30 @@
-# Consema Python implementation
+# Consema Python（consema-py）
 
-The Python implementation of the language-neutral Consema
-configuration-processing contracts (RFC 0016; equal footing with
-Rust/Go/TS/Kotlin per the 2026-08-11 owner decision). Zero third-party
-runtime dependencies (`dependencies = []`, pyproject.toml:22; pytest is a
-dev extra only) and never imports or calls the other implementations.
+Consema 语言中立契约（RFC 0016）的 **Python 实现**仓库。本仓库是 Consema 六仓
+拆分中的 Python 仓：规范权威（RFC、docs、路线图、跨语言 conformance suites）在
+[github.com/consema/consema](https://github.com/consema/consema)；本仓承载
+Python 实现与跨语言差分验证工具。
 
-## Verify
+## 布局
 
-```
+- `python/`：Python 包（Python 3.12，运行时零依赖 `dependencies = []`）。
+  完整文档见 [python/README.md](python/README.md)。
+- `scripts/`：跨语言差分验证脚本（byte parity / normalized differential /
+  protocol exchange）。脚本构建 consema-rs 的 Rust emitter 并对拍 Python 实现；
+  Rust 侧来自 consema-rs 仓 checkout（CI 多仓模式），conformance 数据来自规范仓 checkout。
+- `.github/workflows/ci-python.yml`：Python 门禁（editable install + pytest +
+  零依赖）、conformance runner 门禁（18 suites / 508 cases）与 Python-Rust 差分
+  门禁（windows-latest 多仓 checkout）。
+
+## 构建与测试
+
+```text
 cd python
-python -m pytest                  # testpaths = tests (pyproject.toml:30-32)
-python -m consema.conformance.runner  # runner CLI (18 suites / 508 cases; __main__ at runner.py:392)
-# CI runs `python -m pytest tests/conformance/` (ci-python.yml:92-94); the plain
-# `python -m consema.conformance` exits silently — the package has no __main__.py
-# differential tests live under tests/differential/ and require the
-# CONSEMA_DIFFERENTIAL_* golden env vars (missing env = documented skip)
+python -m pip install -e '.[dev]'
+python -m pytest tests/
 ```
 
-## Conformance
+## 链接
 
-18 suites / 508 cases / aggregate digest `35bebc8d…` are pinned in
-`tests/conformance/test_runner.py` (per-suite applicable surface
-(passed, 0, 0) for every suite — any documented skip fails); 508/508 pass
-in CI (ci-python.yml, python-conformance job).
-
-## References
-
-- Language plan: `docs/multi-language-implementation-plan.md` (L0-L5 closed
-  for all three new languages, 2026-08-12)
-- CI and cross-language verification design: `docs/five-language-ci-design.md`
+- 规范仓（RFC / docs / 路线图）：https://github.com/consema/consema
+- Rust 参考实现：https://github.com/consema/consema-rs
