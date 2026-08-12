@@ -2,7 +2,8 @@
 # Python implementation joins the release gate with three explicit jobs
 # (the design rejects a single shared matrix, §5.2). python-gates runs the
 # editable install, the full pytest suite and the zero-runtime-dependency
-# policy (pyproject.toml dependencies = [] + pip check); python-conformance
+# policy (pyproject.toml dependencies = [] + pip check) on a 3-version
+# matrix (3.12.x / 3.13.x / 3.14.x, fail-fast: false); python-conformance
 # runs the Python runner over the 18 shared suites / 508 cases (the
 # aggregate digest 35bebc8d…, the 18/508 inventory and the per-suite counts
 # are pinned inside python/tests/conformance/test_runner.py, §2.2/§4.2);
@@ -38,14 +39,24 @@ concurrency:
   group: python-ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Top-tier P0: minimal token scope. Every job here only reads repository
+# contents (checkout + multi-repo checkouts + running repo scripts); none
+# uploads artifacts or writes check runs, so the global minimum suffices.
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   python-gates:
-    name: python gates (fmt/type + unit tests + zero-dep)
+    name: python gates (${{ matrix.python-version }}; fmt/type + unit tests + zero-dep)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.12.x', '3.13.x', '3.14.x']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -54,7 +65,7 @@ jobs:
           path: consema-repo
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12.x'
+          python-version: ${{ matrix.python-version }}
       - name: provision conformance data from the consema spec repository
         shell: pwsh
         run: |
@@ -232,3 +243,50 @@ jobs:
           $script = Join-Path $env:GITHUB_WORKSPACE 'scripts/python-verify-protocol-exchange.ps1'
           & $script
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  # Version-consistency gate (tokio check-readme pattern): the README
+  # "Version:" line must equal the python/pyproject.toml version, so a
+  # version bump that forgets the README fails CI.
+  check-version-consistency:
+    name: check README version vs pyproject.toml (version consistency)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: assert pyproject.toml version == README Version line
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(grep -m1 '^version' python/pyproject.toml | sed -E 's/^version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
+          if [ -z "$version" ]; then
+            echo "::error::no 'version' found in python/pyproject.toml"
+            exit 1
+          fi
+          grep -qF "Version: $version" README.md || {
+            echo "::error::README.md does not declare 'Version: $version'"
+            exit 1
+          }
+          echo "README version consistent with pyproject.toml: $version"
+
+  # Alls-green aggregate gate (tokio/pydantic pattern): `check (all gates
+  # green)` is the SINGLE required check for branch protection on this
+  # repository; every other job stays non-required. `if: always()` is
+  # mandatory — otherwise GitHub skips this job when a dependency fails and
+  # a skipped check can be treated as success. `jobs: ${{ toJSON(needs) }}`
+  # is the action's mandatory input (it does not read the needs context
+  # automatically). No job here uses continue-on-error, so the
+  # allowed-failures list is empty.
+  check:
+    name: check (all gates green)
+    if: always()
+    needs: [python-gates, python-conformance, python-differential, check-version-consistency]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@v1
+        with:
+          allowed-failures: ''
+          jobs: ${{ toJSON(needs) }}

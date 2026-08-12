@@ -5,6 +5,9 @@ Consema 语言中立契约（RFC 0016）的 **Python 实现**仓库。本仓库�
 [github.com/consema/consema](https://github.com/consema/consema)；本仓承载
 Python 实现与跨语言差分验证工具。
 
+Version: 0.14.0（`python/pyproject.toml` version；CI
+check-version-consistency job 断言与 README 一致）。
+
 ## 布局
 
 - `python/`：Python 包（Python 3.12，运行时零依赖 `dependencies = []`）。
