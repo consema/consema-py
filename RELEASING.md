@@ -52,3 +52,11 @@ ${{ secrets.PYPI_API_TOKEN }}`（PyPI 账号 → API tokens 生成，写入 GitH
    `python/dist/consema-<version>*.whl` + `.tar.gz`）。
 3. 跨语言同步：按 consema 仓 RELEASING.md 的检查单核对其他语言仓的发布
    状态。
+
+## 4. API reference 文档（决策：pdoc/sphinx 待发布时引入）
+
+API reference 的 pdoc（或 sphinx）构建**尚未接线**（2026-08-12 决策）：
+仓库不新增文档工具链依赖（零运行时依赖策略 §1.3 只约束运行时，但文档
+工具链按"发布时引入"统一处理），对应的 docs CI job 与 typedoc/rustdoc
+artifact 对标产物在工具链引入后补建。当前依赖面审计由
+`.github/workflows/audit.yml`（pip-audit，dev extra 即全部依赖面）覆盖。
