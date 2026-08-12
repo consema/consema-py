@@ -11,7 +11,9 @@ dev extra only) and never imports or calls the other implementations.
 ```
 cd python
 python -m pytest                  # testpaths = tests (pyproject.toml:30-32)
-python -m consema.conformance     # runner CLI (18 suites / 508 cases)
+python -m consema.conformance.runner  # runner CLI (18 suites / 508 cases; __main__ at runner.py:392)
+# CI runs `python -m pytest tests/conformance/` (ci-python.yml:92-94); the plain
+# `python -m consema.conformance` exits silently — the package has no __main__.py
 # differential tests live under tests/differential/ and require the
 # CONSEMA_DIFFERENTIAL_* golden env vars (missing env = documented skip)
 ```
