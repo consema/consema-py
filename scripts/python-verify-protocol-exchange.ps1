@@ -169,7 +169,7 @@ if (Test-Path $verifyErr) {
     Get-Content $verifyErr | ForEach-Object { Write-Host $_ }
 }
 if ($verifyCode -ne 0) {
-    Write-Error "the Rust verify pass found divergences or failed (exit $verifyCode): the Python record codec gaps in python/src/consema/protocol/envelope.py must close per roadmap §11.3"
+    Write-Error "the Rust verify pass found divergences or failed (exit $verifyCode): a divergence here is a real Python encoder/decoder bug (the record codec gaps are closed — measured status in the header above)"
     exit $verifyCode
 }
 Write-Host "protocol exchange verification complete (exit 0)"
