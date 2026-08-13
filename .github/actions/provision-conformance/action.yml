@@ -1,0 +1,35 @@
+# Provision the shared conformance data from the consema spec repository
+# checkout into this workspace (CI multi-repo mode). The spec repository
+# checkout must already exist at <workspace>/consema-repo (every caller
+# checks it out with `path: consema-repo`, pinned to the commit that carries
+# the cfd6e296 519-case inventory); this action copies conformance/
+# (vectors, differential, fixtures) and docs/fc-manifest-0.13.0.json into
+# the workspace root, where the runner and the differential harnesses
+# resolve them by repository-relative path.
+name: Provision conformance data
+description: Copy conformance/ + docs/fc-manifest-0.13.0.json from the consema spec repository checkout (consema-repo) into the workspace root.
+runs:
+  using: composite
+  steps:
+    - name: provision conformance data from the consema spec repository
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $source = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\conformance'
+        $target = Join-Path $env:GITHUB_WORKSPACE 'conformance'
+        if (-not (Test-Path -LiteralPath $source)) {
+          throw "conformance data not found in the consema checkout: $source"
+        }
+        Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
+        New-Item -ItemType Directory -Force (Join-Path $env:GITHUB_WORKSPACE 'docs') | Out-Null
+        $manifest = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\docs\fc-manifest-0.13.0.json'
+        if (-not (Test-Path -LiteralPath $manifest)) {
+          throw "fc-manifest not found in the consema checkout: $manifest"
+        }
+        Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+        # The toml.corpus.cargo-manifest case reads the committed fixture
+        # conformance/fixtures/toml/Cargo.toml (single authority), which is
+        # included in the conformance/ copy above; no workspace-root
+        # Cargo.toml is provisioned anymore.
+        $count = @(Get-ChildItem -LiteralPath $target -Recurse -File).Count
+        Write-Output "provisioned conformance/: $count files + docs/fc-manifest-0.13.0.json"
