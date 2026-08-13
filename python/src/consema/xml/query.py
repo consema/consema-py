@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §8 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:285-311): the
+- RFC 0012 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:285-311): the
   frozen domains ``xml.native-semantic-query@1`` and
   ``xml.lossless-syntax-query@1``; native order is document order; element
   attributes and namespace declarations preserve their respective source
@@ -13,7 +13,7 @@ Authority:
   core.take@1, core.distinct-by-identity@1, limits, cancellation, and
   explicit Completed/Cancelled/Failed terminal states.
 - The match shapes and every operator transcribe
-  crates/consema-xml/src/query.rs:22-220 (XmlMatch), 187-220
+  consema-rs/consema-xml/src/query.rs:22-220 (XmlMatch), 187-220
   (XmlSyntaxMatch), 223-249 (execute_xml_query), 286-335
   (execute_xml_syntax_query), 578-622 (operator dispatch), 624-1376
   (operator implementations) — byte/registry arbitration only.
@@ -25,7 +25,7 @@ Authority:
   consema.protocol.query (RFC 0016 §5.4); the frozen defaults are the core
   query.rs ones (max_steps/max_results 100_000).
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ from consema.xml.kinds import XmlSyntaxKind
 
 
 class QueryLimits:
-    """Execution resource limits (crates/consema-core/src/query.rs)."""
+    """Execution resource limits (consema-rs/consema-core/src/query.rs)."""
 
     __slots__ = ("max_steps", "max_results")
 

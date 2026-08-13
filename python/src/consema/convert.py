@@ -29,7 +29,7 @@ Same-family directions pass the gate and the owning materializer consumes
 the record under its own validation and closure.
 
 Authority: crates/consema/src/conversion.rs (composition algebra); RFC 0004
-(materialization/convert); go/conversion.go as a cross-reference only.
+(materialization/convert); consema-go/go/conversion.go as a cross-reference only.
 """
 
 from __future__ import annotations

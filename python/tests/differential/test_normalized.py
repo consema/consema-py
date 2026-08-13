@@ -1,5 +1,5 @@
 """Tests of the Python normalized-result differential harness
-(python/src/consema/differential/normalized.py; docs/five-language-ci-design.md
+(python/src/consema/differential/normalized.py; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
 §3.3).
 
 TestCaseFileIntegrity always runs and guards the checked-in case set (it

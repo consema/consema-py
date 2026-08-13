@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and policy model: crates/consema-json/src/edit.rs:17-58
+- Operation and policy model: consema-rs/consema-json/src/edit.rs:17-58
   (RepresentationPolicy, ScalarReplacement), 59-108 (EditOperation),
   110-243 (EditTransaction/Builder).
 - Failure algebra and codes: edit.rs:260-299 (EditFailure), 1269-1324
@@ -34,7 +34,7 @@ Authority (Rust arbitration for exact byte semantics):
   conformance/vectors/v1.json:107-141 (scalar edits) and
   json-family-v2.json:174-190 (move-member and preserve-scalars).
 
-Frozen operation ids (crates/consema-json/src/operation_registry.rs:16-79):
+Frozen operation ids (consema-rs/consema-json/src/operation_registry.rs:16-79):
 json.edit.insert-member@1, remove-member@1, move-member@1, rename-member@1,
 insert-array-element@1, remove-array-element@1, replace-scalar-semantic@1,
 replace-scalar-literal@1.

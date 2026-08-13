@@ -2,15 +2,15 @@
 
 Authority:
 
-- RFC 0004 §8 (docs/rfcs/0004-materialization-conversion-and-structural-
+- RFC 0004 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
   edit-v1.md:193-217): input locations are ``Value(ValuePath)`` and
   ``Association(AssociationLocation)``; the process-local Rust map is
   complete for every emitted value and supported association.
 - The ValuePath/AssociationLocation shapes are the semantic-model records
-  of consema-core (crates/consema-core/src/value_path.rs and
+  of consema-core (consema-rs/consema-core/src/value_path.rs and
   association_location.rs); the segment vocabulary is frozen:
   ``ObjectValue(String)``, ``SequenceElement(u64)``, ``EntryKey(u64)``,
-  ``EntryValue(u64)`` (crates/consema-toml/src/projection.rs:265-319 and
+  ``EntryValue(u64)`` (consema-rs/consema-toml/src/projection.rs:265-319 and
   materialization.rs:215-255 use exactly these segments).
 - AssociationRole is closed at ObjectEntry / ObjectKey / EntryMappingEntry
   (projection.rs:299-319; materialization.rs:720-741).

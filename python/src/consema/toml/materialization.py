@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0004 §3/§4/§6 (docs/rfcs/0004-materialization-conversion-and-
+- RFC 0004 §3/§4/§6 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
   structural-edit-v1.md:56-94, 98-127, 150-168): the common
   MaterializationRequest; the frozen style ``toml.canonical-document@1``;
   TOML requires a root Object (or an explicit
@@ -11,7 +11,7 @@ Authority:
   OffsetDateTime/Sequence/Object recursively, requires signed 64-bit
   integers, rejects non-canonical NaN payloads, and never interprets
   duplicate keys.
-- The writer transcribes crates/consema-toml/src/materialization.rs:
+- The writer transcribes consema-rs/consema-toml/src/materialization.rs:
   request validation 81-99; canonical string/key escaping 353-380 (same
   escape set as the canonical literal, edit.rs:1516-1537); float
   canonicalization 382-407 (canonical NaN payloads ``nan``/``-nan``,

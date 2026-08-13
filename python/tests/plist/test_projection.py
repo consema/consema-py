@@ -140,8 +140,8 @@ def test_projection_require_object_policies():
     )
     assert first.complete is not None
     # The require-object projection value is the plain unique-key Object
-    # itself, not a value-tree record wrapper (go/plist/projection.go
-    # projectRequireObject; go/conformance/plist_v1.go:2636-2641).
+    # itself, not a value-tree record wrapper (consema-go/go/plist/projection.go
+    # projectRequireObject; consema-go/go/conformance/plist_v1.go:2636-2641).
     entries = first.complete.value.as_object()
     assert [key for key, _ in entries] == ["a", "b"]
     assert [value.as_string() for _, value in entries] == ["one", "two"]

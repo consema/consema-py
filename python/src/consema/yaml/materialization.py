@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for byte arbitration):
 
-- RFC 0007 s11 (docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:303-353):
+- RFC 0007 s11 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:303-353):
   yaml.canonical-block@1 and yaml.canonical-flow@1; canonical graph
   numbering; deterministic anchors ``&g0``, ``&g1``, ... for nodes whose
   topology requires an alias; the first serialization occurrence defines the
@@ -10,7 +10,7 @@ Authority (language-neutral first; Rust only for byte arbitration):
   every retained standard repository tag explicitly; newline and
   UTF-8/UTF-16 target encoding policies; output is reparsed under the target
   profile before a Complete result.
-- The writer grammar is crates/consema-yaml/src/materialization.rs:207-238
+- The writer grammar is consema-rs/consema-yaml/src/materialization.rs:207-238
   (analyze/write/reparse/provenance), 292-401 (GraphLayout: anchor names for
   nodes with more than one occurrence), 430-717 (GraphWriter block/flow
   rendering), 719-728 (scalar presentation: float canonical ``e0``), and

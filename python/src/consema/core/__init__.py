@@ -5,8 +5,8 @@ ObjectBuilder, EntryMappingBuilder), strict equality and the deterministic
 hash, the PVCE/1 byte codec with its limits, and the typed
 `core.pvce.*@1` errors.
 
-Authority: RFC 0016 §4.1/§4.2; crates/consema-pvce/src/lib.rs (byte
-arbitration); conformance/vectors/v1.json (golden bytes); go/core as a
+Authority: RFC 0016 §4.1/§4.2; consema-rs/consema-pvce/src/lib.rs (byte
+arbitration); conformance/vectors/v1.json (golden bytes); consema-go/go/core as a
 cross-reference only.
 """
 

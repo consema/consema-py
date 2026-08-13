@@ -1,7 +1,7 @@
 """Verifiable proof that planned replacements did not alter surrounding bytes.
 
 Authority:
-- RFC 0004 §15 (docs/rfcs/0004-materialization-conversion-and-structural-
+- RFC 0004 §15 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
   edit-v1.md:358-371): every successful edit commit includes UntouchedByteProof
   — an ordered cover of all old-source intervals outside replacements, mapped
   to target intervals; verification requires old regions exactly cover every
@@ -9,13 +9,13 @@ Authority:
   new byte once, each mapped region has equal length and equal bytes, region
   order is monotonic, and base and target digests match the proof. The proof
   says only that bytes outside planned replacements are identical.
-- crates/consema-document/src/untouched_proof.rs — arbitration:
+- consema-rs/consema-document/src/untouched_proof.rs — arbitration:
   UntouchedByteRegion untouched_proof.rs:8-59; UntouchedByteProof::create /
   from_facts / verify untouched_proof.rs:71-132; canonical region computation
   (maximal, adjacent regions merged) untouched_proof.rs:182-295; region
   validation untouched_proof.rs:297-317.
 
-go/document is a cross-reference only; no code structure is copied.
+consema-go/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

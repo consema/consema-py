@@ -3,7 +3,7 @@ and tfvars formation with recovery and fatal limits, native and lossless
 syntax query, body projection with the ProjectExpression policy, canonical
 materialization with the reparse closure, and the six structural edits.
 Dispatch is by the ``capability`` field, mirroring
-go/conformance/hcl_v1.go.
+consema-go/go/conformance/hcl_v1.go.
 """
 
 from __future__ import annotations

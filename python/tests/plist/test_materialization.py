@@ -209,7 +209,7 @@ def test_fractional_date_policy():
     refused = materialize(value_tree_record(root), xml_request())
     assert isinstance(refused, FailedMaterializationAttempt)
     # The plist family surfaces the plist-owned code directly
-    # (go/plist/materialization.go:125-140; RFC 0013 §12).
+    # (consema-go/go/plist/materialization.go:125-140; RFC 0013 §12).
     assert refused.failure.kind.value == "unrepresentable"
     assert refused.failure.name == "date"
     assert refused.failure.code == "plist.materialization.fractional-date@1"

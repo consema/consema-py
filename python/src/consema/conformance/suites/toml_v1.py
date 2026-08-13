@@ -1,7 +1,7 @@
 """Suite ``consema.toml.conformance@1`` (toml-v1.json, 18 cases): TOML 1.0
 document formation, native items, query, projection, edit, resource limits,
 and real-world corpora. Dispatch is by case id, mirroring
-go/conformance/toml_v1.go.
+consema-go/go/conformance/toml_v1.go.
 """
 
 from __future__ import annotations

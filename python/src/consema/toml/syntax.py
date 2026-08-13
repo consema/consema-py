@@ -2,14 +2,14 @@
 
 Authority:
 
-- The closed twelve-kind vocabulary is frozen by crates/consema-toml/src/
+- The closed twelve-kind vocabulary is frozen by consema-rs/consema-toml/src/
   lib.rs:41-109 (TomlSyntaxKind and its stable query/protocol names
   "Whitespace", "Newline", "Comment", "String", "Bare", "Equals",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Comma", "Dot").
   The Python query validation table already freezes the same spellings
   (consema.protocol query.py:1075-1079 _is_toml_syntax_kind).
 - The tokenizer transcribes the byte classification of
-  crates/consema-toml/src/parser.rs:360-501 (tokenize / is_punctuation /
+  consema-rs/consema-toml/src/parser.rs:360-501 (tokenize / is_punctuation /
   punctuation_kind / string_end): space and tab are Whitespace trivia; LF,
   CRLF, and a bare CR are Newline trivia; ``#`` to end of line is Comment
   trivia; ``'``/``"`` start a String token scanned to its closing quote
@@ -18,7 +18,7 @@ Authority:
   token ending at whitespace, ``#``, punctuation, or a quote.
 - StructuralPiece kinds: Token for string/bare/punctuation, Trivia for
   whitespace/newline/comment (parser.rs:370-412).
-- RFC 0001 §2 (docs/rfcs/0001-toml-1.0-profile.md:18): the token/trivia
+- RFC 0001 §2 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:18): the token/trivia
   index must cover all input with no gaps and no overlaps; the
   LosslessStructuralIndex validates exactly that.
 - max_token_count bounds tokens plus trivia/error regions during
@@ -45,7 +45,7 @@ from consema.toml.errors import TomlFormationFailure
 
 class TomlSyntaxKind(enum.Enum):
     """One format-specific lossless classification of a source piece
-    (crates/consema-toml/src/lib.rs:41-68)."""
+    (consema-rs/consema-toml/src/lib.rs:41-68)."""
 
     WHITESPACE = "Whitespace"
     NEWLINE = "Newline"

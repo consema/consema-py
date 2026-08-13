@@ -8,10 +8,10 @@ Golden cases transcribed from conformance/vectors/source-v1.json:
 - ``source.binary.reject-gap`` (lines 113-118): regions [0,1) and [2,4) leave
   a gap -> expected code "IncompleteStructuralCoverage".
 
-Contract: RFC 0003 §7 (docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
+Contract: RFC 0003 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
 162-171) — binary coverage obeys the no-gap/no-overlap/final-length
 invariant; empty source has an empty valid index; non-empty source requires
-at least one non-empty region. Arbitration: crates/consema-document/
+at least one non-empty region. Arbitration: consema-rs/consema-document/
 src/lib.rs:531-579 (BinaryStructuralIndex) and 582-604 (LocationError).
 """
 

@@ -1,9 +1,9 @@
 """The canonical tagged JSON transport `core.portable-value-json@1`.
 
 Authority: RFC 0015 §3.2 and RFC 0016 §4.2; the wire behavior is frozen by
-crates/consema-protocol/src/value_transport.rs (the byte arbitration
+consema-rs/consema-protocol/src/value_transport.rs (the byte arbitration
 source); conformance/vectors/protocol-v1.json and protocol-v2.json carry the
-shared transport cases. Go (go/protocol/canonical.go) is a cross-reference.
+shared transport cases. Go (consema-go/go/protocol/canonical.go) is a cross-reference.
 
 The decoder is a strict JSON parser (no comments, no trailing commas,
 duplicate members rejected, canonical string/number forms only) followed by

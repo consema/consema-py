@@ -1,10 +1,10 @@
 """The plist-family format operation registry (6 frozen records per profile).
 
-Authority: crates/consema-plist/src/operation_registry.rs:20-83 — the exact
+Authority: consema-rs/consema-plist/src/operation_registry.rs:20-83 — the exact
 operation ids, target roles, argument schemas, and support classifications;
 the surface is frozen by the registry test (operation_registry.rs:104-132:
 exactly six Supported structural operations per profile) and by RFC 0013
-§11 (docs/rfcs/0013-plist-family-profiles-v1.md:685-695: both profiles
+§11 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:685-695: both profiles
 publish the same six snapshot-bound operations, independently typed per
 profile).
 

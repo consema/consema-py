@@ -13,7 +13,7 @@ ini.python-configparser-canonical@1 with exact request combinations
 explicit registered Windows code page, plus CRLF; Python requires one
 non-Binary registered text encoding plus LF), strict encoding, and
 closure: output reparses under the exact target profile and reprojects to
-the identical PortableValue before success (docs/rfcs/0009-ini-family-
+the identical PortableValue before success (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-
 profiles-v1.md:393-435). Failure returns no Document and no partial bytes
 (RFC 0004 §7).
 """
@@ -111,7 +111,7 @@ def test_python_canonical_style():
 
 
 def test_materialization_closure_reprojects_identically():
-    # RFC 0009 §11 (docs/rfcs/0009-...:432-435): all styles reparse under
+    # RFC 0009 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:432-435): all styles reparse under
     # the exact target profile and reproject under the request's policy
     # before success.
     for value, request in (
@@ -172,7 +172,7 @@ def test_limit_outcomes_are_atomic():
 
 
 def test_windows_object_cannot_fabricate_case_collisions():
-    # RFC 0009 §11 (docs/rfcs/0009-...:409-411): Object input cannot
+    # RFC 0009 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:409-411): Object input cannot
     # fabricate a Windows case-equivalent collision even when its spellings
     # are distinct.
     from consema.core.value import ObjectBuilder
@@ -194,7 +194,7 @@ def test_windows_object_cannot_fabricate_case_collisions():
 
 
 def test_python_trailing_empty_value_line_is_unrepresentable():
-    # RFC 0009 §11 (docs/rfcs/0009-...:412-414): Python stored values whose
+    # RFC 0009 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:412-414): Python stored values whose
     # terminal empty line would be normalized away by the frozen parser are
     # unrepresentable rather than silently changed.
     value = nested_entry_mapping([("s", [("value", "line\n")])])
@@ -204,7 +204,7 @@ def test_python_trailing_empty_value_line_is_unrepresentable():
 
 
 def test_unsupported_style_newline_and_encoding_fail_atomically():
-    # RFC 0009 §11 (docs/rfcs/0009-...:401-406): the request combinations
+    # RFC 0009 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:401-406): the request combinations
     # are exact.
     from consema.document.materialization import MaterializationFailureKind as Kind
 

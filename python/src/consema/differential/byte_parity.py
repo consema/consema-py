@@ -1,16 +1,16 @@
 """PVCE/PGCE byte parity of the Python encoders against the Rust authority
 (roadmap §16.1 hard gate: "Rust 与 Go 的 PVCE/PGCE bytes 完全一致", extended
-to Python per docs/five-language-ci-design.md §3.2).
+to Python per https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.2).
 
-Rust is the byte authority (crates/consema-pvce, crates/consema-graph). The
+Rust is the byte authority (consema-rs/consema-pvce, consema-rs/consema-graph). The
 checked-in case set (conformance/differential/cases.json, the shared
 single-authority case directory of the consema repository) is encoded by
 both sides; the Rust encoder example
-(crates/consema-conformance/examples/emit_parity_bytes.rs) emits one
+(consema-rs/consema-conformance/examples/emit_parity_bytes.rs) emits one
 ``<case-id>.hex`` golden file per case, and this module compares the Python
 encoder's bytes byte for byte and checks the bidirectional direction (golden
 bytes -> Python decode -> Python re-encode), mirroring the Go test
-(go/conformance/differential/differential_test.go). Orchestration:
+(consema-go/go/conformance/differential/differential_test.go). Orchestration:
 scripts/python-verify-byte-parity.ps1 provisions the golden directory
 (``CONSEMA_DIFFERENTIAL_RUST_DIR``); without it the test skips (documented,
 never silent). The case-file integrity checks run whenever the shared
@@ -40,7 +40,7 @@ MANIFEST = "consema.differential.byte-parity@1"
 
 # The directory of the Rust encoder's golden hex files
 # (scripts/python-verify-byte-parity.ps1 provisions it; the Go harness uses
-# the same variable name, docs/five-language-ci-design.md §3.2).
+# the same variable name, https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.2).
 RUST_DIR_ENV = "CONSEMA_DIFFERENTIAL_RUST_DIR"
 
 # The closed fifteen-kind vocabulary of the case file's "kinds" metadata

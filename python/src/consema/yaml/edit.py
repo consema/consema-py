@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and policy model: crates/consema-yaml/src/edit.rs:21-53
+- Operation and policy model: consema-rs/consema-yaml/src/edit.rs:21-53
   (RepresentationPolicy, ScalarReplacement), 63-114 (EditOperation),
   116-258 (EditTransaction/Builder).
 - Failure algebra and codes: edit.rs:275-343 (EditFailure and the code
@@ -33,7 +33,7 @@ Authority (Rust arbitration for exact byte semantics):
   conformance/vectors/yaml-v1.json edit.scalar-atomic, edit.anchor-rename,
   edit.structural-insert, edit.anchor-dependency.
 
-Frozen operation ids (crates/consema-yaml/src/operation_registry.rs:16-82):
+Frozen operation ids (consema-rs/consema-yaml/src/operation_registry.rs:16-82):
 yaml.edit.insert-alias@1, insert-mapping-entry@1, insert-sequence-element@1,
 remove-mapping-entry@1, remove-sequence-element@1, rename-anchor@1,
 replace-scalar-literal@1, replace-scalar-semantic@1.

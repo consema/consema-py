@@ -3,7 +3,7 @@ materialization (RFC 0013 §10).
 
 Authority (Rust arbitration for exact bytes and semantics):
 
-- Record contract and request contract: crates/consema-plist/src/
+- Record contract and request contract: consema-rs/consema-plist/src/
   materialization.rs:1-115 — the input is the exact ``plist.value-tree@1``
   record (``{ "record": "plist.value-tree@1", "root": <value>,
   "truncate_policy": "TruncateWithReport" | absent }``); dict associations
@@ -27,7 +27,7 @@ Authority (Rust arbitration for exact bytes and semantics):
   promised Profile, and compares the reparsed native model to the promised
   input semantics; failure returns no target Document, partial bytes, or
   partial provenance (RFC 0013 §10.3).
-- Failure mapping: materialization.rs:78-95 and go/plist/materialization.go
+- Failure mapping: materialization.rs:78-95 and consema-go/go/plist/materialization.go
   Code() — a Date kind marks a value-tree date leaf the XML whole-second
   calendar cannot express (``plist.materialization.fractional-date@1``);
   the returned failure carries the plist-owned ``plist.materialization.*@1``
@@ -133,7 +133,7 @@ class _PlistCodedFailure(MaterializationFailure):
     """Shared-shaped failure carrying the plist-owned ``plist.materialization.*@1``
     spellings for the plist materialization facts (RFC 0013 §12).
 
-    Mirrors go/plist/materialization.go Code() (lines 125-140): a Date-kind
+    Mirrors consema-go/go/plist/materialization.go Code() (lines 125-140): a Date-kind
     Unrepresentable maps to ``plist.materialization.fractional-date@1``,
     every other plist Unrepresentable to ``plist.materialization.unrepresentable@1``,
     and ResourceLimit to ``plist.materialization.resource-limit@1``; the
@@ -156,7 +156,7 @@ class PlistMaterializationFailure(Exception):
     """Stable plist materialization failure.
 
     Code mapping authority: materialization.rs:78-95 and
-    crates/consema-conformance/src/plist_v1.rs:1800-1816 — a Date kind maps
+    consema-rs/consema-conformance/src/plist_v1.rs:1800-1816 — a Date kind maps
     to ``plist.materialization.fractional-date@1``, other plist facts to
     ``plist.materialization.unrepresentable@1`` / ``resource-limit@1``, and
     the shared request/formation failures to the ``core.materialization.*@1``
@@ -1141,7 +1141,7 @@ def materialize(
         complete = _materialize_complete(value, request, analyzed)
     except PlistMaterializationFailure as failure:
         # The date-kind name distinguishes the fractional-date spelling
-        # (go/plist/materialization.go:125-140); the returned failure carries
+        # (consema-go/go/plist/materialization.go:125-140); the returned failure carries
         # the plist-owned ``plist.materialization.*@1`` codes directly.
         name = (
             "date"

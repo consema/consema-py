@@ -3,7 +3,7 @@ Document union.
 
 Authority: crates/consema/src/lib.rs ``registry`` module and ``Document``
 (RFC 0015 §6.2; the Rust crate is the registry/byte arbitration source);
-go/registry.go and go/document.go are cross-references only, never a
+consema-go/go/registry.go and consema-go/go/document.go are cross-references only, never a
 template.
 
 The capability inventory is the declared Feature-Complete Manifest

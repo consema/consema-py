@@ -1,8 +1,8 @@
 """Transferable Profile / Capability registry records and the registry manifest.
 
-Authority: crates/consema-protocol/src/registry.rs (ProfileReference,
+Authority: consema-rs/consema-protocol/src/registry.rs (ProfileReference,
 ProfileDescriptor, CapabilityDeclaration) and registry_manifest.rs
-(RegistryManifest); Go (go/protocol/registry_descriptor.go) is a
+(RegistryManifest); Go (consema-go/go/protocol/registry_descriptor.go) is a
 cross-reference only.
 
 Records:

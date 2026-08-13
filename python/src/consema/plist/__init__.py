@@ -17,12 +17,12 @@ arbitration):
 
 - conformance/vectors/plist-v1.json (34 cases, suite
   "consema.plist.conformance@1") — the machine-readable golden surface;
-- RFC 0013 (plist family profiles v1, docs/rfcs/0013-plist-family-profiles-
+- RFC 0013 (plist family profiles v1, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-
   v1.md), RFC 0004 (materialization/conversion/structural edit,
-  docs/rfcs/0004-...), RFC 0016 §5-§6 (API shapes and error
-  classification, docs/rfcs/0016-...);
-- crates/consema-plist/src/*.rs for byte/registry arbitration only;
-- go/plist as a cross-reference only (never a template).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0004-...), RFC 0016 §5-§6 (API shapes and error
+  classification, https://github.com/consema/consema/blob/main/docs/rfcs/0016-...);
+- consema-rs/consema-plist/src/*.rs for byte/registry arbitration only;
+- consema-go/go/plist as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and
@@ -178,11 +178,11 @@ NATIVE_QUERY_DOMAIN_V1 = "plist.native-semantic-query@1"
 LOSSLESS_SYNTAX_QUERY_DOMAIN_V1 = "plist.lossless-syntax-query@1"
 BINARY_STRUCTURE_QUERY_DOMAIN_V1 = "plist.binary-structure-query@1"
 
-# Frozen materialization styles (RFC 0013 §10, docs/rfcs/0013-...:640-673).
+# Frozen materialization styles (RFC 0013 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0013-...:640-673).
 PLIST_XML_CANONICAL_STYLE = "plist.xml-canonical@1"
 PLIST_BINARY_CANONICAL_STYLE = "plist.binary-canonical@1"
 
-# Frozen projection targets (RFC 0013 §9, docs/rfcs/0013-...:600-631).
+# Frozen projection targets (RFC 0013 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0013-...:600-631).
 PLIST_PROJECTION_VALUE_TREE = "plist.projection.value-tree@1"
 PLIST_PROJECTION_REQUIRE_OBJECT = "plist.projection.require-object@1"
 

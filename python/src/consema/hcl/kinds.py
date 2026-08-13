@@ -3,10 +3,10 @@
 Frozen names/numbers with authority citations (language-neutral first;
 Rust only for registry/byte arbitration):
 
-- ``HclProfile``: the two profile identities — crates/consema-hcl/src/
+- ``HclProfile``: the two profile identities — consema-rs/consema-hcl/src/
   lib.rs:100-118 (enum and id()); the profile ids hcl.native@1 /
   hcl.tfvars@1 are the frozen language-neutral spellings (RFC 0014 §1,
-  docs/rfcs/0014-hcl-family-profiles-v1.md:25-30).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md:25-30).
 - ``HclSyntaxKind``: the closed 30-kind lossless classification with the
   exact stable names ("Whitespace", "LineBreak", "LineComment",
   "InlineComment", "Identifier", "Equals", "Number", "StringOpen",
@@ -16,22 +16,22 @@ Rust only for registry/byte arbitration):
   "HeredocClose", "BraceOpen", "BraceClose", "BracketOpen",
   "BracketClose", "ParenOpen", "ParenClose", "Comma", "Colon",
   "QuestionMark", "Operator", "ErrorRegion") — RFC 0014 §7.2
-  (docs/rfcs/0014-...:490-501) and crates/consema-hcl/src/native.rs:327-475
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0014-...:490-501) and consema-rs/consema-hcl/src/native.rs:327-475
   (enum, as_str, from_name). There is no ``Bom`` kind (RFC 0014 §7.2).
 - ``HclExpressionKindName``: the closed payload-free expression kind set of
-  RFC 0014 §7.1 `hcl.expression-kind-is@1` — crates/consema-hcl/src/
+  RFC 0014 §7.1 `hcl.expression-kind-is@1` — consema-rs/consema-hcl/src/
   expression.rs:561-642 (enum + as_str/from_name); spellings "number",
   "boolean", "null", "template", "function-call", "variable-ref",
   "traversal", "unary", "binary", "conditional", "for-tuple",
   "for-object", "tuple", "object", "parenthesized".
 - The kind-family spellings of the `hcl.expression@1` record (RFC 0014
-  §8.2) — crates/consema-hcl/src/projection.rs:996-1040: variable and
+  §8.2) — consema-rs/consema-hcl/src/projection.rs:996-1040: variable and
   traversal are one "variable" family, for-tuple and for-object are one
   "for" family.
 - Identifier character rules — RFC 0014 §4.1 (UAX #31:
   ``Identifier = ID_Start (ID_Continue | "-")*``, underscore excluded at
   the start, §12 D-4); the Rust lexer's tables are
-  crates/consema-hcl/src/lexer.rs:2098-2108.
+  consema-rs/consema-hcl/src/lexer.rs:2098-2108.
 
 Unicode note (blind-write disclosure): RFC 0014 §4.1 pins Unicode ID_Start
 and ID_Continue via UAX #31. This implementation classifies via the host
@@ -51,7 +51,7 @@ from consema.document.ids import ProfileId
 
 
 class HclProfile(enum.Enum):
-    """Frozen HCL language profile (crates/consema-hcl/src/lib.rs:100-107).
+    """Frozen HCL language profile (consema-rs/consema-hcl/src/lib.rs:100-107).
 
     The two profiles share one grammar and one native semantic model;
     ``hcl.tfvars@1`` is ``hcl.native@1`` under the top-level
@@ -70,7 +70,7 @@ class HclProfile(enum.Enum):
 
 class HclSyntaxKind(enum.Enum):
     """Closed 30-kind HCL lossless syntax-piece classification (RFC 0014
-    §7.2; crates/consema-hcl/src/native.rs:327-398).
+    §7.2; consema-rs/consema-hcl/src/native.rs:327-398).
 
     Every non-empty raw byte of a formed document belongs to exactly one
     ordered structural piece with one of these kinds; there is no ``Bom``

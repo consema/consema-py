@@ -9,9 +9,9 @@ the CLI machine records (core.cli-output@1, core.batch-plan@1,
 core.batch-result@1), the `core.protocol-message@1` envelope, and the CLI
 exit classification.
 
-Authority: RFC 0015/0016; crates/consema-protocol (registry arbitration and
+Authority: RFC 0015/0016; consema-rs/consema-protocol (registry arbitration and
 byte behavior); conformance/vectors (protocol-v1.json, protocol-v2.json,
-cli-v1.json); go/protocol as a cross-reference only.
+cli-v1.json); consema-go/go/protocol as a cross-reference only.
 """
 
 from consema.protocol.canonical import (

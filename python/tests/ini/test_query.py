@@ -7,7 +7,7 @@ Cases covered here (conformance/vectors/ini-v1.json, suite
   query.syntax-decoded-structure-order (51-52),
   query.validation-limit-cancellation (56-57).
 
-The duplicate-group test pins RFC 0009 §9 (docs/rfcs/0009-ini-family-
+The duplicate-group test pins RFC 0009 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-
 profiles-v1.md:330-335): ``ini.duplicate-group@1`` expands each input
 occurrence to every same-role occurrence carrying the same non-absent
 group identity, in source order; an occurrence without a group produces no
@@ -102,7 +102,7 @@ def test_native_order_and_profile_equivalence():
 
 
 def test_duplicate_group_expands_each_occurrence_in_source_order():
-    # RFC 0009 §9 (docs/rfcs/0009-...:330-335): duplicate-group expands
+    # RFC 0009 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:330-335): duplicate-group expands
     # each input occurrence to every same-role occurrence carrying the same
     # non-absent group identity, in source order.
     document = windows_document(b"[Main]\r\nName=one\r\nname=two\r\n[Other]\r\nempty=\r\n")

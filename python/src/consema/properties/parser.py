@@ -3,7 +3,7 @@ document.
 
 Authority (Rust arbitration for exact semantics):
 
-- Parse entry and profile/source contract: crates/consema-properties/src/
+- Parse entry and profile/source contract: consema-rs/consema-properties/src/
   parser.rs:17-91 - encoding request construction (parser.rs:38-55),
   snapshot construction under PropertiesParseLimits (parser.rs:24-33),
   profile/encoding validation with java-properties.source.profile-
@@ -14,20 +14,20 @@ Authority (Rust arbitration for exact semantics):
 - Logical-line assembly: parser.rs:352-469 - odd trailing backslash runs
   continue across the terminator (the final backslash, terminator, and
   leading Properties whitespace of the following natural line contribute
-  no code units; RFC 0010 section 5, docs/rfcs/0010-...:132-158); the EOF
+  no code units; RFC 0010 section 5, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:132-158); the EOF
   unmatched-backslash rule retains the byte as a ContinuationMarker.
 - Key/separator/element grammar: parser.rs:471-507 - first unescaped
   ``=``, ``:``, or Properties whitespace terminates the raw key; optional
   ``=``/``:`` plus surrounding whitespace forms the separator (RFC 0010
-  section 6, docs/rfcs/0010-...:159-181).
+  section 6, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:159-181).
 - Escape processing: parser.rs:909-996 - named, backslash, Unicode (one
   lowercase ``u`` + exactly four hex digits), and dropped-backslash kinds;
-  no recursive decoding (RFC 0010 section 7, docs/rfcs/0010-...:183-206).
+  no recursive decoding (RFC 0010 section 7, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:183-206).
 - Recovery: parser.rs:626-666 - a malformed Unicode escape forms one
   deterministic error record with stable diagnostic
   java-properties.parse.malformed-unicode-escape@1; valid records before
   and after remain inspectable but cannot be projected as a partial
-  completed property list (RFC 0010 section 8, docs/rfcs/0010-...:208-234).
+  completed property list (RFC 0010 section 8, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:208-234).
 - Duplicate groups: parser.rs:668-696 - deterministic exact-code-unit
   groups numbered from 1 in sorted-key order.
 - Structural pieces: parser.rs:698-729 with the Token/Trivia/ErrorRegion
@@ -39,7 +39,7 @@ Authority (Rust arbitration for exact semantics):
   (lib.rs:309-588).
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
-cases formation.* (lines 5-59). go/properties is a cross-reference only.
+cases formation.* (lines 5-59). consema-go/go/properties is a cross-reference only.
 """
 
 from __future__ import annotations
@@ -90,7 +90,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 MALFORMED_UNICODE_ESCAPE_CODE = "java-properties.parse.malformed-unicode-escape@1"
 
 # Properties whitespace is exactly space, tab, and form feed (RFC 0010
-# section 5, docs/rfcs/0010-...:140-141).
+# section 5, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:140-141).
 _PROPERTIES_WHITESPACE = frozenset((" ", "\t", ""))
 
 

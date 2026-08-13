@@ -2,7 +2,7 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (all registry spellings are
-transcribed verbatim from crates/consema-protocol/src/error_registry.rs):
+transcribed verbatim from consema-rs/consema-protocol/src/error_registry.rs):
 
 - yaml.profile.version-directive@1 error_registry.rs:856;
 - yaml.parse.syntax@1 error_registry.rs:850;

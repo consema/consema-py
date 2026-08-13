@@ -1,7 +1,7 @@
 """Suite ``consema.conformance@1`` (v1.json, 30 cases): core value strict
 equality, PVCE/1 golden bytes, JSON parse/query/projection/edit baseline,
 and portable-value query execution. Dispatch is by case id, mirroring
-go/conformance/v1.go.
+consema-go/go/conformance/v1.go.
 """
 
 from __future__ import annotations

@@ -1,10 +1,10 @@
 """Python capability parity assertion against the Feature-Complete
-Manifest (docs/fc-manifest-0.13.0.json; go/capability_parity_test.go
-cross-reference; docs/five-language-ci-design.md §5.3: the L4
+Manifest (docs/fc-manifest-0.13.0.json; consema-go/go/capability_parity_test.go
+cross-reference; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §5.3: the L4
 L-conformance job asserts capability parity).
 
 The mandatory capability set of the Python implementation must match the
-manifest's ``capability_set`` record (fc-manifest-0.13.0.json:30-34):
+manifest's ``capability_set`` record (fc-manifest-0.13.0.json:32):
 8 families / 16 profiles / 21 query domains / 16 operation registries /
 187 error codes. There is no "Rust only" mandatory behavior: every
 mandatory capability of the manifest is implemented by this package — the
@@ -26,8 +26,8 @@ import re
 from consema.protocol.error_registry import ErrorCodeRegistry
 from consema.registry import format_families, operation_registry, profiles, query_domains
 
-# The frozen manifest inventory (fc-manifest-0.13.0.json:31). These pins are
-# the five-runner shared capability assertion (docs/five-language-ci-design.md
+# The frozen manifest inventory (fc-manifest-0.13.0.json:32). These pins are
+# the five-runner shared capability assertion (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
 # §4.2); the runtime check still recomputes the actual inventory.
 EXPECTED_FAMILIES = 8
 EXPECTED_PROFILES = 16

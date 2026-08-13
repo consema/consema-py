@@ -2,19 +2,19 @@
 
 Authority:
 
-- RFC 0001 §4 (docs/rfcs/0001-toml-1.0-profile.md:64-76): the frozen
+- RFC 0001 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:64-76): the frozen
   domains ``toml.native-semantic-query@1`` and
   ``toml.lossless-syntax-query@1`` with the standard operator registry
   (toml.try-table-entries, toml.entry-name-equals, toml.entry-item,
   toml.try-array-elements, toml.array-element-item; toml.syntax-kind-is,
   toml.syntax-text-equals) plus the generic core.take and
   core.distinct-by-identity; validation happens before execution.
-- The match shapes transcribe crates/consema-toml/src/query.rs:9-86
+- The match shapes transcribe consema-rs/consema-toml/src/query.rs:9-86
   (TomlMatch Item/Entry/ArrayElement; TomlSyntaxMatch node/span/kind/
   ordinal).
 - The execution semantics transcribe query.rs:88-488: domain check, step
   counting against QueryLimits (max_steps/max_results default 100_000,
-  crates/consema-core/src/query.rs:2967-2978), expression evaluation
+  consema-rs/consema-core/src/query.rs:2967-2978), expression evaluation
   (Input/Apply/Concat/StructureOrderMerge sorted by source span),
   operator application, and selection (All/First/Last/ZeroOrOne/
   RequireOne with cardinality enforcement).
@@ -47,7 +47,7 @@ from consema.toml.syntax import TomlSyntaxKind
 
 
 class QueryLimits:
-    """Execution resource limits (crates/consema-core/src/query.rs:2967-2978)."""
+    """Execution resource limits (consema-rs/consema-core/src/query.rs:2967-2978)."""
 
     __slots__ = ("max_steps", "max_results")
 

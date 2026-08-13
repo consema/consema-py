@@ -8,7 +8,7 @@ tree.
 
 Authority (language-neutral first; Rust for arbitration):
 
-- Value types and semantics: crates/consema-plist/src/native.rs:31-100
+- Value types and semantics: consema-rs/consema-plist/src/native.rs:31-100
   (PLIST_EPOCH_OFFSET_UNIX / PlistStringStatus / PlistString), 135-195
   (PlistKey), 196-215 (PlistInteger), 219-293 (RealWidth / PlistReal),
   296-311 (PlistBoolean), 322-366 (PlistDate), 369-392 (PlistData),
@@ -18,7 +18,7 @@ Authority (language-neutral first; Rust for arbitration):
 - Arena and structural equality: native.rs:813-1004 (PlistDocument; the
   round-trip equality of RFC 0013 §10.3), 1006-1146
   (PlistDocumentBuilder; iterative Kahn validation).
-- Freezing: RFC 0013 §6 (docs/rfcs/0013-plist-family-profiles-v1.md:
+- Freezing: RFC 0013 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:
   462-510) — duplicate keys are ordered native facts, strings hold exact
   UTF-16 code units with a bounded validation result, integers are signed
   64-bit, reals keep the Float32 width fact, dates are exact double seconds

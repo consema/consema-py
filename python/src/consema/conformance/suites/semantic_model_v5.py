@@ -2,12 +2,12 @@
 22 cases): the v5 registry facts, the portable-graph record and its PGCE/1
 bytes, the graph query/provenance/projection records, the YAML query-result
 record, and the v5 protocol envelope rejections. Dispatch is by case id,
-mirroring go/conformance/semantic_model_v5.go.
+mirroring consema-go/go/conformance/semantic_model_v5.go.
 
 The v5 record codecs that the Python protocol package does not implement
 (portable-graph, graph-query-result, graph-provenance-map,
 graph-projection-result, yaml-query-result) are transcribed locally from
-go/protocol/records_graph.go and records_line_query.go, with the graph
+consema-go/go/protocol/records_graph.go and records_line_query.go, with the graph
 value/byte machinery from the Python ``consema.graph`` package.
 """
 

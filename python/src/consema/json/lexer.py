@@ -3,7 +3,7 @@ coverage with bounded recovery.
 
 Authority (Rust arbitration for exact lexical boundaries):
 
-- Strict/JSONC lexing: crates/consema-json/src/parser.rs:174-402 — BOM piece
+- Strict/JSONC lexing: consema-rs/consema-json/src/parser.rs:174-402 — BOM piece
   plus json.strict.leading-bom@1 under the strict profile (parser.rs:193-214),
   whitespace (parser.rs:218-225), line/block comments with strict rejection
   (parser.rs:226-278), strings (parser.rs:285-314), numbers scanned over

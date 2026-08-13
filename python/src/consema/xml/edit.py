@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §11 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:374-404): V1
+- RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:374-404): V1
   publishes eight versioned operations (xml.edit.replace-text@1,
   insert-attribute@1, remove-attribute@1, rename-attribute@1,
   set-attribute-value@1, insert-element@1, remove-element@1,
@@ -20,7 +20,7 @@ Authority:
   emits a replayable ``SourcePatch``; dry-run and commit have identical
   replacement sets and target digest.
 - The transaction, validation, preparation, and commit logic transcribe
-  crates/consema-xml/src/edit.rs:44-1435 (PreparedEdit:44-56, NameFacts:
+  consema-rs/consema-xml/src/edit.rs:44-1435 (PreparedEdit:44-56, NameFacts:
   58-89, AttributePlacement:91-101, ContentPlacement:102-111,
   EditOperation:113-176, EditTransaction/Builder:178-304, EditCommit:
   306-317, EditFailure:319-408, commit:410-570, dry_run:572-588,
@@ -28,11 +28,11 @@ Authority:
   745-1307, find_node_by_span:1309-1336, source_patch_limits:1346-1356,
   operation metadata:1358-1435) — byte/registry arbitration only.
 - The failure codes are the registered core.edit.*@1 codes
-  (RFC 0004 §17, docs/rfcs/0004-...:387-423; consema.xml.errors).
+  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:387-423; consema.xml.errors).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
   ``xml.edit.*`` (lines 437-566).
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

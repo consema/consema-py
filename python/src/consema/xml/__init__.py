@@ -19,19 +19,19 @@ the frozen eight-operation XML edit surface atomically with ChangeSet,
 SourcePatch, and untouched-byte evidence (RFC 0012 §11, RFC 0004 §13-§16).
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration; go/xml as a cross-reference only, never a template):
+arbitration; consema-go/go/xml as a cross-reference only, never a template):
 
 - conformance/vectors/xml-1-0-safe-v1.json — the machine-readable suite
   "consema.xml-1-0-safe.conformance@1" (35 cases; formation, syntax-query,
   native-query, projection, materialization, edit, limit capabilities);
-- RFC 0012 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md) — the
+- RFC 0012 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md) — the
   language-neutral XML 1.0 safe Profile contract; RFC 0004
   (materialization/structural edit/provenance); RFC 0016 §5-§6 (API
   shapes, error classification, frozen spellings);
-- crates/consema-xml/src/*.rs — byte/registry arbitration
+- consema-rs/consema-xml/src/*.rs — byte/registry arbitration
   (operation_registry.rs:16-89; parser.rs; document.rs; query.rs;
   projection.rs; materialization.rs; edit.rs:1372-1383) and
-  crates/consema-protocol/src/error_registry.rs:466-550/556-604 for the
+  consema-rs/consema-protocol/src/error_registry.rs:466-550/556-604 for the
   core.edit.*@1 and core.materialization.*@1 codes consumed by this
   family. The xml.* diagnostic codes are registered by RFC 0012 §12
   (lines 428-434) and do not enter the consema-protocol core registry.
@@ -42,7 +42,7 @@ Error text is human presentation only and never participates in
 conformance comparison (RFC 0016 §6).
 
 Blind-write status: this code was written before the Python toolchain
-verification gate (docs/multi-language-implementation-plan.md §3/§7). No
+verification gate (https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §3/§7). No
 gate is claimed to have passed; the first verification step after the
 toolchain lands is the formation/query/projection/materialization/edit
 test suite under python/tests/xml/.

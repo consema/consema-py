@@ -6,14 +6,15 @@ param(
 )
 
 # ---------------------------------------------------------------------------
-# Cross-language PVCE/PGCE byte-parity verification for Python (milestone
-# 0.14.0 G0.5; docs/five-language-ci-design.md §3.2; roadmap §16.1 hard gate:
+# Cross-language PVCE/PGCE byte-parity verification for Python (L5
+# differential harness, multi-language-implementation-plan L5;
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.2; roadmap §16.1 hard gate:
 # "Rust 与 Go 的 PVCE/PGCE bytes 完全一致" extended to Python).
 #
 # Pipeline (Python never imports or calls Rust, RFC 0016 §1.1):
 #   1. builds the minimal Rust encoder example
 #      (consema-conformance/examples/emit_parity_bytes.rs);
-#   2. runs it over the checked-in case set
+#   2. runs it over the provisioned case set
 #      (conformance/differential/cases.json, the shared single-authority
 #      case directory of the consema repository) into <OutDir> as one
 #      `<case-id>.hex` file per case;
@@ -25,9 +26,12 @@ param(
 #      re-encode).
 #
 # Requirements: cargo (or $env:CONSEMA_CARGO) and python 3.12 (or
-# $env:CONSEMA_PYTHON) on PATH; the Rust workspace is the consema-rs checkout
-# (<repo root>\consema-rs by default, -RustWorkspace overrides). Windows
-# PowerShell 5.1 compatible, no third-party dependencies.
+# $env:CONSEMA_PYTHON) on PATH; the consema package must be importable
+# (pip install -e python/ — the tests/ tree has no __init__.py and pytest
+# collection errors when the package is not installed); the Rust workspace
+# is the consema-rs checkout (<repo root>\consema-rs by default,
+# -RustWorkspace overrides). Windows PowerShell 5.1 compatible, no
+# third-party dependencies.
 # ---------------------------------------------------------------------------
 
 $ErrorActionPreference = 'Stop'
@@ -111,6 +115,12 @@ $logDir = Join-Path $env:TEMP 'consema-python-parity'
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
 $stderrFile = Join-Path $logDir 'python-test.stderr.txt'
+# Windows PowerShell 5.1: with $ErrorActionPreference = 'Stop' a native
+# command writing to redirected stderr turns into a terminating
+# NativeCommandError before the diagnostics can be captured, so the EAP
+# is relaxed around this native call (pytest writes stderr on failure).
+$EAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 Push-Location $pythonDir
 try {
     & $python -m pytest tests\differential\test_byte_parity.py -v 1> $stdoutFile 2> $stderrFile
@@ -119,6 +129,7 @@ try {
 finally {
     Pop-Location
 }
+$ErrorActionPreference = $EAP
 Get-Content $stdoutFile | ForEach-Object { Write-Host $_ }
 if (Test-Path $stderrFile) {
     Get-Content $stderrFile | ForEach-Object { Write-Host $_ }

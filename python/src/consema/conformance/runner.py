@@ -1,15 +1,17 @@
 """The Python conformance runner over the shared language-neutral vectors
-(RFC 0016 §7; docs/five-language-ci-design.md §2).
+(RFC 0016 §7; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §2).
 
 The runner executes the 18 shared vector suites (519 cases) from the
 repository ``conformance/vectors`` directory, verifies the aggregate digest
-against the Feature-Complete Manifest (fc-manifest-0.13.0.json:35-41), and
+against the Feature-Complete Manifest (fc-manifest-0.13.0.json:39), and
 reports per-suite pass/fail with documented skips (never silent). The
-vector files themselves are the authority: the runner embeds no vector copy
-and holds no expectation literals (conformance/README.md rules 3-4).
+vector files themselves are the authority: the runner holds no vector
+content copy, but the suite/case counts and the aggregate digest are hard
+pins inside this module (conformance/README.md rules 3-4; the pins live
+here, the vector content is authoritative).
 
 Suite-level fixed validations (mirroring the Go runner,
-go/conformance/conformance.go:225-269): the suite and semantic-model
+consema-go/go/conformance/conformance.go:225-269): the suite and semantic-model
 identifiers, case-ID uniqueness, the frozen case-count assertion, and
 unknown-case rejection.
 """
@@ -24,7 +26,7 @@ from dataclasses import dataclass, field
 from consema.conformance import loader
 
 # The frozen aggregate digest and inventory pins (five-runner shared pin;
-# docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json:35-41).
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json:35-41).
 AGGREGATE_SHA256 = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 EXPECTED_SUITES = 18
 EXPECTED_CASES = 519
@@ -308,7 +310,8 @@ def repository_paths() -> tuple[str, str]:
 
 def run_argv(argv: list[str] | None = None) -> int:
     """Runs the conformance runner CLI; returns the process exit code
-    (0 success, 1 usage, 2 data, 5 internal; RFC 0015 §5)."""
+    (0 success, 1 usage, 2 data, 3 limit, 4 precondition, 5 internal;
+    RFC 0015 §5.1)."""
     parser = argparse.ArgumentParser(
         prog="python -m consema.conformance",
         description="Consema conformance runner (18 suites / 519 shared vectors)",
@@ -318,11 +321,23 @@ def run_argv(argv: list[str] | None = None) -> int:
     parser.add_argument("--fixtures", default=default_fixtures, help="conformance/fixtures directory")
     parser.add_argument("--manifest", default="", help="Feature-Complete Manifest path")
     parser.add_argument("--quiet", action="store_true", help="suppress the human report")
-    args = parser.parse_args(argv)
+    try:
+        args = parser.parse_args(argv)
+    except SystemExit as exit_error:
+        # argparse exits 2 on usage errors; RFC 0015 §5.1 maps usage to
+        # exit class 1. --help exits 0 (keep argparse's own exit).
+        if exit_error.code not in (0, 2):
+            raise
+        return 0 if exit_error.code == 0 else 1
     manifest = args.manifest or default_manifest_path(args.vectors)
     runner = Runner(args.vectors, args.fixtures, manifest)
     try:
         report = runner.run()
+    except OSError as error:
+        # Missing/unreadable input (vectors dir, manifest) is a data error
+        # (exit class 2), not an internal error (RFC 0015 §5.1).
+        print(f"consema-conformance: {error}", file=sys.stderr)
+        return 2
     except Exception as error:  # noqa: BLE001 — CLI boundary
         print(f"consema-conformance: {error}", file=sys.stderr)
         return 5
@@ -377,10 +392,11 @@ def suite_definitions() -> list[SuiteDefinition]:
     (consema/conformance/__main__.py), which imports this module once and
     calls :func:`run_argv` directly, so the canonical module object always
     holds the inventory. The ``python -m consema.conformance.runner`` form
-    (re-executed as ``__main__`` after the package import already registered
-    every suite into the canonical module object) still works; a fresh
-    ``__main__`` copy would see an empty inventory, so always read the
-    canonical module object's list.
+    still works but triggers a CPython RuntimeWarning (double import: the
+    module is re-executed as ``__main__`` after the package import already
+    registered every suite into the canonical module object) and double
+    suite inventory; the warning-free entry is ``python -m
+    consema.conformance``. Always read the canonical module object's list.
     """
     canonical = sys.modules.get("consema.conformance.runner")
     if canonical is not None and canonical is not sys.modules.get("__main__"):

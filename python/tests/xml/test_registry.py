@@ -1,12 +1,12 @@
 """Operation-registry intent tests: the frozen eight-operation XML surface.
 
-Authority: crates/consema-xml/src/operation_registry.rs:16-89 (the exact
+Authority: consema-rs/consema-xml/src/operation_registry.rs:16-89 (the exact
 descriptors) and its surface test operation_registry.rs:100-124 (the
-frozen eight-operation list); RFC 0012 §11 (docs/rfcs/0012-xml-1.0-safe-
+frozen eight-operation list); RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-
 profile-v1.md:376-387).
 
 These tests are intent documents written before the Python toolchain
-verification gate (docs/multi-language-implementation-plan.md §3/§7); no
+verification gate (https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §3/§7); no
 gate is claimed to have passed.
 """
 

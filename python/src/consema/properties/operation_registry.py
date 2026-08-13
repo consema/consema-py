@@ -1,10 +1,10 @@
 """The Java Properties format operation registry (5 frozen records).
 
-Authority: crates/consema-properties/src/operation_registry.rs:16-48 — the
+Authority: consema-rs/consema-properties/src/operation_registry.rs:16-48 — the
 exact operation ids, target roles, argument schemas, and support
 classifications; the surface is frozen by the registry test
 (operation_registry.rs:67-95: exactly five Supported structural operations
-for every profile) and RFC 0010 section 13 (docs/rfcs/0010-java-properties-
+for every profile) and RFC 0010 section 13 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-
 profiles-v1.md:385-393). The vector suite pins the exact five-operation
 surface (conformance/vectors/java-properties-v1.json:147-149,
 "registry.frozen-five-operation-surface").

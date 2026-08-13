@@ -2,12 +2,12 @@
 explicit policy targets (RFC 0012 §9).
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
-test); crates/consema-xml/src/projection.rs (byte/registry arbitration);
-RFC 0012 §9 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:313-348) and
+test); consema-rs/consema-xml/src/projection.rs (byte/registry arbitration);
+RFC 0012 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:313-348) and
 RFC 0004 §8 (provenance).
 
 These tests are intent documents written before the Python toolchain
-verification gate (docs/multi-language-implementation-plan.md §3/§7); no
+verification gate (https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §3/§7); no
 gate is claimed to have passed.
 """
 

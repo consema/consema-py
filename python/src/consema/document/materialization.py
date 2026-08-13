@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for arbitration):
 
-- RFC 0004 §3 (docs/rfcs/0004-materialization-conversion-and-structural-
+- RFC 0004 §3 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
   edit-v1.md:56-94): the common immutable MaterializationRequest records
   (target_profile, style, encoding, newline, mapping_policy,
   representability, limits); the closed v1 MaterializationLimits fields and
@@ -18,20 +18,20 @@ Authority (language-neutral first; Rust only for arbitration):
   portable input locations (Value/Association) to target origins
   (snapshot identity, NodeRef, raw Span, relation Direct/Reencoded/
   Generated).
-- RFC 0016 §5.2 (docs/rfcs/0016-go-api-mapping-v1.md:178-182): the
+- RFC 0016 §5.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:178-182): the
   conservative default policy is core.projection.exact-or-reject@1 (never
   invented).
-- crates/consema-document/src/materialization.rs — arbitration:
+- consema-rs/consema-document/src/materialization.rs — arbitration:
   MaterializationLimits defaults materialization.rs:95-105;
   MaterializationRequest defaults materialization.rs:122-132;
   failure code mapping materialization.rs:379-390.
-- Error codes: crates/consema-protocol/src/error_registry.rs
+- Error codes: consema-rs/consema-protocol/src/error_registry.rs
   (core.materialization.formation-failed@1:556, invalid-request@1:562,
   resource-limit@1:574, unrepresentable@1:580, unsupported-encoding@1:586,
   unsupported-newline@1:592, unsupported-profile@1:598,
   unsupported-style@1:604).
 
-go/document is a cross-reference only; no code structure is copied.
+consema-go/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ from consema.document.ids import MaterializationStyleId, ProfileId
 from consema.document.source import SourceEncoding
 from consema.document.structural import NodeRef, SnapshotIdentity, Span
 
-# Frozen defaults, crates/consema-document/src/materialization.rs:95-105
+# Frozen defaults, consema-rs/consema-document/src/materialization.rs:95-105
 _DEFAULT_MAX_INPUT_NODES = 1_000_000
 _DEFAULT_MAX_OUTPUT_BYTES = 64 * 1024 * 1024
 _DEFAULT_MAX_DEPTH = 256
@@ -297,7 +297,7 @@ class MaterializationFailure(Exception):
     """Stable materialization failure with a frozen registered code.
 
     Code mapping authority: materialization.rs:379-390 and
-    crates/consema-protocol/src/error_registry.rs:556-604. Error text is
+    consema-rs/consema-protocol/src/error_registry.rs:556-604. Error text is
     human presentation only (RFC 0016 §6).
     """
 

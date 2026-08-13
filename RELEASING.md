@@ -10,7 +10,7 @@ tag 推送后 `.github/workflows/release.yml` 自动构建 wheel + sdist 并发�
 1. **版本 bump**：改 `python/pyproject.toml` 的 `version`，同时改仓根
    `README.md` 的 `Version:` 行（`check-version-consistency` 门禁强制一致）。
 2. **CHANGELOG 策展**：记录本版本变更；跨语言变更同步到
-   consema 仓库 `docs/CHANGELOG.md`。
+   consema 仓库 `https://github.com/consema/consema/blob/main/CHANGELOG.md`。
 3. **质量门禁全绿**：main 分支 CI `check (all gates green)` 全绿
    （清单见各仓 ci 配置）。
 4. **打 tag 并推送**（发布动作的唯一触发点）：

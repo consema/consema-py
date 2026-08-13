@@ -1,14 +1,14 @@
 """Pinned Python 3.14 / Unicode 16.0 default ``optionxform`` semantics.
 
 The data is transcribed verbatim from
-crates/consema-ini/src/python_case.rs:9-199 — the ordered unconditional
+consema-rs/consema-ini/src/python_case.rs:9-199 — the ordered unconditional
 simple-lowercase ranges and single mappings of Rust 1.85's Unicode 16.0
 tables, plus the U+0130 (LATIN CAPITAL LETTER I WITH DOT ABOVE) special case
 expanding to two scalars (python_case.rs:205-207). Keeping the tables in
 this module prevents host Unicode-table upgrades from changing an already
 selected INI profile (python_case.rs:6-8).
 
-Semantics are pinned by RFC 0009 §7 (docs/rfcs/0009-ini-family-profiles-
+Semantics are pinned by RFC 0009 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-
 v1.md:235-239: option comparison and duplicate detection use the Python
 3.14 default lowercase ``optionxform`` pinned to Unicode 16.0) and by the
 vector case formation.python-unicode16-optionxform

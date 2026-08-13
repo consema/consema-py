@@ -1,7 +1,7 @@
 """PVCE/1 — Portable Value Canonical Encoding / 1.
 
 Wire constants are frozen by the Rust reference codec
-(crates/consema-pvce/src/lib.rs), which is the byte arbitration source:
+(consema-rs/consema-pvce/src/lib.rs), which is the byte arbitration source:
 
 - stream magic is the ASCII octets ``PVCE`` (lib.rs:23);
 - version is minimal unsigned LEB128 ``1`` (lib.rs:25);

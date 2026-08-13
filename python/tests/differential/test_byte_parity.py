@@ -1,8 +1,8 @@
 """Tests of the Python PVCE/PGCE byte-parity harness
-(python/src/consema/differential/byte_parity.py; docs/five-language-ci-design.md
+(python/src/consema/differential/byte_parity.py; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
 §3.2).
 
-TestCaseFileIntegrity always runs and guards the checked-in case set (it
+TestCaseFileIntegrity always runs and guards the provisioned case set (it
 skips, documented, only when the shared conformance data is not provisioned
 beside this repository — fresh clone; python/README.md Verify), so ``pytest``
 protects the input set even without the orchestrator.
@@ -22,7 +22,7 @@ from consema.differential import byte_parity, case_files
 
 
 def test_case_file_integrity() -> None:
-    """The checked-in case set passes every integrity guard (manifest id,
+    """The provisioned case set passes every integrity guard (manifest id,
     exact count, unique ids, known codecs, canonical PVCE values, buildable
     PGCE graphs, fifteen-kind coverage)."""
     reason = case_files.missing_data_reason()

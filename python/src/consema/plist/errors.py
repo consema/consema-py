@@ -2,12 +2,12 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (the ``plist.*`` codes are
-registered by RFC 0013 §12 — docs/rfcs/0013-plist-family-profiles-v1.md:
+registered by RFC 0013 §12 — https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:
 738-752 — and do not enter the ``consema-protocol`` core error registry;
 the Rust family's StableFailure impls and parser emission sites are the
 arbitration for the exact spellings):
 
-- XML grammar diagnostics ``plist.parse.*@1``: crates/consema-plist/src/
+- XML grammar diagnostics ``plist.parse.*@1``: consema-rs/consema-plist/src/
   parser_xml.rs — declaration-version@1 (823), declaration-conflict@1 (856),
   pi-target@1 (936), doctype-subset@1 (1014), doctype@1 (1079),
   dict-missing-value@1 (1163), key-outside-dict@1 (1172), dict-key@1 (1192),
@@ -47,7 +47,7 @@ arbitration for the exact spellings):
   (reparse@1).
 - Materialization: materialization.rs:149 (fractional-date@1); the shared
   core.materialization.*@1 codes of consema.document (RFC 0004 §17).
-- Conformance vector spellings: crates/consema-conformance/src/plist_v1.rs
+- Conformance vector spellings: consema-rs/consema-conformance/src/plist_v1.rs
   — query failures map to plist.query.*@1 (1143-1154, type-mismatch@1 at
   1149) and materialization failures to plist.materialization.*@1
   (1800-1816).
@@ -130,7 +130,7 @@ class PlistFormationFailureKind(enum.Enum):
     """Fatal formation failure categories (FatalFormationFailure of
     consema-document); the resource names follow the Rust spellings used by
     parser_xml.rs / parser_binary.rs and pinned by the RFC 0013 §12 limit
-    list (docs/rfcs/0013-...:718-732)."""
+    list (https://github.com/consema/consema/blob/main/docs/rfcs/0013-...:718-732)."""
 
     SOURCE_BYTES = "source-bytes"
     DECODED_UTF8_BYTES = "decoded-utf8-bytes"
@@ -174,7 +174,7 @@ class PlistFormationFailure(Exception):
     """Fatal formation failure; no Document exists.
 
     Exceeding a configured limit is fatal with no truncation-then-success
-    (RFC 0016 §6; RFC 0013 §12, docs/rfcs/0013-...:729-732); an invalid or
+    (RFC 0016 §6; RFC 0013 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0013-...:729-732); an invalid or
     profile-conflicting encoding is likewise fatal before a Document exists
     (RFC 0013 §2). The frozen codes are the ``plist.limit.*@1`` resource
     names, the fatal ``plist.xml.*@1`` / ``plist.binary.*@1`` codes, or the
@@ -322,7 +322,7 @@ class PlistEditFailure(Exception):
     """Stable edit failure with a frozen registered code.
 
     Code mapping authority: edit.rs:442-454 (RFC 0013 §11 conflict list,
-    docs/rfcs/0013-...:703-714). ``name`` is the exact Rust variant spelling
+    https://github.com/consema/consema/blob/main/docs/rfcs/0013-...:703-714). ``name`` is the exact Rust variant spelling
     the conformance vectors reference (plist-v1.json:1557-1561).
     """
 

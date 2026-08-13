@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §5 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:193-225):
+- RFC 0012 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:193-225):
   prefix spelling is source representation; expanded-name equality compares
   the namespace URI and the local name, never the prefix; the default
   namespace applies to element names, not unprefixed attributes; prefixed
@@ -10,16 +10,16 @@ Authority:
   standard URI; ``xmlns`` is reserved and cannot be rebound; namespace-name
   comparison is exact string comparison with no URI fetch or normalization;
   namespace scope is immutable ancestry-derived data.
-- The resolution rules transcribe crates/consema-xml/src/namespace.rs:9-219
+- The resolution rules transcribe consema-rs/consema-xml/src/namespace.rs:9-219
   (XML_NAMESPACE_URI:10, XMLNS_NAMESPACE_URI:12, QName:16-39,
   ExpandedName:41-57, Binding:59-66, NamespaceError:68-89,
   NamespaceScope:91-218) — byte/registry arbitration only; this module is a
   Python-idiomatic reimplementation.
 - The four namespace error codes are frozen by the parser
-  (crates/consema-xml/src/parser.rs:130-137): unbound-prefix@1,
+  (consema-rs/consema-xml/src/parser.rs:130-137): unbound-prefix@1,
   reserved-prefix@1, xml-rebinding@1, default-xmlns@1.
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (all registry spellings are
-transcribed from crates/consema-protocol/src/error_registry.rs:978-1097;
+transcribed from consema-rs/consema-protocol/src/error_registry.rs:978-1097;
 the format failure enums and their code mappings are the Rust family's
 StableFailure impls):
 
@@ -26,17 +26,17 @@ StableFailure impls):
   :372, core.source.unsupported-bom@1 :405, core.source.resource-limit@1
   :399, core.source.code-page-required@1 :967, core.source.unsupported-
   code-page@1 :973.
-- Formation diagnostic emission: crates/consema-ini/src/parser.rs:1158-1195
+- Formation diagnostic emission: consema-rs/consema-ini/src/parser.rs:1158-1195
   (category per code, severity Error when recovered, occurrence ordinal)
   and the deterministic sort (Diagnostic::sort_deterministically,
   consema-core/src/diagnostic.rs:107-123).
-- Projection failure code mapping: crates/consema-ini/src/projection.rs:
+- Projection failure code mapping: consema-rs/consema-ini/src/projection.rs:
   886-893 (RecoveredDocument -> ini.projection.incomplete-document@1,
   Collision -> ini.projection.collision@1, ResourceLimit ->
   core.projection.resource-limit@1, CoreInvariant ->
   core.projection.target-not-applicable@1) and the failed-attempt
   arguments projection.rs:852-884 (reason, limit, profile).
-- Edit failure code mapping: crates/consema-ini/src/edit.rs:1754-1779
+- Edit failure code mapping: consema-rs/consema-ini/src/edit.rs:1754-1779
   (every EditFailure variant; see the module docstring of
   consema.ini.edit).
 - Query failures reuse the common core.query.*@1 codes
@@ -154,9 +154,9 @@ class IniFormationFailure(Exception):
     """Fatal formation failure; no Document exists.
 
     Exceeding a configured limit is fatal with no truncation-then-success
-    (RFC 0016 §6; RFC 0009 §13, docs/rfcs/0009-...:476-489); an invalid or
+    (RFC 0016 §6; RFC 0009 §13, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:476-489); an invalid or
     profile-conflicting encoding is likewise fatal before a Document exists
-    (RFC 0009 §3, docs/rfcs/0009-...:68-73; parser.rs:22-32, 61-94). The
+    (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:68-73; parser.rs:22-32, 61-94). The
     frozen codes are core.parse.resource-limit@1 (error_registry.rs:39),
     ini.profile.encoding@1 (error_registry.rs:1063), or the wrapped
     source-layer code (core.source.*@1).

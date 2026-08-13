@@ -6,9 +6,9 @@ Case covered here (conformance/vectors/ini-v1.json, suite
 the same order, with exactly six direct structural (Supported)
 operations.
 
-Authority: crates/consema-ini/src/operation_registry.rs:16-80 (descriptors)
+Authority: consema-rs/consema-ini/src/operation_registry.rs:16-80 (descriptors)
 and the registry test operation_registry.rs:105-137; RFC 0009 §12
-(docs/rfcs/0009-ini-family-profiles-v1.md:439-455).
+(https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:439-455).
 """
 
 from __future__ import annotations

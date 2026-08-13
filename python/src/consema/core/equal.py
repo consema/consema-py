@@ -4,7 +4,7 @@ Authority: RFC 0016 §4.1 and the vector cases of conformance/vectors/v1.json
 (`value.decimal-normalization`, `value.float-signed-zero`). The hash is
 defined as FNV-1a (64-bit) over the canonical PVCE/1 encoding of the value,
 so equal values always hash equal and the hash is order-dependent; this is
-the same contract as go/core/equal.go (cross-reference only).
+the same contract as consema-go/go/core/equal.go (cross-reference only).
 
 ``equal`` is total: it never raises on valid values and never accepts an
 unknown kind (the kind set is closed by construction).

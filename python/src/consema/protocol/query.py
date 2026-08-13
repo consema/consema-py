@@ -1,10 +1,10 @@
 """Versioned typed query definitions, validation, and binding.
 
 Authority: RFC 0016 §5.4 and the operator validation table of
-crates/consema-core/src/query.rs:899-1897 (transcribed verbatim, including
+consema-rs/consema-core/src/query.rs:899-1897 (transcribed verbatim, including
 the closed kind-name vocabularies at query.rs:1900-2209); the match-role
 spellings are the language-neutral MatchRole names (query.rs:169-316). Go
-(go/protocol/query.go, query_validate.go) is a cross-reference only.
+(consema-go/go/protocol/query.go, query_validate.go) is a cross-reference only.
 
 The table maps ``(domain, operator)`` to the expected input role, the
 output role, and the required argument value kinds. The generic rows

@@ -13,7 +13,7 @@ Cases covered here (conformance/vectors/ini-v1.json, suite
   remains unchanged.
 
 RFC 0009 §12 contract facts pinned here: duplicate/case-collision rules
-are validated before any patch exists (docs/rfcs/0009-ini-family-profiles-
+are validated before any patch exists (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-
 v1.md:463-466: Rename validates portable character rules, Windows ASCII
 case equivalence, or Python optionxform collisions); removing a section
 removes its owned entries atomically without reparenting (lines 465-466);
@@ -187,7 +187,7 @@ def test_patch_metadata_carries_operation_ids():
 
 
 def test_windows_rename_keeps_ordered_case_equivalent_occurrences():
-    # RFC 0009 §6 (docs/rfcs/0009-...:207-213): repeated/case-equivalent
+    # RFC 0009 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:207-213): repeated/case-equivalent
     # keys stay ordered native facts marked as an ambiguity set; Windows
     # rename never rejects case equivalence (edit.rs:1048-1050).
     document = windows(b"[S]\r\nKey=1\r\nother=2\r\n")
@@ -199,7 +199,7 @@ def test_windows_rename_keeps_ordered_case_equivalent_occurrences():
 
 
 def test_python_optionxform_collision_is_rejected_before_a_patch_exists():
-    # RFC 0009 §12 (docs/rfcs/0009-...:463-464): rename validates Python
+    # RFC 0009 §12 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:463-464): rename validates Python
     # optionxform collisions before any patch exists; the code is
     # ini.edit.case-collision@1 (edit.rs:1767).
     document = python(b"[S]\nKey=1\nother=2\n")
@@ -229,7 +229,7 @@ def test_portable_duplicate_key_insertion_is_rejected():
 
 
 def test_section_removal_owns_entries_atomically_but_not_comments():
-    # RFC 0009 §12 (docs/rfcs/0009-...:465-466, 459-462): removing a
+    # RFC 0009 §12 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:465-466, 459-462): removing a
     # section removes its owned entries atomically; comments are not moved
     # or deleted without explicit ownership.
     document = python(b"[one]\nk=first\n  second\n\n  fourth\n# keep\n[two]\nx=y\n")

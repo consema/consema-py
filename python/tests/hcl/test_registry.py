@@ -1,7 +1,7 @@
 """The HCL format operation registry (RFC 0014 §10).
 
 The frozen surface is pinned by the Rust registry tests
-(crates/consema-hcl/src/operation_registry.rs:100-157): `hcl.native@1`
+(consema-rs/consema-hcl/src/operation_registry.rs:100-157): `hcl.native@1`
 publishes exactly the six frozen operations in the frozen order;
 `hcl.tfvars@1` publishes the four attribute operations only.
 """
@@ -63,7 +63,7 @@ def test_argument_schemas():
 
 def test_operation_ids_are_frozen_spellings():
     # RFC 0014 §10: the six operation ids are frozen language-neutral
-    # spellings (docs/rfcs/0014-...:630-642).
+    # spellings (https://github.com/consema/consema/blob/main/docs/rfcs/0014-...:630-642).
     from consema.hcl import (
         EditOperationKind,
     )

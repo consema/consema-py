@@ -1,7 +1,7 @@
 """Transferable dry-run facts for one fully validated edit transaction.
 
 Authority:
-- RFC 0004 §14 (docs/rfcs/0004-materialization-conversion-and-structural-
+- RFC 0004 §14 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
   edit-v1.md:338-356): dry-run performs every deterministic validation and
   byte-planning step except publishing a new Document; its transferable form
   carries source_id, base_digest, profile, ordered operations with safe
@@ -9,9 +9,9 @@ Authority:
   and an ordered report. Secrets use the SourcePatch redaction rules. A
   dry-run plan is not authority to write a file and is never applied without
   rechecking base digest and every original-byte precondition.
-- RFC 0016 §5.3 (docs/rfcs/0016-go-api-mapping-v1.md:184-187): dry-run
+- RFC 0016 §5.3 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:184-187): dry-run
   semantics identical; nothing authorizes file writes.
-- crates/consema-document/src/edit_plan.rs — arbitration: EditPlanSourceId
+- consema-rs/consema-document/src/edit_plan.rs — arbitration: EditPlanSourceId
   bound edit_plan.rs:13-31 (non-empty, <= 1024); EditOperationSummary bounds
   edit_plan.rs:34-70 (<= 64 arguments, names match
   [a-z0-9_]*, values non-empty <= 1024); EditPlan::new operation-metadata
@@ -19,7 +19,7 @@ Authority:
   must equal the operation's canonical "id@version" form, and no extra
   operation.* keys); EditPlanError edit_plan.rs:200-211.
 
-go/document is a cross-reference only; no code structure is copied.
+consema-go/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

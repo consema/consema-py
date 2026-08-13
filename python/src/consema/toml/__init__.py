@@ -1,4 +1,4 @@
-"""consema.toml — the frozen ``toml.1.0@1`` language profile (L1, mirror of Go G1.3).
+"""consema.toml — the frozen ``toml.1.0@1`` language profile (L1 milestone).
 
 The TOML family forms lossless immutable document snapshots (byte-exact
 render, exhaustive token/trivia coverage), exposes the closed TOML native
@@ -13,17 +13,17 @@ commits the frozen seven-operation TOML edit surface atomically with
 ChangeSet, SourcePatch, and untouched-byte evidence.
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration; go/toml as a cross-reference only, never a template):
+arbitration; consema-go/go/toml as a cross-reference only, never a template):
 
 - conformance/vectors/toml-v1.json — the machine-readable suite
-  "consema.toml.conformance@1" (17 cases; formation, native items, query,
+  "consema.toml.conformance@1" (18 cases; formation, native items, query,
   projection, edit, resource, corpus capabilities);
-- RFC 0001 (docs/rfcs/0001-toml-1.0-profile.md) — the language-neutral
+- RFC 0001 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md) — the language-neutral
   TOML contract; RFC 0004 (materialization/structural edit); RFC 0016
   §5-§6 (API shapes, error classification, frozen spellings);
-- crates/consema-toml/src/*.rs — byte/registry arbitration
+- consema-rs/consema-toml/src/*.rs — byte/registry arbitration
   (operation_registry.rs:16-74; projection.rs; materialization.rs;
-  edit.rs:1280-1332; parser.rs) and crates/consema-protocol/src/
+  edit.rs:1280-1332; parser.rs) and consema-rs/consema-protocol/src/
   error_registry.rs:339-361 for the toml-family codes.
 
 This package is an independent, Python-idiomatic implementation with zero
@@ -31,11 +31,10 @@ third-party runtime dependencies (pyproject policy: python/ zero-dependency
 runtime). Error text is human presentation only and never participates in
 conformance comparison (RFC 0016 §6).
 
-Blind-write status: this code was written before the Python toolchain
-verification gate (docs/multi-language-implementation-plan.md §3/§7). No
-gate is claimed to have passed; the first verification step after the
-toolchain lands is the formation/query/projection/edit test suite under
-python/tests/toml/.
+Verified status: the Python toolchain verification gate has landed; the
+formation/query/projection/edit test suites under python/tests/toml/ run
+in CI (python-gates job) and locally (703 passed / 4 skipped, python/README.md
+Verify).
 """
 
 from consema.toml.document import (

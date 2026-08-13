@@ -3,23 +3,23 @@
 Frozen names/numbers with authority citations (language-neutral first; Rust
 only for registry/byte arbitration):
 
-- ``IniProfile``: the three profile identities — crates/consema-ini/src/
+- ``IniProfile``: the three profile identities — consema-rs/consema-ini/src/
   lib.rs:37-44 (enum), lib.rs:49-55 (id()); the profile ids
   ini.portable@1 / ini.windows@1 / ini.python-configparser@1 are the frozen
   language-neutral spellings (RFC 0009 §1,
-  docs/rfcs/0009-ini-family-profiles-v1.md:22-26).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:22-26).
 - ``IniSyntaxKind``: the closed 14-kind lossless classification with the
   exact stable names ("Bom", "Whitespace", "LineBreak", "CommentMarker",
   "CommentText", "SectionOpen", "SectionName", "SectionClose", "EntryKey",
   "Delimiter", "Quote", "EntryValue", "ContinuationMarker", "ErrorRegion")
   — lib.rs:123-152 (enum), lib.rs:157-173 (as_str), lib.rs:176-194
   (from_name); the lossless syntax domain lists exactly this vocabulary
-  (RFC 0009 §9, docs/rfcs/0009-...:306-313).
+  (RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:306-313).
 - ``IniValueState``: Missing | Empty | Present — lib.rs:198-206; the
   ``ini.entry-value-state-is@1`` argument accepts exactly these three
-  spellings (RFC 0009 §9, docs/rfcs/0009-...:330-331).
+  spellings (RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:330-331).
 - ``IniQuoteStyle``: None | Single | Double — lib.rs:209-217 (Windows
-  profile outer-quote facts, RFC 0009 §6, docs/rfcs/0009-...:199-202).
+  profile outer-quote facts, RFC 0009 §6, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:199-202).
 - ``IniLogicalLineKind``: Section | Entry | Error — lib.rs:220-228.
 - ``IniEncodingSelection``: ProfileDefault | Explicit — lib.rs:59-65
   (RFC 0009 §3: no-BOM bytes never imply the machine's active code page;
@@ -42,7 +42,7 @@ from consema.document.ids import ProfileId
 from consema.document.limits import ParseLimits
 from consema.document.source import SourceEncoding
 
-# Frozen defaults, crates/consema-ini/src/lib.rs:100-118.
+# Frozen defaults, consema-rs/consema-ini/src/lib.rs:100-118.
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
 _DEFAULT_MAX_DECODED_SCALARS = 64 * 1024 * 1024
 _DEFAULT_MAX_PHYSICAL_LINES = 2_000_000
@@ -59,13 +59,13 @@ _DEFAULT_MAX_RECOVERY_REGIONS = 100_000
 
 
 class IniProfile(enum.Enum):
-    """Frozen INI formation profile (crates/consema-ini/src/lib.rs:37-44).
+    """Frozen INI formation profile (consema-rs/consema-ini/src/lib.rs:37-44).
 
     The profiles share bounded source decoding, physical-line scanning,
     immutable snapshot identity, lossless coverage, transaction, proof, and
     patch infrastructure; they do not share accepted encoding, delimiter,
     comment, continuation, case-equivalence, quote, duplicate, or canonical
-    generation rules (RFC 0009 §1, docs/rfcs/0009-...:29-32).
+    generation rules (RFC 0009 §1, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:29-32).
     """
 
     PORTABLE_V1 = "ini.portable"
@@ -79,7 +79,7 @@ class IniProfile(enum.Enum):
 
 class IniEncodingSelection:
     """Explicit source-encoding selection; no host locale is consulted
-    (crates/consema-ini/src/lib.rs:59-65; RFC 0009 §3)."""
+    (consema-rs/consema-ini/src/lib.rs:59-65; RFC 0009 §3)."""
 
     __slots__ = ("kind", "encoding")
 
@@ -117,8 +117,8 @@ class IniEncodingSelection:
 
 class IniSyntaxKind(enum.Enum):
     """Closed INI lossless syntax-piece classification
-    (crates/consema-ini/src/lib.rs:123-152; RFC 0009 §9,
-    docs/rfcs/0009-...:306-313)."""
+    (consema-rs/consema-ini/src/lib.rs:123-152; RFC 0009 §9,
+    https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:306-313)."""
 
     BOM = "Bom"
     WHITESPACE = "Whitespace"
@@ -153,7 +153,7 @@ class IniValueState(enum.Enum):
 
     ``Missing`` is only carried by recovered error records in v1;
     ``key=`` is Empty, never converted to Missing (RFC 0009 §5,
-    docs/rfcs/0009-...:176-177).
+    https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:176-177).
     """
 
     MISSING = "Missing"
@@ -185,7 +185,7 @@ class IniParseLimits:
     the remaining fields bound decoded text, physical/logical lines,
     continuations, sections, entries, duplicate-group members, and recovery
     regions. Exceeding any limit is a fatal formation failure; there is no
-    truncation-then-success (RFC 0009 §13, docs/rfcs/0009-...:476-489).
+    truncation-then-success (RFC 0009 §13, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:476-489).
     """
 
     common: ParseLimits = ParseLimits()
@@ -205,7 +205,7 @@ class IniParseLimits:
 
 
 # -- profile character tables -------------------------------------------------
-# Transcribed verbatim from crates/consema-ini/src/parser.rs:1323-1339 and
+# Transcribed verbatim from consema-rs/consema-ini/src/parser.rs:1323-1339 and
 # materialization.rs:860-888; these tables are the byte authority for every
 # formation and edit name/value validation.
 

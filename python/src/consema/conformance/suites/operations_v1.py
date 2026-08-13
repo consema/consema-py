@@ -2,7 +2,7 @@
 cases): registry manifests, protocol-v3 dual transport, JSON/TOML
 materialization and structural edits with dry-run proof/patch facts,
 conflict/security matrices, the operation registries, and the four convert
-cases. Dispatch is by case id, mirroring go/conformance/operations_v1.go
+cases. Dispatch is by case id, mirroring consema-go/go/conformance/operations_v1.go
 and its JSON (v1_json_face.go), TOML (v1_toml_face.go), and convert
 (convert_face.go) faces exactly.
 """

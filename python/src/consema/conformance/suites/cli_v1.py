@@ -2,7 +2,7 @@
 ``core.cli-output@1`` envelope, the exit-code classification table, the
 ``core.batch-plan@1`` and ``core.batch-result@1`` manifests, the redaction
 record contract, and the transport/patch budgets. Dispatch is by capability,
-mirroring go/conformance/cli_v1.go.
+mirroring consema-go/go/conformance/cli_v1.go.
 
 Every case is driven by tagged JSON text: the input bytes are decoded
 through the protocol v7 records and the re-encode must reproduce the input

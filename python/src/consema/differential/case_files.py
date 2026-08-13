@@ -1,10 +1,10 @@
 """Shared case-file loading for the Python differential harnesses
-(docs/five-language-ci-design.md §3.4/§3.5).
+(https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4/§3.5).
 
 The differential case sets are language-neutral (kind/format/profile/source/
 steps) and live at ``conformance/differential/`` of the consema repository —
 the shared single-authority directory (migrated from
-``go/conformance/differential/`` on 2026-08-12, five-language-ci-design.md
+``consema-go/go/conformance/differential/`` on 2026-08-12, five-language-ci-design.md
 §3.5 executed). This module reads them read-only, exactly as the Go tests
 read them at runtime, and applies the integrity guards (manifest id,
 case-count floor, unique ids) that every language harness pins.

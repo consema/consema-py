@@ -5,8 +5,8 @@ GraphLimits, GraphBuilder, PortableGraph, PgceLimits, the PGCE/1
 encode/decode functions, and the typed `core.graph.*@1` / `core.pgce.*@1`
 errors.
 
-Authority: RFC 0006; crates/consema-graph/src/lib.rs and pgce.rs (byte
-arbitration); go/graph as a cross-reference only.
+Authority: RFC 0006; consema-rs/consema-graph/src/lib.rs and pgce.rs (byte
+arbitration); consema-go/go/graph as a cross-reference only.
 """
 
 from consema.graph.errors import (

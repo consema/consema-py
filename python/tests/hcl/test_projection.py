@@ -122,7 +122,7 @@ def test_project_expression_policy():
     items = projected_items(result.value)
     count_value = projected_value(items[0])
     # A derived expression is projected as the authorized `hcl.expression@1`
-    # record itself (RFC 0014 §8.2; go/hcl/projection.go:559-573), not a
+    # record itself (RFC 0014 §8.2; consema-go/go/hcl/projection.go:559-573), not a
     # {kind, expression} wrapper.
     assert count_value.kind is Kind.OBJECT
     record = dict(count_value.as_object())

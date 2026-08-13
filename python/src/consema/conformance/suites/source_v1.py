@@ -1,7 +1,7 @@
 """Suite ``consema.source.conformance@1`` (source-v1.json, 28 cases): source
 snapshot digest/identity, encoding resolution, decoded locations, binary
 coverage, raw-byte patches, and resource limits. Dispatch is by case id,
-mirroring go/conformance/source_v1.go.
+mirroring consema-go/go/conformance/source_v1.go.
 """
 
 from __future__ import annotations
@@ -81,7 +81,7 @@ def _parse_encoding(name: str) -> SourceEncoding | None:
 
 def _encoding_request(vector: runner.Case) -> EncodingRequest | None:
     """Rebuilds the deterministic resolution request from the vector's
-    encoding facts (go/conformance/source_v1.go sourceEncodingRequest)."""
+    encoding facts (consema-go/go/conformance/source_v1.go sourceEncodingRequest)."""
     encoding_name = compare.string_field(vector.input, "encoding")
     if encoding_name is None:
         return None

@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        涉及契约（contract / Profile / 语义 / 兼容性）的变更必须走规范仓 RFC 流程（docs/rfcs/），本仓只承接 RFC 批准后的实现；详见[规范仓 CONTRIBUTING.md](https://github.com/consema/consema/blob/main/CONTRIBUTING.md)。
+        涉及契约（contract / Profile / 语义 / 兼容性）的变更必须走规范仓 RFC 流程（https://github.com/consema/consema/blob/main/docs/rfcs/），本仓只承接 RFC 批准后的实现；详见[规范仓 CONTRIBUTING.md](https://github.com/consema/consema/blob/main/CONTRIBUTING.md)。
   - type: textarea
     id: problem
     attributes:

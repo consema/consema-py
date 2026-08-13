@@ -3,7 +3,7 @@ toml.canonical-document@1 style (RFC 0004 §4/§6).
 
 The materialized bytes reparses and projects back to the required portable
 value (RFC 0004 §20); fidelity, the explicit mapping conversion, and
-unrepresentable-value failures follow crates/consema-toml/src/
+unrepresentable-value failures follow consema-rs/consema-toml/src/
 materialization.rs.
 """
 

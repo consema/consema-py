@@ -1,5 +1,5 @@
 # Consema Python implementation — scaffold.
-# Authority: docs/multi-language-implementation-plan.md §0.2 (python/ = single
+# Authority: https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §0.2 (python/ = single
 # package `consema`, zero third-party runtime dependencies, pytest for tests).
 #
 # Build backend choice: hatchling. Justification: the package is pure-Python
@@ -10,7 +10,7 @@
 # requirement and does not affect the zero-runtime-dependency policy
 # (go.mod zero-require precedent, plan §0.2).
 [build-system]
-requires = ["hatchling>=1.26"]
+requires = ["hatchling==1.32.0"]
 build-backend = "hatchling.build"
 
 [project]

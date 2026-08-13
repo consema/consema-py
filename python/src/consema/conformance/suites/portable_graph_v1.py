@@ -2,11 +2,11 @@
 10 cases): PGCE/1 golden vectors, strict graph equality and hashing, PGCE
 round-trip stability, strict decode rejections, portable-graph query
 execution, and the bounded-encode stream limit. Dispatch is by case id,
-mirroring go/conformance/portable_graph_v1.go.
+mirroring consema-go/go/conformance/portable_graph_v1.go.
 
 The portable-graph query executor (``core.portable-graph-query@1``) is a
 runner-side capability implementation mirroring the Rust executor
-(crates/consema-graph/src/query.rs): the Input expression yields one Node
+(consema-rs/consema-graph/src/query.rs): the Input expression yields one Node
 match per root in root order, ``graph.reachable-nodes`` performs the
 canonical first-discovery traversal with one shared visited set,
 ``core.distinct-by-identity`` deduplicates by match identity, and the
@@ -247,7 +247,7 @@ def _pgce_stream_limit(vector: runner.Case) -> str | None:
 
 
 # ---------------------------------------------------------------------------
-# portable-graph query execution (crates/consema-graph/src/query.rs)
+# portable-graph query execution (consema-rs/consema-graph/src/query.rs)
 # ---------------------------------------------------------------------------
 
 

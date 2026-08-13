@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §10 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:350-372): the
+- RFC 0012 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:350-372): the
   canonical style consumes one fully validated ``xml.element-tree@1`` value
   and creates a new ``xml.1.0-safe@1`` Document; it is not W3C Canonical
   XML and does not claim C14N equivalence; the style deterministically
@@ -16,7 +16,7 @@ Authority:
   promised input semantics; failure returns no target Document or partial
   output.
 - The writer, encoding, closure verification, and failure mapping transcribe
-  crates/consema-xml/src/materialization.rs:34-1366 (request validation
+  consema-rs/consema-xml/src/materialization.rs:34-1366 (request validation
   90-107; parse limits 109-140; encode_text 143-172; Record validation
   238-500; PrefixTable 502-526; Writer 565-900; verify_closure 912-1210) —
   byte/registry arbitration only.
@@ -29,7 +29,7 @@ Authority:
   ``xml.materialization.escapes-content`` (390-417),
   ``xml.materialization.invalid-record-rejected`` (419-435).
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

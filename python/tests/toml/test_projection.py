@@ -4,7 +4,7 @@ toml.best-exact-core@1 with provenance.
 Vector cases transcribed: toml.projection.all-core-kinds,
 toml.projection.provenance, toml.projection.reject-leap-second
 (conformance/vectors/toml-v1.json); RFC 0001 §5 mapping table; the
-completion algebra and failure codes per crates/consema-toml/src/
+completion algebra and failure codes per consema-rs/consema-toml/src/
 projection.rs.
 """
 

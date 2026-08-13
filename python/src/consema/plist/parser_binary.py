@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact byte semantics and recovery):
 
-- Parser flow: crates/consema-plist/src/parser_binary.rs:496-730 — the
+- Parser flow: consema-rs/consema-plist/src/parser_binary.rs:496-730 — the
   header check (RFC 0013 §5.1, parser_binary.rs:543-552), trailer facts
   and mandatory integrity checks (parser_binary.rs:554-601, 778-917,
   RFC 0013 §5.11), the offset table (parser_binary.rs:919-1010), the

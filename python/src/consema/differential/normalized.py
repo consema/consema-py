@@ -1,18 +1,18 @@
 """Normalized-result differential of the Python pipeline against the Rust
 authority (roadmap §11.2 language-neutral behavior surface;
-docs/five-language-ci-design.md §3.3; the Go twin is
-go/conformance/differential/normalized/).
+https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.3; the Go twin is
+consema-go/go/conformance/differential/normalized/).
 
 The Python implementation runs the same data-driven input set
 (conformance/differential/normalized/cases.json, the shared single-authority
 case directory of the consema repository) through its own
 parse -> query/project/materialize/edit -> source pipeline and emits the
 same line-oriented ``key=value`` fact vocabulary the Rust example
-(crates/consema-conformance/examples/emit_normalized_results.rs) emits, so
+(consema-rs/consema-conformance/examples/emit_normalized_results.rs) emits, so
 the two sides can be compared field by field (case id + field + both values
 on divergence; error text never participates).
 
-The comparison is bidirectional (milestone 0.19.0 G5.2 shape, extended to
+The comparison is bidirectional (L5 differential harness shape, extended to
 Python): the forward direction compares the Python facts with the Rust
 evidence files (CONSEMA_DIFFERENTIAL_NORMALIZED_RUST_DIR, provisioned by
 scripts/python-verify-normalized-differential.ps1), and the reverse
@@ -109,7 +109,7 @@ MANIFEST = "consema.differential.normalized@1"
 
 # The golden evidence directory (Rust emits, this module compares) and the
 # Python evidence directory (this module emits, the Rust --consume mode
-# compares): docs/five-language-ci-design.md §3.3.
+# compares): https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.3.
 RUST_DIR_ENV = "CONSEMA_DIFFERENTIAL_NORMALIZED_RUST_DIR"
 PYTHON_DIR_ENV = "CONSEMA_DIFFERENTIAL_NORMALIZED_PYTHON_DIR"
 

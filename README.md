@@ -10,7 +10,7 @@ Consema 语言中立契约（RFC 0016）的 **Python 实现**仓库。本仓库�
 Python 实现与跨语言差分验证工具。
 
 Version: 1.0.0-rc.1（`python/pyproject.toml` version；CI
-check-version-consistency job 断言与 README 一致）。
+check-version-consistency job 断言 README `Version:` 行与 pyproject 一致）。
 
 ## 快速开始（30 秒跑通）
 
@@ -18,7 +18,7 @@ check-version-consistency job 断言与 README 一致）。
 pip install consema（1.0.0-rc.1 发布后可用）
 ```
 
-把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（一个 JSON 文档走完 parse → query → edit → render 四条链）：
+把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python quickstart.py`）（一个 JSON 文档走完 parse → query → edit → render 四条链）：
 
 ```python
 from consema.core import PortableValue
@@ -59,11 +59,11 @@ if __name__ == "__main__":
     main()
 ```
 
-完整链示例（parse → 操作符式原生语义查询 → best-exact 投影 → 结构编辑 → canonical 物化 → 跨格式转换到 TOML）：[`python/examples/sdk_chain.py`](python/examples/sdk_chain.py)，运行 `cd python && PYTHONPATH=src python examples/sdk_chain.py`。
+完整链示例（parse → 操作符式原生语义查询 → best-exact 投影 → 结构编辑 → canonical 物化 → 跨格式转换到 TOML）：[`python/examples/sdk_chain.py`](python/examples/sdk_chain.py)，运行 `cd python && PYTHONPATH=src python examples/sdk_chain.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python examples/sdk_chain.py`）。
 
 ## API 摘要
 
-核心面一行式（下表；八个格式家族各有独立的 `parse_*` / `execute_*_query` / `project` / `materialize` / `convert_*` 入口）：
+核心面一行式（下表；八个格式家族各有独立的 `parse_*` / `execute_*_query` / `project` / `materialize` 入口，`convert_*` 为根级统一入口、不按家族分包）：
 
 | 操作 | facade 入口 |
 | --- | --- |
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 | edit | `consema.json.EditTransactionBuilder(document)` + `consema.json.commit(document, transaction) -> EditCommit`（`commit_result.document` 为编辑后文档） |
 | materialize | `consema.json.materialize(value: PortableValue, request: MaterializationRequest) -> MaterializationResult` |
 | convert | `consema.convert_json(source, projection_request, materialization_request) -> CompleteConversion \| ConversionFailure`（另有 convert_toml / convert_yaml / convert_ini / convert_properties / convert_xml / convert_plist / convert_hcl） |
-| registry | `consema.format_families()` / `consema.profiles()` / `consema.query_domains()` / `consema.operation_registry(profile)`（8 家族 / 16 profiles / 21 查询域 / 16 操作注册表） |
+| registry | `consema.format_families()` / `consema.profiles()` / `consema.query_domains()` / `consema.operation_registry(profile: ProfileId)`（8 家族 / 16 profiles / 21 查询域 / 16 操作注册表；`operation_registry` 接受 `ProfileId`，从 `profiles()` 取条目时用 `entry.profile_id()`） |
 
 ## 布局
 
@@ -96,36 +96,46 @@ if __name__ == "__main__":
 ```text
 cd python
 python -m pip install -e '.[dev]'
-python -m pytest tests/
+# CI 同款旗标：--import-mode=importlib（多个目录共享 basename 的测试文件，
+# prepend 模式会 import file mismatch）+ PYTHONPATH=tests/xml（xml 测试把
+# conftest 作为模块导入：`from conftest import …`）
+PYTHONPATH=tests/xml python -m pytest --import-mode=importlib tests/
+# PowerShell 等价：$env:PYTHONPATH = 'tests/xml'; python -m pytest --import-mode=importlib tests/
 ```
 
 **前置（重要）：** 全量测试需要规范仓的 conformance 数据——`conformance/`
 （vectors、differential、fixtures）与 `docs/fc-manifest-0.13.0.json`
 **不随本仓提供**（权威在 [github.com/consema/consema](https://github.com/consema/consema)）。
-全新 clone 直接跑 `python -m pytest tests/` 会失败：conformance runner 测试
-（tests/conformance/）读取仓库相对路径的向量数据，差分 integrity 测试读取
-conformance/differential 用例集，各格式家族的 fixture 测试读取
-conformance/fixtures。本地运行前先把规范仓并排检出并把 conformance 数据
-provision 到工作区根（与 CI 的 `.github/actions/provision-conformance` 复合
-action 相同；CI 把规范仓钉在 `ad667021`——cfd6e296 519-case 清单对应的
-commit）：
+全新 clone 未 provision 时跑 `python -m pytest tests/` 会失败：conformance
+runner 测试（tests/conformance/）与 capability parity 测试读取仓库相对路径
+的向量数据/清单而报错，各格式家族的 fixture 测试读取 conformance/fixtures
+而报错；差分 integrity 测试（tests/differential/）缺数据时按 documented
+skip 跳过（见 python/README.md Verify）。本地运行前先把规范仓并排检出并把
+conformance 数据 provision 到工作区根（与 CI 的
+`.github/actions/provision-conformance` 复合 action 相同；CI 把规范仓钉在
+`ad667021`——cfd6e296 519-case 清单对应的 commit）：
 
 ```text
-# 规范仓并排检出到 ../consema（内容与 CI 的 consema-repo checkout 相同）
+# 规范仓并排检出到 ../consema；本地 checkout 必须与 CI 钉在同一个 commit
+# （CI 用 ad667021——cfd6e296 519-case 清单对应的 commit），否则 provision
+# 的数据与 CI 不同：
+#   git clone https://github.com/consema/consema ../consema
+#   cd ../consema && git checkout ad667021f0fd7c611dd0deb670eba7658e1ea575
+# PowerShell 等价：Copy-Item -Recurse ../consema/conformance ./conformance
+# 与 Copy-Item ../consema/docs/fc-manifest-0.13.0.json ./docs/
 cp -r ../consema/conformance ./conformance
 mkdir -p docs
 cp ../consema/docs/fc-manifest-0.13.0.json ./docs/
 ```
 
 数据在场后 703 passed / 4 skipped（CI 同款 `--import-mode=importlib` +
-`PYTHONPATH=tests/xml`）；缺数据时差分 integrity 测试按 documented skip
-跳过（见 python/README.md Verify）。
+`PYTHONPATH=tests/xml`；能力 parity 2 个断言亦全绿）。
 
 ## FAQ
 
 - **支持哪些配置格式？** 八个格式家族、16 个 profiles：JSON（`json.strict@1` / `jsonc.bounded@1` / `json5.standard@1`）、TOML（`toml.1.0@1`）、YAML（`yaml.1.2-core@1` / `yaml.1.1-compat@1`）、INI（`ini.portable@1` / `ini.windows@1` / `ini.python-configparser@1`）、Java Properties（`java-properties.reader@1` / `java-properties.latin1@1`）、XML（`xml.1.0-safe@1`）、Property List（`plist.xml@1` / `plist.binary@1`）、HCL（`hcl.native@1` / `hcl.tfvars@1`）。完整面枚举见 `consema.profiles()`。
 - **与 pydantic / jsonschema 的关系？** 互补而非竞争：pydantic 做运行时 schema 校验/类型转换，Consema 做格式内容处理（无损文档、查询、投影、原子编辑、跨格式转换）；Consema 明确不做业务 schema 校验（平台接入指南）。
-- **性能如何？** 行为一致性由 18 suites / 519 cases conformance 门禁与跨语言差分门禁保证；解析/渲染基准基线见规范仓 `docs/BENCHMARKS-0.13.0.md` 与 Go 仓 [go/README.md](https://github.com/consema/consema-go/blob/main/go/README.md)。
+- **性能如何？** 行为一致性由 18 suites / 519 cases conformance 门禁与跨语言差分门禁保证；解析/渲染基准基线见规范仓 `https://github.com/consema/consema/blob/main/docs/BENCHMARKS-0.13.0.md` 与 Go 仓 [consema-go/go/README.md](https://github.com/consema/consema-go/blob/main/go/README.md)。
 - **零依赖吗？** 是——`dependencies = []`（pytest 仅 dev extra）。
 - **跨语言一致性如何保证？** 18 套语言无关 conformance suite 共 519/519 cases（聚合 digest `cfd6e296…`）由规范仓维护、五仓共享；CI 多仓 checkout 跑 conformance runner 与 Python-Rust 差分门禁（byte parity / normalized differential / protocol-exchange）。
 - **兼容承诺？** 语义化版本；`check-version-consistency` 门禁断言 README 版本行与 `pyproject.toml` 一致；兼容与支持政策见 RFC 0020。

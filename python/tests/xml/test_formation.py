@@ -2,11 +2,11 @@
 default, namespaces, and byte-exact spans (RFC 0012 §2-§7).
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
-test); crates/consema-xml/src/parser.rs (byte/registry arbitration);
-RFC 0012 §2-§7 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:46-283).
+test); consema-rs/consema-xml/src/parser.rs (byte/registry arbitration);
+RFC 0012 §2-§7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:46-283).
 
 These tests are intent documents written before the Python toolchain
-verification gate (docs/multi-language-implementation-plan.md §3/§7); no
+verification gate (https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §3/§7); no
 gate is claimed to have passed.
 """
 
@@ -191,7 +191,7 @@ def test_entity_deny_by_default():
 
 def test_predefined_entities_always_available():
     """The five predefined entities resolve without any declaration
-    (RFC 0012 §3, lines 115-119; crates/consema-xml/src/entity.rs:19-40)."""
+    (RFC 0012 §3, lines 115-119; consema-rs/consema-xml/src/entity.rs:19-40)."""
     doc = parse(
         b"<root>&lt; &gt; &amp; &apos; &quot;</root>",
         XmlProfile.SAFE_V1,
@@ -235,7 +235,7 @@ def test_mixed_content_limit(xml_vectors):
 def test_namespace_scope_is_ancestry_derived():
     """Namespace scope is immutable ancestry-derived data: rebinding in a
     child does not mutate the parent scope
-    (crates/consema-xml/src/namespace.rs:91-218)."""
+    (consema-rs/consema-xml/src/namespace.rs:91-218)."""
     doc = parse(
         b'<a xmlns:p="urn:one"><b xmlns:p="urn:two"><c/></b></a>',
         XmlProfile.SAFE_V1,

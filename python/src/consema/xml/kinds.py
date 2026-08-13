@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §7 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:258-283) freezes
+- RFC 0012 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:258-283) freezes
   the v1 kind set — Bom, Whitespace, LineBreak, DeclarationOpen,
   DeclarationName, DeclarationValue, DeclarationClose, DoctypeOpen,
   DoctypeName, DtdMarkup, DoctypeClose, TagOpen, TagClose,
@@ -14,7 +14,7 @@ Authority:
   ProcessingInstructionClose, ErrorRegion — with the rule that format kinds
   align one-to-one with the common LosslessStructuralIndex pieces.
 - The stable kind names transcribe
-  crates/consema-xml/src/document.rs:801-889 (XmlSyntaxKind::as_str /
+  consema-rs/consema-xml/src/document.rs:801-889 (XmlSyntaxKind::as_str /
   from_name); the lossless-syntax query protocol validates the same
   vocabulary (consema.protocol query.py:1109-1121).
 - consema.document LosslessStructuralIndex (document/structural.py) owns

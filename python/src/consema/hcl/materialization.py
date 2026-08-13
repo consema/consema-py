@@ -33,7 +33,7 @@ fingerprint equality (RFC 0014 §6, §9). Failure returns no target
 Document, partial bytes, or partial provenance.
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration): crates/consema-hcl/src/materialization.rs — the record
+arbitration): consema-rs/consema-hcl/src/materialization.rs — the record
 contract materialization.rs:9-103, request validation
 materialization.rs:266-285, the canonical layout materialization.rs:105-121
 and writer materialization.rs:1133-1333, decimal rendering
@@ -157,7 +157,7 @@ def _shared_failure(failure: HclMaterializationFailure):
 
 def materialization_failure_code(failure) -> str:
     """The suite-published failure code of one shared MaterializationFailure
-    (RFC 0014 §9; crates/consema-conformance/src/hcl_v1.rs:1611-1616):
+    (RFC 0014 §9; consema-rs/consema-conformance/src/hcl_v1.rs:1611-1616):
     Unrepresentable maps to hcl.materialization.unrepresentable@1,
     ResourceLimit to hcl.materialization.resource-limit@1, InvalidRequest
     to the published spelling "invalid-record"."""

@@ -11,7 +11,7 @@ Cases covered here (conformance/vectors/ini-v1.json, suite
 RFC 0009 §10 contract facts pinned here: the default exact projection is
 ``ini.projection.best-exact-entry-mapping@1`` producing a nested
 EntryMapping in source order with duplicate spellings preserved
-(docs/rfcs/0009-ini-family-profiles-v1.md:349-353); the Python DEFAULT
+(https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:349-353); the Python DEFAULT
 section is an ordinary association (lines 355-358); RequireObjectV1 needs
 an explicit NameComparison and CollisionPolicy (Reject | First | Last) and
 every authorized collapse is Transformed with one report event per
@@ -78,7 +78,7 @@ def test_exact_duplicate_entry_mapping():
 
 
 def test_python_default_section_projects_as_ordinary_association():
-    # RFC 0009 §10 (docs/rfcs/0009-...:355-358): the Python default section
+    # RFC 0009 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:355-358): the Python default section
     # is an ordinary association whose provenance carries the
     # DefaultSection role; it is not expanded into every section.
     document = parse(
@@ -162,7 +162,7 @@ def test_explicit_object_collapse():
 
 
 def test_recovered_documents_never_project():
-    # RFC 0009 §10 (docs/rfcs/0009-...:362-363): Recovered documents do not
+    # RFC 0009 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:362-363): Recovered documents do not
     # project; the failure code is ini.projection.incomplete-document@1
     # (case formation.recovery-never-fabricates-entry, ini-v1.json:42).
     document = parse(

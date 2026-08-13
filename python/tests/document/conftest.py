@@ -2,7 +2,7 @@
 
 The package uses a src/ layout (python/pyproject.toml:27-28,
 packages = ["src/consema"]); this conftest lets pytest import ``consema``
-from a checkout before the toolchain/install gate (docs/multi-language-
+from a checkout before the toolchain/install gate (https://github.com/consema/consema/blob/main/docs/multi-language-
 implementation-plan.md §3, §7) is closed. It touches no project files.
 """
 

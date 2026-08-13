@@ -2,11 +2,11 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: crates/consema-properties/src/query.rs:
+- Domain binding and versioning: consema-rs/consema-properties/src/query.rs:
   124-150 (native) and 167-211 (syntax) — domains
   java-properties.native-semantic-query@1 and
   java-properties.lossless-syntax-query@1 (RFC 0010 section 10,
-  docs/rfcs/0010-java-properties-profiles-v1.md:269-308).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:269-308).
 - Operators: query.rs:398-532 (native: properties.document-properties,
   properties.natural-lines, properties.logical-lines,
   properties.logical-line-natural-lines, properties.property-key-equals,
@@ -22,14 +22,14 @@ Authority (Rust arbitration for the executor semantics):
 - Limits and cancellation: consema-core/src/query.rs:2967-2981 (QueryLimits
   defaults max_steps=100_000, max_results=100_000); step accounting
   query.rs:234-277.
-- Failure codes: core.query.*@1 (crates/consema-protocol/src/
+- Failure codes: core.query.*@1 (consema-rs/consema-protocol/src/
   error_registry.rs:108-118) via consema.protocol.query.QueryFailure;
   the argument vocabulary for the Properties operators is validated by
   the transferable query model (consema.protocol.query.
   _check_operator_arguments, query.py:964-1053) before binding.
 - Key matching takes exact UTF-16 code units encoded as ``UTF16BE/1``; it
   does not normalize Unicode or case (RFC 0010 section 10,
-  docs/rfcs/0010-...:284-286). Decoded-text matching is available only
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:284-286). Decoded-text matching is available only
   when a piece is well-formed Unicode; exact raw-byte and exact
   UTF-16-code-unit filters cover all other pieces (lines 304-308).
 

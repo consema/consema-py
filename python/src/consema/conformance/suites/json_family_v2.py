@@ -3,7 +3,7 @@ cases): the JSON5/JSONC formation surface, lossless-syntax and native-
 semantic v2 queries, JSON5 best-exact projection, canonical materialization,
 dialect conversion, structural move-member and scalar-preserving edits, the
 semantic-model v4 registry facts, and the parse depth limit. Dispatch is by
-``input.action``, mirroring go/conformance/json_family_v2.go.
+``input.action``, mirroring consema-go/go/conformance/json_family_v2.go.
 """
 
 from __future__ import annotations

@@ -32,11 +32,11 @@ arbitration):
 
 - conformance/vectors/hcl-v1.json (45 cases, suite
   "consema.hcl.conformance@1") — the machine-readable golden surface;
-- RFC 0014 (HCL family profiles, docs/rfcs/0014-hcl-family-profiles-v1.md)
+- RFC 0014 (HCL family profiles, https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md)
   and RFC 0004 (materialization/projection/edit algebra,
-  docs/rfcs/0004-...);
-- crates/consema-hcl/src/*.rs for byte/registry arbitration only;
-- go/hcl as a cross-reference only (never a template).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0004-...);
+- consema-rs/consema-hcl/src/*.rs for byte/registry arbitration only;
+- consema-go/go/hcl as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and

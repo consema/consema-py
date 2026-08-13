@@ -3,20 +3,20 @@ resolution, and the public parse entry point.
 
 Authority (language-neutral first; Rust only for arbitration):
 
-- RFC 0007 (docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md): source
+- RFC 0007 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md): source
   and encoding s3 (lines 56-72), formation and recovery s4 (73-97), the
   1.2 Core profile s5 (98-139), the 1.1 compatibility profile s6 (140-166),
   graph composition and alias safety s8 (194-213: reserve identity, register
   anchor before descending, most-recent-preceding rule, backward cycles,
   no expansion), and the security rules s13 (400-429: no evaluation, no
   network, no alias expansion).
-- The scalar resolution grammar is frozen by crates/consema-yaml/src/
+- The scalar resolution grammar is frozen by consema-rs/consema-yaml/src/
   native.rs:565-716 (resolve_scalar/resolve_explicit/resolve_implicit),
   746-766 (null/bool), 768-801 (integer), 803-846 (float), 848-912
   (sexagesimal), 969-1075 (timestamp), 1077-1111 (binary).
 - The event grammar mirrors the saphyr event model through
-  crates/consema-yaml/src/backend.rs:24-57 (event kinds) and the native
-  composition order crates/consema-yaml/src/native.rs:224-508.
+  consema-rs/consema-yaml/src/backend.rs:24-57 (event kinds) and the native
+  composition order consema-rs/consema-yaml/src/native.rs:224-508.
 - The profile version directive gate is lib.rs:789-831; fatal limit mapping
   is backend.rs:147-156 and lib.rs:833-858.
 - Scalar resolution surface: conformance/vectors/yaml-v1.json cases
@@ -26,7 +26,7 @@ Authority (language-neutral first; Rust only for arbitration):
   native.arbitrary-duplicate-mapping (entry order and duplicate keys),
   regression.plain-property-characters (plain scalar content).
 
-go/yaml/parser.go is a cross-reference only (never a template).
+consema-go/go/yaml/parser.go is a cross-reference only (never a template).
 
 The parser is intentionally private: Consema owns profile decisions, source
 identity, diagnostics, resource limits, native semantics, and graph

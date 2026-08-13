@@ -2,8 +2,8 @@
 
 The envelope shape (schema / contract_id / contract_version / payload) and
 the transport round trips are defined by RFC 0016 §3.2 and
-crates/consema-protocol/src/contract.rs:419-521; the registered-payload
-dispatch follows crates/consema-protocol/src/payload.rs.
+consema-rs/consema-protocol/src/contract.rs:419-521; the registered-payload
+dispatch follows consema-rs/consema-protocol/src/payload.rs.
 """
 
 import pytest

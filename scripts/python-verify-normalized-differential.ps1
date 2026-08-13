@@ -7,14 +7,15 @@ param(
 
 # ---------------------------------------------------------------------------
 # Cross-language normalized-result differential verification for Python
-# (milestone 0.15.0 G1.5; docs/five-language-ci-design.md §3.3; roadmap
+# (L5 differential harness, multi-language-implementation-plan L5;
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.3; roadmap
 # §11.2 lines 849-861; the Go twin: go-verify-normalized-differential.ps1).
 #
 # Bidirectional pipeline (Python never imports or calls Rust, RFC 0016
 # §1.1):
 #   1. builds the minimal Rust evidence example
 #      (consema-conformance/examples/emit_normalized_results.rs);
-#   2. forward direction: runs it over the checked-in case set
+#   2. forward direction: runs it over the provisioned case set
 #      (conformance/differential/normalized/cases.json, the shared
 #      single-authority case directory of the consema repository) into
 #      <OutDir> as
@@ -135,6 +136,12 @@ $logDir = Join-Path $env:TEMP 'consema-python-normalized'
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
 $stderrFile = Join-Path $logDir 'python-test.stderr.txt'
+# Windows PowerShell 5.1: with $ErrorActionPreference = 'Stop' a native
+# command writing to redirected stderr turns into a terminating
+# NativeCommandError before the diagnostics can be captured, so the EAP
+# is relaxed around this native call (pytest writes stderr on failure).
+$EAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 Push-Location $pythonDir
 try {
     & $python -m pytest tests\differential\test_normalized.py -v 1> $stdoutFile 2> $stderrFile
@@ -143,6 +150,7 @@ try {
 finally {
     Pop-Location
 }
+$ErrorActionPreference = $EAP
 Get-Content $stdoutFile | ForEach-Object { Write-Host $_ }
 if (Test-Path $stderrFile) {
     Get-Content $stderrFile | ForEach-Object { Write-Host $_ }
@@ -167,7 +175,14 @@ if ($testCode -ne 0) {
 Write-Host "[4/4] reverse: running the Rust consume mode against the Python evidence files ($pythonEvidenceDir)"
 $reverseLog = Join-Path $logDir 'rust-consume.stdout.txt'
 $reverseErr = Join-Path $logDir 'rust-consume.stderr.txt'
+# Windows PowerShell 5.1: with $ErrorActionPreference = 'Stop' a native
+# command writing to redirected stderr turns into a terminating
+# NativeCommandError before the diagnostics can be captured, so the EAP
+# is relaxed around this native call (the Rust emitter writes stderr).
+$EAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 & $example $CaseFile $OutDir --consume $pythonEvidenceDir 1> $reverseLog 2> $reverseErr
+$ErrorActionPreference = $EAP
 $consumeCode = $LASTEXITCODE
 Get-Content $reverseLog | ForEach-Object { Write-Host $_ }
 if (Test-Path $reverseErr) {

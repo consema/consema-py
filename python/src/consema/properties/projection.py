@@ -3,14 +3,14 @@ targets with duplicate policy and provenance.
 
 Authority (Rust arbitration for exact semantics):
 
-- Targets, policies, and request building: crates/consema-properties/src/
+- Targets, policies, and request building: consema-rs/consema-properties/src/
   projection.rs:9-82 — BestExactEntryMappingV1 (the default,
   ``java-properties.projection.best-exact-entry-mapping@1``, RFC 0010
-  section 11, docs/rfcs/0010-...:312-323) and RequireObjectV1
+  section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:312-323) and RequireObjectV1
   (``java-properties.projection.require-object@1``, published by the CLI
   wire mapping crates/consema/src/bin/consema/project_cmd.rs:158) under
   the explicit DuplicatePolicy RequireUnique | FirstWins |
-  LastWinsJdkTable (RFC 0010 section 11, docs/rfcs/0010-...:324-339).
+  LastWinsJdkTable (RFC 0010 section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:324-339).
 - Limits: projection.rs:84-106 (max_source_associations 2_000_000,
   max_value_nodes 4_000_001, max_report_entries 100_000,
   max_provenance_units 8_000_000).
@@ -29,7 +29,7 @@ Authority (Rust arbitration for exact semantics):
   authorizing rules are exactly
   java-properties.duplicate-key.first-wins@1 /
   java-properties.duplicate-key.last-wins-jdk-table@1 (RFC 0010 section
-  11, docs/rfcs/0010-...:341-344).
+  11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:341-344).
 - Provenance: projection.rs:308-428 — Direct association origins,
   KeyFragment/ValueFragment raw spans, EscapeDerived escape spellings,
   Derived root origin, and the unit accounting (2 units for a new
@@ -90,7 +90,7 @@ class DuplicatePolicy(enum.Enum):
     @property
     def authorizing_rule(self) -> str | None:
         """The authorizing rule id externalized in conversion reports
-        (RFC 0010 section 11, docs/rfcs/0010-...:341-344)."""
+        (RFC 0010 section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:341-344)."""
         return {
             DuplicatePolicy.FIRST_WINS: "java-properties.duplicate-key.first-wins@1",
             DuplicatePolicy.LAST_WINS_JDK_TABLE: (

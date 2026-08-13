@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §9 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:313-348): the
+- RFC 0012 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:313-348): the
   exact default target is the versioned ``xml.element-tree@1`` record
   containing declaration facts, admitted internal entity declarations, one
   namespace-aware root, ordered namespace declarations, ordered attributes,
@@ -18,7 +18,7 @@ Authority:
   There is no ``xml-to-json-default``, automatic attribute ``@`` prefix,
   automatic text ``#text`` key, or child grouping.
 - The record shapes and every policy transcribe
-  crates/consema-xml/src/projection.rs:20-469 (ProjectionTarget:21-29,
+  consema-rs/consema-xml/src/projection.rs:20-469 (ProjectionTarget:21-29,
   TextContentInclude:31-38, AttributePolicy:39-49, TextKeyPolicy:51-58,
   RepeatedChildPolicy:60-69, ExpandedNameKeyPolicy:71-81, CollisionPolicy:
   116-124, ProjectionRequest:126-213, ProjectionLimits:215-237,
@@ -36,7 +36,7 @@ Authority:
   ``xml.projection.namespace-record`` (327-339),
   ``xml.projection.recovered-never-projects`` (341-350).
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

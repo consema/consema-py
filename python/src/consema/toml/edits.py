@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0004 §12/§13 (docs/rfcs/0004-materialization-conversion-and-
+- RFC 0004 §12/§13 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
   structural-edit-v1.md:291-336): the frozen TOML structural surface
   (insert-entry into root/standard/inline tables with one direct key
   segment and a supported placement; remove-entry and rename-entry on one
@@ -14,7 +14,7 @@ Authority:
   AncestorDescendantConflict, PlacementAnchorRemoved, DuplicateKey,
   UnsupportedOperation, UnrepresentableValue, ResourceLimit,
   NewDocumentFormationFailed).
-- The transaction algebra transcribes crates/consema-toml/src/edit.rs:
+- The transaction algebra transcribes consema-rs/consema-toml/src/edit.rs:
   RepresentationPolicy 16-26; ScalarReplacement/EditOperation 28-99;
   the atomic commit pipeline 281-430; dry-run 432-447; every prepare_*
   function 449-1062 (including delimiter-adjacent comma ownership,
@@ -25,7 +25,7 @@ Authority:
   value whose span is the whole candidate); operation metadata and
   summaries 1132-1240; failure codes edit.rs:1280-1332.
 - The representation policies freeze the four values of RFC 0001 §6
-  (docs/rfcs/0001-toml-1.0-profile.md:111-117); the fallback diagnostic
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:111-117); the fallback diagnostic
   is ``toml.edit.representation-fallback@1`` (error_registry.rs:339).
 """
 

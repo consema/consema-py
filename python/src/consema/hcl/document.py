@@ -9,7 +9,7 @@ blocks (RFC 0014 §5).
 
 Formation runs the frozen native pipeline first, then the tfvars gate
 rejects any top-level block with `hcl.tfvars.block-not-allowed@1` and
-Recovered status (crates/consema-hcl/src/document.rs:46-116). The rejected
+Recovered status (consema-rs/consema-hcl/src/document.rs:46-116). The rejected
 block stays a native item of the Recovered document (RFC 0014 §3, §7):
 recovery retains every independently proven construct, and the tfvars
 restriction is a profile-level rule that does not break the native model's
@@ -20,7 +20,7 @@ The encoding contract is the frozen UTF-8-only source contract (RFC 0014
 `hcl.parse.byte-order-mark@1`, invalid UTF-8 is a fatal formation failure
 with `hcl.parse.invalid-utf8@1`, and a lone CR is Recovered with
 `hcl.parse.lone-cr@1`. The caller-side explicit selection surface admits
-UTF-8 only (crates/consema-hcl/src/lib.rs:120-164): any other explicit
+UTF-8 only (consema-rs/consema-hcl/src/lib.rs:120-164): any other explicit
 encoding is a source-contract conflict that fails fatally with
 `hcl.parse.encoding@1` before any byte is read.
 

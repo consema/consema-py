@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §4-§7 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:132-283):
+- RFC 0012 §4-§7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:132-283):
   the immutable Document retains prolog order, one document element, epilog
   order, and every exact source span; the native roles
   (XmlDocument/XmlDeclaration/XmlDoctype/XmlElement/XmlAttribute/
@@ -14,7 +14,7 @@ Authority:
   (Literal/CharacterReference/PredefinedEntityReference/
   GeneralEntityReference) with line-end-normalized semantic content;
   adjacent Text occurrences are never merged across markup boundaries.
-- The record shapes transcribe crates/consema-xml/src/document.rs:96-407
+- The record shapes transcribe consema-rs/consema-xml/src/document.rs:96-407
   (QNameFacts:96-120, ReferenceFragment:135-172, XmlNamespaceBindingData:
   174-187, XmlAttributeData:189-211, XmlTextData:213-222, XmlCdataData:
   224-235, XmlCommentData:237-248, XmlPiData:250-263, XmlErrorRegionData:
@@ -27,7 +27,7 @@ Authority:
 - Snapshot-bound identity roles are the closed consema.document NodeRole
   vocabulary (document/structural.py:132-144).
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ from consema.xml.namespaces import ExpandedName, NamespaceError, NamespaceScope,
 
 
 class XmlProfile(enum.Enum):
-    """Frozen XML formation profiles (crates/consema-xml/src/lib.rs:54-67)."""
+    """Frozen XML formation profiles (consema-rs/consema-xml/src/lib.rs:54-67)."""
 
     SAFE_V1 = "xml.1.0-safe@1"
 

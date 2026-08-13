@@ -2,18 +2,18 @@
 
 Authority:
 
-- RFC 0012 §11 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:376-387) freezes
+- RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:376-387) freezes
   the eight operation ids (xml.edit.replace-text@1, insert-attribute@1,
   remove-attribute@1, rename-attribute@1, set-attribute-value@1,
   insert-element@1, remove-element@1, rename-element@1).
-- The exact descriptors transcribe crates/consema-xml/src/
+- The exact descriptors transcribe consema-rs/consema-xml/src/
   operation_registry.rs:16-89 (ids, target roles xml.text@1 /
   xml.element@1 / xml.attribute@1, argument kinds String and Placement,
   and the Support classification); the structural surface test
   operation_registry.rs:100-124 pins the frozen eight-operation surface.
 - The argument-kind spellings follow consema-document
   operation_registry.rs (OperationArgumentKind) and are cross-checked by
-  go/xml operation_test.go.
+  consema-go/go/xml operation_test.go.
 """
 
 from __future__ import annotations

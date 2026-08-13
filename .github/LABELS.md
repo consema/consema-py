@@ -20,8 +20,8 @@ complements the human-chosen `kind:` label.
 | `kind: release` | `fbca04` | Release preparation / version bump                                 |
 | `area: core`    | `d93f0b` | Implementation / authoritative content (repo source tree)          |
 | `area: ci`      | `bfd4f2` | CI / tooling: `.github/**`, `scripts/**`                           |
-| `area: docs`    | `c2e0c6` | Documentation: `*.md`, `docs/**`                                   |
-| `needs-info`    | `fbca04` | Issues awaiting information: the stale workflow (`only-labels: needs-info`) target |
+| `area: docs`    | `c2e0c6` | Documentation: `*.md`                                             |
+| `needs-info`    | `1d76db` | Issues awaiting information: the stale workflow (`only-labels: needs-info`) target |
 
 Create the labels in a fresh checkout (or any new repository copy) with:
 
@@ -34,7 +34,7 @@ gh label create "kind: release" --color fbca04
 gh label create "area: core" --color d93f0b
 gh label create "area: ci" --color bfd4f2
 gh label create "area: docs" --color c2e0c6
-gh label create "needs-info" --color fbca04 --description "等待更多信息"
+gh label create "needs-info" --color 1d76db --description "等待更多信息"
 ```
 
 The default GitHub issue labels (bug, enhancement, documentation, ...) stay

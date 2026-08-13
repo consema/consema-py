@@ -7,26 +7,26 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   round-trips lines 23-52, encoding-conflict / unsupported-bom /
   invalid-sequence cases lines 53-82, decoded-location cases lines 83-100,
   limit cases lines 155-172.
-- RFC 0003 (docs/rfcs/0003-source-syntax-query-and-patch-v1.md): content
+- RFC 0003 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md): content
   digest §3 lines 45-62; closed v1 encoding IDs §4.1 lines 66-77; resolution
   inputs and priority §4.2 lines 79-107; decoding rejections §4.3 lines
   109-122; raw spans and decoded boundaries §5 lines 124-141;
   core.source-snapshot@1 exact fields §6 lines 143-160; resource behavior
   §12 lines 311-317.
-- crates/consema-document/src/source.rs — byte/registry arbitration only:
+- consema-rs/consema-document/src/source.rs — byte/registry arbitration only:
   SourceEncoding wire ids source.rs:141-150; WindowsCodePage registry
   source.rs:57-119; BOM detection source.rs:784-804; resolution priority
   source.rs:727-782; UTF-16 decode source.rs:806-869; Latin-1 decode
   source.rs:880-894; code-page decode source.rs:901-992; SourceLimits
   defaults source.rs:401-409; decoded-boundary conversion source.rs:622-665,
   1090-1157.
-- Error codes: crates/consema-protocol/src/error_registry.rs
+- Error codes: consema-rs/consema-protocol/src/error_registry.rs
   (core.source.invalid-utf8@1:207, core.source.encoding-conflict@1:366,
   core.source.invalid-sequence@1:372, core.source.unsupported-bom@1:405,
   core.source.resource-limit@1:399, and the v6 additions
   core.source.code-page-required@1:967, core.source.unsupported-code-page@1:973).
 
-go/document is a cross-reference only; no code structure is copied.
+consema-go/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -40,15 +40,15 @@ from dataclasses import dataclass, field, replace
 from consema.document.ids import ContentDigest
 from consema.document.structural import LocationError, LocationErrorKind
 
-# CHECKPOINT_STRIDE, crates/consema-document/src/source.rs:13
+# CHECKPOINT_STRIDE, consema-rs/consema-document/src/source.rs:13
 _CHECKPOINT_STRIDE = 256
 
-# Source limits defaults, crates/consema-document/src/source.rs:401-409
+# Source limits defaults, consema-rs/consema-document/src/source.rs:401-409
 _DEFAULT_MAX_RAW_BYTES = 64 * 1024 * 1024
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
 _DEFAULT_MAX_DECODED_SCALARS = 64 * 1024 * 1024
 
-# Frozen Windows code-page registry, crates/consema-document/src/source.rs:63-68
+# Frozen Windows code-page registry, consema-rs/consema-document/src/source.rs:63-68
 _FROZEN_CODE_PAGES = frozenset((874, 932, 936, 949, 950) + tuple(range(1250, 1259)) + (65001,))
 
 # Python stdlib codec name per frozen code page (zero-dependency bridge; the
@@ -87,7 +87,7 @@ class SourceEncodingKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class WindowsCodePage:
     """One deterministic Windows code page admitted by source contract v2
-    (crates/consema-document/src/source.rs:57-119).
+    (consema-rs/consema-document/src/source.rs:57-119).
 
     Only the frozen set {874, 932, 936, 949, 950, 1250-1258, 65001} is
     published (source.rs:63-68). Windows code pages are never resolved from
@@ -125,7 +125,7 @@ class WindowsCodePage:
 @dataclass(frozen=True, slots=True)
 class SourceEncoding:
     """Closed source encoding set supported by source contracts v1 and v2
-    (crates/consema-document/src/source.rs:121-155).
+    (consema-rs/consema-document/src/source.rs:121-155).
 
     Wire identifiers match the vector suite's ``selected`` values exactly
     (conformance/vectors/source-v1.json lines 27, 33, 39, 45, 51):
@@ -180,10 +180,10 @@ class SourceEncoding:
 
 class BomPolicy(enum.Enum):
     """Whether marker-shaped leading bytes participate in BOM resolution
-    (crates/consema-document/src/source.rs:158-164).
+    (consema-rs/consema-document/src/source.rs:158-164).
 
     Wire spellings "DetectUnicode"/"TreatAsContent" are frozen by
-    crates/consema-protocol/src/source.rs:606-609.
+    consema-rs/consema-protocol/src/source.rs:606-609.
     """
 
     DETECT_UNICODE = "DetectUnicode"
@@ -216,10 +216,10 @@ class UnsupportedBomKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EncodingRequest:
     """Caller inputs to deterministic encoding resolution
-    (crates/consema-document/src/source.rs:190-260; RFC 0003 §4.2).
+    (consema-rs/consema-document/src/source.rs:190-260; RFC 0003 §4.2).
 
     Resolution priority is caller_override -> declaration -> bom ->
-    profile_default (RFC 0003 §4.2, docs/rfcs/0003-...:95-104); priority
+    profile_default (RFC 0003 §4.2, https://github.com/consema/consema/blob/main/docs/rfcs/0003-...:95-104); priority
     chooses only when higher evidence is absent. Any two present BOM,
     declaration, and caller facts that disagree produce an EncodingConflict;
     the resolver never guesses or silently lets priority hide a contradiction.
@@ -253,7 +253,7 @@ class EncodingRequest:
 @dataclass(frozen=True, slots=True)
 class EncodingFacts:
     """Complete, auditable result of encoding resolution
-    (crates/consema-document/src/source.rs:263-379; RFC 0003 §4.2).
+    (consema-rs/consema-document/src/source.rs:263-379; RFC 0003 §4.2).
 
     ``selected`` is the first present value in the frozen priority order
     caller_override -> declaration -> bom -> profile_default, and only when
@@ -334,7 +334,7 @@ class EncodingFacts:
 @dataclass(frozen=True, slots=True)
 class DecodedPosition:
     """One exact boundary expressed in every supported coordinate system
-    (crates/consema-document/src/source.rs:412-422; RFC 0003 §5).
+    (consema-rs/consema-document/src/source.rs:412-422; RFC 0003 §5).
 
     Only scalar boundaries are addressable; a raw offset inside a UTF-8 scalar
     or between a UTF-16 surrogate pair is rejected rather than rounded.
@@ -376,7 +376,7 @@ class DecodedOffset:
 
 class SourceErrorKind(enum.Enum):
     """Closed set of source construction failures
-    (crates/consema-document/src/source.rs:669-708)."""
+    (consema-rs/consema-document/src/source.rs:669-708)."""
 
     INVALID_UTF8 = "invalid-utf8"
     INVALID_SEQUENCE = "invalid-sequence"
@@ -399,11 +399,11 @@ _CODE_BY_SOURCE_KIND = {
 class SourceError(Exception):
     """Stable source construction failure with a frozen registered code.
 
-    Code mapping authority: crates/consema-protocol/src/error_registry.rs
+    Code mapping authority: consema-rs/consema-protocol/src/error_registry.rs
     (core.source.invalid-utf8@1:207, core.source.invalid-sequence@1:372,
     core.source.encoding-conflict@1:366, core.source.unsupported-bom@1:405,
     core.source.resource-limit@1:399); variant semantics per
-    crates/consema-document/src/source.rs:669-708. The OffsetOverflow variant
+    consema-rs/consema-document/src/source.rs:669-708. The OffsetOverflow variant
     shares the resource-limit code (FatalFormationFailure mapping,
     lib.rs:701-705). Error text is human presentation only (RFC 0016 §6).
     """
@@ -464,7 +464,7 @@ class SourceError(Exception):
 @dataclass(frozen=True, slots=True)
 class SourceLimits:
     """Resource bounds applied while a source snapshot is constructed
-    (crates/consema-document/src/source.rs:382-409; RFC 0003 §12).
+    (consema-rs/consema-document/src/source.rs:382-409; RFC 0003 §12).
 
     Limits apply before or during allocation; a limit failure returns no
     partial snapshot, mapping, or patch result.
@@ -505,7 +505,7 @@ class _DecodedIndex:
 @dataclass(frozen=True, slots=True)
 class SourceSnapshot:
     """Immutable ownership of exact raw bytes plus explicitly derived text facts
-    (crates/consema-document/src/source.rs:477-666; RFC 0003 §3/§4/§6).
+    (consema-rs/consema-document/src/source.rs:477-666; RFC 0003 §3/§4/§6).
 
     The raw bytes, the content digest, and the encoding facts are exact and
     immutable; the decoded text is derived once at construction. Binary
@@ -627,7 +627,7 @@ class SourceSnapshot:
         end of the source and resolves to the terminal DecodedPosition, the
         same way the Rust decoder accepts ``raw_byte <= bytes.len()``
         (source.rs:624-626) and the Go decoder accepts ``rawByte <= len``
-        (go/document/source.go:322-323); only offsets beyond the source are
+        (consema-go/go/document/source.go:322-323); only offsets beyond the source are
         out of bounds. Raises LocationError(OutOfBounds) for offsets beyond
         the source, LocationError(NotDecodedBoundary) for offsets inside one
         encoded scalar, and LocationError(NoDecodedText) for binary sources

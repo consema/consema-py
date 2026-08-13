@@ -2,7 +2,7 @@
 
 Importing this package registers every frozen suite definition with the
 runner's inventory (one module per vector suite, mirroring
-crates/consema-conformance/src/lib.rs:3-25 and go/conformance). The import
+consema-rs/consema-conformance/src/lib.rs:3-25 and consema-go/go/conformance). The import
 order registers the suites in fc-manifest inventory order.
 """
 

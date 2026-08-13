@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for arbitration):
 
-- RFC 0007 s10 (docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:260-301):
+- RFC 0007 s10 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:260-301):
   yaml.projection.best-exact-graph@1 preserves all standard resolved tags,
   arbitrary keys, association order, sharing, and cycles; provenance relates
   graph nodes and edges to every relevant source node/alias occurrence
@@ -10,7 +10,7 @@ Authority (language-neutral first; Rust only for arbitration):
   (RequireExactlyOneDocument, Reject sharing, Reject cycles,
   RequireKnownPortableTag, BestExactObjectOrEntryMapping, alias expansion
   disabled) freeze SharingPolicy/TagPolicy/MappingPolicy.
-- Policies and limits: crates/consema-yaml/src/projection.rs:18-62 (graph
+- Policies and limits: consema-rs/consema-yaml/src/projection.rs:18-62 (graph
   request/limits), 204-258 (SharingPolicy, TagPolicy, MappingPolicy,
   ValueProjectionLimits), 260-332 (ValueProjectionRequest), 334-420
   (Fidelity, events, report), 436-529 (failures and codes).

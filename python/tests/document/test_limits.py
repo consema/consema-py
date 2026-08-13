@@ -7,14 +7,14 @@ Golden cases transcribed from conformance/vectors/source-v1.json:
   max_decoded_utf8_bytes 1 -> core.source.resource-limit@1.
 
 Frozen defaults:
-- SourceLimits: crates/consema-document/src/source.rs:401-409 (64 MiB raw,
+- SourceLimits: consema-rs/consema-document/src/source.rs:401-409 (64 MiB raw,
   128 MiB decoded UTF-8, 64 MiB decoded scalars);
-- ParseLimits: crates/consema-document/src/lib.rs:629-639 (64 MiB source,
+- ParseLimits: consema-rs/consema-document/src/lib.rs:629-639 (64 MiB source,
   depth 256, 2M tokens, 1M nodes, 10k diagnostics) — also pinned by
-  RFC 0016 §5.1 and go/document/limits.go (cross-reference);
-- MaterializationLimits: crates/consema-document/src/materialization.rs:95-105
+  RFC 0016 §5.1 and consema-go/go/document/limits.go (cross-reference);
+- MaterializationLimits: consema-rs/consema-document/src/materialization.rs:95-105
   (1M input nodes, 64 MiB output, depth 256, 100k report, 2M provenance);
-- SourcePatchLimits: crates/consema-document/src/source_patch.rs:19-27
+- SourcePatchLimits: consema-rs/consema-document/src/source_patch.rs:19-27
   (100k replacements, 128 MiB patch bytes).
 """
 

@@ -2,8 +2,8 @@
 
 Authority: RFC 0015 §4 (the `core.cli-output@1` envelope), §8 (the
 `core.batch-plan@1` manifest), §9 (the `core.batch-result@1` manifest), and
-the record validation in crates/consema-protocol/src/cli.rs. Go
-(go/protocol/cli.go, cli_json.go) is a cross-reference only.
+the record validation in consema-rs/consema-protocol/src/cli.rs. Go
+(consema-go/go/protocol/cli.go, cli_json.go) is a cross-reference only.
 
 Every decoder re-validates the cross constraints (closed command and
 exit-class sets, payload-schema/command consistency, redaction consistency,
@@ -231,7 +231,7 @@ _WINDOWS_CODE_PAGES = (874, 932, 936, 949, 950, 1250, 1251, 1252, 1253, 1254, 12
 
 def windows_code_page_from_number(number: int) -> int | None:
     """Resolves one numeric code page only when source contract v2 publishes
-    it (the portable registry of crates/consema-document/src/source.rs:58-76)."""
+    it (the portable registry of consema-rs/consema-document/src/source.rs:58-76)."""
     if number in _WINDOWS_CODE_PAGES:
         return number
     return None
@@ -340,8 +340,8 @@ class SourcePatchLimits:
     """Resource bounds applied while decoding a source-patch record.
 
     Mirrors the document source-patch limits (RFC 0003 §12;
-    crates/consema-protocol/src/cli.rs from_value_with_registry patch_limits
-    parameter; go/protocol/records_source.go DefaultSourcePatchLimits):
+    consema-rs/consema-protocol/src/cli.rs from_value_with_registry patch_limits
+    parameter; consema-go/go/protocol/records_source.go DefaultSourcePatchLimits):
     ``max_replacements`` bounds the ordered replacement count and
     ``max_patch_bytes`` bounds the sum of original and replacement bytes.
     """
@@ -511,7 +511,7 @@ class BatchPlanMessage:
         """Strictly decodes the manifest and re-verifies every cross
         constraint under one explicit registry and one explicit source-patch
         replacement budget (cli.rs from_value_with_registry patch_limits
-        parameter; go/protocol/cli.go:480-486)."""
+        parameter; consema-go/go/protocol/cli.go:480-486)."""
         fields = schema_fields(
             value,
             "core.batch-plan@1",

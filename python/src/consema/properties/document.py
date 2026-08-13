@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: crates/consema-properties/src/lib.rs:
+- Document fields and accessors: consema-rs/consema-properties/src/lib.rs:
   590-775 - snapshot identity (lib.rs:613-615), exact source
   (lib.rs:618-621), render() (byte-for-byte source identity, lib.rs:624-628),
   format family java-properties@1 (lib.rs:631-633), profile (lib.rs:636-639),
@@ -16,7 +16,7 @@ Authority (Rust arbitration for the public surface):
   (lib.rs:344-370), PropertiesComment (lib.rs:372-405), PropertiesEscape
   (lib.rs:407-455), Property (lib.rs:457-546), PropertiesErrorLine
   (lib.rs:548-588); the seven native roles are frozen by RFC 0010 section 9
-  (docs/rfcs/0010-java-properties-profiles-v1.md:253-267) and the NodeRole
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:253-267) and the NodeRole
   vocabulary consema-document lib.rs:113-251.
 - Spans/nodes/identity: consema-document (Span lib.rs:295-342, NodeRef
   lib.rs:254-292, DocumentAuthority lib.rs:54-110) - reused as-is from

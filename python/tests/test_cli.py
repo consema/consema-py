@@ -46,6 +46,10 @@ from consema.protocol.registry_descriptor import ProfileReference
 
 LIMITS = ProtocolLimits()
 
+# The current product version (pyproject.toml version / __init__ __version__);
+# the CLI fixtures must match it so a version bump cannot drift the envelopes.
+PRODUCT_VERSION = "1.0.0-rc.1"
+
 
 def test_eleven_commands_and_their_payload_schemas():
     assert [command.value for command in CliCommand] == [
@@ -70,7 +74,7 @@ def test_redaction_invariant():
 
 
 def test_semantic_version_product_version():
-    for good in ("0.14.0", "1.2.3", "0.14.0-rc.1", "1.0.0-beta.2"):
+    for good in (PRODUCT_VERSION, "1.2.3", "0.14.0-rc.1", "1.0.0-beta.2"):
         CliOutputMessage(
             CliCommand.PLAN, ExitClass.SUCCESS, good,
             _plan_payload(), [], Redaction(False, 0),
@@ -88,7 +92,7 @@ def _plan_payload() -> PortableValue:
     return PortableValue.object(
         [
             ("schema", PortableValue.string("core.batch-plan@1")),
-            ("product_version", PortableValue.string("0.14.0")),
+            ("product_version", PortableValue.string(PRODUCT_VERSION)),
             ("command", PortableValue.string("plan")),
             ("files", PortableValue.sequence([])),
         ]
@@ -97,16 +101,16 @@ def _plan_payload() -> PortableValue:
 
 def test_cli_output_envelope_round_trip():
     message = CliOutputMessage(
-        CliCommand.PLAN, ExitClass.SUCCESS, "0.14.0", _plan_payload(), [], Redaction(False, 0)
+        CliCommand.PLAN, ExitClass.SUCCESS, PRODUCT_VERSION, _plan_payload(), [], Redaction(False, 0)
     )
     value = message.to_value()
     decoded = CliOutputMessage.from_value(value)
     assert decoded.command is CliCommand.PLAN
     assert decoded.exit_class is ExitClass.SUCCESS
-    assert decoded.product_version == "0.14.0"
+    assert decoded.product_version == PRODUCT_VERSION
     assert decoded.redaction == Redaction(False, 0)
     stream = message.to_json(LIMITS)
-    assert CliOutputMessage.from_json(stream, LIMITS).product_version == "0.14.0"
+    assert CliOutputMessage.from_json(stream, LIMITS).product_version == PRODUCT_VERSION
     pvce_stream = message.to_pvce(LIMITS)
     assert CliOutputMessage.from_pvce(pvce_stream, LIMITS).command is CliCommand.PLAN
 
@@ -115,7 +119,7 @@ def test_cli_output_rejects_payload_schema_mismatch():
     payload = PortableValue.object([("schema", PortableValue.string("cli.inspect@1"))])
     with pytest.raises(ProtocolError) as caught:
         CliOutputMessage(
-            CliCommand.PLAN, ExitClass.SUCCESS, "0.14.0", payload, [], Redaction(False, 0)
+            CliCommand.PLAN, ExitClass.SUCCESS, PRODUCT_VERSION, payload, [], Redaction(False, 0)
         )
     assert caught.value.kind is ProtocolErrorKind.SCHEMA_MISMATCH
     assert "not published by plan" in caught.value.detail
@@ -127,7 +131,7 @@ def test_cli_output_revalidates_diagnostics_against_registry():
     diagnostic = _make_diagnostic()
     with pytest.raises(ProtocolError) as caught:
         CliOutputMessage(
-            CliCommand.PLAN, ExitClass.SUCCESS, "0.14.0",
+            CliCommand.PLAN, ExitClass.SUCCESS, PRODUCT_VERSION,
             _plan_payload(), [diagnostic], Redaction(False, 0),
             registry=ErrorCodeRegistry(6),
         )
@@ -183,7 +187,7 @@ def test_batch_plan_planned_entry_constraints():
         failure_code=None,
         diagnostics=None,
     )
-    message = BatchPlanMessage("0.14.0", [planned])
+    message = BatchPlanMessage(PRODUCT_VERSION, [planned])
     value = message.to_value()
     decoded = BatchPlanMessage.from_value(value)
     assert decoded.files[0].path == "a.toml"
@@ -217,7 +221,7 @@ def test_batch_plan_failed_entry_constraints():
         failure_code="cli.limit.file-size@1",
         diagnostics=[_make_diagnostic()],
     )
-    message = BatchPlanMessage("0.14.0", [failed])
+    message = BatchPlanMessage(PRODUCT_VERSION, [failed])
     value = message.to_value()
     decoded = BatchPlanMessage.from_value(value)
     assert decoded.files[0].failure_code == "cli.limit.file-size@1"
@@ -267,7 +271,7 @@ def test_batch_plan_json_transport_carries_bytes_leaves():
         failure_code=None,
         diagnostics=None,
     )
-    message = BatchPlanMessage("0.14.0", [planned])
+    message = BatchPlanMessage(PRODUCT_VERSION, [planned])
     stream = message.to_json(LIMITS)
     decoded = BatchPlanMessage.from_json(stream, LIMITS)
     assert decoded.files[0].source_patch.replacements[0].original == b"1"
@@ -282,7 +286,7 @@ def test_batch_result_status_presence_rules():
         "a.toml", BatchResultFileStatus.COMPLETED, None, _digest_of(b"target"), False
     )
     pending = BatchResultFileEntry("b.toml", BatchResultFileStatus.PENDING, None, None, False)
-    message = BatchResultMessage("0.14.0", [completed, pending])
+    message = BatchResultMessage(PRODUCT_VERSION, [completed, pending])
     decoded = BatchResultMessage.from_value(message.to_value())
     assert decoded.files[0].status is BatchResultFileStatus.COMPLETED
     assert decoded.files[1].status is BatchResultFileStatus.PENDING
@@ -299,7 +303,7 @@ def test_batch_plan_json_command_must_be_plan():
     payload = PortableValue.object(
         [
             ("schema", PortableValue.string("core.batch-plan@1")),
-            ("product_version", PortableValue.string("0.14.0")),
+            ("product_version", PortableValue.string(PRODUCT_VERSION)),
             ("command", PortableValue.string("apply")),
             ("files", PortableValue.sequence([])),
         ]

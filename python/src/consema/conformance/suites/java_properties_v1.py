@@ -4,7 +4,7 @@ unpaired-surrogate recovery, native and lossless-syntax queries, exact
 EntryMapping and explicit Object projections, canonical Reader/Latin-1
 materialization, the five frozen edits with audit artifacts, resource limit
 matrices, and the frozen operation registry. Dispatch is by case id,
-mirroring go/conformance/java_properties_v1.go.
+mirroring consema-go/go/conformance/java_properties_v1.go.
 """
 
 from __future__ import annotations

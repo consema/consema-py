@@ -1,6 +1,6 @@
 # Changelog
 
-Consema 遵循 Semantic Versioning。本仓变更记录以规范仓 CHANGELOG 为权威；完整历史与跨语言时间线见 github.com/consema/consema 的 docs/CHANGELOG.md。
+Consema 遵循 Semantic Versioning。本仓变更记录以规范仓 CHANGELOG 为权威；完整历史与跨语言时间线见 github.com/consema/consema 的 https://github.com/consema/consema/blob/main/CHANGELOG.md。
 
 ## 1.0.0-rc.1（2026-08-13）
 
@@ -13,5 +13,5 @@ Consema 遵循 Semantic Versioning。本仓变更记录以规范仓 CHANGELOG �
 - L5 差分 harness（2026-08-12 · 2f981df，母仓 consema commit）：byte-parity / normalized differential / protocol-exchange 跨语言差分 + 五语言 CI workflow；差分发现的 wire-codec 缺陷随本 commit 修复；
 - 首跑缺陷修复（2026-08-12 · dbba9a4，母仓 consema commit）：python 测试夹具路径仓库相对化；
 - conformance 519/519（18 套 / 聚合 digest cfd6e296 共钉）+ capability parity；
-- CI（ci-python.yml）：editable install + pytest + 零依赖门禁、conformance runner 门禁、Python-Rust 差分门禁；
+- CI（ci-python.yml，9 job）：python-gates（editable install + pytest + 零依赖门禁，3 版本矩阵）、python-conformance（runner 519/519）、python-differential（Python-Rust 差分三 harness）、pip-audit（OSV advisory DB 常设审计）、coverage、check-version-consistency、examples、python-package 与聚合 check 门禁；
 - 完整历史与跨语言时间线见规范仓 CHANGELOG。

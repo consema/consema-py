@@ -1,11 +1,11 @@
 """One immutable document transition: ordered source edits and node mappings.
 
 Authority:
-- crates/consema-document/src/lib.rs:800-900 — SourceEdit (old_span,
+- consema-rs/consema-document/src/lib.rs:800-900 — SourceEdit (old_span,
   new_span, replacement), NodeMappingStatus (closed six-value vocabulary),
   NodeMapping (old, new, status, reason), ChangeSet (old_snapshot,
   new_snapshot, source_edits, node_mappings, diagnostics).
-- RFC 0004 §13 (docs/rfcs/0004-materialization-conversion-and-structural-
+- RFC 0004 §13 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
   edit-v1.md:308-336) — one immutable transaction binds one base
   SnapshotIdentity; every operation is fully validated before any output is
   published; validation, source-edit preparation, output allocation, reparse,

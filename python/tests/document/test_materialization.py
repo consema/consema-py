@@ -1,9 +1,9 @@
 """MaterializationRequest, limits, provenance, and failure-code tests.
 
-Contract: RFC 0004 §3/§7/§8 (docs/rfcs/0004-materialization-conversion-and-
+Contract: RFC 0004 §3/§7/§8 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
 structural-edit-v1.md:56-94, 170-217); arbitration
-crates/consema-document/src/materialization.rs:95-203, 282-391; codes
-crates/consema-protocol/src/error_registry.rs:556-604.
+consema-rs/consema-document/src/materialization.rs:95-203, 282-391; codes
+consema-rs/consema-protocol/src/error_registry.rs:556-604.
 """
 
 from __future__ import annotations

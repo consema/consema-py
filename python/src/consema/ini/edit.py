@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and policy model: crates/consema-ini/src/edit.rs:15-56
+- Operation and policy model: consema-rs/consema-ini/src/edit.rs:15-56
   (RepresentationPolicy, ValueReplacement), 57-107 (EditOperation), 108-243
   (EditTransaction/Builder).
 - Failure algebra and codes: edit.rs:260-303 (EditFailure), 1722-1780
@@ -33,7 +33,7 @@ Authority (Rust arbitration for exact byte semantics):
   conformance/vectors/ini-v1.json:89-106 (edit.all-eight-operations,
   edit.dry-run-patch-proof-and-atomic-failure).
 
-Frozen operation ids (crates/consema-ini/src/operation_registry.rs:18-79):
+Frozen operation ids (consema-rs/consema-ini/src/operation_registry.rs:18-79):
 ini.edit.insert-section@1, remove-section@1, rename-section@1,
 insert-entry@1, remove-entry@1, rename-entry@1,
 replace-semantic-value@1, replace-literal-value@1.
@@ -584,7 +584,7 @@ class _EditPlanner:
     ) -> None:
         """Strict-profile entry collision (edit.rs:1042-1069; Windows keeps
         ordered case-equivalent occurrences, RFC 0009 §6,
-        docs/rfcs/0009-...:207-213)."""
+        https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:207-213)."""
         if self.document.profile is IniProfile.WINDOWS_V1:
             return
         comparison = (
@@ -851,7 +851,7 @@ class _EditPlanner:
 
 def validate_dependencies(document: IniDocument, transaction: EditTransaction) -> None:
     """Cross-operation conflicts before any patch exists (edit.rs:863-920;
-    RFC 0009 §12, docs/rfcs/0009-...:468-472)."""
+    RFC 0009 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:468-472)."""
     removed_sections = {
         operation.target
         for operation in transaction.operations

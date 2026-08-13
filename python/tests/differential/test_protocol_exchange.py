@@ -1,6 +1,6 @@
 """Tests of the Python protocol-exchange harness
 (python/src/consema/differential/protocol_exchange.py;
-docs/five-language-ci-design.md §3.4).
+https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4).
 
 TestCaseFileIntegrity always runs and guards the checked-in case set (file
 level: manifest id, exact count, unique ids, known records, per-record

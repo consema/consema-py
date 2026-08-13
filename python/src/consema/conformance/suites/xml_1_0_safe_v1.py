@@ -2,7 +2,7 @@
 cases): XML 1.0 safe-profile formation with recovery, lossless syntax query,
 native semantic query, element-tree projection, canonical materialization,
 and the eight structural edits. Dispatch is by the ``capability`` field,
-mirroring go/conformance/xml_1_0_safe_v1.go.
+mirroring consema-go/go/conformance/xml_1_0_safe_v1.go.
 """
 
 from __future__ import annotations

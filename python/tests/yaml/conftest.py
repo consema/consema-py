@@ -3,7 +3,7 @@
 The tests are intent documents: every golden value is transcribed from
 conformance/vectors/yaml-v1.json with the case id cited in the test
 docstring. The toolchain runs pytest after the L0/L1 skeleton gates
-(docs/multi-language-implementation-plan.md s3/s7).
+(https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md s3/s7).
 """
 
 from __future__ import annotations

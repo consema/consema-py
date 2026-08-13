@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0004 §10 (docs/rfcs/0004-materialization-conversion-and-structural-
+- RFC 0004 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
   edit-v1.md:244-269) freezes the five structural operation ids
   (toml.edit.insert-entry@1, remove-entry@1, rename-entry@1,
   insert-array-element@1, remove-array-element@1) and declares the two
@@ -10,7 +10,7 @@ Authority:
   replace-scalar-literal@1) through the registry as
   ExistingTypedCapability.
 - The exact seven descriptors transcribe
-  crates/consema-toml/src/operation_registry.rs:16-74 (ids, target roles
+  consema-rs/consema-toml/src/operation_registry.rs:16-74 (ids, target roles
   toml.table-item@1 / toml.entry@1 / toml.array-item@1 /
   toml.array-element@1 / toml.scalar-item@1, argument kinds String /
   PortableValue / Placement / RepresentationPolicy / ExactBytes, and the
@@ -18,7 +18,7 @@ Authority:
   structural surface test operation_registry.rs:94-119 pins the five
   Supported operations and the total count of seven.
 - The argument-kind spellings follow consema-document operation_registry.rs
-  (OperationArgumentKind) and are cross-checked by go/toml
+  (OperationArgumentKind) and are cross-checked by consema-go/go/toml
   operation_registry.go:24-37.
 """
 
@@ -125,7 +125,7 @@ def _descriptor(
 
 # The frozen seven descriptors, operation_registry.rs:16-74, in the
 # canonical emission order: FormatOperationRegistry sorts by operation id
-# (crates/consema-document/src/operation_registry.rs:234), so the
+# (consema-rs/consema-document/src/operation_registry.rs:234), so the
 # published surface is alphabetical (insert-array-element, insert-entry,
 # remove-array-element, remove-entry, rename-entry, replace-scalar-literal,
 # replace-scalar-semantic).

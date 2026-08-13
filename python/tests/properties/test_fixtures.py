@@ -14,7 +14,7 @@ the transport facts:
 - ``latin1-resource.properties.hex`` — non-UTF-8 Latin-1 resource bytes
   under the Latin-1 profile.
 
-Facts (property counts, scalar-projectable) mirror crates/consema-
+Facts (property counts, scalar-projectable) mirror consema-rs/consema-
 conformance/tests/line_format_fixtures.rs:115-179. When the shared tree
 is not reachable the tests skip — the same pattern as
 tests/toml/conftest.py. Fixtures are read-only; tests never modify them.

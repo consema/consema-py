@@ -2,7 +2,7 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (all registry spellings are
-transcribed from crates/consema-protocol/src/error_registry.rs; the format
+transcribed from consema-rs/consema-protocol/src/error_registry.rs; the format
 failure enums and their code mappings are the Rust family's StableFailure
 impls):
 
@@ -17,13 +17,13 @@ impls):
   (json.projection.incomplete-document@1).
 - Fatal formation codes: core.parse.resource-limit@1 error_registry.rs:39;
   core.source.invalid-utf8@1 error_registry.rs:207.
-- Projection failure code mapping: crates/consema-json/src/projection.rs:754-765.
-- Edit failure code mapping: crates/consema-json/src/edit.rs:1299-1323
-  (RFC 0004 §17, docs/rfcs/0004-...:386-423).
+- Projection failure code mapping: consema-rs/consema-json/src/projection.rs:754-765.
+- Edit failure code mapping: consema-rs/consema-json/src/edit.rs:1299-1323
+  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:386-423).
 - Query failures reuse the common core.query.*@1 codes (error_registry.rs:108-118)
   through consema.protocol.query.QueryFailure — no new type is needed.
 - Diagnostic ordering: Diagnostic::sort_deterministically,
-  crates/consema-core/src/diagnostic.rs:107-123 (primary start, category,
+  consema-rs/consema-core/src/diagnostic.rs:107-123 (primary start, category,
   code, occurrence; missing primary sorts last).
 
 Design: the JSON family raises typed exceptions whose stable ``code`` is the

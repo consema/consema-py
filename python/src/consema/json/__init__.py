@@ -1,7 +1,6 @@
 """consema.json — the JSON family (JSON/JSONC/JSON5), L1 milestone.
 
-The language-neutral JSON family contracts (mirror of the Go G1.2
-milestone): frozen profiles (json.strict@1, jsonc.bounded@1,
+The language-neutral JSON family contracts (L1 milestone): frozen profiles (json.strict@1, jsonc.bounded@1,
 json5.standard@1), byte-exact formation with Complete/Recovered status,
 versioned native and lossless syntax query domains, exact-first core
 projection, canonical materialization, dialect conversion via explicit
@@ -16,11 +15,11 @@ arbitration):
   "consema.json-family.conformance@2") and v1.json json cases (lines
   41-183) — the machine-readable golden surface;
 - RFC 0004 (materialization/conversion/structural edit,
-  docs/rfcs/0004-...), RFC 0005 (JSON family production and JSON5 v1,
-  docs/rfcs/0005-...), RFC 0016 §5-§6 (API shapes and error
-  classification, docs/rfcs/0016-...);
-- crates/consema-json/src/*.rs for byte/registry arbitration only;
-- go/json as a cross-reference only (never a template).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0004-...), RFC 0005 (JSON family production and JSON5 v1,
+  https://github.com/consema/consema/blob/main/docs/rfcs/0005-...), RFC 0016 §5-§6 (API shapes and error
+  classification, https://github.com/consema/consema/blob/main/docs/rfcs/0016-...);
+- consema-rs/consema-json/src/*.rs for byte/registry arbitration only;
+- consema-go/go/json as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and

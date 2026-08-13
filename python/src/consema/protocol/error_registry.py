@@ -1,7 +1,7 @@
 """The stable public diagnostic and failure code registry.
 
 All records are transcribed VERBATIM from
-crates/consema-protocol/src/error_registry.rs, the registry arbitration
+consema-rs/consema-protocol/src/error_registry.rs, the registry arbitration
 source: ERROR_CODES_V1 (error_registry.rs:31-362, 55 codes), the per-version
 new-code lists (SOURCE_CODES_V2_BEFORE_UTF8/AFTER_UTF8 at 364-410, 7 codes;
 NEW_CODES_V3 at 446-615, 28; NEW_CODES_V4 at 647-660, 2; NEW_CODES_V5 at
@@ -9,7 +9,7 @@ NEW_CODES_V3 at 446-615, 28; NEW_CODES_V4 at 647-660, 2; NEW_CODES_V5 at
 Versions v2..v7 are the sorted merges of the previous version plus the
 version's new codes, exactly as the Rust const-merge builders produce
 (error_registry.rs:412-1367); the counts are 55/62/90/92/132/166/187
-(error_registry.rs:1717-1723). Go (go/protocol/error_registry.go) is a
+(error_registry.rs:1717-1723). Go (consema-go/go/protocol/error_registry.go) is a
 cross-reference only.
 
 The manifest form (`core.error-code-registry@1`, fields code / category /

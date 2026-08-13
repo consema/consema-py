@@ -2,7 +2,7 @@
 
 Same pattern as tests/document/conftest.py and tests/json/conftest.py; lets
 pytest import ``consema`` from a checkout before the toolchain/install gate
-(docs/multi-language-implementation-plan.md section 3, section 7) is
+(https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md section 3, section 7) is
 closed. It touches no project files.
 """
 

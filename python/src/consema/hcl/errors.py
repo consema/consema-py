@@ -5,10 +5,10 @@ The `hcl.*@1` diagnostic codes are registered by RFC 0014 §11 and are part
 of the `hcl.native@1` and `hcl.tfvars@1` contracts; they deliberately do not
 enter the consema-protocol core error registry, which covers only
 core/protocol and line-format contract codes (RFC 0014 §11,
-docs/rfcs/0014-...:696-715). The spelling authority for every code below is
+https://github.com/consema/consema/blob/main/docs/rfcs/0014-...:696-715). The spelling authority for every code below is
 the vector suite plus the Rust family's StableFailure impls:
 
-- Parser recovery codes: crates/consema-hcl/src/parser.rs:77-98
+- Parser recovery codes: consema-rs/consema-hcl/src/parser.rs:77-98
   (item/attribute/block/label/expression/directive/newline/separator/
   duplicate-attribute) and lexer.rs:457-487 (byte-order-mark, lone-cr,
   invalid-utf8, identifier, invalid-number, invalid-character,
@@ -33,9 +33,9 @@ the vector suite plus the Rust family's StableFailure impls:
 - Materialization codes: the suite maps the shared MaterializationFailure
   to hcl.materialization.unrepresentable@1 /
   hcl.materialization.resource-limit@1 and the InvalidRequest spelling
-  ``"invalid-record"`` (crates/consema-conformance/src/hcl_v1.rs:1611-1616).
+  ``"invalid-record"`` (consema-rs/consema-conformance/src/hcl_v1.rs:1611-1616).
 - Query failures: the suite maps the shared QueryFailure to the
-  hcl.query.*@1 spellings (crates/consema-conformance/src/hcl_v1.rs:658-668;
+  hcl.query.*@1 spellings (consema-rs/consema-conformance/src/hcl_v1.rs:658-668;
   hcl.query.type-mismatch@1 for RequiredTypeMismatch,
   hcl.query.non-literal@1 for TargetUnavailable).
 
@@ -296,7 +296,7 @@ class HclMaterializationFailureKind(enum.Enum):
     hcl.materialization.unrepresentable@1, ResourceLimit to
     hcl.materialization.resource-limit@1, and InvalidRequest to the
     published spelling ``"invalid-record"``
-    (crates/consema-conformance/src/hcl_v1.rs:1611-1616; RFC 0014 §9).
+    (consema-rs/consema-conformance/src/hcl_v1.rs:1611-1616; RFC 0014 §9).
     """
 
     UNREPRESENTABLE = "Unrepresentable"

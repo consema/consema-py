@@ -13,7 +13,7 @@ transport facts:
 - ``legacy-mixed-newline.ini.hex`` — deliberately mixed LF/CRLF
   terminators under the portable profile.
 
-Facts (sections/entries) mirror crates/consema-conformance/tests/
+Facts (sections/entries) mirror consema-rs/consema-conformance/tests/
 line_format_fixtures.rs:48-99. When the shared tree is not reachable the
 tests skip — the same pattern as tests/toml/conftest.py. Fixtures are
 read-only; tests never modify them.

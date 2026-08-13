@@ -3,7 +3,7 @@ and binary formation with recovery, the three query domains, value-tree and
 require-object projection, both canonical materializations, cross-
 representation conversion, the six structural edits, and the declared
 binary-limit matrix. Dispatch is by the ``capability`` field, mirroring
-go/conformance/plist_v1.go.
+consema-go/go/conformance/plist_v1.go.
 """
 
 from __future__ import annotations
@@ -1652,7 +1652,7 @@ def _newline_none():
 
 def _materialization_failure_code(failure) -> str:
     """The stable vector spelling of one materialization failure (mirrors
-    go/plist/materialization.go Code(): the plist family failure codes are
+    consema-go/go/plist/materialization.go Code(): the plist family failure codes are
     plist.materialization.*@1; the shared document layer maps them onto the
     core.materialization.*@1 codes, so the runner re-derives the plist
     spellings)."""

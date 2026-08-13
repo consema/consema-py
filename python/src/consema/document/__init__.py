@@ -1,11 +1,11 @@
-"""consema.document — the document domain (L1 milestone, mirror of Go G1.1).
+"""consema.document — the document domain (L1 milestone).
 
 Immutable source snapshots (raw bytes + encoding facts + content digest),
 structural locations (Span over raw bytes, snapshot-bound NodeRef), formation
 status, parse limits, the common materialization request, verifiable
 byte-level source patches, untouched-byte proofs, and dry-run edit plans.
 
-Package topology mirrors RFC 0016 §3.2 (docs/rfcs/0016-go-api-mapping-v1.md:
+Package topology mirrors RFC 0016 §3.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:
 99-109): ``consema/document`` maps to the Rust ``consema-document`` crate.
 
 Authority (language-neutral first; Rust only for byte/registry arbitration):
@@ -14,8 +14,8 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   location, binary coverage, patch, limits capabilities);
 - RFC 0003 (source facts / snapshot / patch), RFC 0004 (materialization /
   edit / proof / plan), RFC 0016 §5-§6 (API shapes, error classification);
-- crates/consema-document/src/*.rs for byte/registry arbitration only;
-- go/document as a cross-reference only (never a template).
+- consema-rs/consema-document/src/*.rs for byte/registry arbitration only;
+- consema-go/go/document as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and

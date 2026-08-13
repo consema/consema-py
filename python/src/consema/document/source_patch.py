@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for byte/registry arbitration):
 
-- RFC 0003 §10 (docs/rfcs/0003-source-syntax-query-and-patch-v1.md:250-291):
+- RFC 0003 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:250-291):
   the exact core.source-patch@1 fields (base_digest, target_digest,
   encoding, ordered replacements, metadata) and the application rules —
   old ranges are half-open, ordered, and non-overlapping; `original` exactly
@@ -22,12 +22,12 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   from the exact old SourceSnapshot, prepared non-overlapping source edits,
   the exact new SourceSnapshot, and operation metadata; the derived patch
   must reapply to the old snapshot and reproduce the exact new digest.
-- crates/consema-document/src/source_patch.rs — arbitration: SourcePatchLimits
+- consema-rs/consema-document/src/source_patch.rs — arbitration: SourcePatchLimits
   defaults source_patch.rs:19-27; SourceReplacement source_patch.rs:30-108;
   SourcePatch::new/create/apply/derive source_patch.rs:143-280; error-to-code
   mapping source_patch.rs:434-458; replacement validation source_patch.rs:469-
   512; application source_patch.rs:514-554.
-- Error codes: crates/consema-protocol/src/error_registry.rs
+- Error codes: consema-rs/consema-protocol/src/error_registry.rs
   (core.source.patch-base-mismatch@1:381, patch-original-mismatch@1:387,
   patch-target-mismatch@1:393, resource-limit@1:399, encoding-conflict@1:366,
   unsupported-bom@1:405, invalid-sequence@1:372; structural patch defects map
@@ -37,7 +37,7 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   reject-overlap / reject-target-mismatch / reject-encoding-change) and
   lines 167-172 (source.resource.patch-count-limit).
 
-go/document is a cross-reference only; no code structure is copied.
+consema-go/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -56,7 +56,7 @@ from consema.document.source import (
     SourceSnapshot,
 )
 
-# Frozen defaults, crates/consema-document/src/source_patch.rs:19-27
+# Frozen defaults, consema-rs/consema-document/src/source_patch.rs:19-27
 _DEFAULT_MAX_REPLACEMENTS = 100_000
 _DEFAULT_MAX_PATCH_BYTES = 128 * 1024 * 1024
 
@@ -489,7 +489,7 @@ def _snapshot_from_bytes(
 
 def _resolution_request(facts: EncodingFacts) -> EncodingRequest:
     """Rebuilds the EncodingRequest from recorded facts (source.rs:371-378;
-    crates/consema-protocol/src/source.rs:791-800)."""
+    consema-rs/consema-protocol/src/source.rs:791-800)."""
     request = EncodingRequest.new(facts.profile_default).with_bom_policy(facts.bom_policy)
     if facts.declaration is not None:
         request = request.with_declaration(facts.declaration)

@@ -2,16 +2,16 @@
 
 Authority (language-neutral first; Rust only for arbitration):
 
-- RFC 0016 §5.1 (docs/rfcs/0016-go-api-mapping-v1.md:171-176): FormStatus is
+- RFC 0016 §5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:171-176): FormStatus is
   a closed two-value enum (Complete, Recovered) — the 0.13.0 F10 disposition.
-- RFC 0003 §5 (docs/rfcs/0003-source-syntax-query-and-patch-v1.md:124-141):
+- RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:124-141):
   Span is the half-open [start_byte, end_byte) range over original raw bytes;
   §7 (lines 162-171): text Documents retain exhaustive ordered
   Token/Trivia/ErrorRegion coverage; binary Documents use a
   BinaryStructuralIndex with snapshot-bound raw Span, process-local NodeRef,
   and non-empty format-owned region kind; no-gap/no-overlap/final-length
   invariant; empty source has an empty valid index.
-- crates/consema-document/src/lib.rs — arbitration: SnapshotIdentity
+- consema-rs/consema-document/src/lib.rs — arbitration: SnapshotIdentity
   lib.rs:41-51; DocumentAuthority lib.rs:54-110; the closed NodeRole
   vocabulary lib.rs:113-251; NodeRef lib.rs:254-292; Span lib.rs:295-342;
   AssociationPlacement lib.rs:262-272; FormationStatus lib.rs:405-411;
@@ -25,7 +25,7 @@ coverage`` (lines 107-112), ``source.binary.reject-gap`` (lines 113-118) —
 their expected values reference the LocationError variant names
 ("NoDecodedText", "IncompleteStructuralCoverage").
 
-go/document is a cross-reference only; no code structure is copied.
+consema-go/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ _SNAPSHOT_COUNTER = itertools.count(1)
 @dataclass(frozen=True, slots=True)
 class SnapshotIdentity:
     """Opaque identity of exactly one immutable document snapshot
-    (crates/consema-document/src/lib.rs:41-51; RFC 0003 §3, lines 60-62).
+    (consema-rs/consema-document/src/lib.rs:41-51; RFC 0003 §3, lines 60-62).
 
     A fresh opaque process-local identity for every formed Document; parsing
     the same bytes twice produces equal content digests and distinct snapshot
@@ -89,7 +89,7 @@ class DocumentAuthority:
 
 class NodeRole(enum.Enum):
     """Semantic role of a document structural identity
-    (crates/consema-document/src/lib.rs:113-251 — closed vocabulary,
+    (consema-rs/consema-document/src/lib.rs:113-251 — closed vocabulary,
     transcribed verbatim)."""
 
     SYNTAX_NODE = "SyntaxNode"

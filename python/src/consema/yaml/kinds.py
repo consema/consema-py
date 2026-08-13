@@ -3,10 +3,10 @@ scalar presentation styles, and resolved scalar categories.
 
 Authority (language-neutral first; Rust only for registry arbitration):
 
-- Profiles: RFC 0007 §1 (docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:14-33)
+- Profiles: RFC 0007 §1 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:14-33)
   — yaml.1.2-core@1 (YAML 1.2.2 presentation grammar + Core schema) and
   yaml.1.1-compat@1 (compatible presentation + frozen 1.1 scalar
-  resolution); the profile id table is crates/consema-yaml/src/lib.rs:241-257.
+  resolution); the profile id table is consema-rs/consema-yaml/src/lib.rs:241-257.
 - Syntax kinds: RFC 0007 §9 (lines 224-228: BOM, Directive,
   DocumentMarker, Indicator, Anchor, Alias, Tag, Scalar, Whitespace,
   Newline, Comment, ErrorRegion "with stable style subfacts"); the closed

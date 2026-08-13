@@ -14,11 +14,11 @@ arbitration):
 
 - conformance/vectors/yaml-v1.json (25 cases, suite
   "consema.yaml.conformance@1") - the machine-readable golden surface;
-- RFC 0007 (docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md) - the
+- RFC 0007 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md) - the
   YAML family contract; RFC 0004 (materialization/conversion/structural
   edit) and RFC 0006 (PortableGraph/PGCE) for the shared contracts;
-- crates/consema-yaml/src/*.rs for byte/registry arbitration only;
-- go/yaml as a cross-reference only (never a template).
+- consema-rs/consema-yaml/src/*.rs for byte/registry arbitration only;
+- consema-go/go/yaml as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and

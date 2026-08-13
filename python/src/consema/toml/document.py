@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0001 (docs/rfcs/0001-toml-1.0-profile.md) is the language-neutral
+- RFC 0001 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md) is the language-neutral
   contract: §2 (lines 17-49) freezes the four public roles (TomlItem,
   TomlEntry, TomlKey, TomlArrayElement), the closed native item set
   (String, Integer, Float, Boolean, OffsetDateTime, LocalDateTime,
@@ -13,12 +13,12 @@ Authority:
   fabricated range). §1 (line 12) and IMPLEMENTATION.md:102: TOML tables
   are not JSON objects; they meet only in explicit projection.
 - The entity spans transcribe the Rust entity builder
-  (crates/consema-toml/src/parser.rs:84-338): the root table spans the
+  (consema-rs/consema-toml/src/parser.rs:84-338): the root table spans the
   whole source; a table spans its header/body range; a key spans its key
   literal; an entry spans from the key start to the value end; an array
   element spans its value.
 - The temporal datum shape (TomlDate/TomlTime/TomlOffset/TomlDateTime)
-  transcribes crates/consema-toml/src/lib.rs:307-349.
+  transcribes consema-rs/consema-toml/src/lib.rs:307-349.
 - Formation status is always Complete for this family
   (lib.rs:175-179: TOML 0.2 forms only complete valid documents; RFC 0016
   §5.1 F10 — the closed two-value enum).
@@ -48,7 +48,7 @@ from consema.toml.syntax import TomlSyntaxKind
 
 
 class TomlProfile(enum.Enum):
-    """Frozen TOML language profiles (crates/consema-toml/src/lib.rs:34-39)."""
+    """Frozen TOML language profiles (consema-rs/consema-toml/src/lib.rs:34-39)."""
 
     TOML10_V1 = "toml.1.0@1"
 
@@ -58,7 +58,7 @@ class TomlProfile(enum.Enum):
 
 
 class TomlItemKind(enum.Enum):
-    """Native TOML item category (crates/consema-toml/src/lib.rs:272-305,
+    """Native TOML item category (consema-rs/consema-toml/src/lib.rs:272-305,
     transcribed verbatim)."""
 
     STRING = "String"

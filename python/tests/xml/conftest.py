@@ -47,7 +47,7 @@ def find_case(xml_vectors, case_id: str) -> dict:
 
 def form_document(case: dict) -> object:
     """Forms the document exactly as the shared runners do
-    (crates/consema-conformance/src/xml_v1.rs:133-170): the
+    (consema-rs/consema-conformance/src/xml_v1.rs:133-170): the
     ``utf16le-bom`` input encoding selects a BOM-prefixed UTF-16LE source,
     and the ``amplification_ratio`` / ``max_mixed_content_items`` inputs
     override the parse limits."""

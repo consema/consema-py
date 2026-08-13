@@ -10,7 +10,7 @@ formation failure or an atomic operation failure; a limit failure never
 masquerades as an empty body, truncated expression, shortened query,
 partial target, or successful edit (hard gate 4).
 
-Authority: crates/consema-hcl/src/lib.rs:166-234 (fields) and lib.rs:236-273
+Authority: consema-rs/consema-hcl/src/lib.rs:166-234 (fields) and lib.rs:236-273
 (the frozen R-3 default values, transcribed verbatim).
 """
 

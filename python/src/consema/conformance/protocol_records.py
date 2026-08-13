@@ -6,8 +6,8 @@ the CLI records, but not the v1 record codecs that the protocol vectors
 exercise (completion, cancellation-request, execution-policy,
 projection-request/report/result, provenance-map, query-result,
 change-set). This module transcribes those codecs from the Rust protocol
-crate (crates/consema-protocol/src/execution.rs, projection.rs, query.rs,
-change.rs — the registry/byte authority), with go/protocol (records_*.go)
+crate (consema-rs/consema-protocol/src/execution.rs, projection.rs, query.rs,
+change.rs — the registry/byte authority), with consema-go/go/protocol (records_*.go)
 as cross-reference only.
 
 Every record follows the fixed-field schema discipline of the semantic

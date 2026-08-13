@@ -1,5 +1,5 @@
 """consema.conformance — the Python conformance runner over the shared
-language-neutral vectors (RFC 0016 §7; docs/five-language-ci-design.md §2).
+language-neutral vectors (RFC 0016 §7; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §2).
 
 Imports the runner machinery and registers the frozen 18-suite inventory.
 The vector files in ``conformance/vectors`` are the authority; this package

@@ -6,15 +6,16 @@ param(
 )
 
 # ---------------------------------------------------------------------------
-# Cross-language protocol exchange verification for Python (milestone 0.19.0
-# G5.3; docs/five-language-ci-design.md §3.4; roadmap §22.2 line 1882
+# Cross-language protocol exchange verification for Python (L5
+# differential harness, multi-language-implementation-plan L5;
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4; roadmap §22.2 line 1883
 # "protocol cross-encode/decode 100%" extended to Python; the Go twin:
 # go-verify-protocol-exchange.ps1).
 #
 # Pipeline (Python never imports or calls Rust, RFC 0016 §1.1):
 #   1. builds the minimal Rust exchange example
 #      (consema-conformance/examples/emit_protocol_exchange.rs);
-#   2. emit mode: runs it over the checked-in case set
+#   2. emit mode: runs it over the provisioned case set
 #      (conformance/differential/protocol-exchange/cases.json, the shared
 #      single-authority case directory of the consema repository) into
 #      <OutDir> as one `<case-id>.json.hex`/`.pvce.hex`/`.error.txt` per
@@ -131,6 +132,12 @@ $logDir = Join-Path $env:TEMP 'consema-python-exchange'
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
 $stderrFile = Join-Path $logDir 'python-test.stderr.txt'
+# Windows PowerShell 5.1: with $ErrorActionPreference = 'Stop' a native
+# command writing to redirected stderr turns into a terminating
+# NativeCommandError before the diagnostics can be captured, so the EAP
+# is relaxed around this native call (pytest writes stderr on failure).
+$EAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 Push-Location $pythonDir
 try {
     & $python -m pytest tests\differential\test_protocol_exchange.py -v 1> $stdoutFile 2> $stderrFile
@@ -139,6 +146,7 @@ try {
 finally {
     Pop-Location
 }
+$ErrorActionPreference = $EAP
 Get-Content $stdoutFile | ForEach-Object { Write-Host $_ }
 if (Test-Path $stderrFile) {
     Get-Content $stderrFile | ForEach-Object { Write-Host $_ }
@@ -162,7 +170,14 @@ if ($testCode -ne 0) {
 Write-Host "[4/4] verify: running the Rust --verify pass against the Python encoder files ($pythonEvidenceDir)"
 $verifyLog = Join-Path $logDir 'rust-verify.stdout.txt'
 $verifyErr = Join-Path $logDir 'rust-verify.stderr.txt'
+# Windows PowerShell 5.1: with $ErrorActionPreference = 'Stop' a native
+# command writing to redirected stderr turns into a terminating
+# NativeCommandError before the diagnostics can be captured, so the EAP
+# is relaxed around this native call (the Rust emitter writes stderr).
+$EAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 & $example --verify $CaseFile $pythonEvidenceDir 1> $verifyLog 2> $verifyErr
+$ErrorActionPreference = $EAP
 $verifyCode = $LASTEXITCODE
 Get-Content $verifyLog | ForEach-Object { Write-Host $_ }
 if (Test-Path $verifyErr) {

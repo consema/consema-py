@@ -3,7 +3,7 @@
 
 Authority (Rust arbitration for the exact semantics):
 
-- Conversion algebra: crates/consema-plist/src/document.rs:224-312
+- Conversion algebra: consema-rs/consema-plist/src/document.rs:224-312
   (Document::convert_to: same-representation, recovered, and missing-native
   gates), 494-552 (convert_xml_to_binary: node/key/report budget checks,
   serialization, reparse closure with native-model equality, and the

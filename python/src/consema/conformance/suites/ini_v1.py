@@ -4,7 +4,7 @@ Python ConfigParser behaviors, recovery atomicity, native and syntax
 queries, exact and collapsed projections with provenance, canonical
 materialization, the eight frozen edits with audit artifacts, resource
 limit matrices, and the frozen operation registry. Dispatch is by case id,
-mirroring go/conformance/ini_v1.go.
+mirroring consema-go/go/conformance/ini_v1.go.
 """
 
 from __future__ import annotations

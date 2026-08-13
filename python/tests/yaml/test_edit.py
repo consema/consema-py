@@ -15,7 +15,7 @@ Cases covered with the vector case ids cited:
   yaml.edit.anchor-dependency@1 (only the deleted subtree is collected;
   alias edges are never crossed).
 - The eight frozen operation ids
-  (crates/consema-yaml/src/operation_registry.rs:16-82).
+  (consema-rs/consema-yaml/src/operation_registry.rs:16-82).
 
 Contract: RFC 0007 s12 (lines 355-398) — transactions are snapshot-bound
 and validate all operations before publishing a candidate; dry-run and

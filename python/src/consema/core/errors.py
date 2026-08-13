@@ -1,9 +1,9 @@
 """Typed PVCE/1 codec failures with frozen `core.pvce.*@1` codes.
 
-Authority: crates/consema-pvce/src/lib.rs:1062-1108 (the StableFailure
+Authority: consema-rs/consema-pvce/src/lib.rs:1062-1108 (the StableFailure
 diagnostic-code mapping); error registry arbitration: the same codes appear
-verbatim in the v1 registry of crates/consema-protocol/src/error_registry.rs.
-Go (go/core/errors.go) is a cross-reference only; the code set below is the
+verbatim in the v1 registry of consema-rs/consema-protocol/src/error_registry.rs.
+Go (consema-go/go/core/errors.go) is a cross-reference only; the code set below is the
 Rust decoder's full surface, including the two extension-related kinds
 (NestedExtendedValue, ExpectedCoreValue) that the Go fifteen-kind model
 cannot reach.

@@ -2,10 +2,10 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: crates/consema-json/src/query.rs:91-125
+- Domain binding and versioning: consema-rs/consema-json/src/query.rs:91-125
   (native) and 142-183 (syntax) — domains json.native-semantic-query@1/2
   and json.lossless-syntax-query@1/2; JSON5 documents require version 2
-  (query.rs:100-104, 151-155; RFC 0005 §7, docs/rfcs/0005-...:152-172).
+  (query.rs:100-104, 151-155; RFC 0005 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:152-172).
 - Operators: query.rs:307-356 (syntax: json.syntax-kind-is,
   json.syntax-text-equals, core.take, core.distinct-by-identity) and
   query.rs:358-477 (native: json.try-object-members, json.member-name-
@@ -17,7 +17,7 @@ Authority (Rust arbitration for the executor semantics):
 - Limits and cancellation: consema-core/src/query.rs:2967-2981 (QueryLimits
   defaults max_steps=100_000, max_results=100_000); the step accounting
   query.rs:204-213.
-- Failure codes: core.query.*@1 (crates/consema-protocol/src/
+- Failure codes: core.query.*@1 (consema-rs/consema-protocol/src/
   error_registry.rs:108-118) via consema.protocol.query.QueryFailure.
 
 The transferable query model (QueryDomain, QueryExpression, OperatorCall,

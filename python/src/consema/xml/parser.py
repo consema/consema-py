@@ -4,7 +4,7 @@ bounded entity expansion, recovery, and exhaustive piece coverage
 
 Authority:
 
-- RFC 0012 §2 (docs/rfcs/0012-xml-1.0-safe-profile-v1.md:46-82) — source
+- RFC 0012 §2 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:46-82) — source
   and encoding: UTF-8 (optional BOM) / UTF-16LE / UTF-16BE (required BOM);
   no-BOM defaults to UTF-8; the declaration uses version exactly ``1.0``
   and agrees with the selected encoding; raw CR/CRLF/LF spelling remains in
@@ -24,7 +24,7 @@ Authority:
 - RFC 0012 §7 (lines 258-283) — the v1 kind set with exhaustive raw-byte
   coverage; decoded tokenizer spans convert back to exact raw-byte spans.
 - The formation pipeline and every recovery code transcribe
-  crates/consema-xml/src/parser.rs (encoding request 56-80; profile
+  consema-rs/consema-xml/src/parser.rs (encoding request 56-80; profile
   validation 82-108; declaration 334-503; PI 505-579; comment 581-644;
   DOCTYPE 646-911; element/attribute 913-1305; text/CDATA 1307-1422;
   fragments and reference resolution 1460-1729; recovery 1731-1790;
@@ -34,7 +34,7 @@ Authority:
   (lines 428-434: they are RFC-registered and do not enter the
   consema-protocol core error registry).
 
-go/xml is a cross-reference only; no code structure is copied.
+consema-go/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ from consema.xml.kinds import XmlSyntaxKind
 from consema.xml.namespaces import NamespaceError, NamespaceScope
 
 # ---------------------------------------------------------------------------
-# Encoding selection (crates/consema-xml/src/lib.rs:69-79)
+# Encoding selection (consema-rs/consema-xml/src/lib.rs:69-79)
 # ---------------------------------------------------------------------------
 
 
@@ -135,7 +135,7 @@ class XmlEncodingSelection:
 
 
 # ---------------------------------------------------------------------------
-# Parse limits (crates/consema-xml/src/lib.rs:81-157)
+# Parse limits (consema-rs/consema-xml/src/lib.rs:81-157)
 # ---------------------------------------------------------------------------
 
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024

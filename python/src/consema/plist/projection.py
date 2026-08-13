@@ -3,7 +3,7 @@ unique-key Object (RFC 0013 §9).
 
 Authority (Rust arbitration for exact semantics):
 
-- Targets, policies, and limits: crates/consema-plist/src/projection.rs:49-
+- Targets, policies, and limits: consema-rs/consema-plist/src/projection.rs:49-
   184 — ProjectionTarget::ValueTreeV1 / RequireObjectV1 (projection.rs:53-
   61), UidPolicy Exclude / Include (projection.rs:63-71), CollisionPolicy
   Reject / First / Last (projection.rs:73-82), the request builders
@@ -800,7 +800,7 @@ def project(document: PlistDocument, request: ProjectionRequest) -> ProjectionRe
         else:
             # The require-object target carries the unique-key Object itself
             # (projection.rs:1157-1810; the Go runner reads the projection
-            # value as a plain *core.Object — go/conformance/plist_v1.go:
+            # value as a plain *core.Object — consema-go/go/conformance/plist_v1.go:
             # 2636-2641), not a value-tree record wrapper.
             record = projector.project_require_object(native.root(), ValuePath.root(), 0)
     except PlistProjectionFailure as failure:

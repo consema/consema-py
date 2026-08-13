@@ -1,8 +1,8 @@
 """FormationStatus closure and structural identity tests.
 
 FormationStatus is a closed two-value enum (Complete, Recovered) per RFC 0016
-§5.1 (docs/rfcs/0016-go-api-mapping-v1.md:171-176) and
-crates/consema-document/src/lib.rs:405-411; the 0.13.0 review's F10
+§5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:171-176) and
+consema-rs/consema-document/src/lib.rs:405-411; the 0.13.0 review's F10
 disposition pins this as the only formation-status surface (no alias).
 """
 

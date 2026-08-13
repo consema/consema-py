@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: crates/consema-plist/src/query.rs:269-459
+- Domain binding and versioning: consema-rs/consema-plist/src/query.rs:269-459
   — ``plist.native-semantic-query@1`` serves both representations
   (query.rs:269-283), ``plist.lossless-syntax-query@1`` exists only for
   ``plist.xml@1`` (query.rs:322-335), and ``plist.binary-structure-query@1``
@@ -15,7 +15,7 @@ Authority (Rust arbitration for the executor semantics):
   elements@1, plist.value-type-is@1, plist.value-as-integer@1,
   plist.value-as-real@1, plist.value-as-string@1, plist.value-as-data@1,
   plist.value-as-date@1, plist.value-as-uid@1, plist.value-as-boolean-is@1
-  (the exact RFC 0013 §8.1 surface, docs/rfcs/0013-...:543-558); the
+  (the exact RFC 0013 §8.1 surface, https://github.com/consema/consema/blob/main/docs/rfcs/0013-...:543-558); the
   closed kind names of ``plist.value-type-is@1`` (query.rs:1188-1200).
 - Syntax operators: query.rs:1260-1280 (plist.syntax-kind-is@1,
   plist.syntax-text-equals@1); binary structure operators query.rs:1335-
@@ -26,7 +26,7 @@ Authority (Rust arbitration for the executor semantics):
 - Selection algebra and limits: consema-core/src/query.rs:2967-2981
   (QueryLimits defaults max_steps=100_000, max_results=100_000);
   typed-accessor type mismatch is the runner-mapped
-  ``plist.query.type-mismatch@1`` (crates/consema-conformance/src/
+  ``plist.query.type-mismatch@1`` (consema-rs/consema-conformance/src/
   plist_v1.rs:1149).
 - Expression evaluation and StructureOrderMerge: the common query model of
   consema.protocol.query (RFC 0016 §5.4), as the other families use.

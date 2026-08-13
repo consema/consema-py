@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact semantics):
 
-- Parse entry and fatal limits: crates/consema-json/src/parser.rs:73-166 —
+- Parse entry and fatal limits: consema-rs/consema-json/src/parser.rs:73-166 —
   source-bytes limit (parser.rs:78-84), UTF-8 snapshot construction
   (parser.rs:85), structural-index construction (parser.rs:99-120),
   trailing-content recovery (parser.rs:136-144), formation status
@@ -16,17 +16,17 @@ Authority (Rust arbitration for exact semantics):
   recovery (parser.rs:1025-1039), missing-close recovery
   (parser.rs:1059-1068, 1086-1096).
 - String decoding: parser.rs:1232-1347 (JSON5 extensions per RFC 0005 §5,
-  docs/rfcs/0005-...:93-113); the json5.string.unescaped-line-separator@1
+  https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:93-113); the json5.string.unescaped-line-separator@1
   warning parser.rs:884-892.
 - Number decoding: parser.rs:863-878 (strict) and parse_json5_number
   parser.rs:1375-1443 (RFC 0005 §6); the frozen non-finite bits
-  parser.rs:1382-1401 and RFC 0005 §6 (docs/rfcs/0005-...:133-139).
+  parser.rs:1382-1401 and RFC 0005 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:133-139).
 - IdentifierName decoding: parser.rs:910-935 and decode_json5_identifier
   parser.rs:1349-1373.
 - Entity allocation and the fatal node-count limit: parser.rs:1147-1189.
 
 Decimal normalization (coefficient/exponent canonical form) is the core
-value model's contract (consema.core.value.Decimal; crates/consema-core/
+value model's contract (consema.core.value.Decimal; consema-rs/consema-core/
 src/value.rs:277-292). Integer and Decimal values remain arbitrary
 precision; parsing never rounds through a host float (RFC 0005 §6).
 """
@@ -129,7 +129,7 @@ class ElementEntity:
 
 
 # The frozen non-finite binary64 bit patterns (RFC 0005 §6,
-# docs/rfcs/0005-...:133-139; parser.rs:1382-1401).
+# https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:133-139; parser.rs:1382-1401).
 BITS_POSITIVE_INFINITY = 0x7FF0000000000000
 BITS_NEGATIVE_INFINITY = 0xFFF0000000000000
 BITS_NAN = 0x7FF8000000000000
@@ -531,7 +531,7 @@ def parse(
     limits: ParseLimits,
 ) -> object:
     """Parses a complete immutable JSON/JSONC/JSON5 document snapshot
-    (crates/consema-json/src/lib.rs:161-168, parser.rs:73-166).
+    (consema-rs/consema-json/src/lib.rs:161-168, parser.rs:73-166).
 
     Returns the ``JsonDocument`` from :mod:`consema.json.document`; raises
     :class:`JsonFormationFailure` for fatal limits or invalid UTF-8.

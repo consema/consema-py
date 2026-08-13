@@ -21,10 +21,10 @@ formation (root body first, then each item in source order; an attribute
 consumes one ordinal for itself and then every node of its expression
 subtree in ``children()`` source order; a block consumes one ordinal for
 itself, one per label, and then its nested body's items —
-crates/consema-hcl/src/projection.rs:124-130). Query and projection issue
+consema-rs/consema-hcl/src/projection.rs:124-130). Query and projection issue
 snapshot-bound NodeRefs from these ordinals.
 
-Authority: crates/consema-hcl/src/native.rs (types and accessors,
+Authority: consema-rs/consema-hcl/src/native.rs (types and accessors,
 native.rs:28-325); HclSyntaxKind spellings are frozen in
 consema.hcl.kinds (RFC 0014 §7.2).
 """

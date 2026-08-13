@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: crates/consema-hcl/src/query.rs:189-222
+- Domain binding and versioning: consema-rs/consema-hcl/src/query.rs:189-222
   (native, hcl.native-semantic-query@1) and query.rs:244-285 (syntax,
   hcl.lossless-syntax-query@1); both profiles share the one syntax system,
   so only the domain identity is guarded.
@@ -19,7 +19,7 @@ Authority (Rust arbitration for the executor semantics):
   as-real, as-boolean-is, as-null-is; a non-literal expression is reported
   as TargetUnavailable (the conformance layer maps it to
   hcl.query.non-literal@1), a type mismatch as RequiredTypeMismatch
-  (hcl.query.type-mismatch@1) — crates/consema-conformance/src/hcl_v1.rs:
+  (hcl.query.type-mismatch@1) — consema-rs/consema-conformance/src/hcl_v1.rs:
   658-668.
 - Limits and cancellation: the common QueryLimits defaults
   max_steps=100_000, max_results=100_000.
