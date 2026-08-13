@@ -59,7 +59,7 @@ body:
       label: 环境信息
       description: |
         - `python --version`、`pip --version`（Python 3.12）
-        - `python/pyproject.toml` version（当前 0.14.0）
+        - `python/pyproject.toml` version（当前 1.0.0-rc.1）
         - OS / 平台
       placeholder: |
         - python: ...

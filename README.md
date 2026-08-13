@@ -9,13 +9,13 @@ Consema 语言中立契约（RFC 0016）的 **Python 实现**仓库。本仓库�
 [github.com/consema/consema](https://github.com/consema/consema)；本仓承载
 Python 实现与跨语言差分验证工具。
 
-Version: 0.14.0（`python/pyproject.toml` version；CI
+Version: 1.0.0-rc.1（`python/pyproject.toml` version；CI
 check-version-consistency job 断言与 README 一致）。
 
 ## 快速开始（30 秒跑通）
 
 ```text
-pip install consema
+pip install consema（1.0.0-rc.1 发布后可用）
 ```
 
 把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（一个 JSON 文档走完 parse → query → edit → render 四条链）：

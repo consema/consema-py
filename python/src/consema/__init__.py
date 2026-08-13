@@ -1,13 +1,13 @@
 """consema — language-neutral Consema contracts (Python implementation).
 
-L0 milestone: closed fifteen-kind PortableValue model, strict equality and
+L0 milestone (closed): closed fifteen-kind PortableValue model, strict equality and
 deterministic hashing, the PVCE/1 byte codec (consema.core), PortableGraph
 and the PGCE/1 byte codec (consema.graph), and the protocol surface —
 contract/error registries, canonical tagged JSON transport, Diagnostic,
 registry descriptors, query definition validation, CLI machine records,
 and CLI exit classification (consema.protocol).
 
-L1-L4 milestones: the eight format families (json, toml, yaml, ini,
+L1-L4 milestones (closed): the eight format families (json, toml, yaml, ini,
 properties, xml, plist, hcl) with parse/query/projection/materialization/
 edit surfaces, and the root facade — the additive registry enumeration
 (consema.registry), the opaque Document union, the single facade parse
@@ -17,12 +17,16 @@ projection-to-materialization conversion composition
 language-neutral vectors (``consema.conformance``), and the capability
 parity assertion (``consema.capability_parity``).
 
+L5 milestone (closed): the cross-language differential harnesses
+(byte parity / normalized differential / protocol exchange) and the
+five-language CI gates (scripts/, .github/workflows/ci-python.yml).
+
 Authority: RFC 0001-0016, conformance/vectors, and the Rust crates as
 the byte/registry arbitration sources. This package is an independent,
 Python-idiomatic implementation with zero third-party runtime dependencies.
 """
 
-__version__ = "0.14.0"
+__version__ = "1.0.0-rc.1"
 
 from consema import convert, registry  # noqa: F401
 from consema.convert import (  # noqa: F401

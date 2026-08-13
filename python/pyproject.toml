@@ -15,8 +15,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "consema"
-version = "0.14.0"
-description = "Language-neutral Consema contracts: closed fifteen-kind PortableValue, PortableGraph, PVCE/1 and PGCE/1 codecs, protocol registries (L0 milestone)"
+version = "1.0.0-rc.1"
+description = "Language-neutral Consema contracts: closed fifteen-kind PortableValue, PortableGraph, PVCE/1 and PGCE/1 codecs, protocol registries (L0-L5 closed)"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }

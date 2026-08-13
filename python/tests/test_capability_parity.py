@@ -1,6 +1,6 @@
-﻿"""Capability parity test: the Python mandatory capability set must match
+"""Capability parity test: the Python mandatory capability set must match
 the Feature-Complete Manifest (docs/fc-manifest-0.13.0.json:30-34) with no
-"Rust only" mandatory behavior (docs/five-language-ci-design.md 搂5.3;
+"Rust only" mandatory behavior (docs/five-language-ci-design.md §5.3;
 go/capability_parity_test.go cross-reference).
 
 Runs under pytest or directly (python tests/test_capability_parity.py).

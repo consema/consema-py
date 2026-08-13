@@ -1,5 +1,5 @@
-﻿"""Conformance runner test: pins the milestone gate (docs/go-implementation
-plan 搂4.2; docs/five-language-ci-design.md 搂4.2 鈥?the five-runner shared
+"""Conformance runner test: pins the milestone gate (docs/go-implementation
+plan §4.2; docs/five-language-ci-design.md §4.2 — the five-runner shared
 pin): the aggregate vector digest matches the Feature-Complete Manifest and
 the frozen constant, the inventory is exactly 18 suites / 519 cases, every
 suite is conformant (documented skips count as success), and each suite
@@ -24,10 +24,10 @@ from consema.conformance.runner import (
 )
 
 # The five-runner shared aggregate pin (docs/five-language-ci-design.md
-# 搂4.2; fc-manifest-0.13.0.json:38).
+# §4.2; fc-manifest-0.13.0.json:38).
 RECORDED_AGGREGATE = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 
-# Per-suite applicable surface {passed, skipped, failed} 鈥?the current L4
+# Per-suite applicable surface {passed, skipped, failed} — the current L5
 # surface executes every case (go/conformance/conformance_test.go:60-97).
 EXPECTED_SUITE_COUNTS = {
     "consema.conformance@1": (30, 0, 0),

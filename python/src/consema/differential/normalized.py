@@ -1,6 +1,6 @@
-﻿"""Normalized-result differential of the Python pipeline against the Rust
-authority (roadmap 搂11.2 language-neutral behavior surface;
-docs/five-language-ci-design.md 搂3.3; the Go twin is
+"""Normalized-result differential of the Python pipeline against the Rust
+authority (roadmap §11.2 language-neutral behavior surface;
+docs/five-language-ci-design.md §3.3; the Go twin is
 go/conformance/differential/normalized/).
 
 The Python implementation runs the same data-driven input set
@@ -26,7 +26,7 @@ The fact vocabulary is the language-neutral surface: parse formation,
 diagnostic code/order (never text), query count/identity/order, projection/
 materialization reports, edit result bytes or failure codes, and
 resource-limit completion semantics. Any divergence is a finding for the
-roadmap 搂11.3 process, never a silent Python-side "fix".
+roadmap §11.3 process, never a silent Python-side "fix".
 """
 
 from __future__ import annotations
@@ -109,7 +109,7 @@ MANIFEST = "consema.differential.normalized@1"
 
 # The golden evidence directory (Rust emits, this module compares) and the
 # Python evidence directory (this module emits, the Rust --consume mode
-# compares): docs/five-language-ci-design.md 搂3.3.
+# compares): docs/five-language-ci-design.md §3.3.
 RUST_DIR_ENV = "CONSEMA_DIFFERENTIAL_NORMALIZED_RUST_DIR"
 PYTHON_DIR_ENV = "CONSEMA_DIFFERENTIAL_NORMALIZED_PYTHON_DIR"
 
