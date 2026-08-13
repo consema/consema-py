@@ -310,7 +310,7 @@ def run_argv(argv: list[str] | None = None) -> int:
     """Runs the conformance runner CLI; returns the process exit code
     (0 success, 1 usage, 2 data, 5 internal; RFC 0015 §5)."""
     parser = argparse.ArgumentParser(
-        prog="python -m consema.conformance.runner",
+        prog="python -m consema.conformance",
         description="Consema conformance runner (18 suites / 519 shared vectors)",
     )
     default_vectors, default_fixtures = repository_paths()
@@ -373,11 +373,14 @@ def register_suite(
 def suite_definitions() -> list[SuiteDefinition]:
     """The registered suite inventory.
 
-    Under ``python -m consema.conformance.runner`` the module is
-    re-executed as ``__main__`` after the package import already registered
-    every suite into the canonical ``consema.conformance.runner`` module
-    object; a fresh ``__main__`` copy would see an empty inventory. Always
-    read the canonical module object's list.
+    The canonical entry is ``python -m consema.conformance``
+    (consema/conformance/__main__.py), which imports this module once and
+    calls :func:`run_argv` directly, so the canonical module object always
+    holds the inventory. The ``python -m consema.conformance.runner`` form
+    (re-executed as ``__main__`` after the package import already registered
+    every suite into the canonical module object) still works; a fresh
+    ``__main__`` copy would see an empty inventory, so always read the
+    canonical module object's list.
     """
     canonical = sys.modules.get("consema.conformance.runner")
     if canonical is not None and canonical is not sys.modules.get("__main__"):

@@ -1,0 +1,25 @@
+"""Entry point for ``python -m consema.conformance`` — the conformance
+runner CLI (RFC 0015 §5; the invocation documented in python/README.md).
+
+The package ``__init__`` imports the runner machinery eagerly, so running
+``python -m consema.conformance.runner`` would re-execute the module as
+``__main__`` after it is already imported (a CPython RuntimeWarning and a
+second copy of the suite inventory). This bootstrap instead imports the
+canonical module once and calls its CLI function directly: no re-execution,
+no warning, and the 18-suite inventory registered by
+``consema.conformance.suites`` is the one used.
+"""
+
+from __future__ import annotations
+
+import sys
+
+from consema.conformance.runner import run_argv
+
+
+def main() -> None:
+    sys.exit(run_argv())
+
+
+if __name__ == "__main__":
+    main()
