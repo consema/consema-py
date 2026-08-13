@@ -17,3 +17,11 @@ venv/
 dist/
 .coverage
 htmlcov/
+
+# Provisioned conformance data — owned by the consema repository, copied in
+# by the CI provision step / local provision (python/README.md "Verify");
+# never committed in this split repository. Root-anchored: the
+# python/src/consema/conformance package must stay tracked. Only the
+# manifest file is ignored under docs/, never the rest of docs/.
+/conformance/
+/docs/fc-manifest-0.13.0.json
