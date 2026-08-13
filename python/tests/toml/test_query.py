@@ -1,4 +1,4 @@
-﻿"""Query intent documents: the toml.native-semantic-query@1 and
+"""Query intent documents: the toml.native-semantic-query@1 and
 toml.lossless-syntax-query@1 domains.
 
 Vector cases transcribed: toml.query.nested-entry-order,

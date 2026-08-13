@@ -1,4 +1,4 @@
-﻿"""Root facade registry surface tests (crates/consema/src/lib.rs registry
+"""Root facade registry surface tests (crates/consema/src/lib.rs registry
 module; go/registry.go cross-reference).
 
 Covers the additive enumeration (8 families / 16 profiles / 21 query

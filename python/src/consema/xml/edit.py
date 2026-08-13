@@ -1,4 +1,4 @@
-﻿"""Snapshot-bound XML structural edit (RFC 0012 §11).
+"""Snapshot-bound XML structural edit (RFC 0012 §11).
 
 Authority:
 
