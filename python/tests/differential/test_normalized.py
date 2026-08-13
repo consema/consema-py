@@ -2,7 +2,9 @@
 (python/src/consema/differential/normalized.py; docs/five-language-ci-design.md
 §3.3).
 
-TestCaseFileIntegrity always runs and guards the checked-in case set.
+TestCaseFileIntegrity always runs and guards the checked-in case set (it
+skips, documented, only when the shared conformance data is not provisioned
+beside this repository — fresh clone; python/README.md Verify).
 TestNormalizedDifferential skips without the environment variable
 (documented skip, never silent) and runs only when
 scripts/python-verify-normalized-differential.ps1 provisioned the Rust
@@ -28,6 +30,9 @@ from consema.differential import case_files, normalized
 def test_case_file_integrity() -> None:
     """The checked-in case set passes every integrity guard (manifest id,
     exact count, unique ids, per-kind schema validity)."""
+    reason = case_files.missing_data_reason()
+    if reason:
+        pytest.skip(reason)
     cases = normalized.load_case_file()
     assert len(cases) == 108
     document_cases = [case for case in cases if case["kind"] == "document"]
@@ -55,6 +60,9 @@ def test_forward_differential() -> None:
 def test_emit_python_normalized_results(tmp_path) -> None:
     """The Python-side evidence files are emitted in the same shape the
     forward direction reads and the Rust consume mode reads."""
+    reason = case_files.missing_data_reason()
+    if reason:
+        pytest.skip(reason)
     cases = normalized.load_case_file()
     emitted = normalized.emit_evidence_to_dir(cases, str(tmp_path))
     assert emitted == 108
@@ -88,6 +96,9 @@ def test_emit_format_consistency() -> None:
     """The emitted files round-trip through the forward reader and compare
     equal field by field with the computed facts (the Go
     TestEmitFormatConsistency twin)."""
+    reason = case_files.missing_data_reason()
+    if reason:
+        pytest.skip(reason)
     cases = normalized.load_case_file()
     import tempfile
 

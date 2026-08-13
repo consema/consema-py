@@ -4,7 +4,9 @@ docs/five-language-ci-design.md §3.4).
 
 TestCaseFileIntegrity always runs and guards the checked-in case set (file
 level: manifest id, exact count, unique ids, known records, per-record
-coverage, canonical transport JSON, registered expected codes).
+coverage, canonical transport JSON, registered expected codes; it skips,
+documented, only when the shared conformance data is not provisioned beside
+this repository — fresh clone; python/README.md Verify).
 TestProtocolExchange skips without the environment variables (documented
 skip, never silent) and runs only when
 scripts/python-verify-protocol-exchange.ps1 provisioned the Rust files and
@@ -20,11 +22,14 @@ import os
 
 import pytest
 
-from consema.differential import protocol_exchange
+from consema.differential import case_files, protocol_exchange
 
 
 def test_case_file_integrity() -> None:
     """The checked-in case set passes every file-level integrity guard."""
+    reason = case_files.missing_data_reason()
+    if reason:
+        pytest.skip(reason)
     cases = protocol_exchange.load_case_file()
     assert len(cases) == 83
     accept_count = sum(
@@ -38,8 +43,10 @@ def test_case_file_integrity() -> None:
 
 
 def test_protocol_exchange() -> None:
-    """Bidirectional cross-language exchange against the Rust files, with
-    the known Python record-codec gaps documented (never silent fixes)."""
+    """Bidirectional cross-language exchange against the Rust files: the
+    Python encoder bytes are byte-identical with the Rust files (the record
+    codec gaps are closed — protocol_exchange.py module docstring, measured
+    status 83/83)."""
     rust_dir = os.environ.get(protocol_exchange.RUST_DIR_ENV)
     if not rust_dir:
         pytest.skip(

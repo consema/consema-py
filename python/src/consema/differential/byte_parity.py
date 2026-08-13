@@ -13,7 +13,9 @@ bytes -> Python decode -> Python re-encode), mirroring the Go test
 (go/conformance/differential/differential_test.go). Orchestration:
 scripts/python-verify-byte-parity.ps1 provisions the golden directory
 (``CONSEMA_DIFFERENTIAL_RUST_DIR``); without it the test skips (documented,
-never silent) and only the case-file integrity checks run.
+never silent). The case-file integrity checks run whenever the shared
+conformance data is provisioned beside this repository and skip (documented,
+python/README.md Verify) on a fresh clone without it.
 
 A divergence here is a Python encoder bug (the encoders are in scope:
 python/src/consema/core/pvce.py, python/src/consema/graph/pgce.py).

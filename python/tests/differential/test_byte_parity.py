@@ -2,8 +2,10 @@
 (python/src/consema/differential/byte_parity.py; docs/five-language-ci-design.md
 §3.2).
 
-TestCaseFileIntegrity always runs and guards the checked-in case set, so
-``pytest`` protects the input set even without the orchestrator.
+TestCaseFileIntegrity always runs and guards the checked-in case set (it
+skips, documented, only when the shared conformance data is not provisioned
+beside this repository — fresh clone; python/README.md Verify), so ``pytest``
+protects the input set even without the orchestrator.
 TestDifferentialByteParity skips without the environment variable
 (documented skip, never silent) and runs only when
 scripts/python-verify-byte-parity.ps1 provisioned the Rust golden byte
@@ -16,13 +18,16 @@ import os
 
 import pytest
 
-from consema.differential import byte_parity
+from consema.differential import byte_parity, case_files
 
 
 def test_case_file_integrity() -> None:
     """The checked-in case set passes every integrity guard (manifest id,
     exact count, unique ids, known codecs, canonical PVCE values, buildable
     PGCE graphs, fifteen-kind coverage)."""
+    reason = case_files.missing_data_reason()
+    if reason:
+        pytest.skip(reason)
     cases = byte_parity.load_case_file()
     assert len(cases) == 68
     pvce_count = sum(1 for case in cases if case.codec == "pvce")

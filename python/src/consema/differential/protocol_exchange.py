@@ -25,7 +25,9 @@ The Python side also emits its own encoder files (CONSEMA_EXCHANGE_PYTHON_DIR),
 which the Rust example's ``--verify`` mode closes: Python-encode ->
 Rust-decode. Orchestration: scripts/python-verify-protocol-exchange.ps1.
 Without the environment variables the exchange test skips (documented,
-never silent) and only the case-file integrity checks run.
+never silent). The case-file integrity checks run whenever the shared
+conformance data is provisioned beside this repository and skip (documented,
+python/README.md Verify) on a fresh clone without it.
 
 Measured status (2026-08-12): 83/83 cases verified (40/40 accept, 43/43
 reject) after the envelope.py record codec fixes: the value-path wire

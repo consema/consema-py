@@ -44,6 +44,27 @@ def differential_dir() -> str:
     return os.path.join(repository_root(), "conformance", "differential")
 
 
+def missing_data_reason() -> str | None:
+    """The documented-skip reason when the shared conformance data is not
+    provisioned beside this repository (a fresh clone without the spec
+    repository checkout + provision step, python/README.md Verify), else
+    ``None``.
+
+    The differential case sets are not carried by this repository: they
+    live in conformance/ of the consema repository and CI copies them in
+    (ci-python.yml provision step). Tests call this before loading a case
+    file so a fresh-clone run reports a documented skip instead of a file
+    error; once the data is present, the integrity guards must run."""
+    if not os.path.isdir(differential_dir()):
+        return (
+            "conformance/differential is not provisioned in this checkout "
+            "(fresh clone): check out consema/consema beside this repository "
+            "and provision conformance/ + docs/fc-manifest-0.13.0.json as CI "
+            "does (python/README.md \"Verify\")"
+        )
+    return None
+
+
 def case_file_path(name: str) -> str:
     """One checked-in case file path."""
     return os.path.join(differential_dir(), name)
