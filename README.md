@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
 ## API 摘要
 
-核心面一行式（完整签名见 [python/README.md](python/README.md)；八个格式家族各有独立的 `parse_*` / `execute_*_query` / `project` / `materialize` / `convert_*` 入口）：
+核心面一行式（下表；八个格式家族各有独立的 `parse_*` / `execute_*_query` / `project` / `materialize` / `convert_*` 入口）：
 
 | 操作 | facade 入口 |
 | --- | --- |
@@ -77,14 +77,19 @@ if __name__ == "__main__":
 
 ## 布局
 
-- `python/`：Python 包（Python 3.12，运行时零依赖 `dependencies = []`）。
-  完整文档见 [python/README.md](python/README.md)。
+- `python/`：Python 包（`requires-python >= 3.12`，CI 矩阵 3.12/3.13/3.14，
+  运行时零依赖 `dependencies = []`）。完整文档见 [python/README.md](python/README.md)。
 - `scripts/`：跨语言差分验证脚本（byte parity / normalized differential /
   protocol exchange）。脚本构建 consema-rs 的 Rust emitter 并对拍 Python 实现；
   Rust 侧来自 consema-rs 仓 checkout（CI 多仓模式），conformance 数据来自规范仓 checkout。
-- `.github/workflows/ci-python.yml`：Python 门禁（editable install + pytest +
-  零依赖）、conformance runner 门禁（18 suites / 519 cases）与 Python-Rust 差分
-  门禁（windows-latest 多仓 checkout）。
+- `.github/workflows/ci-python.yml`：7 个门禁 job —— python-gates（compileall
+  语法门禁 + editable install + pytest + 零依赖断言，3.12/3.13/3.14 矩阵）、
+  coverage（pytest-cov 全量，总覆盖 >= 60%）、python-conformance（runner
+  18 suites / 519 cases）、python-differential（Python-Rust 差分：byte parity /
+  normalized differential / protocol exchange，windows-latest 多仓 checkout）、
+  python-package（pip wheel --no-deps 打包门禁）、check-version-consistency
+  （README 版本行与 pyproject.toml 一致）、examples（SDK 链示例实跑）；另有
+  aggregate `check (all gates green)` 门禁。
 
 ## 构建与测试
 
@@ -93,6 +98,28 @@ cd python
 python -m pip install -e '.[dev]'
 python -m pytest tests/
 ```
+
+**前置（重要）：** 全量测试需要规范仓的 conformance 数据——`conformance/`
+（vectors、differential、fixtures）与 `docs/fc-manifest-0.13.0.json`
+**不随本仓提供**（权威在 [github.com/consema/consema](https://github.com/consema/consema)）。
+全新 clone 直接跑 `python -m pytest tests/` 会失败：conformance runner 测试
+（tests/conformance/）读取仓库相对路径的向量数据，差分 integrity 测试读取
+conformance/differential 用例集，各格式家族的 fixture 测试读取
+conformance/fixtures。本地运行前先把规范仓并排检出并把 conformance 数据
+provision 到工作区根（与 CI 的 `.github/actions/provision-conformance` 复合
+action 相同；CI 把规范仓钉在 `ad667021`——cfd6e296 519-case 清单对应的
+commit）：
+
+```text
+# 规范仓并排检出到 ../consema（内容与 CI 的 consema-repo checkout 相同）
+cp -r ../consema/conformance ./conformance
+mkdir -p docs
+cp ../consema/docs/fc-manifest-0.13.0.json ./docs/
+```
+
+数据在场后 703 passed / 4 skipped（CI 同款 `--import-mode=importlib` +
+`PYTHONPATH=tests/xml`）；缺数据时差分 integrity 测试按 documented skip
+跳过（见 python/README.md Verify）。
 
 ## FAQ
 
