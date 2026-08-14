@@ -11,8 +11,11 @@
 # runs the Python runner over the 18 shared suites / 519 cases (the
 # aggregate digest cfd6e296…, the 18/519 inventory and the per-suite counts
 # are pinned inside python/tests/conformance/test_runner.py, §2.2/§4.2) and
-# the runner CLI smoke (python -m consema.conformance, a4dac2d; the
-# shared-conformance step of §3.6/§7.2); python-package runs the L5
+# the runner CLI smoke (python -m consema.conformance, a4dac2d) runs
+# with python-conformance; the §3.6/§7.2 shared-conformance step — the
+# fourth differential leg (scripts/python-verify-shared-conformance.ps1)
+# — is not landed in this repo: the py repo carries no shared-conformance
+# carrier; python-package runs the L5
 # packaging gate (pip wheel --no-deps — the hatchling-built wheel must
 # contain the consema package, §1.1 package row / §5.3 L5 row);
 # python-differential runs the bidirectional scripts/python-verify-*.ps1
