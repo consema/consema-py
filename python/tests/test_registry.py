@@ -14,6 +14,7 @@ from __future__ import annotations
 import sys
 
 from consema.document.ids import FormatFamilyId, ProfileId
+from consema.document.structural import FormationStatus
 from consema.registry import (
     Document,
     ProfileError,
@@ -133,6 +134,16 @@ def test_facade_json_oversized_number_is_resource_limit_not_value_error():
         assert error.limit == 100_000
     else:
         raise AssertionError("oversized JSON number must fail as resource-limit")
+
+
+def test_facade_xml_formation_status_reads_through_property():
+    """The facade formation_status() must work for the xml family, which
+    exposes the fact as a property (its conformance suite reads it as an
+    attribute) rather than a method like the seven other families."""
+    document = parse_document(b"<x/>", ProfileId.new("xml.1.0-safe", 1))
+    assert document.as_xml() is not None
+    assert document.formation_status() is FormationStatus.COMPLETE
+    assert document.formation_status().value == "Complete"
 
 
 def test_document_typed_adapters_dispatch_by_family():

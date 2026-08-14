@@ -576,7 +576,11 @@ class Document:
 
     def formation_status(self) -> FormationStatus:
         """Formation status of the underlying snapshot."""
-        return self._inner.formation_status()
+        status = self._inner.formation_status
+        # seven families expose a method; the xml family exposes the same
+        # fact as a property (its conformance suite reads it as an
+        # attribute), so dispatch on the callable shape.
+        return status() if callable(status) else status
 
     def diagnostics(self) -> tuple:
         """Deterministically ordered document diagnostics."""
