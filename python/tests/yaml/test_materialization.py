@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import pytest
 
-from consema.core.value import PortableValue
+from consema.core.value import PortableValue, decimal
 from consema.document.ids import MaterializationStyleId, ProfileId
 from consema.document.materialization import (
     MaterializationRequest,
@@ -213,6 +213,23 @@ def test_materialization_float_canonical_e0():
     assert projected.value.as_decimal().exponent == 3
     result = materialize_value(projected.value, _flow_request())
     assert result.document.render() == b'--- !!float "1e3"\n'
+
+
+def test_materialization_huge_integer_and_decimal_are_exact():
+    """A >4300-digit integer/decimal materializes and round-trips exactly:
+    the interpreter's int() string-conversion limit must never surface as
+    a bare ValueError or invalidate the canonical scalar (the values are
+    within the parse magnitude bound)."""
+    integer = PortableValue.integer(10**5000 - 1)
+    result = materialize_value(integer, _flow_request())
+    assert result.document.render() == b'--- !!int "' + b"9" * 5000 + b'"\n'
+    projected = project_value(result.document, ValueProjectionRequest.best_exact_v1())
+    assert projected.value == integer
+    float_value = PortableValue.decimal(decimal(10**5000 - 1, 0))
+    result = materialize_value(float_value, _flow_request())
+    assert result.document.render() == b'--- !!float "' + b"9" * 5000 + b'e0"\n'
+    projected = project_value(result.document, ValueProjectionRequest.best_exact_v1())
+    assert projected.value == float_value
 
 
 def _utf16le():

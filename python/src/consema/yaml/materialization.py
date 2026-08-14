@@ -275,6 +275,24 @@ class _BoundedText:
         return "".join(self.text)
 
 
+def _int_to_decimal_str(value: int) -> str:
+    """Exact int to decimal string, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits; a parsed
+    document may legitimately hold larger integers within the parse
+    magnitude bound)."""
+    try:
+        return str(value)
+    except ValueError:
+        negative = value < 0
+        remaining = -value if negative else value
+        chunks: list[str] = []
+        while remaining:
+            remaining, part = divmod(remaining, 1_000_000_000)
+            chunks.append(f"{part:09d}")
+        text = "".join(reversed(chunks)).lstrip("0") or "0"
+        return "-" + text if negative else text
+
+
 def _scalar_presentation(tag: str, canonical: str) -> str:
     """The frozen scalar presentation (materialization.rs): a float
     canonical without ``.``/``e``/``E`` gains ``e0``."""
@@ -802,13 +820,15 @@ def _define_value_node(builder: GraphBuilder, value: PortableValue) -> GraphNode
             node_id, TAG_BOOL, "true" if value.as_boolean() else "false"
         )
     elif kind is Kind.INTEGER:
-        builder.define_scalar(node_id, TAG_INT, str(value.as_integer()))
+        builder.define_scalar(node_id, TAG_INT, _int_to_decimal_str(value.as_integer()))
     elif kind is Kind.DECIMAL:
         decimal = value.as_decimal()
         canonical = (
-            str(decimal.coefficient)
+            _int_to_decimal_str(decimal.coefficient)
             if decimal.exponent == 0
-            else f"{decimal.coefficient}e{decimal.exponent}"
+            else _int_to_decimal_str(decimal.coefficient)
+            + "e"
+            + _int_to_decimal_str(decimal.exponent)
         )
         builder.define_scalar(node_id, TAG_FLOAT, canonical)
     elif kind is Kind.BINARY_FLOAT64:
@@ -864,7 +884,7 @@ def _define_value_node(builder: GraphBuilder, value: PortableValue) -> GraphNode
 def _fraction_text(fraction: Decimal) -> str:
     if fraction.coefficient == 0:
         return ""
-    digits = str(abs(fraction.coefficient))
+    digits = _int_to_decimal_str(abs(fraction.coefficient))
     return "." + digits
 
 

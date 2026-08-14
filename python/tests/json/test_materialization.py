@@ -202,6 +202,20 @@ def test_profile_and_style_resolution():
     assert caught.value.kind is MaterializationFailureKind.UNSUPPORTED_PROFILE
 
 
+def test_materialization_huge_integer_and_decimal_are_exact():
+    """A >4300-digit integer/decimal materializes exactly: the
+    interpreter's int() string-conversion limit must never surface as a
+    bare ValueError (the values are within the parse magnitude bound)."""
+    integer = PortableValue.object([("a", PortableValue.integer(10**5000 - 1))])
+    result = materialize(integer, strict_request())
+    assert result.document.render() == b'{"a":' + b"9" * 5000 + b"}"
+    decimal_value = PortableValue.object(
+        [("a", PortableValue.decimal(decimal(10**5000 - 1, -3)))]
+    )
+    result = materialize(decimal_value, strict_request())
+    assert result.document.render() == b'{"a":' + b"9" * 5000 + b"e-3}"
+
+
 def test_materialization_closure_reproject():
     # Closure: output reparses under the exact requested profile and
     # reprojects to the identical PortableValue (RFC 0005 §9).

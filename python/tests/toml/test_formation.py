@@ -194,6 +194,33 @@ def test_syntax_error_at_eof_is_formation_failure_not_index_error():
         assert facade_caught.value.code == "toml.parse.syntax@1", source
 
 
+def test_integer_above_i64_range_is_syntax_not_value_error():
+    """A 20+ digit dec-int overflows i64 and is rejected as a syntax
+    failure before any conversion: the interpreter's int() conversion
+    limit (4300 digits) never surfaces as a bare ValueError."""
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = " + "9" * 5000 + "\n").encode("utf-8"))
+    assert caught.value.code == "toml.parse.syntax@1"
+
+
+def test_integer_above_magnitude_bound_is_resource_limit():
+    """A >100_000-digit integer (decimal or hex) is a fatal number-digits
+    resource-limit failure with the frozen arguments — never a bare
+    ValueError and never a truncated document."""
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = " + "9" * 100_001 + "\n").encode("utf-8"))
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.diagnostics[0].arguments == {
+        "name": "number-digits",
+        "observed": "100001",
+        "limit": "100000",
+    }
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = 0x" + "1" * 100_001 + "\n").encode("utf-8"))
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.diagnostics[0].arguments["name"] == "number-digits"
+
+
 def test_resource_token_limit():
     """toml.resource.token-limit: max_token_count=3 fails fatally with
     core.parse.resource-limit@1 and no truncated success."""

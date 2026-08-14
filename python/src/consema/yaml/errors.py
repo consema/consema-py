@@ -110,6 +110,7 @@ class YamlFormationFailureKind(enum.Enum):
     TOKEN_COUNT = "token-count"
     NESTING_DEPTH = "nesting-depth"
     NODE_COUNT = "node-count"
+    NUMBER_DIGITS = "number-digits"
     INVALID_UTF8 = "invalid-utf8"
     PROFILE_VERSION = "profile-version"
     SYNTAX = "syntax"
@@ -172,6 +173,8 @@ def resource_limit_failure(
         if name == "native-nodes"
         else YamlFormationFailureKind.NESTING_DEPTH
         if name == "nesting-depth"
+        else YamlFormationFailureKind.NUMBER_DIGITS
+        if name == "number-digits"
         else YamlFormationFailureKind.TOKEN_COUNT,
         name=name,
         observed=observed,

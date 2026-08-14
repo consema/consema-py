@@ -239,7 +239,7 @@ def _valid_underscored(value: str) -> str | None:
     return value
 
 
-def parse_integer(value: str, profile: YamlProfile) -> str | None:
+def parse_integer(value: str, profile: YamlProfile, max_number_digits: int) -> str | None:
     sign_unsigned = _split_sign(value)
     if sign_unsigned is None:
         return None
@@ -272,19 +272,20 @@ def parse_integer(value: str, profile: YamlProfile) -> str | None:
         base = 8
         digits = cleaned
     elif profile is YamlProfile.YAML11_COMPAT_V1 and ":" in cleaned:
-        return _parse_sexagesimal_integer(sign, cleaned)
+        return _parse_sexagesimal_integer(sign, cleaned, max_number_digits)
     else:
         base = 10
         digits = cleaned
     if not digits:
         return None
+    _check_number_digits(_count_number_digits(digits, base), max_number_digits)
     magnitude = 0
     for character in digits:
         digit = _digit_value(character, base)
         if digit < 0 or digit >= base:
             return None
         magnitude = magnitude * base + digit
-    return str(sign * magnitude)
+    return _int_to_decimal_str(sign * magnitude)
 
 
 def _digit_value(character: str, base: int) -> int:
@@ -294,6 +295,53 @@ def _digit_value(character: str, base: int) -> int:
         return int(character, base)
     except ValueError:
         return -1
+
+
+def _int_decimal(text: str) -> int:
+    """Exact decimal-string to int, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits; the magnitude
+    bound above it already passed, so digits are 0-9)."""
+    negative = text.startswith("-")
+    digits = text[1:] if text[:1] in ("+", "-") else text
+    try:
+        value = int(digits)
+    except ValueError:
+        value = 0
+        for index in range(0, len(digits), 4):
+            value = value * 10_000 + int(digits[index : index + 4])
+    return -value if negative else value
+
+
+def _count_number_digits(digits: str, base: int) -> int:
+    """One number's magnitude digit count, base-aware (hex counts hex
+    digits; decimal counts 0-9)."""
+    if base == 16:
+        return sum(1 for ch in digits if ch in "0123456789abcdefABCDEF")
+    return sum(1 for ch in digits if "0" <= ch <= "0123456789"[base - 1])
+
+
+def _check_number_digits(count: int, max_digits: int) -> None:
+    """Fatal number-digits resource-limit failure when one number's
+    magnitude digits exceed the bound (native.rs; checked before the
+    conversion/accumulation work)."""
+    if count > max_digits:
+        raise resource_limit_failure("number-digits", count, max_digits)
+
+
+def _int_to_decimal_str(value: int) -> str:
+    """Exact int to decimal string, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits)."""
+    try:
+        return str(value)
+    except ValueError:
+        negative = value < 0
+        remaining = -value if negative else value
+        chunks: list[str] = []
+        while remaining:
+            remaining, part = divmod(remaining, 1_000_000_000)
+            chunks.append(f"{part:09d}")
+        text = "".join(reversed(chunks)).lstrip("0") or "0"
+        return "-" + text if negative else text
 
 
 def _normalize_decimal_lexeme(value: str) -> str:
@@ -316,7 +364,7 @@ def _normalize_decimal_lexeme(value: str) -> str:
     return value
 
 
-def _parse_json_number(text: str) -> Decimal | None:
+def _parse_json_number(text: str, max_number_digits: int) -> Decimal | None:
     """Exact finite decimal parse of one normalized JSON-number lexeme
     (Decimal::parse_json_number; the same semantics as
     consema.json.parser.parse_json_decimal)."""
@@ -346,8 +394,12 @@ def _parse_json_number(text: str) -> Decimal | None:
         if not mantissa.isdigit():
             return None
         digits = mantissa
-    coefficient = sign * int(digits) if digits else 0
-    exponent = int(exponent_text) - scale if exponent_text else -scale
+    exponent_digits = len(exponent_text)
+    if exponent_text[:1] in ("+", "-"):
+        exponent_digits -= 1
+    _check_number_digits(len(digits) + exponent_digits, max_number_digits)
+    coefficient = sign * _int_decimal(digits) if digits else 0
+    exponent = _int_decimal(exponent_text) - scale if exponent_text else -scale
     return Decimal(coefficient, exponent)
 
 
@@ -358,11 +410,11 @@ def _is_signed_digits(value: str) -> bool:
 
 def _decimal_canonical(value: Decimal) -> str:
     if value.exponent == 0:
-        return str(value.coefficient)
-    return f"{value.coefficient}e{value.exponent}"
+        return _int_to_decimal_str(value.coefficient)
+    return _int_to_decimal_str(value.coefficient) + "e" + _int_to_decimal_str(value.exponent)
 
 
-def parse_float(value: str, profile: YamlProfile) -> str | None:
+def parse_float(value: str, profile: YamlProfile, max_number_digits: int) -> str | None:
     if value in (".inf", ".Inf", ".INF", "+.inf", "+.Inf", "+.INF"):
         return ".inf"
     if value in ("-.inf", "-.Inf", "-.INF"):
@@ -379,20 +431,24 @@ def parse_float(value: str, profile: YamlProfile) -> str | None:
     else:
         cleaned = value
     if profile is YamlProfile.YAML11_COMPAT_V1 and ":" in cleaned:
-        return _parse_sexagesimal_float(cleaned)
+        return _parse_sexagesimal_float(cleaned, max_number_digits)
     if not any(marker in cleaned for marker in (".", "e", "E")):
         return None
-    decimal = _parse_json_number(_normalize_decimal_lexeme(cleaned))
+    decimal = _parse_json_number(_normalize_decimal_lexeme(cleaned), max_number_digits)
     if decimal is None:
         return None
     return _decimal_canonical(decimal)
 
 
-def _parse_sexagesimal_integer(sign: int, value: str) -> str | None:
+def _parse_sexagesimal_integer(sign: int, value: str, max_number_digits: int) -> str | None:
     parts = value.split(":")
     first = parts[0]
     if not first or not first.isdigit():
         return None
+    _check_number_digits(
+        len(first) + sum(len(part) for part in parts[1:] if part.isdigit()),
+        max_number_digits,
+    )
     magnitude = 0
     for digit in first:
         magnitude = magnitude * 10 + int(digit)
@@ -407,10 +463,10 @@ def _parse_sexagesimal_integer(sign: int, value: str) -> str | None:
         count += 1
     if count == 0:
         return None
-    return str(sign * magnitude)
+    return _int_to_decimal_str(sign * magnitude)
 
 
-def _parse_sexagesimal_float(value: str) -> str | None:
+def _parse_sexagesimal_float(value: str, max_number_digits: int) -> str | None:
     sign_unsigned = _split_sign(value)
     if sign_unsigned is None:
         return None
@@ -424,21 +480,27 @@ def _parse_sexagesimal_float(value: str) -> str | None:
         return None
     if len(parts) < 2:
         return None
+    _check_number_digits(
+        sum(len(part) for part in parts[:-1] if part.isdigit())
+        + len(whole)
+        + len(fraction),
+        max_number_digits,
+    )
     magnitude = 0
     for index, part in enumerate(parts[:-1]):
         if not part.isdigit():
             return None
-        component = int(part)
+        component = _int_decimal(part)
         if index > 0 and component > 59:
             return None
         magnitude = magnitude * 60 + component
     if not whole.isdigit():
         return None
-    whole_value = int(whole)
+    whole_value = _int_decimal(whole)
     if whole_value > 59:
         return None
     magnitude = magnitude * 60 + whole_value
-    coefficient = sign * int(f"{magnitude}{fraction}")
+    coefficient = sign * (magnitude * 10 ** len(fraction) + _int_decimal(fraction))
     return _decimal_canonical(Decimal(coefficient, -len(fraction)))
 
 
@@ -1938,7 +2000,7 @@ def _compose(
             index = reserve_node()
             anchor, anchor_span = register_anchor(event.anchor_id, index)
             decoded = _exact_empty_scalar(event, source, raw)
-            tag, scalar = _resolve_scalar(decoded, event.style, event.tag, profile)
+            tag, scalar = _resolve_scalar(decoded, event.style, event.tag, profile, limits)
             span = raw_span(event.start, event.end)
             nodes[index] = NativeNode(
                 tag=tag, anchor=anchor, anchor_span=anchor_span, span=span,
@@ -2077,6 +2139,7 @@ def _resolve_scalar(
     style: YamlScalarStyle | None,
     explicit: str | None,
     profile: YamlProfile,
+    limits: ParseLimits,
 ) -> tuple[str, NativeScalar]:
     """Profile scalar resolution (native.rs)."""
     public_style = style if style is not None else YamlScalarStyle.PLAIN
@@ -2087,13 +2150,13 @@ def _resolve_scalar(
         if tag == "!" or tag == TAG_STR:
             return (TAG_STR, NativeScalar(decoded, decoded, YamlScalarKind.STRING, public_style))
         if tag == TAG_NULL:
-            return _resolve_explicit(decoded, public_style, TAG_NULL, YamlScalarKind.NULL, profile)
+            return _resolve_explicit(decoded, public_style, TAG_NULL, YamlScalarKind.NULL, profile, limits)
         if tag == TAG_BOOL:
-            return _resolve_explicit(decoded, public_style, TAG_BOOL, YamlScalarKind.BOOLEAN, profile)
+            return _resolve_explicit(decoded, public_style, TAG_BOOL, YamlScalarKind.BOOLEAN, profile, limits)
         if tag == TAG_INT:
-            return _resolve_explicit(decoded, public_style, TAG_INT, YamlScalarKind.INTEGER, profile)
+            return _resolve_explicit(decoded, public_style, TAG_INT, YamlScalarKind.INTEGER, profile, limits)
         if tag == TAG_FLOAT:
-            return _resolve_explicit(decoded, public_style, TAG_FLOAT, YamlScalarKind.FLOAT, profile)
+            return _resolve_explicit(decoded, public_style, TAG_FLOAT, YamlScalarKind.FLOAT, profile, limits)
         if tag == TAG_TIMESTAMP:
             canonical = parse_timestamp(decoded)
             if canonical is None:
@@ -2112,7 +2175,7 @@ def _resolve_scalar(
             TAG_STR,
             NativeScalar(decoded, decoded, YamlScalarKind.STRING, public_style),
         )
-    return _resolve_implicit(decoded, public_style, profile)
+    return _resolve_implicit(decoded, public_style, profile, limits)
 
 
 def _resolve_explicit(
@@ -2121,6 +2184,7 @@ def _resolve_explicit(
     tag: str,
     kind: YamlScalarKind,
     profile: YamlProfile,
+    limits: ParseLimits,
 ) -> tuple[str, NativeScalar]:
     canonical: str | None = None
     if kind is YamlScalarKind.NULL:
@@ -2128,26 +2192,26 @@ def _resolve_explicit(
     elif kind is YamlScalarKind.BOOLEAN:
         canonical = parse_bool(decoded, profile)
     elif kind is YamlScalarKind.INTEGER:
-        canonical = parse_integer(decoded, profile)
+        canonical = parse_integer(decoded, profile, limits.max_number_digits)
     elif kind is YamlScalarKind.FLOAT:
-        canonical = parse_float(decoded, profile)
+        canonical = parse_float(decoded, profile, limits.max_number_digits)
     if canonical is None:
         raise semantic_failure("yaml.scalar.invalid-explicit-tag@1")
     return (tag, NativeScalar(decoded, canonical, kind, style))
 
 
 def _resolve_implicit(
-    decoded: str, style: YamlScalarStyle, profile: YamlProfile
+    decoded: str, style: YamlScalarStyle, profile: YamlProfile, limits: ParseLimits
 ) -> tuple[str, NativeScalar]:
     if parse_null(decoded) is not None:
         return (TAG_NULL, NativeScalar(decoded, "", YamlScalarKind.NULL, style))
     bool_value = parse_bool(decoded, profile)
     if bool_value is not None:
         return (TAG_BOOL, NativeScalar(decoded, bool_value, YamlScalarKind.BOOLEAN, style))
-    integer = parse_integer(decoded, profile)
+    integer = parse_integer(decoded, profile, limits.max_number_digits)
     if integer is not None:
         return (TAG_INT, NativeScalar(decoded, integer, YamlScalarKind.INTEGER, style))
-    float_value = parse_float(decoded, profile)
+    float_value = parse_float(decoded, profile, limits.max_number_digits)
     if float_value is not None:
         return (TAG_FLOAT, NativeScalar(decoded, float_value, YamlScalarKind.FLOAT, style))
     if profile is YamlProfile.YAML11_COMPAT_V1:

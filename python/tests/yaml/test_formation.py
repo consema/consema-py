@@ -55,6 +55,60 @@ def _scalar_facts(document, ordinal: int, item: int):
     return scalar
 
 
+def _first_value_canonical(document, entry: int = 0) -> str:
+    """Canonical spelling of the first mapping entry's value scalar."""
+    return document.document(0).root().mapping_entry(entry).value().scalar().canonical()
+
+
+def test_number_magnitude_bound_is_inclusive_and_exact():
+    """A 5000-digit integer (above the interpreter's 4300-digit int()
+    conversion limit, within the 100_000 magnitude bound) parses exactly
+    to its canonical decimal spelling; the exact 100_000-digit boundary
+    parses too — no bare ValueError, no truncation."""
+    document = parse_source("n: " + "9" * 5000, YamlProfile.YAML12_CORE_V1)
+    assert _first_value_canonical(document) == "9" * 5000
+    boundary = parse_source("n: " + "9" * 100_000, YamlProfile.YAML12_CORE_V1)
+    assert _first_value_canonical(boundary) == "9" * 100_000
+
+
+def test_number_above_magnitude_bound_is_resource_limit():
+    """A >100_000-digit integer is a fatal number-digits resource-limit
+    failure, never the interpreter's bare ValueError."""
+    source = ("n: " + "9" * 100_001).encode("utf-8")
+    with pytest.raises(YamlFormationFailure) as caught:
+        parse(source, YamlProfile.YAML12_CORE_V1, ParseLimits())
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.kind is YamlFormationFailureKind.NUMBER_DIGITS
+    assert caught.value.observed == 100_001
+    assert caught.value.limit == 100_000
+
+
+def test_float_exponent_magnitude_bound():
+    """The decimal float path counts coefficient plus exponent digits
+    before int(); within the bound the >4300-digit exponent converts
+    exactly, above it the failure is number-digits."""
+    within = parse_source("n: 1e" + "9" * 5000, YamlProfile.YAML12_CORE_V1)
+    assert _first_value_canonical(within) == "1e" + "9" * 5000
+    source = ("n: 1e" + "9" * 100_001).encode("utf-8")
+    with pytest.raises(YamlFormationFailure) as caught:
+        parse(source, YamlProfile.YAML12_CORE_V1, ParseLimits())
+    assert caught.value.kind is YamlFormationFailureKind.NUMBER_DIGITS
+    assert caught.value.observed == 100_002  # coefficient 1 plus exponent digits
+
+
+def test_yaml11_sexagesimal_magnitude_bound():
+    """The 1.1 sexagesimal paths (integer and float) carry the same
+    magnitude bound."""
+    source = ("n: " + "9" * 100_001 + ":1").encode("utf-8")
+    with pytest.raises(YamlFormationFailure) as caught:
+        parse(source, YamlProfile.YAML11_COMPAT_V1, ParseLimits())
+    assert caught.value.kind is YamlFormationFailureKind.NUMBER_DIGITS
+    source = ("n: " + "9" * 100_001 + ":1.5").encode("utf-8")
+    with pytest.raises(YamlFormationFailure) as caught:
+        parse(source, YamlProfile.YAML11_COMPAT_V1, ParseLimits())
+    assert caught.value.kind is YamlFormationFailureKind.NUMBER_DIGITS
+
+
 def test_profile_yaml12_scalars():
     # Case profile.yaml12-scalars (yaml-v1.json:5-9).
     document = parse_source("[yes, 017, 0o17, 1:02:03, 2001-12-15]", YamlProfile.YAML12_CORE_V1)

@@ -206,9 +206,10 @@ class Parser:
     """Cursor-based TOML 1.0 parser over the decoded text; spans are raw
     byte offsets via ``bm``."""
 
-    def __init__(self, text: str, bm: _ByteMap) -> None:
+    def __init__(self, text: str, bm: _ByteMap, limits: ParseLimits) -> None:
         self.text = text
         self.bm = bm
+        self.limits = limits
         self.pos = 0
         self.root = _TableNode(TableFlavor.ROOT)
         self.current = self.root
@@ -550,17 +551,36 @@ class Parser:
             radix = {"x": 16, "o": 8, "b": 2}[prefix]
             if not _radix_ok(digits, radix):
                 return None
+            self._check_number_digits(digits, radix)
             value = int(digits.replace("_", ""), radix)
         else:
             int_end = _scan_dec_int(token, 0)
             if int_end is None or int_end != len(token):
                 return None
-            value = int(token.replace("_", ""), 10)
+            digits = rest.replace("_", "")
+            self._check_number_digits(digits, 10)
+            if len(digits) > 19:
+                # any valid dec-int with 20+ digits overflows i64
+                # (numbers.rs); reject before conversion so the
+                # interpreter's decimal int() conversion limit never
+                # surfaces as a bare ValueError
+                return None
+            value = int(digits, 10)
         if sign < 0:
             value = -value
         if not _INT64_MIN <= value <= _INT64_MAX:
             return None
         return _InternalItemKind.integer(value)
+
+    def _check_number_digits(self, digits: str, radix: int) -> None:
+        """Fatal number-digits resource-limit failure when one integer
+        token's magnitude digits exceed ``limits.max_number_digits``
+        (the same-wave cross-language bound; checked before int())."""
+        observed = _count_number_digits(digits, radix)
+        if observed > self.limits.max_number_digits:
+            raise TomlFormationFailure.resource_limit(
+                "number-digits", observed, self.limits.max_number_digits
+            )
 
     # -- strings ----------------------------------------------------------
 
@@ -1028,6 +1048,14 @@ def _scan_dec_int(token: str, index: int) -> int | None:
     return index
 
 
+def _count_number_digits(digits: str, radix: int) -> int:
+    """One integer token's magnitude digit count, radix-aware (hex
+    literals count their hex digits; underscores never count)."""
+    if radix == 16:
+        return sum(1 for ch in digits if ch in "0123456789abcdefABCDEF")
+    return sum(1 for ch in digits if "0" <= ch <= "0123456789"[radix - 1])
+
+
 def _radix_ok(digits: str, radix: int) -> bool:
     """Radix digits with underscores only between digits (numbers.rs)."""
     if not digits:
@@ -1378,7 +1406,7 @@ def parse(source_bytes: bytes, profile: TomlProfile, limits: ParseLimits) -> Doc
     preflight_delimiter_nesting(text, pieces, limits.max_nesting_depth)
     structural_index = LosslessStructuralIndex.new(authority.identity, source.len(), pieces)
     try:
-        parser = Parser(text, bm)
+        parser = Parser(text, bm, limits)
         root_node = parser.parse()
         builder = _EntityBuilder(authority, source.len(), limits)
         root = builder.build_table(root_node, 0, (0, source.len()))

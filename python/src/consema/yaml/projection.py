@@ -55,6 +55,7 @@ from consema.yaml.parser import (
     NativeMappingEntry,
     NativeScalar,
     NativeSequenceItem,
+    _int_decimal,
     TAG_BINARY,
     TAG_BOOL,
     TAG_FLOAT,
@@ -786,7 +787,7 @@ class _ValueContext:
             return invalid()
         if scalar.kind is YamlScalarKind.INTEGER:
             try:
-                return PortableValue.integer(int(scalar.canonical))
+                return PortableValue.integer(_int_decimal(scalar.canonical))
             except ValueError:
                 return invalid()
         if scalar.kind is YamlScalarKind.FLOAT:
@@ -974,8 +975,8 @@ def _parse_exact_decimal(text: str) -> Decimal | None:
     else:
         digits = mantissa
     try:
-        coefficient = sign * int(digits) if digits else 0
-        exponent = int(exponent_text) - scale if exponent_text else -scale
+        coefficient = sign * _int_decimal(digits) if digits else 0
+        exponent = _int_decimal(exponent_text) - scale if exponent_text else -scale
     except ValueError:
         return None
     return Decimal(coefficient, exponent)

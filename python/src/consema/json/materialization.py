@@ -124,6 +124,24 @@ def requested_style(request: MaterializationRequest, profile: JsonProfile) -> Js
     raise MaterializationFailure(MaterializationFailureKind.UNSUPPORTED_STYLE)
 
 
+def _int_to_decimal_str(value: int) -> str:
+    """Exact int to decimal string, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits; a parsed
+    document may legitimately hold larger integers within the parse
+    magnitude bound)."""
+    try:
+        return str(value)
+    except ValueError:
+        negative = value < 0
+        remaining = -value if negative else value
+        chunks: list[str] = []
+        while remaining:
+            remaining, part = divmod(remaining, 1_000_000_000)
+            chunks.append(f"{part:09d}")
+        text = "".join(reversed(chunks)).lstrip("0") or "0"
+        return "-" + text if negative else text
+
+
 class _BoundedOutput:
     def __init__(self, max_bytes: int) -> None:
         self._bytes = bytearray()
@@ -190,10 +208,15 @@ class _JsonWriter:
             )
 
     def write_integer(self, value: int) -> None:
-        self.output.push_bytes(str(value).encode("ascii"))
+        self.output.push_bytes(_int_to_decimal_str(value).encode("ascii"))
 
     def write_decimal(self, value) -> None:
-        self.output.push_bytes(f"{value.coefficient}e{value.exponent}".encode("ascii"))
+        text = (
+            _int_to_decimal_str(value.coefficient)
+            + "e"
+            + _int_to_decimal_str(value.exponent)
+        )
+        self.output.push_bytes(text.encode("ascii"))
 
     def write_string(self, value: str) -> None:
         self.output.push_byte(ord('"'))
