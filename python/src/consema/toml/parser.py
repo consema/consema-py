@@ -509,7 +509,8 @@ class Parser:
                 return _InternalItemKind.float_bits(_FLOAT_NEG_INF_BITS)
             if token == "-nan":
                 return _InternalItemKind.float_bits(_FLOAT_NEG_NAN_BITS)
-            if token == "nan":
+            if token in ("nan", "+nan"):
+                # numbers.rs: +nan is a positive silent NaN, never +inf
                 return _InternalItemKind.float_bits(_FLOAT_NAN_BITS)
             return _InternalItemKind.float_bits(_FLOAT_INF_BITS)
         if not _float_grammar_ok(token):

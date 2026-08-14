@@ -19,9 +19,21 @@ from __future__ import annotations
 
 import pytest
 
+from consema.core import PortableValue
+from consema.document.ids import MaterializationStyleId, ProfileId
 from consema.document.limits import ParseLimits
+from consema.document.materialization import MaterializationRequest
 from consema.document.structural import FormationStatus, StructuralPieceKind
-from consema.toml import TomlFormationFailure, TomlItemKind, TomlProfile, parse
+from consema.registry import parse_document
+from consema.toml import (
+    ProjectionRequest,
+    ProjectionTarget,
+    TomlFormationFailure,
+    TomlItemKind,
+    TomlProfile,
+    materialize,
+    parse,
+)
 from consema.toml.syntax import TomlSyntaxKind
 
 
@@ -114,6 +126,25 @@ def test_native_array_aot_distinct(fixture_bytes):
     assert len(upstreams.array_elements()) == 2
     assert upstreams.array_elements()[0].item().kind() is TomlItemKind.STANDARD_TABLE
     assert upstreams.array_elements()[1].item().kind() is TomlItemKind.STANDARD_TABLE
+
+
+def test_plus_nan_is_silent_nan_not_positive_infinity():
+    """+nan maps to the positive silent NaN bit pattern (numbers.rs;
+    toml_edit authority and the go/ts/kt families all map +nan to NaN),
+    and canonical materialization emits 'a = nan' — never 'a = inf'."""
+    document = parse_document(b"a = +nan", ProfileId.new("toml.1.0", 1))
+    projection = document.as_toml().project(
+        ProjectionRequest.new(ProjectionTarget.BEST_EXACT_CORE_V1)
+    )
+    assert projection.value == PortableValue.object(
+        [("a", PortableValue.binary_float64(0x7FF8000000000000))]
+    )
+    request = MaterializationRequest.new(
+        ProfileId.new("toml.1.0", 1),
+        MaterializationStyleId.new("toml.canonical-document", 1),
+    )
+    result = materialize(projection.value, request)
+    assert result.document.render() == b'"a" = nan\n'
 
 
 def test_native_float_signed_zero():
