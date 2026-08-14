@@ -4,8 +4,9 @@ The Python implementation of the language-neutral Consema
 configuration-processing contracts (RFC 0002/0003/0004/0006 contract
 family; authority: the spec repository docs/rfcs/; equal footing with
 Rust/Go/TS/Kotlin per the 2026-08-11 owner decision). Zero third-party
-runtime dependencies (`dependencies = []`, pyproject.toml:35; pytest is a
-dev extra only) and never imports or calls the other implementations.
+runtime dependencies (`dependencies = []` — the pyproject.toml
+`dependencies` field is the anchor; pytest is a dev extra only) and never
+imports or calls the other implementations.
 
 ## Verify
 
@@ -56,11 +57,15 @@ python -m consema.conformance     # runner CLI (18 suites / 519 cases; __main__ 
 
 18 suites / 519 cases / aggregate digest `cfd6e296…` are pinned in
 `tests/conformance/test_runner.py` (per-suite applicable surface
-(passed, 0, 0) for every suite — any documented skip fails); 519/519 pass
-in CI (ci-python.yml, python-conformance job).
+(passed, 0, 0) for every suite — any documented skip fails); the full
+surface passes in CI (ci-python.yml, python-conformance job; 现行计数以
+最近 CI run 为准，见 GitHub Actions)。
 
 ## References
 
 - Language plan: `https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md` (L0-L5 closed
-  for all three new languages, 2026-08-12)
+  for all three new languages, 2026-08-12; the py L-differential row carries
+  three harnesses — byte parity / normalized / protocol exchange — and the
+  §3.6 shared-conformance differential leg is not landed in this repo, see
+  the ci-python.yml header note)
 - CI and cross-language verification design: `https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md`

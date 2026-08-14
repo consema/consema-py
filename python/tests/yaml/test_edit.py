@@ -3,21 +3,21 @@ the anchor-safe rules (RFC 0007 s12).
 
 Cases covered with the vector case ids cited:
 
-- edit.scalar-atomic (yaml-v1.json:105-108): a semantic scalar replacement
+- edit.scalar-atomic (yaml-v1.json): a semantic scalar replacement
   under PreserveCompatible keeps the plain style and yields exactly one
   source edit: ``# keep\\na: 2\\nb: two\\n``.
-- edit.anchor-rename (yaml-v1.json:110-114): renaming an anchor updates its
+- edit.anchor-rename (yaml-v1.json): renaming an anchor updates its
   exact dependent aliases in one transaction.
-- edit.structural-insert (yaml-v1.json:115-118): canonical flow fragments
+- edit.structural-insert (yaml-v1.json): canonical flow fragments
   ``!!bool "true"`` and ``? !!str "b" : !!int "2"`` with comma ownership.
-- edit.anchor-dependency (yaml-v1.json:120-123): removing an anchored
+- edit.anchor-dependency (yaml-v1.json): removing an anchored
   definition while a live alias remains fails with
   yaml.edit.anchor-dependency@1 (only the deleted subtree is collected;
   alias edges are never crossed).
 - The eight frozen operation ids
   (https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs).
 
-Contract: RFC 0007 s12 (lines 355-398) — transactions are snapshot-bound
+Contract: RFC 0007 s12 — transactions are snapshot-bound
 and validate all operations before publishing a candidate; dry-run and
 commit produce identical replacements and target digest; a failure returns
 no Document, no ChangeSet, no SourcePatch.
@@ -45,7 +45,7 @@ from tests.yaml.conftest import parse_source
 
 
 def test_edit_scalar_atomic():
-    # Case edit.scalar-atomic (yaml-v1.json:105-108).
+    # Case edit.scalar-atomic (yaml-v1.json).
     document = parse_source("# keep\na: 1\nb: two\n", YamlProfile.YAML12_CORE_V1)
     target = document.document(0).root().mapping_entry(0).value()
     builder = EditTransactionBuilder(document)
@@ -67,7 +67,7 @@ def test_edit_scalar_atomic():
 
 
 def test_edit_anchor_rename():
-    # Case edit.anchor-rename (yaml-v1.json:110-114).
+    # Case edit.anchor-rename (yaml-v1.json).
     document = parse_source("first: &x [one]\ncopy: *x\n", YamlProfile.YAML12_CORE_V1)
     target = document.document(0).root().mapping_entry(0).value()
     builder = EditTransactionBuilder(document)
@@ -78,14 +78,14 @@ def test_edit_anchor_rename():
     assert result.document.alias(0).name() == "renamed"
     # Dry-run and commit share the identical patch and target digest.
     # target_digest is a dataclass FIELD on the Python SourcePatch
-    # (python/src/consema/document/source_patch.py:224), not a method as in
+    # (python/src/consema/document/source_patch.py), not a method as in
     # Rust/Go/TS — the Python family chose the field form (RFC 0003 §10).
     plan = dry_run(document, transaction, EditPlanSourceId.new("config.yaml"))
     assert plan.target_digest() == result.source_patch.target_digest
 
 
 def test_edit_structural_insert():
-    # Case edit.structural-insert (yaml-v1.json:115-118): one transaction
+    # Case edit.structural-insert (yaml-v1.json): one transaction
     # mutating two independent containers; the fragments are the canonical
     # flow spellings ``!!bool "true"`` and ``? !!str "b" : !!int "2"``.
     document = parse_source("seq: [one, two]\nmap: {a: 1}\n", YamlProfile.YAML12_CORE_V1)
@@ -113,7 +113,7 @@ def test_edit_structural_insert():
 
 
 def test_edit_anchor_dependency():
-    # Case edit.anchor-dependency (yaml-v1.json:120-123): removing the
+    # Case edit.anchor-dependency (yaml-v1.json): removing the
     # anchored sequence element would leave the live ``*x`` alias without
     # its anchor; the transaction fails atomically with
     # yaml.edit.anchor-dependency@1 and the base document is unchanged.

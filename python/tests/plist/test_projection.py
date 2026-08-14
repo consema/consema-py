@@ -5,7 +5,7 @@ each test cites the vector case id.
 
 Cases covered here:
 
-- plist-v1.json: plist.projection.value-tree-record (lines 1090-1148),
+- plist-v1.json: plist.projection.value-tree-record,
   plist.projection.require-object-policies (1149-1199),
   plist.projection.atomic-failures (1200-1221).
 """
@@ -48,12 +48,12 @@ def binary_document(hex_string: str):
 
 
 # ---------------------------------------------------------------------------
-# plist.projection.value-tree-record (plist-v1.json:1090-1148)
+# plist.projection.value-tree-record (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_projection_value_tree_record():
-    # Case plist.projection.value-tree-record (plist-v1.json:1091-1147).
+    # Case plist.projection.value-tree-record (plist-v1.json).
     source = (
         '<plist version="1.0"><dict>'
         "<key>name</key><string>text</string>"
@@ -106,12 +106,12 @@ def test_projection_value_tree_record():
 
 
 # ---------------------------------------------------------------------------
-# plist.projection.require-object-policies (plist-v1.json:1149-1199)
+# plist.projection.require-object-policies (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_projection_require_object_policies():
-    # Case plist.projection.require-object-policies (plist-v1.json:1150-1198).
+    # Case plist.projection.require-object-policies (plist-v1.json).
     duplicate_source = (
         '<plist version="1.0"><dict>'
         "<key>a</key><string>one</string>"
@@ -141,7 +141,7 @@ def test_projection_require_object_policies():
     assert first.complete is not None
     # The require-object projection value is the plain unique-key Object
     # itself, not a value-tree record wrapper (https://github.com/consema/consema-go/blob/main/go/plist/projection.go
-    # projectRequireObject; https://github.com/consema/consema-go/blob/main/go/conformance/plist_v1.go:2636-2641).
+    # projectRequireObject; https://github.com/consema/consema-go/blob/main/go/conformance/plist_v1.go).
     entries = first.complete.value.as_object()
     assert [key for key, _ in entries] == ["a", "b"]
     assert [value.as_string() for _, value in entries] == ["one", "two"]
@@ -162,12 +162,12 @@ def test_projection_require_object_policies():
 
 
 # ---------------------------------------------------------------------------
-# plist.projection.atomic-failures (plist-v1.json:1200-1221)
+# plist.projection.atomic-failures (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_projection_atomic_failures():
-    # Case plist.projection.atomic-failures (plist-v1.json:1201-1220).
+    # Case plist.projection.atomic-failures (plist-v1.json).
     incomplete = xml_document('<plist version="1.0"><dict><key>a</key></dict></plist>')
     result = project(incomplete, ProjectionRequest.value_tree())
     assert result.failed is not None

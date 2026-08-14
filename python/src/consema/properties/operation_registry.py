@@ -6,7 +6,7 @@ classifications; the surface is frozen by the registry test
 (operation_registry.rs: exactly five Supported structural operations
 for every profile) and RFC 0010 section 13 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-
 profiles-v1.md). The vector suite pins the exact five-operation
-surface (conformance/vectors/java-properties-v1.json:147-149,
+surface (conformance/vectors/java-properties-v1.json,
 "registry.frozen-five-operation-surface").
 
 Frozen records (operation_registry.rs):

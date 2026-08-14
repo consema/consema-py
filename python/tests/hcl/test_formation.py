@@ -7,7 +7,7 @@ Assertions check the language-neutral facts the vectors pin (formation
 status, exact render round-trip, diagnostics, canonical decimals, fatal
 limits). Cases covered:
 
-- hcl-v1.json: hcl.native-formation.body-basic (lines 9-20),
+- hcl-v1.json: hcl.native-formation.body-basic,
   hcl.native-formation.comments (22-32), hcl.native-formation.heredoc
   (58-68), hcl.native-formation.number-matrix (82-169),
   hcl.native-formation.identifiers-keywords (171-224),
@@ -70,7 +70,7 @@ def fatal_code(source: bytes, limits: HclParseLimits) -> str | None:
 
 
 def test_body_basic_forms_complete_and_renders_exactly():
-    # Case hcl.native-formation.body-basic (hcl-v1.json:9-20).
+    # Case hcl.native-formation.body-basic (hcl-v1.json).
     source = (
         "region = \"us-east-1\"\n\n"
         "server \"web\" \"1\" {\n  port = 8080\n}\n\n"
@@ -91,7 +91,7 @@ def test_body_basic_forms_complete_and_renders_exactly():
 
 
 def test_comments_are_complete_and_byte_exact():
-    # Case hcl.native-formation.comments (hcl-v1.json:22-32).
+    # Case hcl.native-formation.comments (hcl-v1.json).
     source = (
         "# leading hash\na = 1 // trailing slash\n"
         "b = 2 /* inline */\nc = 3 /* spans\nlines */\n"
@@ -106,7 +106,7 @@ def test_comments_are_complete_and_byte_exact():
 
 
 def test_heredoc_matrix_is_complete_and_byte_exact():
-    # Case hcl.native-formation.heredoc (hcl-v1.json:58-68).
+    # Case hcl.native-formation.heredoc (hcl-v1.json).
     source = (
         "plain = <<EOT\nalpha\nbeta\nEOT\n"
         "indented = <<-EOT\n    one\n      two\n    EOT\n"
@@ -123,7 +123,7 @@ def test_heredoc_matrix_is_complete_and_byte_exact():
 
 
 def test_number_matrix_statuses_diagnostics_and_canonical_values():
-    # Case hcl.native-formation.number-matrix (hcl-v1.json:82-169).
+    # Case hcl.native-formation.number-matrix (hcl-v1.json).
     samples = [
         ("a = 0\n", "Complete", None, "0"),
         ("a = 42\n", "Complete", None, "42"),
@@ -149,7 +149,7 @@ def test_number_matrix_statuses_diagnostics_and_canonical_values():
 
 
 def test_identifier_keyword_matrix():
-    # Case hcl.native-formation.identifiers-keywords (hcl-v1.json:171-224).
+    # Case hcl.native-formation.identifiers-keywords (hcl-v1.json).
     samples = [
         ("foo-bar = 1\n", "Complete"),
         ("变量 = 2\n", "Complete"),
@@ -168,7 +168,7 @@ def test_identifier_keyword_matrix():
 
 
 def test_source_contract_bom_lone_cr_invalid_utf8():
-    # Case hcl.native-formation.source-contract (hcl-v1.json:387-430).
+    # Case hcl.native-formation.source-contract (hcl-v1.json).
     bom = b"\xef\xbb\xbfa = 1\n"
     document = parse(bom, HclProfile.NATIVE_V1)
     assert document.formation_status().value == "Recovered"
@@ -191,7 +191,7 @@ def test_source_contract_bom_lone_cr_invalid_utf8():
 
 
 def test_recovery_matrix_boundaries():
-    # Case hcl.native-formation.recovery-matrix (hcl-v1.json:432-492).
+    # Case hcl.native-formation.recovery-matrix (hcl-v1.json).
     samples = [
         ("a = \"abc\n", "hcl.parse.unterminated-string@1"),
         ("a = <<EOT\ncontent\n", "hcl.parse.unterminated-heredoc@1"),
@@ -209,7 +209,7 @@ def test_recovery_matrix_boundaries():
 
 def test_recovery_keeps_proven_attributes():
     # Case hcl.native-formation.recovery-matrix sample 5
-    # (hcl-v1.json:450-454, 480-485): "a" and "b" stay proven attributes.
+    # (hcl-v1.json, 480-485): "a" and "b" stay proven attributes.
     document = parse(b"a = 1 @ 2\nb = 3\n", HclProfile.NATIVE_V1)
     assert document.formation_status().value == "Recovered"
     names = [item.as_attribute().name for item in document.body.items]
@@ -218,7 +218,7 @@ def test_recovery_keeps_proven_attributes():
 
 def test_empty_body_and_eof_termination():
     # Case hcl.native-formation.empty-body-eof-termination
-    # (hcl-v1.json:1649-1682).
+    # (hcl-v1.json).
     for source in ["", "a = 1", "b {\n}\n", "oneline { y = 2 }"]:
         document = parse(source.encode("utf-8"), HclProfile.NATIVE_V1)
         assert document.formation_status().value == "Complete", repr(source)
@@ -226,7 +226,7 @@ def test_empty_body_and_eof_termination():
 
 
 def test_for_key_ambiguity():
-    # Case hcl.native-formation.for-key-ambiguity (hcl-v1.json:1751-1779).
+    # Case hcl.native-formation.for-key-ambiguity (hcl-v1.json).
     document = parse(b"a = { for = 1 }\n", HclProfile.NATIVE_V1)
     assert document.formation_status().value == "Recovered"
     assert "hcl.parse.expression@1" in diagnostic_codes(document)
@@ -237,7 +237,7 @@ def test_for_key_ambiguity():
 
 
 def test_invalid_escapes_are_recovered():
-    # Case hcl.native-formation.invalid-escapes (hcl-v1.json:1709-1737).
+    # Case hcl.native-formation.invalid-escapes (hcl-v1.json).
     for source in ["a = \"bad \\q\"\n", "a = \"\\u12\"\n", "a = \"\\U00110000\"\n"]:
         document = parse(source.encode("utf-8"), HclProfile.NATIVE_V1)
         assert document.formation_status().value == "Recovered", source
@@ -245,7 +245,7 @@ def test_invalid_escapes_are_recovered():
 
 
 def test_tfvars_attributes_only_is_complete():
-    # Case hcl.tfvars-formation.attributes-only (hcl-v1.json:506-516).
+    # Case hcl.tfvars-formation.attributes-only (hcl-v1.json).
     source = (
         "region = \"us-east-1\"\ncount = 3\nratio = 0.5\nenabled = true\n"
         "tags = [\"a\", \"b\"]\nlabels = {\n  env = \"prod\"\n}\n"
@@ -257,7 +257,7 @@ def test_tfvars_attributes_only_is_complete():
 
 
 def test_tfvars_block_rejected_with_profile_code():
-    # Case hcl.tfvars-formation.block-rejected (hcl-v1.json:518-528).
+    # Case hcl.tfvars-formation.block-rejected (hcl-v1.json).
     source = "region = \"us-east-1\"\nblock \"x\" {\n  a = 1\n}\n"
     document = parse(source.encode("utf-8"), HclProfile.TFVARS_V1)
     assert document.formation_status().value == "Recovered"
@@ -270,7 +270,7 @@ def test_tfvars_block_rejected_with_profile_code():
 
 
 def test_tfvars_accepts_the_full_expression_grammar():
-    # Case hcl.tfvars-formation.expression-grammar-full (hcl-v1.json:530-540).
+    # Case hcl.tfvars-formation.expression-grammar-full (hcl-v1.json).
     # Terraform's static-only evaluation rule is application-layer policy,
     # never replicated at formation (RFC 0014 §5, hard gate 3).
     source = "computed = max(1, 2)\nref = var.other\njoined = \"prefix-${var.suffix}\"\n"
@@ -280,7 +280,7 @@ def test_tfvars_accepts_the_full_expression_grammar():
 
 
 def test_tfvars_duplicate_attribute():
-    # Case hcl.tfvars-formation.duplicate-attribute (hcl-v1.json:542-552).
+    # Case hcl.tfvars-formation.duplicate-attribute (hcl-v1.json).
     document = parse(b"a = 1\na = 2\n", HclProfile.TFVARS_V1)
     assert document.formation_status().value == "Recovered"
     assert "hcl.parse.duplicate-attribute@1" in diagnostic_codes(document)
@@ -290,7 +290,7 @@ def test_tfvars_duplicate_attribute():
 
 
 def test_unary_compound_matrix():
-    # Case hcl.native-formation.unary-compound (hcl-v1.json:226-279).
+    # Case hcl.native-formation.unary-compound (hcl-v1.json).
     samples = [
         ("a = -1 + 2\n", "Complete"),
         ("a = 2 * -1\n", "Complete"),
@@ -309,7 +309,7 @@ def test_unary_compound_matrix():
 
 
 def test_operators_precedence_matrix():
-    # Case hcl.native-formation.operators-precedence (hcl-v1.json:281-349).
+    # Case hcl.native-formation.operators-precedence (hcl-v1.json).
     samples = [
         ("a = 1 + 2 * 3\n", "Complete"),
         ("a = (1 + 2) * 3\n", "Complete"),
@@ -335,8 +335,8 @@ def test_operators_precedence_matrix():
 
 
 def test_constructors_and_for_expressions():
-    # Cases hcl.native-formation.constructors (hcl-v1.json:351-361) and
-    # hcl.native-formation.for-expressions (hcl-v1.json:363-373).
+    # Cases hcl.native-formation.constructors (hcl-v1.json) and
+    # hcl.native-formation.for-expressions (hcl-v1.json).
     source = (
         "nlsep = [\n  1,\n  2,\n]\nobj = {\n  a = 1\n  b = 2\n}\n"
         "dups = { a = 1, a = 2 }\nnumkey = { 1 = \"one\" }\n"
@@ -361,7 +361,7 @@ def test_constructors_and_for_expressions():
 
 
 def test_directive_strip_markers():
-    # Case hcl.native-formation.directive-strip-markers (hcl-v1.json:1739-
+    # Case hcl.native-formation.directive-strip-markers (hcl-v1.json-
     # 1749): the `~` strip markers are source facts, never applied.
     source = 'a = "%{~ if x ~}yes%{ endif }"\nb = "%{ for k, v in m ~}${k}%{ endfor }"\n'
     document = parse(source.encode("utf-8"), HclProfile.NATIVE_V1)
@@ -374,7 +374,7 @@ def test_directive_strip_markers():
 
 
 def test_leading_digit_rejection():
-    # Case hcl.native-formation.leading-digit-rejection (hcl-v1.json:1684-
+    # Case hcl.native-formation.leading-digit-rejection (hcl-v1.json-
     # 1707).
     document = parse(b"1abc = 1\n", HclProfile.NATIVE_V1)
     assert document.formation_status().value == "Recovered"
@@ -385,7 +385,7 @@ def test_leading_digit_rejection():
 
 
 def test_native_production_shape():
-    # Case hcl.native-formation.production-shape (hcl-v1.json:494-504).
+    # Case hcl.native-formation.production-shape (hcl-v1.json).
     source = (
         'terraform {\n  required_version = ">= 1.5"\n}\n\n'
         'variable "region" {\n  type    = string\n  default = "us-east-1"\n}\n\n'
@@ -403,7 +403,7 @@ def test_native_production_shape():
 
 
 def test_tfvars_production_shape():
-    # Case hcl.tfvars-formation.production-shape (hcl-v1.json:554-564).
+    # Case hcl.tfvars-formation.production-shape (hcl-v1.json).
     source = (
         "# Production-shaped terraform.tfvars fixture\n"
         'region = "us-east-1"\ninstance_type = "t3.micro"\n'
@@ -481,7 +481,7 @@ def test_no_evaluation_directive_and_for_are_syntax_facts():
 
 
 def test_expression_kinds_are_syntax_facts():
-    # The expression-matrix sample of hcl-v1.json:47-50: every expression
+    # The expression-matrix sample of hcl-v1.json: every expression
     # parses to its frozen kind with exact source text, never a value.
     source = (
         "int = 42\nreal = 1.5\nexp = 1e3\nneg = -7\nyes = true\nno = false\n"
@@ -521,7 +521,7 @@ def test_expression_kinds_are_syntax_facts():
 
 
 def test_function_call_arguments_and_expansion_are_syntax_facts():
-    # hcl-v1.json:53-54 (`call = max(1, 2, 3)`): the call is a FunctionCall
+    # hcl-v1.json (`call = max(1, 2, 3)`): the call is a FunctionCall
     # with ordered arguments; nothing is invoked.
     document = parse(b"call = max(1, 2, 3)\n", HclProfile.NATIVE_V1)
     expression = document.body.items[0].as_attribute().expression
@@ -530,7 +530,7 @@ def test_function_call_arguments_and_expansion_are_syntax_facts():
     assert name == "max"
     assert [argument.expand for argument in args] == [False, False, False]
     assert len(args) == 3
-    # merge(m1, m2...) keeps the expansion marker fact (hcl-v1.json:308).
+    # merge(m1, m2...) keeps the expansion marker fact (hcl-v1.json).
     document = parse(b"a = merge(m1, m2...)\n", HclProfile.NATIVE_V1)
     expression = document.body.items[0].as_attribute().expression
     _, _, args = expression.kind.payload
@@ -538,7 +538,7 @@ def test_function_call_arguments_and_expansion_are_syntax_facts():
 
 
 def test_traversal_steps_are_never_resolved():
-    # hcl-v1.json:375-384 (`v = foo` ... `expridx = foo[1 + 1]`): traversal
+    # hcl-v1.json (`v = foo` ... `expridx = foo[1 + 1]`): traversal
     # facts with ordered steps, never resolved.
     document = parse(
         b"v = foo\nattr = foo.bar\nidx = foo[0]\nsplat1 = foo.*.bar\n"
@@ -563,8 +563,8 @@ def test_traversal_steps_are_never_resolved():
 
 
 def test_limit_expression_depth_and_binary_chain():
-    # Cases hcl.limit.expression-depth (hcl-v1.json:1781-1793) and
-    # hcl.limit.binary-chain-depth (hcl-v1.json:1796-1809).
+    # Cases hcl.limit.expression-depth (hcl-v1.json) and
+    # hcl.limit.binary-chain-depth (hcl-v1.json).
     assert (
         fatal_code(b"a = (((1)))\n", limited(max_expression_depth=3))
         == "hcl.limit.expression-depth@1"
@@ -576,7 +576,7 @@ def test_limit_expression_depth_and_binary_chain():
 
 
 def test_limit_body_nesting():
-    # Case hcl.limit.body-nesting (hcl-v1.json:1811-1824).
+    # Case hcl.limit.body-nesting (hcl-v1.json).
     source = b"a = 1\nb {\nc {\nd = 1\n}\n}\n"
     assert (
         fatal_code(source, limited(max_body_depth=2)) == "hcl.limit.body-depth@1"
@@ -584,8 +584,8 @@ def test_limit_body_nesting():
 
 
 def test_limit_number_digits_and_arithmetic_overflow():
-    # Cases hcl.limit.number-digits (hcl-v1.json:1826-1839) and
-    # hcl.limit.arithmetic-overflow (hcl-v1.json:1841-1851).
+    # Cases hcl.limit.number-digits (hcl-v1.json) and
+    # hcl.limit.arithmetic-overflow (hcl-v1.json).
     assert (
         fatal_code(b"a = 1e10\n", limited(max_number_digits=5))
         == "hcl.limit.number-digits@1"
@@ -597,7 +597,7 @@ def test_limit_number_digits_and_arithmetic_overflow():
 
 
 def test_limit_count_family():
-    # Cases hcl.limit.attribute-count (hcl-v1.json:1853-1866),
+    # Cases hcl.limit.attribute-count (hcl-v1.json),
     # hcl.limit.block-count (1868-1881), hcl.limit.body-item-count
     # (1883-1896), hcl.limit.label-count (1898-1911).
     assert (
@@ -619,7 +619,7 @@ def test_limit_count_family():
 
 
 def test_limit_template_heredoc_and_constructor_extents():
-    # Cases hcl.limit.template-size (hcl-v1.json:1913-1926),
+    # Cases hcl.limit.template-size (hcl-v1.json),
     # hcl.limit.heredoc-size (1928-1941), hcl.limit.tuple-elements
     # (1943-1956), hcl.limit.object-entries (1958-1971).
     assert (

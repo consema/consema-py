@@ -3,28 +3,28 @@
 Authority (language-neutral first; Rust only for byte/registry arbitration):
 
 - conformance/vectors/source-v1.json — the machine-readable case suite
-  "consema.source.conformance@1": digest cases lines 4-22, encoding
-  round-trips lines 23-52, encoding-conflict / unsupported-bom /
-  invalid-sequence cases lines 53-82, decoded-location cases lines 83-100,
-  limit cases lines 155-172.
+  "consema.source.conformance@1" (case ids are the anchors; the provisioned
+  file's line numbers are not stable): the digest, encoding round-trip,
+  encoding-conflict / unsupported-bom / invalid-sequence, decoded-location
+  and limit cases.
 - RFC 0003 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md): content
-  digest §3 lines 45-62; closed v1 encoding IDs §4.1 lines 66-77; resolution
+  digest §3; closed v1 encoding IDs §4.1; resolution
   inputs and priority §4.2、decoding rejections §4.3、raw spans and decoded
   boundaries §5（行号已删除，以 § 锚为准）;
-  core.source-snapshot@1 exact fields §6 lines 143-160; resource behavior
-  §12 lines 311-317.
+  core.source-snapshot@1 exact fields §6; resource behavior
+  §12.
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs — byte/registry arbitration only:
   SourceEncoding wire ids source.rs; WindowsCodePage registry
   source.rs; BOM detection source.rs; resolution priority
   source.rs; UTF-16 decode source.rs; Latin-1 decode
   source.rs; code-page decode source.rs; SourceLimits
-  defaults source.rs; decoded-boundary conversion source.rs,
- .（区间定义处）
+  defaults source.rs; decoded-boundary conversion source.rs
 - Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
-  (core.source.invalid-utf8@1:207, core.source.encoding-conflict@1:366,
-  core.source.invalid-sequence@1:372, core.source.unsupported-bom@1:405,
-  core.source.resource-limit@1:399, and the v6 additions
-  core.source.code-page-required@1:967, core.source.unsupported-code-page@1:973).
+  (core.source.invalid-utf8@1, core.source.encoding-conflict@1,
+  core.source.invalid-sequence@1, core.source.unsupported-bom@1,
+  core.source.resource-limit@1, and the v6 additions
+  core.source.code-page-required@1, core.source.unsupported-code-page@1 —
+  code names are the anchors).
 
 https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
@@ -128,7 +128,8 @@ class SourceEncoding:
     (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs).
 
     Wire identifiers match the vector suite's ``selected`` values exactly
-    (conformance/vectors/source-v1.json lines 27, 33, 39, 45, 51):
+    (conformance/vectors/source-v1.json — the ``selected`` field spellings
+    are the anchors):
     "binary", "utf-8", "utf-16le", "utf-16be", "latin-1".
     """
 
@@ -400,9 +401,10 @@ class SourceError(Exception):
     """Stable source construction failure with a frozen registered code.
 
     Code mapping authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
-    (core.source.invalid-utf8@1:207, core.source.invalid-sequence@1:372,
-    core.source.encoding-conflict@1:366, core.source.unsupported-bom@1:405,
-    core.source.resource-limit@1:399); variant semantics per
+    (core.source.invalid-utf8@1, core.source.invalid-sequence@1,
+    core.source.encoding-conflict@1, core.source.unsupported-bom@1,
+    core.source.resource-limit@1 — code names are the anchors); variant
+    semantics per
     https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs. The OffsetOverflow variant
     shares the resource-limit code (FatalFormationFailure mapping,
     lib.rs). Error text is human presentation only (RFC 0016 §6).
@@ -621,13 +623,13 @@ class SourceSnapshot:
     def decoded_position(self, raw_byte: int) -> DecodedPosition:
         """Resolves one raw byte offset only when it is a decoded scalar
         boundary (source.rs; vector cases source.location.*,
-        conformance/vectors/source-v1.json:83-100).
+        conformance/vectors/source-v1.json).
 
         The terminal raw offset (``raw_byte == len``) is the valid half-open
         end of the source and resolves to the terminal DecodedPosition, the
         same way the Rust decoder accepts ``raw_byte <= bytes.len()``
         (source.rs) and the Go decoder accepts ``rawByte <= len``
-        (https://github.com/consema/consema-go/blob/main/go/document/source.go:322-323); only offsets beyond the source are
+        (https://github.com/consema/consema-go/blob/main/go/document/source.go); only offsets beyond the source are
         out of bounds. Raises LocationError(OutOfBounds) for offsets beyond
         the source, LocationError(NotDecodedBoundary) for offsets inside one
         encoded scalar, and LocationError(NoDecodedText) for binary sources
@@ -754,7 +756,7 @@ def _decode_utf16(raw: bytes, encoding: SourceEncoding, limits: SourceLimits) ->
 
     Rejects odd-length input and isolated or reversed surrogate pairs. The
     BOM code unit decodes to U+FEFF and remains part of the raw source and
-    the decoded text (RFC 0003 §4.3, lines 119-122).
+    the decoded text (RFC 0003 §4.3).
     """
     if len(raw) % 2 != 0:
         raise SourceError(
@@ -803,7 +805,7 @@ def _decode_utf16(raw: bytes, encoding: SourceEncoding, limits: SourceLimits) ->
 def _decode_latin1(raw: bytes, limits: SourceLimits) -> str:
     """ISO-8859-1 byte-to-U+0000..U+00FF decoding (source.rs).
 
-    Latin-1 is not Windows-1252 (RFC 0003 §4.1, lines 76-77).
+    Latin-1 is not Windows-1252 (RFC 0003 §4.1).
     """
     _check_limit("decoded-scalars", len(raw), limits.max_decoded_scalars)
     output: list[str] = []

@@ -92,7 +92,7 @@ def validate_identifier(identifier: str, path: str) -> None:
 
 
 def validate_namespace(identifier: str, require_dot: bool, path: str) -> None:
-    """Validates a profile/namespace identifier (contract.go:148-168).
+    """Validates a profile/namespace identifier (contract.go).
 
     Unlike contract identifiers, non-first segments may start with a digit
     (profile IDs such as ``json.strict``); used by profile references and

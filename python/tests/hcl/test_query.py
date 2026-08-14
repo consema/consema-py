@@ -59,7 +59,7 @@ def match_texts(execution, document) -> list[str]:
 
 
 def test_native_body_walk():
-    # Case hcl.query.native-body-walk (hcl-v1.json:567-608).
+    # Case hcl.query.native-body-walk (hcl-v1.json).
     source = b"region = \"us-east-1\"\nserver \"web\" {\n  port = 8080\n}\ncount = 3\n"
     execution = native(
         [
@@ -85,7 +85,7 @@ def test_native_body_walk():
 
 
 def test_blocks_and_labels_both_samples():
-    # Case hcl.query.blocks-and-labels (hcl-v1.json:610-688).
+    # Case hcl.query.blocks-and-labels (hcl-v1.json).
     source = b"region = \"us-east-1\"\nserver \"web\" {\n  port = 8080\n}\ncount = 3\n"
 
     labels = native(
@@ -130,7 +130,7 @@ def test_blocks_and_labels_both_samples():
 
 
 def test_literal_accessors():
-    # Case hcl.query.literal-accessors (hcl-v1.json:690-812).
+    # Case hcl.query.literal-accessors (hcl-v1.json).
     def accessor(source: bytes, name: str):
         return native(
             [
@@ -160,7 +160,7 @@ def test_literal_accessors():
 
 
 def test_boolean_accessor_is_complete():
-    # Case hcl.query.literal-accessors sample 4 (hcl-v1.json:763-771, 804-810).
+    # Case hcl.query.literal-accessors sample 4 (hcl-v1.json, 804-810).
     execution = native(
         [
             OperatorCall("hcl.document-body", 1),
@@ -179,7 +179,7 @@ def test_boolean_accessor_is_complete():
 
 
 def test_lossless_kind_filter_with_ordinals():
-    # Case hcl.query.lossless-kind-filter (hcl-v1.json:814-861).
+    # Case hcl.query.lossless-kind-filter (hcl-v1.json).
     source = b"# c\nregion = \"us-east-1\"\n"
 
     comments = syntax(
@@ -212,7 +212,7 @@ def test_lossless_kind_filter_with_ordinals():
 
 
 def test_error_regions_query():
-    # Case hcl.query.error-regions (hcl-v1.json:863-887).
+    # Case hcl.query.error-regions (hcl-v1.json).
     execution = native(
         [
             OperatorCall("hcl.document-body", 1),

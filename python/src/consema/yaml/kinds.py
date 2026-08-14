@@ -7,7 +7,7 @@ Authority (language-neutral first; Rust only for registry arbitration):
   — yaml.1.2-core@1 (YAML 1.2.2 presentation grammar + Core schema) and
   yaml.1.1-compat@1 (compatible presentation + frozen 1.1 scalar
   resolution); the profile id table is https://github.com/consema/consema-rs/blob/main/consema-yaml/src/lib.rs.
-- Syntax kinds: RFC 0007 §9 (lines 224-228: BOM, Directive,
+- Syntax kinds: RFC 0007 §9 (BOM, Directive,
   DocumentMarker, Indicator, Anchor, Alias, Tag, Scalar, Whitespace,
   Newline, Comment, ErrorRegion "with stable style subfacts"); the closed
   spellings are frozen by lib.rs and their stable names by
@@ -18,7 +18,7 @@ Authority (language-neutral first; Rust only for registry arbitration):
   Timestamp/Binary/Custom/Tagged).
 
 The profile wire identifiers (``yaml.1.2-core@1``, ``yaml.1.1-compat@1``)
-are referenced verbatim by conformance/vectors/yaml-v1.json:3 and by every
+are referenced verbatim by conformance/vectors/yaml-v1.json and by every
 vector case input.
 """
 

@@ -8,13 +8,13 @@ Authority (language-neutral first; Rust only for arbitration):
   representability, limits); the closed v1 MaterializationLimits fields and
   semantics; ExactOnly is intentionally the only v1 representability value;
   UniqueStringEntriesToObject is explicit and reportable.
-- RFC 0004 §4 (lines 98-127): frozen style IDs (json.canonical-compact@1,
+- RFC 0004 §4: frozen style IDs (json.canonical-compact@1,
   json.canonical-pretty@1, toml.canonical-document@1) and newline rules.
-- RFC 0004 §7 (lines 170-191): the completion algebra — Complete{Value,
+- RFC 0004 §7: the completion algebra — Complete{Value,
   Fidelity, Report, Provenance} or Failed{Diagnostics, Report,
   analyzed_input_paths}; failed attempts contain no Document and no partial
   output bytes.
-- RFC 0004 §8 (lines 193-217): materialization provenance points from
+- RFC 0004 §8: materialization provenance points from
   portable input locations (Value/Association) to target origins
   (snapshot identity, NodeRef, raw Span, relation Direct/Reencoded/
   Generated).
@@ -26,10 +26,10 @@ Authority (language-neutral first; Rust only for arbitration):
   MaterializationRequest defaults materialization.rs;
   failure code mapping materialization.rs.
 - Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
-  (core.materialization.formation-failed@1:556, invalid-request@1:562,
-  resource-limit@1:574, unrepresentable@1:580, unsupported-encoding@1:586,
-  unsupported-newline@1:592, unsupported-profile@1:598,
-  unsupported-style@1:604).
+  (core.materialization.formation-failed@1, invalid-request@1,
+  resource-limit@1, unrepresentable@1, unsupported-encoding@1,
+  unsupported-newline@1, unsupported-profile@1,
+  unsupported-style@1 — code names are the anchors).
 
 https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
@@ -86,7 +86,7 @@ class MaterializationLimits:
 
     All limits apply before or during allocation; a failure returns no
     Document, no partial bytes, and no provenance that can be mistaken for a
-    result (RFC 0004 §3, lines 83-84).
+    result (RFC 0004 §3).
     """
 
     max_input_nodes: int = _DEFAULT_MAX_INPUT_NODES
@@ -105,7 +105,7 @@ class MaterializationRequest:
     Object-only, and ExactOnly defaults (materialization.rs).
     Materialization consumes one complete PortableValue; it never consumes a
     format AST, process-local handle, partial projection, or arbitrary bytes
-    (RFC 0004 §3, lines 58-59).
+    (RFC 0004 §3).
     """
 
     target_profile: ProfileId
@@ -149,7 +149,7 @@ class MaterializationReport:
     """Complete ordered materialization report (materialization.rs).
 
     Report events are stable, ordered, machine-readable diagnostics; human
-    wording is not a contract (RFC 0004 §7, lines 189-191).
+    wording is not a contract (RFC 0004 §7).
     """
 
     events: tuple[object, ...] = field(default_factory=tuple, repr=False)

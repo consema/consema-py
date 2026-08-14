@@ -66,7 +66,7 @@ PYTHON_DIR_ENV = "CONSEMA_EXCHANGE_PYTHON_DIR"
 # The closed record inventory of the exchange set: exactly the protocol
 # record surface both implementations decode in full (exchange_test.go
 # allRecords; the Python dispatch is validate_registered_payload,
-# python/src/consema/protocol/envelope.py:2768-2859).
+# python/src/consema/protocol/envelope.py).
 ALL_RECORDS = [
     "core.batch-plan@1",
     "core.batch-result@1",
@@ -175,7 +175,7 @@ def decode_record(record: str, value) -> object:
     returns the re-encodeable value tree (exchange_test.go decodeRecord).
 
     The Python record codecs validate through ``validate_registered_payload``
-    (the payload.rs dispatch mirror, envelope.py:2768-2859) and re-encode the
+    (the payload.rs dispatch mirror, envelope.py) and re-encode the
     validated transport value; ``core.portable-value-json@1`` has no
     record-level decoder: the transported value is the record."""
     if record == "core.portable-value-json@1":
@@ -187,7 +187,7 @@ def decode_record(record: str, value) -> object:
         # The registry dispatch mirrors the payload.rs mapping: any
         # QueryFailure becomes KindInvalidValue at "$.payload" (the same
         # mapping as validate_registered_payload and the Go payload.go
-        # decodeRecord; exchange_test.go:573-594).
+        # decodeRecord; exchange_test.go).
         raise protocol_error(
             ProtocolErrorKind.INVALID_VALUE,
             "$.payload",

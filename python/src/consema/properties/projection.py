@@ -40,8 +40,7 @@ Authority (Rust arbitration for exact semantics):
 The value-path and association-location records are the semantic model's
 portable input locations (RFC 0004 section 8). Golden transcription
 targets: conformance/vectors/java-properties-v1.json cases
-projection.* (lines 76-89) and resource.projection-limit-matrix
-(lines 142-145).
+projection.* and resource.projection-limit-matrix.
 """
 
 from __future__ import annotations

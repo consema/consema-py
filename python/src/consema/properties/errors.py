@@ -44,7 +44,7 @@ presentation only and never participates in conformance comparison. The
 vector-facing failure *names* ("RecoveredDocument", "UnpairedSurrogate",
 "InvalidLiteral", ...) are exposed as ``name`` properties using the exact
 Rust variant spellings the conformance vectors reference
-(conformance/vectors/java-properties-v1.json:58, :83, :88).
+(conformance/vectors/java-properties-v1.json, :83, :88).
 """
 
 from __future__ import annotations

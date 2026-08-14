@@ -19,14 +19,19 @@ returns a partial target document.
 
 Baseline families (JSON, TOML, YAML, INI, Java Properties) project plain
 portable values that convert to every target family under the target's
-representability rules. The record families (XML, plist, HCL) project
-versioned internal records (``xml.element-tree@1``, ``plist.value-tree@1``,
-``hcl.body@1``; RFC 0012 §9, RFC 0013 §9, RFC 0014 §8.2) that only their
-owning format family's materializer consumes: the record-consumption gate
-fails a conversion atomically with the shared invalid-request vocabulary
-whenever the record's owning family is not the target profile's family.
-Same-family directions pass the gate and the owning materializer consumes
-the record under its own validation and closure.
+representability rules — except the record-family targets (wave-4 GW4-27):
+the XML/plist/HCL materializers consume only their owning family's record,
+so a baseline projection targeting xml.1.0-safe, plist.xml or hcl.native
+fails atomically with MATERIALIZATION_FAILED (measured: convert_json →
+xml.1.0-safe / plist.xml / hcl.native all fail). The record families (XML,
+plist, HCL) project versioned internal records (``xml.element-tree@1``,
+``plist.value-tree@1``, ``hcl.body@1``; RFC 0012 §9, RFC 0013 §9, RFC 0014
+§8.2) that only their owning format family's materializer consumes: the
+record-consumption gate fails a conversion atomically with the shared
+invalid-request vocabulary whenever the record's owning family is not the
+target profile's family. Same-family directions pass the gate and the
+owning materializer consumes the record under its own validation and
+closure.
 
 Authority: https://github.com/consema/consema-rs/blob/main/consema/src/conversion.rs (composition algebra); RFC 0004
 (materialization/convert); https://github.com/consema/consema-go/blob/main/go/conversion.go as a cross-reference only.

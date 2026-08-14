@@ -65,7 +65,7 @@ from consema.protocol.schema import (
     string_of,
 )
 
-# The Go wire spellings of the v1 encoding kinds (protocol_v2.go:59-73 and
+# The Go wire spellings of the v1 encoding kinds (protocol_v2.go and
 # records_source.go encodingFromNameV1).
 _GO_ENCODING_BY_NAME = {
     "Binary": SourceEncoding.binary,
@@ -174,7 +174,7 @@ def _error_code_manifest(vector: runner.Case) -> str | None:
 
 
 # ---------------------------------------------------------------------------
-# vector-to-snapshot / replacement construction (protocol_v2.go:174-248)
+# vector-to-snapshot / replacement construction (protocol_v2.go)
 # ---------------------------------------------------------------------------
 
 
@@ -594,7 +594,7 @@ def _unsigned64(value: PortableValue, path: str) -> int:
 def _dual_transport_closed(
     contract: ContractId, payload: PortableValue, registry: ContractRegistry
 ) -> str | None:
-    """Envelope JSON/PVCE closure (protocol_v2.go:268-310)."""
+    """Envelope JSON/PVCE closure (protocol_v2.go)."""
     limits = ProtocolLimits()
     try:
         envelope = ProtocolMessage(contract, payload, registry)
@@ -844,7 +844,7 @@ def _patch_stale_after_wire(vector: runner.Case) -> str | None:
 
 
 # ---------------------------------------------------------------------------
-# tampering helpers (protocol_v2.go:592-620)
+# tampering helpers (protocol_v2.go)
 # ---------------------------------------------------------------------------
 
 

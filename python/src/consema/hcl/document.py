@@ -177,7 +177,7 @@ class HclDocument:
 
 def _node_role_of(node) -> NodeRole:
     """The frozen node role of one native tree node (consema-document
-    NodeRole closed vocabulary, structural.py:151-159)."""
+    NodeRole closed vocabulary, structural.py)."""
     from consema.hcl.native import (
         HclAttribute,
         HclBlock,

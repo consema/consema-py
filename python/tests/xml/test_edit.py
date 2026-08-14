@@ -82,7 +82,7 @@ def _text_ref(doc, ordinal=0):
 
 def test_vector_set_attribute_value(xml_vectors):
     """Golden transcription of ``xml.edit.set-attribute-value``
-    (xml-1-0-safe-v1.json:436-453): only the value span between the quotes
+    (xml-1-0-safe-v1.json): only the value span between the quotes
     is owned."""
     case = find_case(xml_vectors, "xml.edit.set-attribute-value")
     doc = form_document(case)
@@ -94,7 +94,7 @@ def test_vector_set_attribute_value(xml_vectors):
 
 def test_vector_insert_and_remove_element(xml_vectors):
     """Golden transcription of ``xml.edit.insert-and-remove-element``
-    (xml-1-0-safe-v1.json:454-475): insert-element appends mixed content
+    (xml-1-0-safe-v1.json): insert-element appends mixed content
     and remove-element consumes the whole subtree."""
     case = find_case(xml_vectors, "xml.edit.insert-and-remove-element")
     doc = form_document(case)
@@ -112,7 +112,7 @@ def test_vector_insert_and_remove_element(xml_vectors):
 
 def test_vector_rename_element_both_tags(xml_vectors):
     """Golden transcription of ``xml.edit.rename-element-both-tags``
-    (xml-1-0-safe-v1.json:476-493): both the start-tag and end-tag names
+    (xml-1-0-safe-v1.json): both the start-tag and end-tag names
     are renamed."""
     case = find_case(xml_vectors, "xml.edit.rename-element-both-tags")
     doc = form_document(case)
@@ -124,7 +124,7 @@ def test_vector_rename_element_both_tags(xml_vectors):
 
 def test_vector_insert_attribute_end(xml_vectors):
     """Golden transcription of ``xml.edit.insert-attribute-end``
-    (xml-1-0-safe-v1.json:494-513): End placement inserts before the
+    (xml-1-0-safe-v1.json): End placement inserts before the
     closing ``/>`` or ``>``."""
     case = find_case(xml_vectors, "xml.edit.insert-attribute-end")
     doc = form_document(case)
@@ -141,7 +141,7 @@ def test_vector_insert_attribute_end(xml_vectors):
 
 def test_vector_remove_attribute(xml_vectors):
     """Golden transcription of ``xml.edit.remove-attribute``
-    (xml-1-0-safe-v1.json:514-530): removal owns the leading whitespace."""
+    (xml-1-0-safe-v1.json): removal owns the leading whitespace."""
     case = find_case(xml_vectors, "xml.edit.remove-attribute")
     doc = form_document(case)
     builder = EditTransactionBuilder(doc)
@@ -152,7 +152,7 @@ def test_vector_remove_attribute(xml_vectors):
 
 def test_vector_replace_text_occurrence(xml_vectors):
     """Golden transcription of ``xml.edit.replace-text-occurrence``
-    (xml-1-0-safe-v1.json:531-548): replace-text targets one exact text
+    (xml-1-0-safe-v1.json): replace-text targets one exact text
     occurrence by its document-order ordinal."""
     case = find_case(xml_vectors, "xml.edit.replace-text-occurrence")
     doc = form_document(case)
@@ -164,7 +164,7 @@ def test_vector_replace_text_occurrence(xml_vectors):
 
 def test_vector_rename_attribute(xml_vectors):
     """Golden transcription of ``xml.edit.rename-attribute``
-    (xml-1-0-safe-v1.json:549-566): the attribute name span is replaced and
+    (xml-1-0-safe-v1.json): the attribute name span is replaced and
     the value is preserved."""
     case = find_case(xml_vectors, "xml.edit.rename-attribute")
     doc = form_document(case)
@@ -246,7 +246,7 @@ def test_commit_artifacts_are_complete_and_verifiable():
 def test_dry_run_matches_commit_exactly():
     """Dry-run performs every deterministic validation and byte-planning
     step; dry-run and commit have identical replacement sets and target
-    digest (edit.rs; RFC 0004 §14, lines 338-356)."""
+    digest (edit.rs; RFC 0004 §14)."""
     doc = _doc(b"<root>old</root>")
     builder = EditTransactionBuilder(doc)
     builder.replace_text(_text_ref(doc, 0), "new")
@@ -332,7 +332,7 @@ def test_duplicate_expanded_attribute_is_rejected():
 def test_new_literal_content_is_escaped_never_interpolated():
     """Semantic replacement accepts text, never raw untrusted markup; new
     literal content is XML-escaped under the existing encoding (RFC 0012
-    §11, lines 393-396)."""
+    §11)."""
     doc = _doc(b"<root>a</root>")
     builder = EditTransactionBuilder(doc)
     builder.replace_text(_text_ref(doc, 0), "x < y & z")

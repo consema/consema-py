@@ -1,9 +1,9 @@
 """Frozen limit defaults and resource-limit vector cases.
 
 Golden cases transcribed from conformance/vectors/source-v1.json:
-- ``source.resource.raw-limit`` (lines 155-160): raw 6162 with
+- ``source.resource.raw-limit``: raw 6162 with
   max_raw_bytes 1 -> core.source.resource-limit@1;
-- ``source.resource.decoded-limit`` (lines 161-166): latin-1 e9 with
+- ``source.resource.decoded-limit``: latin-1 e9 with
   max_decoded_utf8_bytes 1 -> core.source.resource-limit@1.
 
 Frozen defaults:

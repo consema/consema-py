@@ -401,7 +401,7 @@ class _Context:
             self.event(self.document.node_ref(expression), path)
             # Under the ProjectExpression policy each derived expression is
             # the authorized `hcl.expression@1` record itself, not a
-            # {kind, expression} wrapper (https://github.com/consema/consema-go/blob/main/go/hcl/projection.go:559-573;
+            # {kind, expression} wrapper (https://github.com/consema/consema-go/blob/main/go/hcl/projection.go;
             # hcl-v1.json hcl.projection.project-expression-policy).
             return self.expression_record(expression)
         literal = literal_value(expression)

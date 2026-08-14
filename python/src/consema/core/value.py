@@ -7,14 +7,17 @@ BinaryFloat64, String, Bytes, Date, Time, LocalDateTime, OffsetDateTime,
 Sequence, Object, EntryMapping. The kind *names* are the language-neutral
 spellings used by the tagged JSON transport
 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/value_transport.rs). Decimal normalization and
-temporal validation follow https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs,
-（temporal validation 区间定义处）; https://github.com/consema/consema-go/blob/main/go/core is a cross-reference.
+temporal validation follow https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs
+(https://github.com/consema/consema-go/blob/main/go/core is a cross-reference).
 
 Design: a single immutable class (Python has no closed interface types; a
-closed *kind* is enforced by the enum and the private constructor), with
-tuple payloads so values are hashable, order-preserving, and shareable.
-Object entries are ordered unique-key (str, value) pairs; EntryMapping
-associations are ordered arbitrary-key pairs with duplicates allowed.
+closed *kind* is enforced by the enum, and construction goes through the
+kind-named classmethods below, which validate each payload shape —
+``PortableValue.__init__`` itself is public API shape and performs no
+payload validation; wave-4 GW4-28), with tuple payloads so values are
+hashable, order-preserving, and shareable. Object entries are ordered
+unique-key (str, value) pairs; EntryMapping associations are ordered
+arbitrary-key pairs with duplicates allowed.
 """
 
 from __future__ import annotations

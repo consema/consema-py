@@ -113,7 +113,7 @@ MANIFEST = "consema.differential.normalized@1"
 RUST_DIR_ENV = "CONSEMA_DIFFERENTIAL_NORMALIZED_RUST_DIR"
 PYTHON_DIR_ENV = "CONSEMA_DIFFERENTIAL_NORMALIZED_PYTHON_DIR"
 
-# Query domain mapping (the Go runner's match, runner.go:794).
+# Query domain mapping (the Go runner's match, runner.go).
 _NATIVE_DOMAINS = {
     ("json.native-semantic-query", 1): protocol_query.domain_json_native_v1,
     ("json.native-semantic-query", 2): protocol_query.domain_json_native_v2,
@@ -276,7 +276,7 @@ class Facts:
 
 def escape(text: str) -> str:
     """JSON string escaping for the evidence files (the Go runner's
-    ``escape``, runner.go:233-295, mirrored verbatim): short escapes for the
+    ``escape``, runner.go, mirrored verbatim): short escapes for the
     JSON whitespace set, \\u00xx lowercase hex for the other control
     characters, everything else passed through as UTF-8."""
     output: list[str] = []
@@ -1657,7 +1657,7 @@ def apply_json_edit_operations(builder, state: DocState, step: dict) -> bool:
 # The TOML family's policy enum uses lowercase wire spellings
 # ("preserve-compatible") while the case file uses the shared vocabulary
 # ("PreserveCompatible"); map explicitly (the Go tomlRepresentationPolicy
-# mapping, runner.go:2750-2763).
+# mapping, runner.go).
 _TOML_POLICIES = {
     "PreserveCompatible": toml_edits.RepresentationPolicy.PRESERVE_COMPATIBLE,
     "CanonicalForProfile": toml_edits.RepresentationPolicy.CANONICAL_FOR_PROFILE,
@@ -2429,7 +2429,7 @@ def run_case(case: dict) -> list[str]:
 
 def compare_facts(case_id: str, own_lines: list[str], evidence_lines: list[str]) -> list[str]:
     """Compares the two fact line sets field by field (the Go test's
-    ``compareFacts``, normalized_test.go:191-231). Every key must exist on
+    ``compareFacts``, normalized_test.go). Every key must exist on
     both sides with an equal value; a missing or extra key is itself a
     differential failure."""
     own_facts: dict[str, str] = {}

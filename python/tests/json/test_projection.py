@@ -38,7 +38,7 @@ DEFAULT_LIMITS = ParseLimits()
 
 
 def test_json5_projection_duplicates_nonfinite():
-    # Case json5.projection.duplicates-nonfinite (json-family-v2.json:126-130).
+    # Case json5.projection.duplicates-nonfinite (json-family-v2.json).
     document = parse(b"{a:Infinity,a:-NaN}", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     result = project(
         document,
@@ -56,7 +56,7 @@ def test_json5_projection_duplicates_nonfinite():
 
 
 def test_json5_projection_old_target_rejected():
-    # Case json5.projection.old-target-rejected (json-family-v2.json:132-136).
+    # Case json5.projection.old-target-rejected (json-family-v2.json).
     document = parse(b"{a:1}", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     result = project(
         document,
@@ -67,7 +67,7 @@ def test_json5_projection_old_target_rejected():
 
 
 def test_best_exact_duplicate_mapping():
-    # Case projection.best-exact-duplicate-mapping (v1.json:89-93).
+    # Case projection.best-exact-duplicate-mapping (v1.json).
     document = parse(b'{"a":1,"a":2}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     result = project(
         document,
@@ -91,7 +91,7 @@ def test_best_exact_duplicate_mapping():
 
 
 def test_object_reject_duplicates():
-    # Case projection.object-reject-duplicates (v1.json:95-99).
+    # Case projection.object-reject-duplicates (v1.json).
     document = parse(b'{"a":1,"a":2}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     result = project(
         document,
@@ -104,7 +104,7 @@ def test_object_reject_duplicates():
 
 
 def test_object_last_wins():
-    # Case projection.object-last-wins (v1.json:101-105).
+    # Case projection.object-last-wins (v1.json).
     document = parse(b'{"a":1,"a":2}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     result = project(
         document,
@@ -121,7 +121,7 @@ def test_object_last_wins():
 
 
 def test_object_key_provenance():
-    # Case projection.object-key-provenance (v1.json:155-159).
+    # Case projection.object-key-provenance (v1.json).
     document = parse(b'{"a":1,"b":2}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     result = project(
         document,

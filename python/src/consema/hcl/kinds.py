@@ -36,7 +36,7 @@ Rust only for registry/byte arbitration):
 Unicode note (blind-write disclosure): RFC 0014 §4.1 pins Unicode ID_Start
 and ID_Continue via UAX #31. This implementation classifies via the host
 ``str.isidentifier`` semantics (CPython 3.12), matching the JSON5
-precedent of consema.json.kinds (kinds.py:29-37): the identifier matrix
+precedent of consema.json.kinds (kinds.py): the identifier matrix
 vectors (ASCII, Unicode letters, digits, hyphen, leading-digit and
 leading-underscore rejection, keyword spellings) all fall in the stable
 set. A differential run against the pinned unicode-ident tables is a

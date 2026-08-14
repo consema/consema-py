@@ -1,8 +1,7 @@
 """The frozen eight-operation INI registry surface.
 
 Case covered here (conformance/vectors/ini-v1.json, suite
-"consema.ini.conformance@1"): registry.frozen-eight-operation-surface
-(lines 136-139) — every profile publishes the same eight operation ids in
+"consema.ini.conformance@1"): registry.frozen-eight-operation-surface — every profile publishes the same eight operation ids in
 the same order, with exactly six direct structural (Supported)
 operations.
 
@@ -34,7 +33,7 @@ EXPECTED_OPERATIONS = [
 
 
 def test_frozen_eight_operation_surface():
-    # Case registry.frozen-eight-operation-surface (ini-v1.json:136-139).
+    # Case registry.frozen-eight-operation-surface (ini-v1.json).
     for profile in (
         IniProfile.PORTABLE_V1,
         IniProfile.WINDOWS_V1,

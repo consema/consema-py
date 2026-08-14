@@ -31,7 +31,7 @@ registered code (RFC 0016 §6). Error text is human presentation only and
 never participates in conformance comparison. The vector-facing failure
 *names* ("TargetNotFound", "Unrepresentable", ...) are exposed as ``name``
 properties using the exact Rust variant spellings that the conformance
-vectors reference (conformance/vectors/json-family-v2.json:183,
+vectors reference (conformance/vectors/json-family-v2.json,
 :147, :153).
 """
 
@@ -248,7 +248,7 @@ class JsonEditFailure(Exception):
 
     Code mapping authority: edit.rs (RFC 0004 §17). ``name`` is
     the exact Rust variant spelling referenced by the conformance vectors
-    (json-family-v2.json:183 "TargetNotFound").
+    (json-family-v2.json "TargetNotFound").
     """
 
     def __init__(

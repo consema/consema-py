@@ -6,8 +6,12 @@ defined as FNV-1a (64-bit) over the canonical PVCE/1 encoding of the value,
 so equal values always hash equal and the hash is order-dependent; this is
 the same contract as https://github.com/consema/consema-go/blob/main/go/core/equal.go (cross-reference only).
 
-``equal`` is total: it never raises on valid values and never accepts an
-unknown kind (the kind set is closed by construction).
+``equal`` is total: it never raises on valid values (values built through
+the kind-named constructors) and never accepts an unknown kind (the kind
+set is closed by the enum). The raw ``PortableValue.__init__`` performs no
+payload validation, so a value constructed outside the classmethods can
+still raise inside ``equal`` (wave-4 GW4-28; construct via the
+classmethods).
 """
 
 from __future__ import annotations

@@ -11,7 +11,7 @@ Authority:
   published; validation, source-edit preparation, output allocation, reparse,
   mapping, untouched proof, and SourcePatch derivation form one atomic
   commit.
-- RFC 0016 §5.3 (lines 184-187) — ChangeSet remains the document-level
+- RFC 0016 §5.3 — ChangeSet remains the document-level
   change fact; SourcePatch remains the portable raw-byte application fact
   (RFC 0004 §16).
 

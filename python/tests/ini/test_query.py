@@ -3,7 +3,7 @@
 Cases covered here (conformance/vectors/ini-v1.json, suite
 "consema.ini.conformance@1"):
 
-- query.native-order-and-profile-equivalence (lines 46-47),
+- query.native-order-and-profile-equivalence,
   query.syntax-decoded-structure-order (51-52),
   query.validation-limit-cancellation (56-57).
 
@@ -12,8 +12,8 @@ profiles-v1.md): ``ini.duplicate-group@1`` expands each input
 occurrence to every same-role occurrence carrying the same non-absent
 group identity, in source order; an occurrence without a group produces no
 match; repeated input groups may repeat output. Name filters require
-OriginalExact | ProfileEquivalent explicitly (RFC 0009 §9, lines 301-304);
-syntax text comparison uses decoded scalar text (lines 337-341).
+OriginalExact | ProfileEquivalent explicitly (RFC 0009 §9);
+syntax text comparison uses decoded scalar text.
 """
 
 from __future__ import annotations
@@ -77,12 +77,12 @@ def windows_document(source: bytes):
 
 
 # ---------------------------------------------------------------------------
-# query.native-order-and-profile-equivalence (ini-v1.json:46-47)
+# query.native-order-and-profile-equivalence (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_native_order_and_profile_equivalence():
-    # Case query.native-order-and-profile-equivalence (ini-v1.json:46-47).
+    # Case query.native-order-and-profile-equivalence (ini-v1.json).
     document = windows_document(b"[Main]\r\nName=one\r\nname=two\r\n[Other]\r\nempty=\r\n")
     query = executable(
         "ini.native-semantic-query",
@@ -211,12 +211,12 @@ def test_name_filters_require_explicit_comparison_mode():
 
 
 # ---------------------------------------------------------------------------
-# query.syntax-decoded-structure-order (ini-v1.json:51-52)
+# query.syntax-decoded-structure-order (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_syntax_decoded_structure_order():
-    # Case query.syntax-decoded-structure-order (ini-v1.json:51-52).
+    # Case query.syntax-decoded-structure-order (ini-v1.json).
     document = windows_document(b"[S]\r\nName=\" value \"\r\n")
     quote_branch = QueryExpression(ExpressionKind.INPUT).then(
         OperatorCall("ini.syntax-kind-is", 1).with_argument(
@@ -258,12 +258,12 @@ def test_syntax_text_equals_uses_decoded_scalars():
 
 
 # ---------------------------------------------------------------------------
-# query.validation-limit-cancellation (ini-v1.json:56-57)
+# query.validation-limit-cancellation (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_query_validation_limit_and_cancellation():
-    # Case query.validation-limit-cancellation (ini-v1.json:56-57): the
+    # Case query.validation-limit-cancellation (ini-v1.json): the
     # result budget fails with core.query.resource-limit@1 and a cursor
     # yields the completed prefix before cancellation.
     document = parse(

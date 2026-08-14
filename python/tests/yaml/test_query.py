@@ -2,17 +2,17 @@
 
 Cases covered with the vector case ids cited:
 
-- query.mapping-entries (yaml-v1.json:50-54): the pipeline
+- query.mapping-entries (yaml-v1.json): the pipeline
   yaml.documents / yaml.document-root / yaml.try-mapping-entries yields
   roles ["YamlMappingEntry", "YamlMappingEntry"].
-- query.alias-target (yaml-v1.json:55-58): yaml.alias-occurrences /
+- query.alias-target (yaml-v1.json): yaml.alias-occurrences /
   yaml.alias-target yields roles ["YamlNode"] and the shared identity.
-- query.syntax-comments (yaml-v1.json:60-63): the Comment pieces of
+- query.syntax-comments (yaml-v1.json): the Comment pieces of
   "a: 1 # first\nb: 2 # second\n" carry source ordinals [5, 12].
-- query.resource-limit (yaml-v1.json:65-68): max_results 2 on a three
+- query.resource-limit (yaml-v1.json): max_results 2 on a three
   element sequence fails with core.query.resource-limit@1.
 
-The operator surface is frozen by RFC 0007 s9 (lines 229-251) and the
+The operator surface is frozen by RFC 0007 s9 and the
 role rows by consema.protocol.query (the protocol agent owns domain
 validation; this module binds and executes).
 """
@@ -43,7 +43,7 @@ SYNTAX_DOMAIN = "yaml.lossless-syntax-query"
 
 
 def test_query_mapping_entries():
-    # Case query.mapping-entries (yaml-v1.json:50-54).
+    # Case query.mapping-entries (yaml-v1.json).
     document = parse_source("{a: 1, b: 2}\n", YamlProfile.YAML12_CORE_V1)
     executable = executable_from_pipeline(
         NATIVE_DOMAIN,
@@ -56,7 +56,7 @@ def test_query_mapping_entries():
 
 
 def test_query_alias_target():
-    # Case query.alias-target (yaml-v1.json:55-58): the alias target is the
+    # Case query.alias-target (yaml-v1.json): the alias target is the
     # anchored node; identity is shared, never expanded.
     document = parse_source("[&x {k: v}, *x]\n", YamlProfile.YAML12_CORE_V1)
     executable = executable_from_pipeline(
@@ -71,7 +71,7 @@ def test_query_alias_target():
 
 
 def test_query_syntax_comments():
-    # Case query.syntax-comments (yaml-v1.json:60-63). The comment ordinals
+    # Case query.syntax-comments (yaml-v1.json). The comment ordinals
     # are the zero-based source-piece ordinals of the Comment matches.
     # yaml.syntax-kind-is@1 requires its kind argument: validation rejects a
     # missing one with core.query.invalid-argument@1 (query.rs
@@ -102,7 +102,7 @@ def test_query_syntax_comments():
 
 
 def test_query_resource_limit():
-    # Case query.resource-limit (yaml-v1.json:65-68): a completed prefix is
+    # Case query.resource-limit (yaml-v1.json): a completed prefix is
     # never disguised as success; the failure code is
     # core.query.resource-limit@1.
     document = parse_source("[a, b, c]\n", YamlProfile.YAML12_CORE_V1)
@@ -140,7 +140,7 @@ def test_query_anchor_definition_and_node():
     # query.rs: yaml.anchor-definition exposes the exact &name span
     # and yaml.anchor-node returns the anchored representation node. The
     # anchored node must be reachable by the pipeline: as in the Go twin
-    # (https://github.com/consema/consema-go/blob/main/go/yaml/query_test.go:69-89) the anchor sits on the document root —
+    # (https://github.com/consema/consema-go/blob/main/go/yaml/query_test.go) the anchor sits on the document root —
     # a value anchor ("first: &x [one]") is never entered by the
     # documents/document-root pipeline (0 matches in Python, Rust, and Go).
     document = parse_source("&a [one]\n", YamlProfile.YAML12_CORE_V1)

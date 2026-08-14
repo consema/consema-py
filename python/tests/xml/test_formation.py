@@ -32,7 +32,7 @@ from conftest import find_case, form_document
 
 def test_vector_basic_complete(xml_vectors):
     """Golden transcription of ``xml.formation.basic-complete``
-    (xml-1-0-safe-v1.json:5-16): a simple complete document renders
+    (xml-1-0-safe-v1.json): a simple complete document renders
     byte-exact."""
     case = find_case(xml_vectors, "xml.formation.basic-complete")
     doc = form_document(case)
@@ -42,7 +42,7 @@ def test_vector_basic_complete(xml_vectors):
 
 def test_vector_default_namespace_on_elements(xml_vectors):
     """Golden transcription of ``xml.formation.default-namespace-on-elements``
-    (xml-1-0-safe-v1.json:17-28): the default namespace applies to element
+    (xml-1-0-safe-v1.json): the default namespace applies to element
     names only; unprefixed attributes stay unnamespaced."""
     case = find_case(xml_vectors, "xml.formation.default-namespace-on-elements")
     doc = form_document(case)
@@ -57,7 +57,7 @@ def test_vector_default_namespace_on_elements(xml_vectors):
 
 def test_vector_prefixed_namespace_resolution(xml_vectors):
     """Golden transcription of ``xml.formation.prefixed-namespace-resolution``
-    (xml-1-0-safe-v1.json:29-40): scoped prefix bindings resolve exactly."""
+    (xml-1-0-safe-v1.json): scoped prefix bindings resolve exactly."""
     case = find_case(xml_vectors, "xml.formation.prefixed-namespace-resolution")
     doc = form_document(case)
     assert doc.status is FormationStatus.COMPLETE
@@ -75,7 +75,7 @@ def test_vector_prefixed_namespace_resolution(xml_vectors):
 
 def test_vector_internal_entity_expansion(xml_vectors):
     """Golden transcription of ``xml.formation.internal-entity-expansion``
-    (xml-1-0-safe-v1.json:53-64): admitted internal general text entities
+    (xml-1-0-safe-v1.json): admitted internal general text entities
     expand and the declaration spelling round-trips."""
     case = find_case(xml_vectors, "xml.formation.internal-entity-expansion")
     doc = form_document(case)
@@ -89,7 +89,7 @@ def test_vector_internal_entity_expansion(xml_vectors):
 
 def test_vector_utf16le_with_bom(xml_vectors):
     """Golden transcription of ``xml.formation.utf16le-with-bom``
-    (xml-1-0-safe-v1.json:89-101): UTF-16LE with BOM forms and renders the
+    (xml-1-0-safe-v1.json): UTF-16LE with BOM forms and renders the
     exact original bytes (RFC 0012 §2: UTF-16 requires its BOM)."""
     case = find_case(xml_vectors, "xml.formation.utf16le-with-bom")
     doc = form_document(case)
@@ -100,7 +100,7 @@ def test_vector_utf16le_with_bom(xml_vectors):
 def test_vector_duplicate_expanded_attribute_recovered(xml_vectors):
     """Golden transcription of
     ``xml.formation.duplicate-expanded-attribute-recovered``
-    (xml-1-0-safe-v1.json:102-113): two prefixes bound to one URI produce
+    (xml-1-0-safe-v1.json): two prefixes bound to one URI produce
     one expanded-name duplicate and a Recovered document with the frozen
     diagnostic."""
     case = find_case(xml_vectors, "xml.formation.duplicate-expanded-attribute-recovered")
@@ -111,7 +111,7 @@ def test_vector_duplicate_expanded_attribute_recovered(xml_vectors):
 
 def test_vector_unbound_prefix_recovered(xml_vectors):
     """Golden transcription of ``xml.formation.unbound-prefix-recovered``
-    (xml-1-0-safe-v1.json:114-125): an unbound prefix is a deterministic
+    (xml-1-0-safe-v1.json): an unbound prefix is a deterministic
     recovery, never a fabricated expanded name."""
     case = find_case(xml_vectors, "xml.formation.unbound-prefix-recovered")
     doc = form_document(case)
@@ -124,7 +124,7 @@ def test_vector_unbound_prefix_recovered(xml_vectors):
 
 def test_vector_external_subset_recovered(xml_vectors):
     """Golden transcription of ``xml.formation.external-subset-recovered``
-    (xml-1-0-safe-v1.json:126-137): a DOCTYPE SYSTEM external subset is
+    (xml-1-0-safe-v1.json): a DOCTYPE SYSTEM external subset is
     denied with the stable security diagnostic; no I/O ever happens."""
     case = find_case(xml_vectors, "xml.formation.external-subset-recovered")
     doc = form_document(case)
@@ -134,8 +134,8 @@ def test_vector_external_subset_recovered(xml_vectors):
 
 def test_vector_unknown_entity_recovered(xml_vectors):
     """Golden transcription of ``xml.formation.unknown-entity-recovered``
-    (xml-1-0-safe-v1.json:138-149): unknown references produce no partial
-    native text (RFC 0012 §3, lines 127-130)."""
+    (xml-1-0-safe-v1.json): unknown references produce no partial
+    native text (RFC 0012 §3)."""
     case = find_case(xml_vectors, "xml.formation.unknown-entity-recovered")
     doc = form_document(case)
     assert doc.status is FormationStatus.RECOVERED
@@ -144,7 +144,7 @@ def test_vector_unknown_entity_recovered(xml_vectors):
 
 def test_vector_missing_root_recovered(xml_vectors):
     """Golden transcription of ``xml.formation.missing-root-recovered``
-    (xml-1-0-safe-v1.json:150-161): a document without an element is
+    (xml-1-0-safe-v1.json): a document without an element is
     Recovered; the parser never invents a second root."""
     case = find_case(xml_vectors, "xml.formation.missing-root-recovered")
     doc = form_document(case)
@@ -155,7 +155,7 @@ def test_vector_missing_root_recovered(xml_vectors):
 
 def test_vector_dtd_comment_not_excluded_markup(xml_vectors):
     """Golden transcription of ``xml.formation.dtd-comment-not-excluded-markup``
-    (xml-1-0-safe-v1.json:162-173): a comment inside the internal subset is
+    (xml-1-0-safe-v1.json): a comment inside the internal subset is
     character data; ``<!ELEMENT>`` inside it is not a declaration."""
     case = find_case(xml_vectors, "xml.formation.dtd-comment-not-excluded-markup")
     doc = form_document(case)
@@ -171,7 +171,7 @@ def test_vector_dtd_comment_not_excluded_markup(xml_vectors):
 def test_entity_deny_by_default():
     """Deny-by-default: unknown, parameter, external, and markup-creating
     entities are rejected with their frozen diagnostics and never produce
-    native text (RFC 0012 §3, lines 101-131)."""
+    native text (RFC 0012 §3)."""
     cases = [
         (b"<root>&unknown;</root>", "xml.entity.unknown@1"),
         (b"<!DOCTYPE root [<!ENTITY % p \"x\">]><root/>", "xml.dtd.parameter-entity@1"),
@@ -190,7 +190,7 @@ def test_entity_deny_by_default():
 
 def test_predefined_entities_always_available():
     """The five predefined entities resolve without any declaration
-    (RFC 0012 §3, lines 115-119; https://github.com/consema/consema-rs/blob/main/consema-xml/src/entity.rs)."""
+    (RFC 0012 §3; https://github.com/consema/consema-rs/blob/main/consema-xml/src/entity.rs)."""
     doc = parse(
         b"<root>&lt; &gt; &amp; &apos; &quot;</root>",
         XmlProfile.SAFE_V1,
@@ -206,7 +206,7 @@ def test_predefined_entities_always_available():
 
 def test_entity_amplification_ratio_bounds_expansion(xml_vectors):
     """Golden transcription of ``xml.limit.entity-amplification-recovered``
-    (xml-1-0-safe-v1.json:568-579): a 20-byte declaration at ratio 2 allows
+    (xml-1-0-safe-v1.json): a 20-byte declaration at ratio 2 allows
     at most 40 expanded bytes; the third reference breaches."""
     case = find_case(xml_vectors, "xml.limit.entity-amplification-recovered")
     doc = form_document(case)
@@ -216,7 +216,7 @@ def test_entity_amplification_ratio_bounds_expansion(xml_vectors):
 
 def test_mixed_content_limit(xml_vectors):
     """Golden transcription of ``xml.limit.mixed-content-diagnostic``
-    (xml-1-0-safe-v1.json:580-592): the child-element budget is the same
+    (xml-1-0-safe-v1.json): the child-element budget is the same
     hard mixed-content budget; the overflow is dropped with a diagnostic."""
     case = find_case(xml_vectors, "xml.limit.mixed-content-diagnostic")
     doc = form_document(case)
@@ -251,7 +251,7 @@ def test_namespace_scope_is_ancestry_derived():
 
 def test_xml_prefix_permanently_bound():
     """The ``xml`` prefix is permanently bound to its standard URI and
-    cannot be rebound (RFC 0012 §5, lines 213-214)."""
+    cannot be rebound (RFC 0012 §5)."""
     doc = parse(
         b'<root xml:lang="en"/>',
         XmlProfile.SAFE_V1,
@@ -273,7 +273,7 @@ def test_xml_prefix_permanently_bound():
 
 def test_xmlns_reserved_everywhere():
     """``xmlns`` is reserved for namespace declarations and cannot be used
-    as an ordinary name or rebound (RFC 0012 §5, line 215)."""
+    as an ordinary name or rebound (RFC 0012 §5)."""
     doc = parse(
         b"<root xmlns:x=\"urn:u\" xmlns:x2=\"urn:v\"/>",
         XmlProfile.SAFE_V1,
@@ -292,7 +292,7 @@ def test_xmlns_reserved_everywhere():
 def test_spans_are_raw_byte_ranges():
     """Every public span is a half-open raw-byte range; unmodified
     rendering returns the exact original bytes including line endings
-    (RFC 0012 §2, lines 48-53)."""
+    (RFC 0012 §2)."""
     source = b"<root>\r\n  <child>t</child>\r\n</root>"
     doc = parse(
         source, XmlProfile.SAFE_V1, XmlEncodingSelection.profile_default(), XmlParseLimits()
@@ -313,7 +313,7 @@ def test_spans_are_raw_byte_ranges():
 
 def test_utf16_spans_cover_original_code_units():
     """UTF-16 pieces cover original code units, not a temporary UTF-8
-    buffer (RFC 0012 §7, lines 279-282)."""
+    buffer (RFC 0012 §7)."""
     source = "<root>中文</root>"
     raw = b"\xff\xfe" + source.encode("utf-16-le")
     doc = parse(
@@ -331,7 +331,7 @@ def test_utf16_spans_cover_original_code_units():
 
 def test_mixed_content_order_is_preserved(xml_vectors):
     """Golden transcription of ``xml.formation.mixed-content-order``
-    (xml-1-0-safe-v1.json:65-76): text, element, text, CDATA, comment, PI
+    (xml-1-0-safe-v1.json): text, element, text, CDATA, comment, PI
     keep their exact source order and spelling."""
     case = find_case(xml_vectors, "xml.formation.mixed-content-order")
     doc = form_document(case)
@@ -351,8 +351,8 @@ def test_mixed_content_order_is_preserved(xml_vectors):
 
 def test_crlf_normalization_is_semantic_not_destructive(xml_vectors):
     """Golden transcription of ``xml.formation.crlf-semantic-normalization``
-    (xml-1-0-safe-v1.json:77-88): raw CRLF stays in the source while native
-    text is line-end normalized to LF (RFC 0012 §2, lines 83-85)."""
+    (xml-1-0-safe-v1.json): raw CRLF stays in the source while native
+    text is line-end normalized to LF (RFC 0012 §2)."""
     case = find_case(xml_vectors, "xml.formation.crlf-semantic-normalization")
     doc = form_document(case)
     assert doc.status is FormationStatus.COMPLETE

@@ -1,14 +1,14 @@
 """Decoded-location boundary tests (Span-adjacent coordinate conversion).
 
 Golden cases transcribed from conformance/vectors/source-v1.json:
-- ``source.location.utf8-boundaries`` (lines 83-88): raw 41f09f988042
+- ``source.location.utf8-boundaries``: raw 41f09f988042
   (A U+1F600 B), raw_byte 5 -> decoded_utf8_byte 5, unicode_scalar_offset 2,
   utf16_code_unit_offset 3; invalid_raw_byte 2 (inside the scalar) is
   rejected; invalid_utf16_offset 2 (inside the surrogate pair) is rejected.
-- ``source.location.utf16-boundaries`` (lines 89-94): raw 41003dd800de4200
+- ``source.location.utf16-boundaries``: raw 41003dd800de4200
   under utf-16le, raw_byte 6 -> (5, 2, 3); invalid_raw_byte 3 rejected;
   invalid_utf16_offset 2 rejected.
-- ``source.location.binary-no-text`` (lines 95-100): binary sources raise
+- ``source.location.binary-no-text``: binary sources raise
   the NoDecodedText location error.
 
 Contract: RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md
@@ -87,7 +87,7 @@ def test_binary_no_text() -> None:
 
 def test_terminal_boundary_resolves() -> None:
     """The terminal raw offset is the valid half-open end of the source
-    (source.rs; https://github.com/consema/consema-go/blob/main/go/document/source.go:322-323): a piece ending
+    (source.rs; https://github.com/consema/consema-go/blob/main/go/document/source.go): a piece ending
     exactly at the source end addresses the terminal DecodedPosition, and
     only offsets beyond the source are out of bounds."""
     snapshot = _snapshot("41f09f988042", SourceEncoding.utf8())

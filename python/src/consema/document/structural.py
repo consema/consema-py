@@ -6,7 +6,7 @@ Authority (language-neutral first; Rust only for arbitration):
   a closed two-value enum (Complete, Recovered) — the 0.13.0 F10 disposition.
 - RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md):
   Span is the half-open [start_byte, end_byte) range over original raw bytes;
-  §7 (lines 162-171): text Documents retain exhaustive ordered
+  §7: text Documents retain exhaustive ordered
   Token/Trivia/ErrorRegion coverage; binary Documents use a
   BinaryStructuralIndex with snapshot-bound raw Span, process-local NodeRef,
   and non-empty format-owned region kind; no-gap/no-overlap/final-length
@@ -20,8 +20,8 @@ Authority (language-neutral first; Rust only for arbitration):
   LocationError lib.rs.
 
 Vector coverage: conformance/vectors/source-v1.json cases
-``source.binary.empty-coverage`` (lines 101-106), ``source.binary.region-
-coverage`` (lines 107-112), ``source.binary.reject-gap`` (lines 113-118) —
+``source.binary.empty-coverage``, ``source.binary.region-
+coverage``, ``source.binary.reject-gap`` —
 their expected values reference the LocationError variant names
 ("NoDecodedText", "IncompleteStructuralCoverage").
 
@@ -40,7 +40,7 @@ _SNAPSHOT_COUNTER = itertools.count(1)
 @dataclass(frozen=True, slots=True)
 class SnapshotIdentity:
     """Opaque identity of exactly one immutable document snapshot
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs; RFC 0003 §3, lines 60-62).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs; RFC 0003 §3).
 
     A fresh opaque process-local identity for every formed Document; parsing
     the same bytes twice produces equal content digests and distinct snapshot
@@ -180,7 +180,7 @@ class Span:
 
     [start_byte, end_byte) over original raw bytes; offsets never become
     UTF-8 indices after decoding UTF-16 or Latin-1 (RFC 0003 §5,
-    lines 126-127).
+    ).
     """
 
     snapshot: SnapshotIdentity
@@ -278,7 +278,7 @@ class BinaryRegion:
 @dataclass(frozen=True, slots=True)
 class BinaryStructuralIndex:
     """Exhaustive ordered format-owned region coverage for one opaque binary
-    source (lib.rs; RFC 0003 §7, lines 162-171).
+    source (lib.rs; RFC 0003 §7).
 
     Binary coverage obeys the same no-gap/no-overlap/final-length invariant
     but does not call bytes tokens or trivia. Empty source has an empty valid
@@ -321,7 +321,7 @@ class BinaryStructuralIndex:
 
     def region_count(self) -> int:
         """Number of ordered regions (vector field ``region_count``,
-        conformance/vectors/source-v1.json:105,111)."""
+        conformance/vectors/source-v1.json,111)."""
         return len(self.regions)
 
 
@@ -329,8 +329,9 @@ class LocationErrorKind(enum.Enum):
     """Span, identity, or coverage failure (lib.rs).
 
     The variant names are the exact Rust spellings; the conformance vectors
-    reference them by name (conformance/vectors/source-v1.json lines 99 and
-    117: "NoDecodedText", "IncompleteStructuralCoverage").
+    reference them by name (conformance/vectors/source-v1.json —
+    "NoDecodedText", "IncompleteStructuralCoverage" are the case-id
+    anchors).
     """
 
     INVERTED_SPAN = "InvertedSpan"
@@ -350,7 +351,7 @@ class LocationError(Exception):
 
     Location failures are internal (format-layer) errors; they carry no
     registered error code — the registered source codes belong to content
-    construction and patch application (RFC 0003 §11, lines 307-309). Error
+    construction and patch application (RFC 0003 §11). Error
     text is human presentation only.
     """
 

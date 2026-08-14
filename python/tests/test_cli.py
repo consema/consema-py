@@ -47,8 +47,10 @@ from consema.protocol.registry_descriptor import ProfileReference
 LIMITS = ProtocolLimits()
 
 # The current product version (pyproject.toml version / __init__ __version__);
-# the CLI fixtures must match it so a version bump cannot drift the envelopes.
-PRODUCT_VERSION = "1.0.0-rc.1"
+# read dynamically so a version bump cannot drift the CLI envelope fixtures
+# (wave-4 GW4-09: the old hardcoded literal was a fifth version sync point
+# outside the check-version-consistency gate).
+from consema import __version__ as PRODUCT_VERSION
 
 
 def test_eleven_commands_and_their_payload_schemas():

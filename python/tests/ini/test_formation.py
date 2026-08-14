@@ -9,7 +9,7 @@ coverage, fatal limits).
 
 Cases covered here:
 
-- ini-v1.json: formation.portable-lossless (lines 6-8),
+- ini-v1.json: formation.portable-lossless,
   formation.profile-counterexample-matrix (11-17),
   formation.windows-utf16-case-and-quote (20-22),
   formation.windows-explicit-code-page (25-27),
@@ -62,12 +62,12 @@ def assert_exact_coverage(document, raw: bytes) -> None:
 
 
 # ---------------------------------------------------------------------------
-# formation.portable-lossless (ini-v1.json:6-8)
+# formation.portable-lossless (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_portable_lossless_formation():
-    # Case formation.portable-lossless (ini-v1.json:6-8).
+    # Case formation.portable-lossless (ini-v1.json).
     source = "; heading\r\n[core]\r\nname=value\nempty="
     document = parse(
         source.encode("utf-8"),
@@ -90,7 +90,7 @@ def test_portable_lossless_formation():
 
 
 # ---------------------------------------------------------------------------
-# formation.profile-counterexample-matrix (ini-v1.json:11-17)
+# formation.profile-counterexample-matrix (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
@@ -103,7 +103,7 @@ def test_portable_lossless_formation():
     ],
 )
 def test_profile_counterexample_matrix(profile, expected):
-    # Case formation.profile-counterexample-matrix (ini-v1.json:11-17).
+    # Case formation.profile-counterexample-matrix (ini-v1.json).
     samples = [b"[s]\nkey=value\n", b"[s]\nkey:value\n", b"[s]\nkey=\xc3\xa9\n"]
     for sample, want in zip(samples, expected):
         try:
@@ -177,7 +177,7 @@ def test_windows_dialect_trivia_and_quotes():
     # trivia; an exactly single- or double-quoted value has a semantic
     # content span without the outer marks; quotes inside an otherwise
     # unquoted value are ordinary content. An unquoted value retains its
-    # decoded scalar content exactly (RFC 0009 §6, lines 202-203).
+    # decoded scalar content exactly (RFC 0009 §6).
     document = parse(
         b"[s]\r\n  key =  value  \r\nplain=\"q\"text\r\n",
         IniProfile.WINDOWS_V1,
@@ -280,12 +280,12 @@ def test_python_invalid_continuation_recovers():
 
 
 # ---------------------------------------------------------------------------
-# formation.windows-utf16-case-and-quote (ini-v1.json:20-22)
+# formation.windows-utf16-case-and-quote (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_windows_utf16_case_and_quote():
-    # Case formation.windows-utf16-case-and-quote (ini-v1.json:20-22).
+    # Case formation.windows-utf16-case-and-quote (ini-v1.json).
     raw = bytes.fromhex(
         "fffe5b004d00610069006e005d000d000a0020004e0061006d00650020003d0022002000760061006c0075006500200022000d000a005b006d00610069006e005d000d000a004e0041004d0045003d00740077006f00"
     )
@@ -308,12 +308,12 @@ def test_windows_utf16_case_and_quote():
 
 
 # ---------------------------------------------------------------------------
-# formation.windows-explicit-code-page (ini-v1.json:25-27)
+# formation.windows-explicit-code-page (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_windows_explicit_code_page():
-    # Case formation.windows-explicit-code-page (ini-v1.json:25-27).
+    # Case formation.windows-explicit-code-page (ini-v1.json).
     from consema.document.source import WindowsCodePage
 
     code_page = WindowsCodePage.from_number(1252)
@@ -330,12 +330,12 @@ def test_windows_explicit_code_page():
 
 
 # ---------------------------------------------------------------------------
-# formation.python-default-continuation-raw (ini-v1.json:30-32)
+# formation.python-default-continuation-raw (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_python_default_continuation_raw():
-    # Case formation.python-default-continuation-raw (ini-v1.json:30-32).
+    # Case formation.python-default-continuation-raw (ini-v1.json).
     source = "[DEFAULT]\nRoot = raw%(x)s\n[Sec]\nKey: first\n    second\n\n    third\nOther = #literal ;literal"
     document = parse(
         source.encode("utf-8"),
@@ -357,12 +357,12 @@ def test_python_default_continuation_raw():
 
 
 # ---------------------------------------------------------------------------
-# formation.python-unicode16-optionxform (ini-v1.json:35-37)
+# formation.python-unicode16-optionxform (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_python_unicode16_optionxform():
-    # Case formation.python-unicode16-optionxform (ini-v1.json:35-37).
+    # Case formation.python-unicode16-optionxform (ini-v1.json).
     source = "[S]\nİ=1\ni̇=2\n"
     document = parse(
         source.encode("utf-8"),
@@ -387,12 +387,12 @@ def test_python_optionxform_frozen_unicode_16_examples():
 
 
 # ---------------------------------------------------------------------------
-# formation.recovery-never-fabricates-entry (ini-v1.json:40-42)
+# formation.recovery-never-fabricates-entry (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_recovery_never_fabricates_entry():
-    # Case formation.recovery-never-fabricates-entry (ini-v1.json:40-42).
+    # Case formation.recovery-never-fabricates-entry (ini-v1.json).
     document = parse(
         b"[s]\nbare\n",
         IniProfile.PORTABLE_V1,
@@ -471,7 +471,7 @@ def test_python_profile_accepts_bom_selected_encoding():
 
 
 # ---------------------------------------------------------------------------
-# resource.formation-limit-matrix (ini-v1.json:108-128)
+# resource.formation-limit-matrix (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
@@ -498,7 +498,7 @@ def test_python_profile_accepts_bom_selected_encoding():
     ],
 )
 def test_formation_limit_matrix_is_fatal(limits, profile, source):
-    # Case resource.formation-limit-matrix (ini-v1.json:108-128): all 17
+    # Case resource.formation-limit-matrix (ini-v1.json): all 17
     # configured limits fail fatally; no partial document exists. The
     # vector pins only the fatal outcomes and the no-partial-documents
     # rule, not the code: source-level budgets surface through the source

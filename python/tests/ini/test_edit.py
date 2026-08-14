@@ -4,7 +4,7 @@ round-trips (INI).
 Cases covered here (conformance/vectors/ini-v1.json, suite
 "consema.ini.conformance@1"):
 
-- edit.all-eight-operations (lines 90-100): all eight operations produce
+- edit.all-eight-operations: all eight operations produce
   the exact expected bytes, one source edit each;
 - edit.dry-run-patch-proof-and-atomic-failure (104-105): dry-run equals
   commit, the derived SourcePatch replays against the base and reproduces
@@ -16,11 +16,11 @@ RFC 0009 §12 contract facts pinned here: duplicate/case-collision rules
 are validated before any patch exists (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-
 v1.md: Rename validates portable character rules, Windows ASCII
 case equivalence, or Python optionxform collisions); removing a section
-removes its owned entries atomically without reparenting (lines 465-466);
+removes its owned entries atomically without reparenting;
 Windows keeps ordered case-equivalent occurrences (RFC 0009 §6, lines
 ); Python multiline entries own their continuations only
 (edit.rs); comments are never moved or deleted without explicit
-ownership (RFC 0009 §12, lines 459-462).
+ownership (RFC 0009 §12).
 """
 
 from __future__ import annotations
@@ -68,12 +68,12 @@ def python(source: bytes):
 
 
 # ---------------------------------------------------------------------------
-# edit.all-eight-operations (ini-v1.json:90-100)
+# edit.all-eight-operations (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_edit_all_eight_operations():
-    # Case edit.all-eight-operations (ini-v1.json:90-100).
+    # Case edit.all-eight-operations (ini-v1.json).
     document = portable(b"[one]\na=1\n[two]\nb=2\n")
     entry = document.entries[0]
     section = document.sections[0]
@@ -124,12 +124,12 @@ def test_edit_all_eight_operations():
 
 
 # ---------------------------------------------------------------------------
-# edit.dry-run-patch-proof-and-atomic-failure (ini-v1.json:104-105)
+# edit.dry-run-patch-proof-and-atomic-failure (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_dry_run_patch_proof_and_atomic_failure():
-    # Case edit.dry-run-patch-proof-and-atomic-failure (ini-v1.json:104-105).
+    # Case edit.dry-run-patch-proof-and-atomic-failure (ini-v1.json).
     document = portable(b"; before\n[s]\nk=old\n; after\n")
     builder = EditTransactionBuilder(document)
     builder.semantic_value(
@@ -315,7 +315,7 @@ def test_duplicate_target_fails_atomically():
 def test_recovered_documents_refuse_edits():
     # RFC 0009 §4: projection, materialization-from-document, and edit
     # commit require a Complete document (case
-    # formation.recovery-never-fabricates-entry, ini-v1.json:42).
+    # formation.recovery-never-fabricates-entry, ini-v1.json).
     recovered = portable(b"[s]\nbare\n")
     builder = EditTransactionBuilder(recovered)
     with pytest.raises(IniEditFailure) as caught:

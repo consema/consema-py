@@ -1,11 +1,11 @@
 """Golden digest and snapshot-identity tests.
 
 Golden cases transcribed from conformance/vectors/source-v1.json:
-- case ``source.digest.sha256-empty`` (lines 4-10): digest of the empty
+- case ``source.digest.sha256-empty``: digest of the empty
   source is e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855;
-- case ``source.digest.sha256-abc`` (lines 11-16): digest of 616263 is
+- case ``source.digest.sha256-abc``: digest of 616263 is
   ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad;
-- case ``source.identity.equal-bytes-distinct-snapshots`` (lines 17-22):
+- case ``source.identity.equal-bytes-distinct-snapshots``:
   two snapshots of the same raw bytes have equal digests and distinct
   snapshot identities.
 
@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from consema.document import ContentDigest, DocumentAuthority, SourceSnapshot
 
-# Golden digests, conformance/vectors/source-v1.json:9 and :15
+# Golden digests, conformance/vectors/source-v1.json and :15
 EMPTY_DIGEST = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 ABC_DIGEST = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
 

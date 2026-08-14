@@ -16,7 +16,7 @@ Authority:
   (projection.rs; materialization.rs).
 
 These records are typed opaquely by consema.document
-(materialization.py:169-195 MaterializationInputLocation); the toml family
+(materialization.py MaterializationInputLocation); the toml family
 owns the concrete payloads. If the protocol agent later publishes the
 semantic-model v6 value-path records, this module should delegate to them.
 """

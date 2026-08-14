@@ -88,7 +88,9 @@ def test_real_project_yaml_fixtures_graph_pgce_round_trip():
 
 def test_anchor_heavy_fixture_is_explicit_about_sharing():
     # The anchor-heavy fixture must reject implicit sharing and complete
-    # under explicit acyclic duplication (https://github.com/consema/consema-go/blob/main/go/yaml fixture_test.go:147-166).
+    # under explicit acyclic duplication
+    # (https://github.com/consema/consema-go/blob/main/go/yaml/fixture_test.go — the fixture case
+    # surface, symbol-anchored; line numbers may drift).
     document, _raw = _form("anchor-heavy.yaml")
     default = project_value(document, ValueProjectionRequest.best_exact_v1())
     assert getattr(default, "code", None) == "yaml.projection.sharing@1"

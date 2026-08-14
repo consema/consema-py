@@ -15,10 +15,10 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   resulting encoding facts to equal the patch facts; metadata is
   deterministic audit data and cannot affect application; redaction flags
   control review/log presentation, not the bytes required for application.
-- RFC 0003 §12 (lines 311-317): source limits cover raw bytes, decoded UTF-8
+- RFC 0003 §12: source limits cover raw bytes, decoded UTF-8
   bytes, decoded boundary count, and patch replacement count/bytes; limits
   apply before or during allocation.
-- RFC 0004 §16 (lines 373-385): a committed edit derives core.source-patch@1
+- RFC 0004 §16: a committed edit derives core.source-patch@1
   from the exact old SourceSnapshot, prepared non-overlapping source edits,
   the exact new SourceSnapshot, and operation metadata; the derived patch
   must reapply to the old snapshot and reproduce the exact new digest.
@@ -28,14 +28,15 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   mapping source_patch.rs; replacement validation source_patch.rs
   512; application source_patch.rs.
 - Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
-  (core.source.patch-base-mismatch@1:381, patch-original-mismatch@1:387,
-  patch-target-mismatch@1:393, resource-limit@1:399, encoding-conflict@1:366,
-  unsupported-bom@1:405, invalid-sequence@1:372; structural patch defects map
-  to core.protocol.invalid-value@1:87 per source_patch.rs).
-- Vector cases: conformance/vectors/source-v1.json lines 119-154
+  (core.source.patch-base-mismatch@1, patch-original-mismatch@1,
+  patch-target-mismatch@1, resource-limit@1, encoding-conflict@1,
+  unsupported-bom@1, invalid-sequence@1; structural patch defects map
+  to core.protocol.invalid-value@1 per source_patch.rs — code names are
+  the anchors).
+- Vector cases: conformance/vectors/source-v1.json
   (source.patch.success / reject-stale-base / reject-original-mismatch /
-  reject-overlap / reject-target-mismatch / reject-encoding-change) and
-  lines 167-172 (source.resource.patch-count-limit).
+  reject-overlap / reject-target-mismatch / reject-encoding-change and
+  source.resource.patch-count-limit — case ids are the anchors).
 
 https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
@@ -217,7 +218,7 @@ class SourcePatch:
     fails atomically and returns no new SourceSnapshot. Metadata is
     deterministic audit data and cannot affect application. SourcePatch is
     not ChangeSet, semantic diff, merge, fuzzy patch, file-system write, or
-    permission to alter a stale snapshot (RFC 0003 §10, lines 290-291).
+    permission to alter a stale snapshot (RFC 0003 §10).
     """
 
     base_digest: ContentDigest

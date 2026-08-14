@@ -39,7 +39,7 @@ def projected_value(item: dict):
 
 
 def test_literal_complete_record():
-    # Case hcl.projection.literal-complete-record (hcl-v1.json:889-1009).
+    # Case hcl.projection.literal-complete-record (hcl-v1.json).
     source = (
         'name = "consema"\ncount = 42\nratio = 1.50\nbig = 1e3\nsmall = 15e-1\n'
         "enabled = true\nnothing = null\ntags = [\"a\", \"b\"]\n"
@@ -94,7 +94,7 @@ def test_literal_complete_record():
 
 
 def test_non_literal_expression_fails_atomically():
-    # Case hcl.projection.non-literal-expression (hcl-v1.json:1011-1041).
+    # Case hcl.projection.non-literal-expression (hcl-v1.json).
     samples = [
         "count = 1 + 2\n",
         "name = var.name\n",
@@ -111,7 +111,7 @@ def test_non_literal_expression_fails_atomically():
 
 
 def test_project_expression_policy():
-    # Case hcl.projection.project-expression-policy (hcl-v1.json:1043-1081).
+    # Case hcl.projection.project-expression-policy (hcl-v1.json).
     source = "count = 1 + 2\nname = var.name\nok = 42\n"
     document = parse(source.encode("utf-8"), NATIVE)
     result = project(
@@ -122,7 +122,7 @@ def test_project_expression_policy():
     items = projected_items(result.value)
     count_value = projected_value(items[0])
     # A derived expression is projected as the authorized `hcl.expression@1`
-    # record itself (RFC 0014 §8.2; https://github.com/consema/consema-go/blob/main/go/hcl/projection.go:559-573), not a
+    # record itself (RFC 0014 §8.2; https://github.com/consema/consema-go/blob/main/go/hcl/projection.go), not a
     # {kind, expression} wrapper.
     assert count_value.kind is Kind.OBJECT
     record = dict(count_value.as_object())
@@ -150,7 +150,7 @@ def test_project_expression_policy():
 
 
 def test_literal_complete_boundary():
-    # Case hcl.projection.literal-complete-boundary (hcl-v1.json:1083-1151).
+    # Case hcl.projection.literal-complete-boundary (hcl-v1.json).
     samples = [
         ("a = -1\n", True),
         ("a = 1 + 2\n", False),

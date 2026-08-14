@@ -27,8 +27,7 @@ Authority (Rust arbitration for exact semantics):
   (projection.rs), lifts fidelity to Transformed
   (projection.rs), and keeps a Collapsed provenance origin
   (projection.rs); First and Last retain source occurrence
-  spelling and retained-source order (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md
-（区间定义处）)
+  spelling and retained-source order (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)
 - Provenance: add_origin projection.rs (new locations count two
   units, existing one; Direct origins insert at position 0, others
   append); entry value origins projection.rs (Direct or

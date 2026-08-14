@@ -2,11 +2,14 @@
 (python/src/consema/differential/protocol_exchange.py;
 https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4).
 
-TestCaseFileIntegrity always runs and guards the checked-in case set (file
-level: manifest id, exact count, unique ids, known records, per-record
-coverage, canonical transport JSON, registered expected codes; it skips,
-documented, only when the shared conformance data is not provisioned beside
-this repository — fresh clone; python/README.md Verify).
+TestCaseFileIntegrity always runs and guards the provisioned case set
+(file level: manifest id, exact count, unique ids, known records,
+per-record coverage, canonical transport JSON, registered expected codes;
+it skips, documented, only when the shared conformance data is not
+provisioned beside this repository — fresh clone; python/README.md
+Verify). The case set is copied in by CI provision (conformance/ is
+.gitignore-excluded; it is not checked into this repository — wave-4
+GW4-26 wording).
 TestProtocolExchange skips without the environment variables (documented
 skip, never silent) and runs only when
 scripts/python-verify-protocol-exchange.ps1 provisioned the Rust files and
@@ -26,7 +29,7 @@ from consema.differential import case_files, protocol_exchange
 
 
 def test_case_file_integrity() -> None:
-    """The checked-in case set passes every file-level integrity guard."""
+    """The provisioned case set passes every file-level integrity guard."""
     reason = case_files.missing_data_reason()
     if reason:
         pytest.skip(reason)

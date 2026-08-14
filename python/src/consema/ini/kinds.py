@@ -26,7 +26,7 @@ only for registry/byte arbitration):
   the caller must select an explicit code page).
 - ``IniParseLimits`` defaults — lib.rs (common ParseLimits plus
   the INI-specific decoded/line/record/group limits; the resource names
-  are pinned by conformance/vectors/ini-v1.json:108-128,
+  are pinned by conformance/vectors/ini-v1.json,
   resource.formation-limit-matrix).
 - Windows name/value character tables: parser.rs (is_windows_name)
   and materialization.rs (is_windows_name /

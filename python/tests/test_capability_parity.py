@@ -1,5 +1,5 @@
 """Capability parity test: the Python mandatory capability set must match
-the Feature-Complete Manifest (docs/fc-manifest-0.13.0.json:30-34) with no
+the Feature-Complete Manifest (docs/fc-manifest-0.13.0.json) with no
 "Rust only" mandatory behavior (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §5.3;
 https://github.com/consema/consema-go/blob/main/go/capability_parity_test.go cross-reference).
 

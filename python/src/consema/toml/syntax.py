@@ -7,7 +7,7 @@ Authority:
   "Whitespace", "Newline", "Comment", "String", "Bare", "Equals",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Comma", "Dot").
   The Python query validation table already freezes the same spellings
-  (consema.protocol query.py:1075-1079 _is_toml_syntax_kind).
+  (consema.protocol query.py _is_toml_syntax_kind).
 - The tokenizer transcribes the byte classification of
   https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs (tokenize / is_punctuation /
   punctuation_kind / string_end): space and tab are Whitespace trivia; LF,

@@ -7,7 +7,7 @@ with the plist domain identities.
 
 Cases covered here:
 
-- plist-v1.json: plist.query.dict-entries-order (lines 917-946),
+- plist-v1.json: plist.query.dict-entries-order,
   plist.query.typed-accessors (948-1042),
   plist.query.binary-structure (1043-1089).
 """
@@ -83,12 +83,12 @@ def _string_value(text: str):
 
 
 # ---------------------------------------------------------------------------
-# plist.query.dict-entries-order (plist-v1.json:917-946)
+# plist.query.dict-entries-order (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_query_dict_entries_order():
-    # Case plist.query.dict-entries-order (plist-v1.json:918-945).
+    # Case plist.query.dict-entries-order (plist-v1.json).
     source = (
         '<plist version="1.0"><dict><key>a</key><integer>1</integer>'
         "<key>b</key><array><string>x</string></array>"
@@ -116,12 +116,12 @@ def test_query_dict_entries_order():
 
 
 # ---------------------------------------------------------------------------
-# plist.query.typed-accessors (plist-v1.json:948-1042)
+# plist.query.typed-accessors (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_query_typed_accessors():
-    # Case plist.query.typed-accessors (plist-v1.json:949-1041).
+    # Case plist.query.typed-accessors (plist-v1.json).
     source = (
         '<plist version="1.0"><dict><key>count</key><integer>42</integer>'
         "<key>created</key><date>2023-01-01T00:00:00Z</date>"
@@ -183,12 +183,12 @@ def test_query_typed_accessors():
 
 
 # ---------------------------------------------------------------------------
-# plist.query.binary-structure (plist-v1.json:1043-1089)
+# plist.query.binary-structure (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_query_binary_structure():
-    # Case plist.query.binary-structure (plist-v1.json:1044-1088). The
+    # Case plist.query.binary-structure (plist-v1.json). The
     # binary structure facts are document-level (RFC 0013 §8.3): every
     # structure operator projects its fact set once from any binary-
     # structure match, and the runner executes each filter standalone

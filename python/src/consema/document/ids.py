@@ -8,8 +8,7 @@ Frozen names/numbers with authority citations:
   (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md);
   https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs (arbitration).
   Golden values: conformance/vectors/source-v1.json cases
-  ``source.digest.sha256-empty`` (lines 4-10) and ``source.digest.sha256-abc``
-  (lines 11-16).
+  ``source.digest.sha256-empty`` and ``source.digest.sha256-abc``.
 - ``ProfileId`` / ``FormatFamilyId``: namespaced ID + immutable version —
   https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs.
 - ``FormatOperationId``: namespaced operation identifier; its Display form
@@ -22,7 +21,9 @@ The vector suite name ``consema.source.conformance@1`` and the capability ids
 of its cases (``core.source.snapshot@1``, ``core.source.encoding@1``,
 ``core.source.decoded-location@1``, ``core.source.binary-coverage@1``,
 ``core.source.patch@1``, ``core.source.limits@1``) are the machine-readable
-capability inventory (conformance/vectors/source-v1.json:2,7,13,19,25,...).
+capability inventory (conformance/vectors/source-v1.json — the case-id
+capability names are the anchors; the provisioned file's line numbers are
+not stable).
 
 https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """

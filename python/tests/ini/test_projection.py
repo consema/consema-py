@@ -3,7 +3,7 @@
 Cases covered here (conformance/vectors/ini-v1.json, suite
 "consema.ini.conformance@1"):
 
-- projection.exact-duplicate-entry-mapping (lines 61-62),
+- projection.exact-duplicate-entry-mapping,
   projection.explicit-object-collapse (66-67),
   projection.fragmented-value-provenance (71-72),
   resource.projection-limit-matrix (131-133).
@@ -12,13 +12,12 @@ RFC 0009 §10 contract facts pinned here: the default exact projection is
 ``ini.projection.best-exact-entry-mapping@1`` producing a nested
 EntryMapping in source order with duplicate spellings preserved
 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md); the Python DEFAULT
-section is an ordinary association (lines 355-358); RequireObjectV1 needs
+section is an ordinary association; RequireObjectV1 needs
 an explicit NameComparison and CollisionPolicy (Reject | First | Last) and
 every authorized collapse is Transformed with one report event per
-discarded association and retained/discarded provenance (lines 364-381);
+discarded association and retained/discarded provenance;
 provenance distinguishes Direct, Derived, ContinuationFragment,
-QuoteDerived, and Collapsed relations (lines 383-385; projection.rs
-159).
+QuoteDerived, and Collapsed relations (projection.rs).
 """
 
 from __future__ import annotations
@@ -54,12 +53,12 @@ def windows_document():
 
 
 # ---------------------------------------------------------------------------
-# projection.exact-duplicate-entry-mapping (ini-v1.json:61-62)
+# projection.exact-duplicate-entry-mapping (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_exact_duplicate_entry_mapping():
-    # Case projection.exact-duplicate-entry-mapping (ini-v1.json:61-62).
+    # Case projection.exact-duplicate-entry-mapping (ini-v1.json).
     document = windows_document()
     result = project(document, ProjectionRequest.best_exact_entry_mapping())
     assert isinstance(result, CompleteProjection)
@@ -99,12 +98,12 @@ def test_python_default_section_projects_as_ordinary_association():
 
 
 # ---------------------------------------------------------------------------
-# projection.explicit-object-collapse (ini-v1.json:66-67)
+# projection.explicit-object-collapse (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_explicit_object_collapse():
-    # Case projection.explicit-object-collapse (ini-v1.json:66-67).
+    # Case projection.explicit-object-collapse (ini-v1.json).
     document = windows_document()
 
     rejected = project(
@@ -164,7 +163,7 @@ def test_explicit_object_collapse():
 def test_recovered_documents_never_project():
     # RFC 0009 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:362-363): Recovered documents do not
     # project; the failure code is ini.projection.incomplete-document@1
-    # (case formation.recovery-never-fabricates-entry, ini-v1.json:42).
+    # (case formation.recovery-never-fabricates-entry, ini-v1.json).
     document = parse(
         b"[s]\nbare\n",
         IniProfile.PORTABLE_V1,
@@ -178,12 +177,12 @@ def test_recovered_documents_never_project():
 
 
 # ---------------------------------------------------------------------------
-# projection.fragmented-value-provenance (ini-v1.json:71-72)
+# projection.fragmented-value-provenance (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_fragmented_value_provenance():
-    # Case projection.fragmented-value-provenance (ini-v1.json:71-72).
+    # Case projection.fragmented-value-provenance (ini-v1.json).
     python = parse(
         b"[s]\nkey = first\n  second\n",
         IniProfile.PYTHON_CONFIGPARSER_V1,
@@ -228,12 +227,12 @@ def test_fragmented_value_provenance():
 
 
 # ---------------------------------------------------------------------------
-# resource.projection-limit-matrix (ini-v1.json:131-133)
+# resource.projection-limit-matrix (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_projection_limit_matrix():
-    # Case resource.projection-limit-matrix (ini-v1.json:131-133): all
+    # Case resource.projection-limit-matrix (ini-v1.json): all
     # three declared limits fail with core.projection.resource-limit@1.
     from consema.ini.projection import ProjectionLimits
 

@@ -63,7 +63,7 @@ def object_root_ref(document):
 
 
 def test_json5_edit_move_member():
-    # Case json5.edit.move-member (json-family-v2.json:174-178).
+    # Case json5.edit.move-member (json-family-v2.json).
     source = "{ /*before*/ a:1, /*stay*/ b:2, c:3, }"
     expected = "{ /*before*/ b:2,a:1, /*stay*/  c:3, }"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
@@ -83,7 +83,7 @@ def test_json5_edit_move_member():
 
 
 def test_json5_edit_move_cross_object_rejected():
-    # Case json5.edit.move-cross-object-rejected (json-family-v2.json:180-184).
+    # Case json5.edit.move-cross-object-rejected (json-family-v2.json).
     source = "{left:{a:1},right:{b:2}}"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     root_members = member_refs(document)
@@ -106,7 +106,7 @@ def test_json5_edit_move_cross_object_rejected():
 
 
 def test_json5_edit_preserve_scalars():
-    # Case json5.edit.preserve-scalars (json-family-v2.json:186-190).
+    # Case json5.edit.preserve-scalars (json-family-v2.json).
     source = "{hex:+0X0f,point:+.50,string:'a\\x20\\v',nf:+Infinity}"
     expected = "{hex:+0X10,point:+.75,string:'a\\x20\\v',nf:+NaN}"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
@@ -142,7 +142,7 @@ def test_json5_edit_preserve_scalars():
 
 
 def test_edit_scalar_minimal():
-    # Case edit.scalar-minimal (v1.json:107-111).
+    # Case edit.scalar-minimal (v1.json).
     source = "{ /* lead */ \"a\" : 1 // tail\n}"
     expected = "{ /* lead */ \"a\" : 200 // tail\n}"
     document = parse(source.encode("utf-8"), JsonProfile.JSONC_BOUNDED_V1, DEFAULT_LIMITS)
@@ -161,7 +161,7 @@ def test_edit_scalar_minimal():
 
 
 def test_edit_preserve_decimal_scale():
-    # Case edit.preserve-decimal-scale (v1.json:113-117).
+    # Case edit.preserve-decimal-scale (v1.json).
     document = parse(b'{"a": 1.00}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     transaction = (
         EditTransactionBuilder(document)
@@ -177,7 +177,7 @@ def test_edit_preserve_decimal_scale():
 
 
 def test_edit_preserve_exponent_style():
-    # Case edit.preserve-exponent-style (v1.json:119-123).
+    # Case edit.preserve-exponent-style (v1.json).
     document = parse(b'{"a": 1E+02}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     transaction = (
         EditTransactionBuilder(document)
@@ -193,7 +193,7 @@ def test_edit_preserve_exponent_style():
 
 
 def test_edit_canonical_for_profile():
-    # Case edit.canonical-for-profile (v1.json:125-129).
+    # Case edit.canonical-for-profile (v1.json).
     document = parse(b'{"a": 1.00}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     transaction = (
         EditTransactionBuilder(document)
@@ -209,7 +209,7 @@ def test_edit_canonical_for_profile():
 
 
 def test_edit_preserve_else_canonical():
-    # Case edit.preserve-else-canonical (v1.json:131-135).
+    # Case edit.preserve-else-canonical (v1.json).
     document = parse(b'{"a": 1.000}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     transaction = (
         EditTransactionBuilder(document)
@@ -231,7 +231,7 @@ def test_edit_preserve_else_canonical():
 
 
 def test_edit_preserve_incompatible_rejected():
-    # Case edit.preserve-incompatible-rejected (v1.json:137-141).
+    # Case edit.preserve-incompatible-rejected (v1.json).
     document = parse(b'{"a": 1.000}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     transaction = (
         EditTransactionBuilder(document)
@@ -248,7 +248,7 @@ def test_edit_preserve_incompatible_rejected():
 
 
 def test_edit_wrong_snapshot():
-    # Case edit.wrong-snapshot (v1.json:173-177).
+    # Case edit.wrong-snapshot (v1.json).
     first = parse(b"1", JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     second = parse(b"2", JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     transaction = (

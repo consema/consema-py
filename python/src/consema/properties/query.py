@@ -26,12 +26,12 @@ Authority (Rust arbitration for the executor semantics):
   error_registry.rs) via consema.protocol.query.QueryFailure;
   the argument vocabulary for the Properties operators is validated by
   the transferable query model (consema.protocol.query.
-  _check_operator_arguments, query.py:964-1053) before binding.
+  _check_operator_arguments, query.py) before binding.
 - Key matching takes exact UTF-16 code units encoded as ``UTF16BE/1``; it
   does not normalize Unicode or case (RFC 0010 section 10,
   https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md). Decoded-text matching is available only
   when a piece is well-formed Unicode; exact raw-byte and exact
-  UTF-16-code-unit filters cover all other pieces (lines 304-308).
+  UTF-16-code-unit filters cover all other pieces.
 
 The transferable query model (QueryDomain, QueryExpression, OperatorCall,
 QuerySelection, QueryDefinition, ValidatedQuery, ExecutableQuery,
@@ -381,7 +381,7 @@ def _execute_syntax_expression(
     # StructureOrderMerge: raw source order with ties preserved
     # (query.rs); the sort is stable, so equal spans keep their
     # branch order (the vector pins the merged kinds and the non-strict
-    # ordinal increase; java-properties-v1.json:66-69).
+    # ordinal increase; java-properties-v1.json).
     output = []
     for branch in expression.branches:
         output.extend(_execute_syntax_expression(branch, input_matches, context))

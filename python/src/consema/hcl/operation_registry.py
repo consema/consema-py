@@ -18,7 +18,7 @@ Frozen records (operation_registry.rs):
 
 Operation ids/versions and the ``id@version`` display form are frozen by
 consema-document (FormatOperationId); the EditPlan operation-metadata
-matching rule requires that form (edit_plan.py:84-121).
+matching rule requires that form (edit_plan.py).
 """
 
 from __future__ import annotations

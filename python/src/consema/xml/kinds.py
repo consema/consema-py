@@ -16,7 +16,7 @@ Authority:
 - The stable kind names transcribe
   https://github.com/consema/consema-rs/blob/main/consema-xml/src/document.rs (XmlSyntaxKind::as_str /
   from_name); the lossless-syntax query protocol validates the same
-  vocabulary (consema.protocol query.py:1109-1121).
+  vocabulary (consema.protocol query.py).
 - consema.document LosslessStructuralIndex (document/structural.py) owns
   the common token/trivia/error-region piece classification; this module
   only owns the format kind parallel to it.

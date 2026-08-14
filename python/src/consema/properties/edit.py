@@ -35,8 +35,8 @@ Authority (Rust arbitration for exact byte semantics):
   rename-property@1.
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
-cases edit.all-five-operations (lines 106-109) and
-edit.dry-run-patch-proof-conflict-atomicity (lines 111-114).
+cases edit.all-five-operations and
+edit.dry-run-patch-proof-conflict-atomicity.
 """
 
 from __future__ import annotations

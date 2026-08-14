@@ -19,8 +19,8 @@ Authority:
   operator application, and selection (All/First/Last/ZeroOrOne/
   RequireOne with cardinality enforcement).
 - The query definition/validation model lives in consema.protocol
-  (query.py:523-529 and 597-602 freeze the toml operator rows;
-  query.py:1075-1079 the syntax-kind vocabulary). The executor below
+  (query.py and 597-602 freeze the toml operator rows;
+  query.py the syntax-kind vocabulary). The executor below
   consumes a validated ``ExecutableQuery``.
 - QueryLimits and CancellationToken are owned here (RFC 0016 §5.4); the
   frozen fields and defaults are the core query.rs ones.

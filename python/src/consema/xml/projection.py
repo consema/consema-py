@@ -29,10 +29,10 @@ Authority:
   ProjectionResult:412-419, ProjectionFailure:421-469) and the tree walk
   projection.rs — byte/registry arbitration only.
 - Provenance is the reverse-direction map of materialization provenance
-  (RFC 0004 §8, lines 193-197); value/association paths are the
+  (RFC 0004 §8); value/association paths are the
   semantic-model records (consema.xml.paths).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
-  ``xml.projection.element-tree-record`` (lines 311-325),
+  ``xml.projection.element-tree-record``,
   ``xml.projection.namespace-record`` (327-339),
   ``xml.projection.recovered-never-projects`` (341-350).
 

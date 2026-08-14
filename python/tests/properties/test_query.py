@@ -2,8 +2,7 @@
 
 Cases covered:
 
-- java-properties-v1.json: query.native-duplicates-and-escape-ownership
-  (lines 61-64), query.logical-and-syntax-order (66-69),
+- java-properties-v1.json: query.native-duplicates-and-escape-ownership, query.logical-and-syntax-order (66-69),
   query.validation-limit-cancellation (71-74).
 - The escaped-key duplicate query exercises exact UTF-16 ``UTF16BE/1``
   key matching without Unicode normalization or case folding (RFC 0010
@@ -61,7 +60,7 @@ def executable(domain_id: str, version: int, operators: list[OperatorCall]):
 
 def test_native_duplicates_and_escape_ownership():
     # Case query.native-duplicates-and-escape-ownership
-    # (java-properties-v1.json:61-64).
+    # (java-properties-v1.json).
     source = b"a\\ key=one\\u0021\na\\ key=two\nempty\n"
     document = parse_reader(source, SourceEncoding.utf8(), DEFAULT_LIMITS)
     key_utf16be = bytes.fromhex("00610020006b00650079")  # "a key" as UTF16BE/1
@@ -115,7 +114,7 @@ def test_native_duplicates_and_escape_ownership():
 
 
 def test_logical_and_syntax_order():
-    # Case query.logical-and-syntax-order (java-properties-v1.json:66-69).
+    # Case query.logical-and-syntax-order (java-properties-v1.json).
     logical = parse_reader(b"k=one\\\r\n two\n", SourceEncoding.utf8(), DEFAULT_LIMITS)
     logical_query = executable(
         NATIVE_DOMAIN,
@@ -185,7 +184,7 @@ def test_logical_and_syntax_order():
 
 def test_validation_limit_cancellation():
     # Case query.validation-limit-cancellation
-    # (java-properties-v1.json:71-74).
+    # (java-properties-v1.json).
     invalid = QueryDefinition(QueryDomain(NATIVE_DOMAIN, 1)).with_expression(
         QueryExpression(ExpressionKind.INPUT)
         .then(OperatorCall("properties.document-properties", 1))

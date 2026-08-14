@@ -30,7 +30,7 @@ Authority:
 - The failure codes are the registered core.edit.*@1 codes
   (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md; consema.xml.errors).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
-  ``xml.edit.*`` (lines 437-566).
+  ``xml.edit.*``.
 
 https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """

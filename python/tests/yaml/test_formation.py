@@ -2,28 +2,28 @@
 
 Cases covered with the vector case ids cited:
 
-- profile.yaml12-scalars (yaml-v1.json:5-9): plain scalar resolution under
+- profile.yaml12-scalars (yaml-v1.json): plain scalar resolution under
   yaml.1.2-core@1 — kinds [String, Integer, Integer, String, String] and
   canonical spellings ["yes", "17", "15", "1:02:03", "2001-12-15"].
-- profile.yaml11-scalars (yaml-v1.json:10-14): the same source under
+- profile.yaml11-scalars (yaml-v1.json): the same source under
   yaml.1.1-compat@1 with the %YAML 1.1 directive — kinds [Boolean,
   Integer, String, Integer, Timestamp] and canonical spellings
   ["true", "15", "0o17", "3723", "2001-12-15"].
-- source.utf16le-bom (yaml-v1.json:15-18): UTF-16LE with BOM selects the
+- source.utf16le-bom (yaml-v1.json): UTF-16LE with BOM selects the
   Utf16Le encoding and forms one document.
-- stream.empty (yaml-v1.json:19-22): document_count 0, alias_count 0.
-- stream.multi-document (yaml-v1.json:23-28): two documents, one alias.
-- syntax.styles-and-trivia (yaml-v1.json:29-33): 48 lossless pieces with
+- stream.empty (yaml-v1.json): document_count 0, alias_count 0.
+- stream.multi-document (yaml-v1.json): two documents, one alias.
+- syntax.styles-and-trivia (yaml-v1.json): 48 lossless pieces with
   every required kind.
-- native.arbitrary-duplicate-mapping (yaml-v1.json:35-38): three ordered
+- native.arbitrary-duplicate-mapping (yaml-v1.json): three ordered
   entries, duplicate keys preserved, sequence keys.
-- formation.undefined-alias (yaml-v1.json:39-43): yaml.parse.syntax@1.
-- resource.parse-source-bytes (yaml-v1.json:124-128): the fatal
+- formation.undefined-alias (yaml-v1.json): yaml.parse.syntax@1.
+- resource.parse-source-bytes (yaml-v1.json): the fatal
   core.parse.resource-limit@1 code.
-- regression.plain-property-characters (yaml-v1.json:134-138): a plain
+- regression.plain-property-characters (yaml-v1.json): a plain
   scalar keeps ``k:#foo &a !t s`` and defines no anchors.
 
-Security: RFC 0007 s13 (lines 400-429) — no evaluation, no alias
+Security: RFC 0007 s13 — no evaluation, no alias
 expansion; the alias-bomb test pins that a large repeated alias stream
 forms without exponential work (one edge per alias) and that the
 document-scoped anchor limits hold.
@@ -110,7 +110,7 @@ def test_yaml11_sexagesimal_magnitude_bound():
 
 
 def test_profile_yaml12_scalars():
-    # Case profile.yaml12-scalars (yaml-v1.json:5-9).
+    # Case profile.yaml12-scalars (yaml-v1.json).
     document = parse_source("[yes, 017, 0o17, 1:02:03, 2001-12-15]", YamlProfile.YAML12_CORE_V1)
     root = document.document(0).root()
     assert root.sequence_len() == 5
@@ -125,7 +125,7 @@ def test_profile_yaml12_scalars():
 
 
 def test_profile_yaml11_scalars():
-    # Case profile.yaml11-scalars (yaml-v1.json:10-14).
+    # Case profile.yaml11-scalars (yaml-v1.json).
     source = "%YAML 1.1\n---\n[yes, 017, 0o17, 1:02:03, 2001-12-15]\n"
     document = parse_source(source, YamlProfile.YAML11_COMPAT_V1)
     assert document.document_count() == 1
@@ -141,7 +141,7 @@ def test_profile_yaml11_scalars():
 
 
 def test_source_utf16le_bom():
-    # Case source.utf16le-bom (yaml-v1.json:15-18); the raw hex is
+    # Case source.utf16le-bom (yaml-v1.json); the raw hex is
     # fffe 6100 3a00 2000 3100 0a00 ("a: 1\\n" in UTF-16LE with BOM).
     raw = bytes.fromhex("fffe61003a00200031000a00")
     document = parse(raw, YamlProfile.YAML12_CORE_V1, ParseLimits())
@@ -157,14 +157,14 @@ def test_source_utf16le_bom():
 
 
 def test_stream_empty():
-    # Case stream.empty (yaml-v1.json:19-22).
+    # Case stream.empty (yaml-v1.json).
     document = parse_source("", YamlProfile.YAML12_CORE_V1)
     assert document.document_count() == 0
     assert document.alias_count() == 0
 
 
 def test_stream_multi_document():
-    # Case stream.multi-document (yaml-v1.json:23-28).
+    # Case stream.multi-document (yaml-v1.json).
     source = "---\n&a [one, *a]\n---\n{k: v}\n"
     document = parse_source(source, YamlProfile.YAML12_CORE_V1)
     assert document.document_count() == 2
@@ -180,7 +180,7 @@ def test_stream_multi_document():
 
 
 def test_syntax_styles_and_trivia():
-    # Case syntax.styles-and-trivia (yaml-v1.json:29-33): 48 pieces and the
+    # Case syntax.styles-and-trivia (yaml-v1.json): 48 pieces and the
     # closed required-kind set.
     source = (
         "--- # doc\n"
@@ -228,7 +228,7 @@ def test_syntax_styles_and_trivia():
 
 
 def test_native_arbitrary_duplicate_mapping():
-    # Case native.arbitrary-duplicate-mapping (yaml-v1.json:35-38).
+    # Case native.arbitrary-duplicate-mapping (yaml-v1.json).
     source = "? [a, b]\n: one\nk: two\nk: three\n"
     document = parse_source(source, YamlProfile.YAML12_CORE_V1)
     root = document.document(0).root()
@@ -244,7 +244,7 @@ def test_native_arbitrary_duplicate_mapping():
 
 
 def test_formation_undefined_alias():
-    # Case formation.undefined-alias (yaml-v1.json:39-43): the undefined
+    # Case formation.undefined-alias (yaml-v1.json): the undefined
     # alias fails at parse time with yaml.parse.syntax@1.
     with pytest.raises(YamlFormationFailure) as caught:
         parse_source("[*missing]\n", YamlProfile.YAML12_CORE_V1)
@@ -252,7 +252,7 @@ def test_formation_undefined_alias():
 
 
 def test_resource_parse_source_bytes():
-    # Case resource.parse-source-bytes (yaml-v1.json:124-128): exceeding
+    # Case resource.parse-source-bytes (yaml-v1.json): exceeding
     # max_source_bytes is fatal with core.parse.resource-limit@1.
     with pytest.raises(YamlFormationFailure) as caught:
         parse(
@@ -265,7 +265,7 @@ def test_resource_parse_source_bytes():
 
 
 def test_regression_plain_property_characters():
-    # Case regression.plain-property-characters (yaml-v1.json:134-138):
+    # Case regression.plain-property-characters (yaml-v1.json):
     # ``&a`` and ``!t`` inside a more-indented plain continuation are scalar
     # text, never node properties (syntax.rs plain continuation rule).
     source = "---\nk:#foo\n &a !t s\n"
@@ -278,7 +278,7 @@ def test_regression_plain_property_characters():
 
 
 def test_alias_bomb_forms_one_edge_per_alias():
-    # RFC 0007 s8 (lines 194-213): "an alias is one edge regardless of
+    # RFC 0007 s8: "an alias is one edge regardless of
     # target size; parse and graph formation never perform recursive alias
     # expansion". An alias bomb must form linearly: each alias occurrence
     # is exactly one graph edge, never an expansion of the target.

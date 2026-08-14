@@ -28,7 +28,7 @@ Rust only for registry/byte arbitration):
 
 The profile ids are the frozen language-neutral spellings also pinned by
 the vector suite ``consema.java-properties.conformance@1``
-(conformance/vectors/java-properties-v1.json:2-3). https://github.com/consema/consema-go/blob/main/go/properties is a
+(conformance/vectors/java-properties-v1.json). https://github.com/consema/consema-go/blob/main/go/properties is a
 cross-reference only.
 """
 

@@ -10,18 +10,18 @@ Authority:
   and agrees with the selected encoding; raw CR/CRLF/LF spelling remains in
   source pieces while native character data follows XML 1.0 line-end
   normalization to LF.
-- RFC 0012 §3 (lines 87-131) — safe DTD and entity boundary: internal-only
+- RFC 0012 §3 — safe DTD and entity boundary: internal-only
   DOCTYPE; external subset/entity, parameter entity, notation, validation
   declarations and markup-creating entity text recover; five predefined
   entities always available; expansion guarded before and during allocation
   across the whole document.
-- RFC 0012 §4 (lines 132-167) — formation and recovery: Complete requires
+- RFC 0012 §4 — formation and recovery: Complete requires
   one document element, matched tags, legal characters/names, namespace
   constraints, admitted resolved DTD subset, exhaustive source coverage and
   every configured limit; Recovered retains the immutable source,
   exhaustive coverage, ordered diagnostics, and never invents a closing
   tag, binding, attribute value, or second root.
-- RFC 0012 §7 (lines 258-283) — the v1 kind set with exhaustive raw-byte
+- RFC 0012 §7 — the v1 kind set with exhaustive raw-byte
   coverage; decoded tokenizer spans convert back to exact raw-byte spans.
 - The formation pipeline and every recovery code transcribe
   https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs (encoding request 56-80; profile
@@ -31,7 +31,7 @@ Authority:
   finish 1792-1914) — byte/registry arbitration only. The XML name grammar
   follows the normative XML 1.0 Fifth Edition productions (RFC 0012 §1).
 - The frozen xml.* diagnostic codes are registered by RFC 0012 §12
-  (lines 428-434: they are RFC-registered and do not enter the
+  (they are RFC-registered and do not enter the
   consema-protocol core error registry).
 
 https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
@@ -1671,7 +1671,7 @@ def _encoding_request(selection: XmlEncodingSelection) -> EncodingRequest:
         SourceEncodingKind.UTF16BE,
     ):
         # UTF-32, Latin-1, Windows code pages, and other IANA encodings are
-        # explicit v1 Profile exclusions (RFC 0012 §2, lines 62-67).
+        # explicit v1 Profile exclusions (RFC 0012 §2).
         raise XmlFormationFailure.fatal("xml.profile.encoding@1", DiagnosticCategory.CONFORMANCE)
     return EncodingRequest.new(SourceEncoding.utf8()).with_caller_override(encoding)
 

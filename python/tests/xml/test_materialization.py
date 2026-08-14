@@ -41,7 +41,7 @@ def _request():
 def _record(case) -> PortableValue:
     """The vector record converted to a PortableValue (the shared runners
     parse the vector JSON with the strict JSON profile and project the
-    record field; conformance/vectors/xml-1-0-safe-v1.json:352-435)."""
+    record field; conformance/vectors/xml-1-0-safe-v1.json)."""
     return _json_value(case["input"]["record"])
 
 
@@ -68,7 +68,7 @@ def _json_value(obj):
 
 def test_vector_canonical_round_trip(xml_vectors):
     """Golden transcription of ``xml.materialization.canonical-round-trip``
-    (xml-1-0-safe-v1.json:351-388): the canonical style emits a final LF
+    (xml-1-0-safe-v1.json): the canonical style emits a final LF
     newline and double-quoted attributes."""
     case = find_case(xml_vectors, "xml.materialization.canonical-round-trip")
     result = materialize(_record(case), _request())
@@ -78,8 +78,8 @@ def test_vector_canonical_round_trip(xml_vectors):
 
 def test_vector_escapes_content(xml_vectors):
     """Golden transcription of ``xml.materialization.escapes-content``
-    (xml-1-0-safe-v1.json:389-417): new literal content is XML-escaped,
-    never interpolated as raw syntax (RFC 0012 §11, lines 393-395)."""
+    (xml-1-0-safe-v1.json): new literal content is XML-escaped,
+    never interpolated as raw syntax (RFC 0012 §11)."""
     case = find_case(xml_vectors, "xml.materialization.escapes-content")
     result = materialize(_record(case), _request())
     assert result.document.render() == b"<root>a &lt; b &amp; c</root>\n"
@@ -87,7 +87,7 @@ def test_vector_escapes_content(xml_vectors):
 
 def test_vector_invalid_record_rejected(xml_vectors):
     """Golden transcription of ``xml.materialization.invalid-record-rejected``
-    (xml-1-0-safe-v1.json:418-435): a record that is not
+    (xml-1-0-safe-v1.json): a record that is not
     ``xml.element-tree@1`` fails with the wire failure ``invalid-record``
     (the shared runners map InvalidRequest to that name,
     https://github.com/consema/consema-rs/blob/main/consema-conformance/src/xml_v1.rs)."""
@@ -127,7 +127,7 @@ def test_request_validation_rejects_foreign_contracts():
 
 def test_utf16_output_carries_bom():
     """UTF-16 output always carries its corresponding BOM and a matching
-    declaration (RFC 0012 §10, lines 364-366; materialization.rs).
+    declaration (RFC 0012 §10; materialization.rs).
     The declaration is emitted only when the record declares one; a
     UTF-16 output then forces the ``UTF-16`` spelling."""
     record = _json_value({

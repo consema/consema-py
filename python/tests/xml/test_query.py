@@ -90,10 +90,10 @@ def _doc(source: bytes):
 
 def test_vector_syntax_kind_and_text_filter(xml_vectors):
     """Golden transcription of ``xml.syntax-query.kind-and-text-filter``
-    (xml-1-0-safe-v1.json:174-202): the lossless domain filters by the
+    (xml-1-0-safe-v1.json): the lossless domain filters by the
     frozen kind ``local-name`` in exact source order. (The vector ordinals
     are informational — both shared runners compare kind and text only,
-    https://github.com/consema/consema-go/blob/main/go/conformance/xml_1_0_safe_v1.go:189-191.)"""
+    https://github.com/consema/consema-go/blob/main/go/conformance/xml_1_0_safe_v1.go.)"""
     case = find_case(xml_vectors, "xml.syntax-query.kind-and-text-filter")
     doc = form_document(case)
     assert doc.status.value == "Complete"
@@ -108,7 +108,7 @@ def test_vector_syntax_kind_and_text_filter(xml_vectors):
 
 def test_vector_syntax_entity_reference_kind(xml_vectors):
     """Golden transcription of ``xml.syntax-query.entity-reference-kind``
-    (xml-1-0-safe-v1.json:203-226): ``&lt;`` is one entity-reference piece."""
+    (xml-1-0-safe-v1.json): ``&lt;`` is one entity-reference piece."""
     case = find_case(xml_vectors, "xml.syntax-query.entity-reference-kind")
     doc = form_document(case)
     expression = _input_then(
@@ -122,7 +122,7 @@ def test_vector_syntax_entity_reference_kind(xml_vectors):
 
 def test_vector_syntax_attribute_value_kind(xml_vectors):
     """Golden transcription of ``xml.syntax-query.attribute-value-kind``
-    (xml-1-0-safe-v1.json:227-250): the value between the quotes is one
+    (xml-1-0-safe-v1.json): the value between the quotes is one
     attribute-value piece."""
     case = find_case(xml_vectors, "xml.syntax-query.attribute-value-kind")
     doc = form_document(case)
@@ -136,7 +136,7 @@ def test_vector_syntax_attribute_value_kind(xml_vectors):
 
 def test_vector_native_attributes_and_values(xml_vectors):
     """Golden transcription of ``xml.native-query.attributes-and-values``
-    (xml-1-0-safe-v1.json:251-276): document-root then element-attributes
+    (xml-1-0-safe-v1.json): document-root then element-attributes
     yields the attribute association with its normalized value."""
     case = find_case(xml_vectors, "xml.native-query.attributes-and-values")
     doc = form_document(case)
@@ -153,7 +153,7 @@ def test_vector_native_attributes_and_values(xml_vectors):
 
 def test_vector_native_descendants_order(xml_vectors):
     """Golden transcription of ``xml.native-query.descendants-order``
-    (xml-1-0-safe-v1.json:277-309): descendant traversal is bounded
+    (xml-1-0-safe-v1.json): descendant traversal is bounded
     pre-order and never includes the input element itself."""
     case = find_case(xml_vectors, "xml.native-query.descendants-order")
     doc = form_document(case)
@@ -173,7 +173,7 @@ def test_vector_native_descendants_order(xml_vectors):
 
 def test_mixed_content_children_preserve_order():
     """element-children preserves mixed-content order
-    (query.rs; RFC 0012 §8, lines 308-311)."""
+    (query.rs; RFC 0012 §8)."""
     doc = _doc(b"<root>a<child/>b</root>")
     expression = _input_then(_op("xml.document-root"), _op("xml.element-children"))
     matches = execute_xml_query(_native(expression), doc)
@@ -263,7 +263,7 @@ def test_node_kind_is_filters_mixed_output():
 
 def test_core_take_and_distinct_by_identity():
     """core.take@1 and core.distinct-by-identity@1 are available in both
-    domains (RFC 0012 §8, lines 302-306)."""
+    domains (RFC 0012 §8)."""
     doc = _doc(b"<root><a/><b/><c/></root>")
     expression = _input_then(
         _op("xml.document-root"),
@@ -326,7 +326,7 @@ def test_syntax_text_equals_compares_raw_bytes():
 
 def test_syntax_kinds_cover_every_piece_exactly_once():
     """Every non-empty raw byte belongs to exactly one ordered piece
-    (RFC 0012 §7, lines 258-261)."""
+    (RFC 0012 §7)."""
     doc = _doc(b'<?xml version="1.0"?><root a="1">t</root>')
     pieces = doc.lossless_structural_index().pieces
     kinds = doc.lossless_syntax_kinds()

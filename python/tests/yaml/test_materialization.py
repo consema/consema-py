@@ -3,15 +3,15 @@ cases) and the RFC 0007 s11 closure.
 
 Cases covered with the vector case ids cited:
 
-- materialization.graph-cycle-flow (yaml-v1.json:95-98): the byte-exact
+- materialization.graph-cycle-flow (yaml-v1.json): the byte-exact
   canonical flow output ``--- &g0 !!seq [!!str "one", *g0]\\n`` for the
   shared-cycle graph; the materialized document reprojects to the exact
   input graph and the fidelity is Exact.
-- materialization.value-flow (yaml-v1.json:99-103): the byte-exact output
+- materialization.value-flow (yaml-v1.json): the byte-exact output
   ``--- !!map {? !!str "a" : !!seq [!!int "1", !!bool "true"]}\\n``; the
   reprojection equals the input value.
 
-Contract: RFC 0007 s11 (lines 303-353) — canonical graph numbering,
+Contract: RFC 0007 s11 — canonical graph numbering,
 deterministic anchors ``&g0``... for nodes whose topology requires an
 alias, explicit standard tags, target reparse before a Complete result,
 and no partial output bytes on failure.
@@ -48,7 +48,7 @@ def _flow_request(profile: str = "yaml.1.2-core") -> MaterializationRequest:
 
 
 def test_materialization_graph_cycle_flow():
-    # Case materialization.graph-cycle-flow (yaml-v1.json:95-98).
+    # Case materialization.graph-cycle-flow (yaml-v1.json).
     document = parse_source("&root [one, *root]\n", YamlProfile.YAML12_CORE_V1)
     graph = project_graph(document)
     result = materialize_graph(graph, _flow_request())
@@ -59,7 +59,7 @@ def test_materialization_graph_cycle_flow():
 
 
 def test_materialization_value_flow():
-    # Case materialization.value-flow (yaml-v1.json:99-103).
+    # Case materialization.value-flow (yaml-v1.json).
     document = parse_source("{a: [1, true]}\n", YamlProfile.YAML12_CORE_V1)
     projected = project_value(document, ValueProjectionRequest.best_exact_v1())
     assert not isinstance(projected, FailedGraphMaterializationAttempt)
@@ -90,7 +90,7 @@ def test_materialization_block_style():
 
 
 def test_materialization_utf16_output_carries_bom():
-    # RFC 0007 s11 (lines 348-351): UTF-16LE/BE output always carries the
+    # RFC 0007 s11: UTF-16LE/BE output always carries the
     # matching BOM and raw encoded bytes are charged to max_output_bytes.
     document = parse_source("[one]\n", YamlProfile.YAML12_CORE_V1)
     graph = project_graph(document)

@@ -61,7 +61,7 @@ def json5_request(style: str = "json5.canonical-compact", newline=NewlinePolicy.
 
 
 def test_json5_materialize_canonical_specials():
-    # Case json5.materialize.canonical-specials (json-family-v2.json:138-142).
+    # Case json5.materialize.canonical-specials (json-family-v2.json).
     values = PortableValue.sequence(
         [
             PortableValue.binary_float64(BITS_POSITIVE_INFINITY),
@@ -76,7 +76,7 @@ def test_json5_materialize_canonical_specials():
 
 
 def test_json5_materialize_reject_finite_binary():
-    # Case json5.materialize.reject-finite-binary (json-family-v2.json:144-148).
+    # Case json5.materialize.reject-finite-binary (json-family-v2.json).
     result = materialize(
         PortableValue.binary_float64(0x0000000000000000), json5_request()
     )
@@ -86,7 +86,7 @@ def test_json5_materialize_reject_finite_binary():
 
 def test_json5_materialize_reject_profile_style_mismatch():
     # Case json5.materialize.reject-profile-style-mismatch
-    # (json-family-v2.json:150-154).
+    # (json-family-v2.json).
     # strict style under the json5 profile is a mismatch:
     result = materialize(
         PortableValue.null(),
@@ -100,7 +100,7 @@ def test_json5_materialize_reject_profile_style_mismatch():
 
 
 def test_json5_convert_finite_to_strict():
-    # Case json5.convert.finite-to-strict (json-family-v2.json:156-160).
+    # Case json5.convert.finite-to-strict (json-family-v2.json).
     source = "{service:{port:8080,},}"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     from consema.json.projection import (
@@ -119,7 +119,7 @@ def test_json5_convert_finite_to_strict():
 
 
 def test_json5_convert_nonfinite_to_strict_fails():
-    # Case json5.convert.nonfinite-to-strict-fails (json-family-v2.json:162-166).
+    # Case json5.convert.nonfinite-to-strict-fails (json-family-v2.json).
     document = parse(b"Infinity", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     from consema.json.projection import (
         ProjectionRequestBuilder,
@@ -137,7 +137,7 @@ def test_json5_convert_nonfinite_to_strict_fails():
 
 
 def test_json5_convert_strict_to_json5():
-    # Case json5.convert.strict-to-json5 (json-family-v2.json:168-172).
+    # Case json5.convert.strict-to-json5 (json-family-v2.json).
     source = '{"a":1}'
     document = parse(source.encode("utf-8"), JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     from consema.json.projection import (

@@ -17,12 +17,12 @@ Authority (Rust arbitration for exact bytes):
   pages; strict — an unrepresentable scalar fails the whole operation,
   RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 - Writer: materialization.rs — the canonical per-profile entry
-  representation: portable ``key=value`` ASCII (RFC 0009 §11, lines 415-
-  417), Windows ``key=value`` with deterministic quoting only when needed
-  to preserve leading/trailing value whitespace (lines 419-424;
-  windows_value_needs_quotes materialization.rs), Python
+  representation: portable ``key=value`` ASCII (RFC 0009 §11), Windows
+  ``key=value`` with deterministic quoting only when needed
+  to preserve leading/trailing value whitespace
+  (windows_value_needs_quotes materialization.rs), Python
   ``key = value`` with deterministic four-space continuation and literal
-  interpolation markers (lines 426-430; write_python_entry
+  interpolation markers (write_python_entry
   materialization.rs); section/key/value representability gates
   materialization.rs.
 - Failure names and codes: the common materialization algebra of

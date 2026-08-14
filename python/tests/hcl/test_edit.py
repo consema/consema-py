@@ -41,7 +41,7 @@ from consema.hcl import (
 
 
 def test_attribute_operations_golden():
-    # Case hcl.edit.attribute-operations (hcl-v1.json:1462-1504).
+    # Case hcl.edit.attribute-operations (hcl-v1.json).
     document = parse(b"region = \"us-east-1\"\ncount = 2\nenabled = true\n", HclProfile.NATIVE_V1)
     builder = EditTransactionBuilder(document)
     builder.insert_attribute(
@@ -68,7 +68,7 @@ def test_attribute_operations_golden():
 
 
 def test_block_operations_golden():
-    # Case hcl.edit.block-operations (hcl-v1.json:1506-1549).
+    # Case hcl.edit.block-operations (hcl-v1.json).
     document = parse(b"server \"web\" {\n  port = 8080\n}\n", HclProfile.NATIVE_V1)
     builder = EditTransactionBuilder(document)
     builder.insert_block(
@@ -93,7 +93,7 @@ def test_block_operations_golden():
 
 
 def test_conflict_codes():
-    # Case hcl.edit.conflicts (hcl-v1.json:1551-1647).
+    # Case hcl.edit.conflicts (hcl-v1.json).
     def conflict(source: bytes, profile, operations) -> str:
         document = parse(source, profile)
         builder = EditTransactionBuilder(document)
@@ -163,7 +163,7 @@ def test_conflict_codes():
 
 
 def test_dry_run_equivalence():
-    # Case hcl.edit.dry-run-equivalence (hcl-v1.json:2047-2080): dry-run
+    # Case hcl.edit.dry-run-equivalence (hcl-v1.json): dry-run
     # and commit produce the identical replacement set and target digest.
     document = parse(b"region = \"us-east-1\"\ncount = 2\nenabled = true\n", HclProfile.NATIVE_V1)
     builder = EditTransactionBuilder(document)

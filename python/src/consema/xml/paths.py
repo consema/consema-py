@@ -19,7 +19,7 @@ Authority:
   (materialization.rs).
 
 These records are typed opaquely by consema.document
-(materialization.py:169-195 MaterializationInputLocation). If the protocol
+(materialization.py MaterializationInputLocation). If the protocol
 agent later publishes the semantic-model v6 value-path records, this module
 should delegate to them.
 """

@@ -2,7 +2,7 @@
 
 Cases covered:
 
-- java-properties-v1.json: resource.formation-limit-matrix (lines 116-140)
+- java-properties-v1.json: resource.formation-limit-matrix
   — every PropertiesParseLimits bound is fatal with no partial document,
   and resource.projection-limit-matrix (142-145) — every projection
   bound fails atomically with core.projection.resource-limit@1.
@@ -51,7 +51,7 @@ def formation_fails(source: str, limits: PropertiesParseLimits) -> bool:
 
 
 def test_formation_limit_matrix():
-    # Case resource.formation-limit-matrix (java-properties-v1.json:116-140):
+    # Case resource.formation-limit-matrix (java-properties-v1.json):
     # all twenty limits are fatal (fatal_count fact) and no partial
     # document is published (no_partial_documents fact).
     cases = [
@@ -85,7 +85,7 @@ def test_formation_limit_matrix():
 
 
 def test_projection_limit_matrix():
-    # Case resource.projection-limit-matrix (java-properties-v1.json:142-145):
+    # Case resource.projection-limit-matrix (java-properties-v1.json):
     # every projection bound fails atomically with
     # core.projection.resource-limit@1 (failed_count fact).
     document = parse_reader(b"a=1\n", SourceEncoding.utf8(), DEFAULT_LIMITS)

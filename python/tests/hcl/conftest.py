@@ -1,7 +1,7 @@
 """Shared HCL test helpers: query executable construction and diagnostics.
 
 The executable helper mirrors the JSON family's pattern
-(tests/json/test_query.py:41-52): a definition is validated against the
+(tests/json/test_query.py): a definition is validated against the
 language-neutral operator table of consema.protocol.query and bound with
 the core ordered-results capability (RFC 0016 §5.4).
 """

@@ -8,7 +8,7 @@ syntax-kind presence, diagnostics, fatal limits).
 
 Cases covered here:
 
-- json-family-v2.json: json5.parse.full-surface (lines 5-10),
+- json-family-v2.json: json5.parse.full-surface,
   json5.parse.identifiers (12-16), json5.parse.string-extensions (18-22),
   json5.parse.extended-whitespace-comments (24-28),
   json5.parse.unescaped-separator-warning (30-34),
@@ -27,7 +27,7 @@ Cases covered here:
   parse.duplicate-members (59-63), parse.lossless-byte-coverage (65-69).
 
 Formation closure: a Complete parse renders the exact original source
-bytes (byte-exact roundtrip, v1.json:41-45).
+bytes (byte-exact roundtrip, v1.json).
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ def diagnostics_of(document) -> list[str]:
 
 
 def test_json5_parse_full_surface():
-    # Case json5.parse.full-surface (json-family-v2.json:5-10).
+    # Case json5.parse.full-surface (json-family-v2.json).
     source = (
         "\ufeff{ // lead\nunquoted:'value',\\u0061:.5,hex:+0X10,trail:1.,"
         "exp:1.e+2,truth:true,nil:null,inf:-Infinity,nan:+NaN,}"
@@ -104,7 +104,7 @@ def test_json5_parse_full_surface():
 
 
 def test_json5_parse_identifiers():
-    # Case json5.parse.identifiers (json-family-v2.json:12-16).
+    # Case json5.parse.identifiers (json-family-v2.json).
     source = "{$_:1,while:2,true:3,π:4,\\u0061:5,a\u200c:6,a\u200d:7}"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -114,7 +114,7 @@ def test_json5_parse_identifiers():
 
 
 def test_json5_parse_string_extensions():
-    # Case json5.parse.string-extensions (json-family-v2.json:18-22).
+    # Case json5.parse.string-extensions (json-family-v2.json).
     source = "['single','\\x41','\\v','\\0','\\q','line\\\nnext','\\uD83D\\uDE00']"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -130,7 +130,7 @@ def test_json5_parse_string_extensions():
 
 
 def test_json5_parse_extended_whitespace_comments():
-    # Case json5.parse.extended-whitespace-comments (json-family-v2.json:24-28).
+    # Case json5.parse.extended-whitespace-comments (json-family-v2.json).
     source = "\u00a0\u1680// line\u2028[1,/* block */2,]\u3000"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -142,7 +142,7 @@ def test_json5_parse_extended_whitespace_comments():
 
 
 def test_json5_parse_unescaped_separator_warning():
-    # Case json5.parse.unescaped-separator-warning (json-family-v2.json:30-34).
+    # Case json5.parse.unescaped-separator-warning (json-family-v2.json).
     source = "'a\u2028b'"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -151,49 +151,49 @@ def test_json5_parse_unescaped_separator_warning():
 
 
 def test_json5_reject_invalid_escaped_identifier():
-    # Case json5.reject.invalid-escaped-identifier (json-family-v2.json:36-40).
+    # Case json5.reject.invalid-escaped-identifier (json-family-v2.json).
     document = parse(b"{\\u0030bad:1}", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json5.syntax.invalid-identifier@1" in diagnostics_of(document)
 
 
 def test_json5_reject_leading_zero_decimal():
-    # Case json5.reject.leading-zero-decimal (json-family-v2.json:42-46).
+    # Case json5.reject.leading-zero-decimal (json-family-v2.json).
     document = parse(b"01", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json.syntax.invalid-number@1" in diagnostics_of(document)
 
 
 def test_json5_reject_empty_hex():
-    # Case json5.reject.empty-hex (json-family-v2.json:48-52).
+    # Case json5.reject.empty-hex (json-family-v2.json).
     document = parse(b"0x", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json.syntax.invalid-number@1" in diagnostics_of(document)
 
 
 def test_json5_reject_decimal_string_escape():
-    # Case json5.reject.decimal-string-escape (json-family-v2.json:54-58).
+    # Case json5.reject.decimal-string-escape (json-family-v2.json).
     document = parse(b"'\\1'", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json.syntax.invalid-string-escape@1" in diagnostics_of(document)
 
 
 def test_json5_reject_isolated_surrogate():
-    # Case json5.reject.isolated-surrogate (json-family-v2.json:60-64).
+    # Case json5.reject.isolated-surrogate (json-family-v2.json).
     document = parse(b"'\\uD800'", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json.syntax.invalid-string-escape@1" in diagnostics_of(document)
 
 
 def test_json5_reject_unterminated_comment():
-    # Case json5.reject.unterminated-comment (json-family-v2.json:66-70).
+    # Case json5.reject.unterminated-comment (json-family-v2.json).
     document = parse(b"1/* open", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json.syntax.unterminated-block-comment@1" in diagnostics_of(document)
 
 
 def test_json_strict_reject_json5_surface():
-    # Case json.strict.reject-json5-surface (json-family-v2.json:72-76).
+    # Case json.strict.reject-json5-surface (json-family-v2.json).
     source = "// note\n{\"a\":1,}"
     document = parse(source.encode("utf-8"), JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
@@ -204,7 +204,7 @@ def test_json_strict_reject_json5_surface():
 
 
 def test_jsonc_complete_shared_surface():
-    # Case jsonc.complete-shared-surface (json-family-v2.json:78-82).
+    # Case jsonc.complete-shared-surface (json-family-v2.json).
     source = "// note\n{\"a\":1,}"
     document = parse(source.encode("utf-8"), JsonProfile.JSONC_BOUNDED_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -212,7 +212,7 @@ def test_jsonc_complete_shared_surface():
 
 
 def test_json5_complete_jsonc_surface():
-    # Case json5.complete-jsonc-surface (json-family-v2.json:84-88).
+    # Case json5.complete-jsonc-surface (json-family-v2.json).
     source = "// note\n{\"a\":1,}"
     document = parse(source.encode("utf-8"), JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -220,7 +220,7 @@ def test_json5_complete_jsonc_surface():
 
 
 def test_json5_number_positive_infinity():
-    # Case json5.number.positive-infinity (json-family-v2.json:90-94).
+    # Case json5.number.positive-infinity (json-family-v2.json).
     document = parse(b"+Infinity", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
     kind = document.root().kind()
@@ -230,7 +230,7 @@ def test_json5_number_positive_infinity():
 
 
 def test_json5_number_negative_nan():
-    # Case json5.number.negative-nan (json-family-v2.json:96-100).
+    # Case json5.number.negative-nan (json-family-v2.json).
     document = parse(b"-NaN", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
     kind = document.root().kind()
@@ -240,7 +240,7 @@ def test_json5_number_negative_nan():
 
 
 def test_json5_number_huge_hex_exact():
-    # Case json5.number.huge-hex-exact (json-family-v2.json:102-106).
+    # Case json5.number.huge-hex-exact (json-family-v2.json).
     document = parse(b"0xFFFFFFFFFFFFFFFFFFFFFFFF", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
     kind = document.root().kind()
@@ -250,7 +250,7 @@ def test_json5_number_huge_hex_exact():
 
 
 def test_json5_number_leading_trailing_exact():
-    # Case json5.number.leading-trailing-exact (json-family-v2.json:108-112).
+    # Case json5.number.leading-trailing-exact (json-family-v2.json).
     document = parse(b"[.5,1.,1.e2]", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
     availability = document.root().array_elements()
@@ -264,7 +264,7 @@ def test_json5_number_leading_trailing_exact():
 
 
 def test_json5_security_depth_limit():
-    # Case json5.security.depth-limit (json-family-v2.json:198-202).
+    # Case json5.security.depth-limit (json-family-v2.json).
     limits = ParseLimits(max_nesting_depth=2)
     with pytest.raises(JsonFormationFailure) as caught:
         parse(b"[[[[0]]]]", JsonProfile.JSON5_STANDARD_V1, limits)
@@ -349,7 +349,7 @@ def test_number_at_exact_magnitude_limit_parses():
 
 
 def test_parse_strict_exact_roundtrip():
-    # Case parse.strict-exact-roundtrip (v1.json:41-45).
+    # Case parse.strict-exact-roundtrip (v1.json).
     source = " {\n  \"a\" : [1, 2]\n} "
     document = parse(source.encode("utf-8"), JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -357,7 +357,7 @@ def test_parse_strict_exact_roundtrip():
 
 
 def test_parse_jsonc_comments_trailing_comma():
-    # Case parse.jsonc-comments-trailing-comma (v1.json:47-51).
+    # Case parse.jsonc-comments-trailing-comma (v1.json).
     source = "{/*x*/\"a\":1,}"
     document = parse(source.encode("utf-8"), JsonProfile.JSONC_BOUNDED_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -365,14 +365,14 @@ def test_parse_jsonc_comments_trailing_comma():
 
 
 def test_parse_recovery_missing_close():
-    # Case parse.recovery-missing-close (v1.json:53-57).
+    # Case parse.recovery-missing-close (v1.json).
     document = parse(b'{"a":1', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"
     assert "json.syntax.missing-object-close@1" in diagnostics_of(document)
 
 
 def test_parse_duplicate_members():
-    # Case parse.duplicate-members (v1.json:59-63).
+    # Case parse.duplicate-members (v1.json).
     document = parse(b'{"a":1,"a":2}', JsonProfile.STRICT_V1, DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
     assert member_names(document) == ["a", "a"]
@@ -384,7 +384,7 @@ def test_parse_duplicate_members():
 
 
 def test_parse_lossless_byte_coverage():
-    # Case parse.lossless-byte-coverage (v1.json:65-69).
+    # Case parse.lossless-byte-coverage (v1.json).
     source = " \n// c\n[1,] "
     document = parse(source.encode("utf-8"), JsonProfile.JSONC_BOUNDED_V1, DEFAULT_LIMITS)
     pieces = document.lossless_structural_index().pieces

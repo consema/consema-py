@@ -25,8 +25,7 @@ Authority (Rust arbitration for exact semantics):
   BestExact (projection.rs) with the StructureReencoded event
   (projection.rs), key/value association origins
   (projection.rs), select_members policy retention
-  (projection.rs) with DuplicateCollapsed events (projection.rs
-（区间定义处）)
+  (projection.rs) with DuplicateCollapsed events (projection.rs)
 - Provenance: projection.rs and add_origin projection.rs
   (every projected value and supported association maps Direct to its
   source node/span; limit projection.rs).
@@ -36,7 +35,7 @@ Authority (Rust arbitration for exact semantics):
 - Target contract ids: json.projection.best-exact-core@1 and
   json5.projection.best-exact-core@1 are the frozen target spellings
   (RFC 0005 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md); the v1 vectors reference the
-  target by the alias "BestExactCore@1" (conformance/vectors/v1.json:91).
+  target by the alias "BestExactCore@1" (conformance/vectors/v1.json).
 
 Design: the value-path and association-location records are the semantic
 model's portable input locations (RFC 0004 §8); the protocol layer

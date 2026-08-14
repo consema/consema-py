@@ -994,7 +994,7 @@ def _is_v1_role(role: MatchRole) -> bool:
 
 class _SourceEditMessage:
     """One exact source edit of the ``core.change-set@1`` record
-    (records_change_set.go:13-39)."""
+    (records_change_set.go)."""
 
     __slots__ = ("old_start", "old_end", "new_start", "new_end", "replacement")
 
@@ -1031,7 +1031,7 @@ class _SourceEditMessage:
 
 class _NodeMappingMessage:
     """One portable node-mapping fact with caller-defined stable locators
-    (records_change_set.go:41-122)."""
+    (records_change_set.go)."""
 
     __slots__ = ("old_locators", "new_locators", "status", "reason")
 
@@ -1094,7 +1094,7 @@ class _NodeMappingMessage:
 
 class ChangeSetMessage:
     """The complete ``core.change-set@1`` record with external source and
-    node identities (records_change_set.go:124-343)."""
+    node identities (records_change_set.go)."""
 
     __slots__ = ("old_source_id", "new_source_id", "source_edits", "node_mappings", "diagnostics")
 

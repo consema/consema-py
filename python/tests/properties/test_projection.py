@@ -2,8 +2,7 @@
 
 Cases covered:
 
-- java-properties-v1.json: projection.exact-duplicates-and-fragments
-  (lines 76-79), projection.unpaired-and-recovered-atomic-failure
+- java-properties-v1.json: projection.exact-duplicates-and-fragments, projection.unpaired-and-recovered-atomic-failure
   (81-84), projection.explicit-jdk-table-collapse (86-89).
 - Empty keys and values produce exact zero-width provenance anchors
   (Rust test empty_keys_and_values_have_exact_zero_width_provenance
@@ -45,7 +44,7 @@ def relation_present(complete, relation: ProvenanceRelation) -> bool:
 
 def test_exact_duplicates_and_fragments():
     # Case projection.exact-duplicates-and-fragments
-    # (java-properties-v1.json:76-79).
+    # (java-properties-v1.json).
     document = parse("a\\ key=one\\\n two\\u0021\na\\ key=last\n")
     result = project(document, ProjectionRequest.best_exact_entry_mapping())
     assert isinstance(result, CompleteProjection)
@@ -80,7 +79,7 @@ def test_exact_duplicates_and_fragments():
 
 def test_unpaired_and_recovered_atomic_failure():
     # Case projection.unpaired-and-recovered-atomic-failure
-    # (java-properties-v1.json:81-84).
+    # (java-properties-v1.json).
     unpaired = parse("a=ok\nb=\\uD800")
     result = project(unpaired, ProjectionRequest.best_exact_entry_mapping())
     assert isinstance(result, FailedProjectionAttempt)
@@ -99,7 +98,7 @@ def test_unpaired_and_recovered_atomic_failure():
 
 def test_explicit_jdk_table_collapse():
     # Case projection.explicit-jdk-table-collapse
-    # (java-properties-v1.json:86-89).
+    # (java-properties-v1.json).
     document = parse("a=first\nb=middle\na=last\n")
     unique = project(
         document, ProjectionRequest.require_object(DuplicatePolicy.REQUIRE_UNIQUE)

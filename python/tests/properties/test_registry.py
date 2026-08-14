@@ -1,7 +1,7 @@
 """Operation registry golden transcription (java-properties-v1.json case).
 
 Case covered: registry.frozen-five-operation-surface
-(java-properties-v1.json:147-149) — both profiles publish the same frozen
+(java-properties-v1.json) — both profiles publish the same frozen
 five Supported structural operations; the operation ids are exact
 (operation_registry.rs).
 """
@@ -27,7 +27,7 @@ EXPECTED = [
 
 def test_both_profiles_publish_the_same_frozen_five_operation_surface():
     # Case registry.frozen-five-operation-surface
-    # (java-properties-v1.json:147-149).
+    # (java-properties-v1.json).
     for profile in (PropertiesProfile.READER_V1, PropertiesProfile.LATIN1_V1):
         registry = format_operation_registry(profile)
         assert list(registry.operation_ids()) == EXPECTED

@@ -18,8 +18,8 @@ Authority:
   (execute_xml_syntax_query), 578-622 (operator dispatch), 624-1376
   (operator implementations) — byte/registry arbitration only.
 - The query definition/validation model lives in consema.protocol
-  (query.py:649-691 freeze the xml operator rows and the syntax-kind
-  vocabulary at query.py:1109-1121); the executor below consumes a
+  (query.py freeze the xml operator rows and the syntax-kind
+  vocabulary at query.py); the executor below consumes a
   validated ``ExecutableQuery``.
 - QueryLimits and CancellationToken follow the shared records of
   consema.protocol.query (RFC 0016 §5.4); the frozen defaults are the core

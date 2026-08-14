@@ -1,7 +1,7 @@
 """SourcePatch construction, application, and failure-code tests.
 
 Golden case transcribed from conformance/vectors/source-v1.json:
-- ``source.patch.success`` (lines 119-124): base 6e616d65203d206f6c640a
+- ``source.patch.success``: base 6e616d65203d206f6c640a
   ("name = old\\n"), replacements [(0,0,"","2320"), (7,10,"6f6c64","6e6577")]
   -> target 23206e616d65203d206e65770a ("# name = new\\n");
 - rejection cases: ``reject-stale-base`` (125-130) ->

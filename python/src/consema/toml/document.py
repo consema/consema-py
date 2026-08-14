@@ -3,14 +3,14 @@
 Authority:
 
 - RFC 0001 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md) is the language-neutral
-  contract: §2 (lines 17-49) freezes the four public roles (TomlItem,
+  contract: §2 freezes the four public roles (TomlItem,
   TomlEntry, TomlKey, TomlArrayElement), the closed native item set
   (String, Integer, Float, Boolean, OffsetDateTime, LocalDateTime,
   LocalDate, LocalTime, Array, InlineTable, RootTable, StandardTable,
   ImplicitTable, DottedTable, ArrayOfTables), the dotted-key layering rule
-  (§2.1, lines 38-45), and the span rules (§2.2, lines 47-49: implicit
+  (§2.1), and the span rules (§2.2: implicit
   logical nodes may use the span of their creating key segment, never a
-  fabricated range). §1 (line 12) and IMPLEMENTATION.md: TOML tables
+  fabricated range). §1 and IMPLEMENTATION.md: TOML tables
   are not JSON objects; they meet only in explicit projection.
 - The entity spans transcribe the Rust entity builder
   (https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs): the root table spans the
@@ -23,7 +23,7 @@ Authority:
   (lib.rs: TOML 0.2 forms only complete valid documents; RFC 0016
   §5.1 F10 — the closed two-value enum).
 - Node handles and spans are snapshot-bound (consema.document structural
-  NodeRef/Span; RFC 0001 §2 line 18).
+  NodeRef/Span; RFC 0001 §2).
 """
 
 from __future__ import annotations

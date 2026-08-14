@@ -511,7 +511,7 @@ class BatchPlanMessage:
         """Strictly decodes the manifest and re-verifies every cross
         constraint under one explicit registry and one explicit source-patch
         replacement budget (cli.rs from_value_with_registry patch_limits
-        parameter; https://github.com/consema/consema-go/blob/main/go/protocol/cli.go:480-486)."""
+        parameter; https://github.com/consema/consema-go/blob/main/go/protocol/cli.go)."""
         fields = schema_fields(
             value,
             "core.batch-plan@1",

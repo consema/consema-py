@@ -9,11 +9,10 @@ Authority (language-neutral first; Rust only for registry arbitration):
   ``toml.projection.core-invariant@1`` :351,
   ``toml.projection.unrepresentable-datetime@1`` :357.
 - The core codes consumed by the TOML family are registered at
-  error_registry.rs (core.parse.resource-limit@1), :57
-  (core.projection.resource-limit@1), :141-201 (core.query.*@1),
-  :466-550 (core.edit.*@1) — the edit codes were introduced by RFC 0004
-  §17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md
-（区间定义处）)
+  error_registry.rs — core.parse.resource-limit@1,
+  core.projection.resource-limit@1, the core.query.*@1 family and the
+  core.edit.*@1 family (code names are the anchors; the edit codes were
+  introduced by RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md)
 - The edit failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs
   and its code mapping edit.rs (StableFailure impl).
 - The projection failure vocabulary follows
@@ -64,9 +63,10 @@ class TomlDiagnostic:
     Mirrors the frozen code/category/severity/primary/arguments/occurrence
     record shape of ``core.diagnostic@1`` (RFC 0015; protocol diagnostic.py)
     with a snapshot-bound primary location (Rust DiagnosticLocation carries
-    ``snapshot: Option<SnapshotIdentity>``; https://github.com/consema/consema-rs/blob/main/consema-core
-    diagnostic.rs). The vector suite references only the code
-    (conformance/vectors/toml-v1.json:87 ``"toml.parse.syntax@1"``) and the
+    ``snapshot: Option<SnapshotIdentity>``;
+    https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs).
+    The vector suite references only the code
+    (conformance/vectors/toml-v1.json ``"toml.parse.syntax@1"``) and the
     argument names used by the resource-limit records ("name", "observed",
     "limit"; parser.rs).
     """

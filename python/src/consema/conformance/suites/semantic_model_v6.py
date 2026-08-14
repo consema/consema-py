@@ -700,7 +700,7 @@ def _decoded_position_resolves(snapshot: SourceSnapshot, raw_byte: int) -> bool:
 
     The Go decoder resolves the terminal boundary (``raw_byte == len``) when
     the final scalar ends at the source end, while the Python document layer
-    rejects offsets at or beyond the end (document/source.py:632). The
+    rejects offsets at or beyond the end (document/source.py). The
     terminal boundary is resolved runner-side to mirror the Go behavior.
     """
     if raw_byte > len(snapshot.bytes()):

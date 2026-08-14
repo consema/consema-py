@@ -40,8 +40,10 @@ Repository = "https://github.com/consema/consema-py"
 
 [project.optional-dependencies]
 # Pinned exactly (G70, 2026-08-14): the dev extra is the whole dependency
-# surface (zero runtime dependencies) and the repository keeps no lockfile,
-# so the dev versions are the reproducibility anchor.
+# surface (zero runtime dependencies). The repository keeps no lockfile, so
+# only these two direct pins are reproducible — the transitive tree floats
+# with pip resolution at install time (a lockfile is a post-1.0.0 backlog
+# item; wave-4 R17).
 dev = ["pytest==9.1.1", "pytest-cov==7.1.0"]
 
 # G95 (2026-08-14): the MIT LICENSE text must ship in both the sdist and
@@ -58,6 +60,17 @@ license-files = { paths = ["LICENSE"] }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/consema"]
+
+# Wave-4 GW4-18 (2026-08-15): the sdist ships only the package tree plus
+# the metadata files hatchling always includes (pyproject.toml, the README,
+# the license-files set, and the VCS exclusion files — hatchling
+# force-includes .gitignore by design, so a .gitignore in the sdist is
+# expected, not a leak). Without an explicit include, hatchling packed the
+# whole project directory — tests/, examples/ and local .coverage files
+# leaked into the sdist (the release.yml artifact check now asserts their
+# absence).
+[tool.hatch.build.targets.sdist]
+include = ["src/consema/**"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

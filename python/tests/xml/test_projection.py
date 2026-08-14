@@ -53,7 +53,7 @@ def _object(value: PortableValue) -> dict:
 
 def test_vector_element_tree_record(xml_vectors):
     """Golden transcription of ``xml.projection.element-tree-record``
-    (xml-1-0-safe-v1.json:310-325): the exact default target is the
+    (xml-1-0-safe-v1.json): the exact default target is the
     versioned ``xml.element-tree@1`` record; the root keeps its attribute
     and its element child."""
     case = find_case(xml_vectors, "xml.projection.element-tree-record")
@@ -74,7 +74,7 @@ def test_vector_element_tree_record(xml_vectors):
 
 def test_vector_namespace_record(xml_vectors):
     """Golden transcription of ``xml.projection.namespace-record``
-    (xml-1-0-safe-v1.json:326-339): the projected root carries its resolved
+    (xml-1-0-safe-v1.json): the projected root carries its resolved
     namespace URI."""
     case = find_case(xml_vectors, "xml.projection.namespace-record")
     doc = form_document(case)
@@ -87,8 +87,8 @@ def test_vector_namespace_record(xml_vectors):
 
 def test_vector_recovered_never_projects(xml_vectors):
     """Golden transcription of ``xml.projection.recovered-never-projects``
-    (xml-1-0-safe-v1.json:340-350): Recovered documents never publish
-    partial semantic values (RFC 0012 §9, lines 329-331)."""
+    (xml-1-0-safe-v1.json): Recovered documents never publish
+    partial semantic values (RFC 0012 §9)."""
     case = find_case(xml_vectors, "xml.projection.recovered-never-projects")
     doc = form_document(case)
     result = project_document(doc, ProjectionRequest.element_tree())
@@ -103,7 +103,7 @@ def test_vector_recovered_never_projects(xml_vectors):
 def test_element_tree_record_is_not_a_portable_tree():
     """The ``xml.element-tree@1`` record is the XML domain record: an
     element tree with ordered mixed content, never a PortableValue tree
-    (RFC 0012 §9, lines 321-327; task requirement)."""
+    (RFC 0012 §9; task requirement)."""
     doc = _doc(b"<root>a<child/>b<![CDATA[c]]><!--d--><?pi e?></root>")
     result = project_document(doc, ProjectionRequest.element_tree())
     root = _object(_object(result.value)["root"])
@@ -122,7 +122,7 @@ def test_element_tree_record_is_not_a_portable_tree():
 def test_text_fragments_are_preserved():
     """Text content keeps its exact fragments: literals, character
     references, predefined and general entity references (RFC 0012 §6,
-    lines 227-252)."""
+    )."""
     doc = _doc(b'<!DOCTYPE root [<!ENTITY e "expanded">]><root>a&lt;b&#65;&e;</root>')
     result = project_document(doc, ProjectionRequest.element_tree())
     root = _object(_object(result.value)["root"])
@@ -143,7 +143,7 @@ def test_text_fragments_are_preserved():
 
 def test_projection_provenance_is_direct_and_complete():
     """Every emitted value carries a source origin with a direct relation
-    and exact raw span (RFC 0004 §8, lines 193-217; projection.rs)."""
+    and exact raw span (RFC 0004 §8; projection.rs)."""
     doc = _doc(b'<root a="1"><child>t</child></root>')
     result = project_document(doc, ProjectionRequest.element_tree())
     assert len(result.provenance.entries) > 0

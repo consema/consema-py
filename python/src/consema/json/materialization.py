@@ -630,7 +630,7 @@ _FAILURE_NAME_BY_KIND = {
 
 def materialization_failure_name(failure: MaterializationFailure) -> str:
     """Exact Rust variant spelling referenced by the conformance vectors
-    (json-family-v2.json:147 "Unrepresentable", :153 "UnsupportedStyle";
+    (json-family-v2.json "Unrepresentable", :153 "UnsupportedStyle";
     consema-document/src/materialization.rs)."""
     return _FAILURE_NAME_BY_KIND[failure.kind]
 

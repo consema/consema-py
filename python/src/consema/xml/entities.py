@@ -16,9 +16,10 @@ Authority:
   byte/registry arbitration only; this module is a Python-idiomatic
   reimplementation.
 - The entity diagnostic codes are frozen by the parser
-  (https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs): markup@1:789, illegal-character@1:794,
-  parameter-entity@1:765/806, reserved-name@1:817, duplicate@1:828,
-  unknown@1:1612, cyclic@1:1638, amplification@1:1753, limit@1:1754.
+  (https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs): markup@1, illegal-character@1,
+  parameter-entity@1, reserved-name@1, duplicate@1,
+  unknown@1, cyclic@1, amplification@1, limit@1 — code names are the
+  anchors.
 """
 
 from __future__ import annotations

@@ -59,7 +59,7 @@ class XmlDiagnostic:
     record shape of ``core.diagnostic@1`` with a snapshot-bound primary
     location (Rust DiagnosticLocation carries a snapshot identity). The
     vector suite references only the code
-    (conformance/vectors/xml-1-0-safe-v1.json:111,123,135,147,159,577,591).
+    (conformance/vectors/xml-1-0-safe-v1.json,123,135,147,159,577,591).
     """
 
     code: str
@@ -75,7 +75,7 @@ class XmlFormationFailure(Exception):
 
     Fatal failures cover invalid byte decoding, impossible source
     coordinates, allocation/host-size overflow, and inability to construct
-    exhaustive coverage (RFC 0012 §4, lines 158-163); syntax,
+    exhaustive coverage (RFC 0012 §4); syntax,
     well-formedness, namespace, safe-DTD, and entity errors form Recovered
     documents instead. Source failures delegate to the wrapped
     ``core.source.*`` code.

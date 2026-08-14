@@ -29,7 +29,7 @@ Authority (Rust arbitration for exact byte semantics):
 - Operation metadata: edit.rs (operation.{index} =
   "ini.edit.*@1" forms) and safe summaries edit.rs.
 - The v1 vector goldens this module must reproduce byte-for-byte:
-  conformance/vectors/ini-v1.json:89-106 (edit.all-eight-operations,
+  conformance/vectors/ini-v1.json (edit.all-eight-operations,
   edit.dry-run-patch-proof-and-atomic-failure).
 
 Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-ini/src/operation_registry.rs):

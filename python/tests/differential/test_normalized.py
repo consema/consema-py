@@ -2,9 +2,11 @@
 (python/src/consema/differential/normalized.py; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
 §3.3).
 
-TestCaseFileIntegrity always runs and guards the checked-in case set (it
+TestCaseFileIntegrity always runs and guards the provisioned case set (it
 skips, documented, only when the shared conformance data is not provisioned
-beside this repository — fresh clone; python/README.md Verify).
+beside this repository — fresh clone; python/README.md Verify). The case
+set is copied in by CI provision (conformance/ is .gitignore-excluded; it
+is not checked into this repository — wave-4 GW4-26 wording).
 TestNormalizedDifferential skips without the environment variable
 (documented skip, never silent) and runs only when
 scripts/python-verify-normalized-differential.ps1 provisioned the Rust
@@ -28,7 +30,7 @@ from consema.differential import case_files, normalized
 
 
 def test_case_file_integrity() -> None:
-    """The checked-in case set passes every integrity guard (manifest id,
+    """The provisioned case set passes every integrity guard (manifest id,
     exact count, unique ids, per-kind schema validity)."""
     reason = case_files.missing_data_reason()
     if reason:

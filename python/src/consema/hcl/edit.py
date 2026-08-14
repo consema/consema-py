@@ -178,8 +178,7 @@ class BodyPlacement:
 
 @dataclass(frozen=True, slots=True)
 class EditKey:
-    """One object-constructor literal key (RFC 0014 §4.6, §8.1; edit.rs
-（区间定义处）)
+    """One object-constructor literal key (RFC 0014 §4.6, §8.1; edit.rs)
 
     ``kind`` is "identifier" | "number" | "string". An identifier key
     spelled `for` is refused, because the for-expression interpretation

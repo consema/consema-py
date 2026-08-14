@@ -3,7 +3,7 @@
 The vector files are plain strict JSON documents (never
 ``core.portable-value-json@1`` transport envelopes; conformance/README.md
 rule 3); the loader converts them into the core value model with the Go
-runner's exact conventions (https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go:490-577):
+runner's exact conventions (https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go):
 
 - object member keys are sorted lexicographically at load time;
 - exact-integer number spellings become ``Integer``; non-integral
@@ -15,7 +15,7 @@ runner's exact conventions (https://github.com/consema/consema-go/blob/main/go/c
 The aggregate digest algorithm is frozen at the
 fc-manifest-0.13.0.json ``digests.conformance_suite`` note (key-name
 anchor; mirrored by the Go runner at
-https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go:437-484):
+https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go):
 file-name byte-order sort, per-file sha256 lowercase hex, lines
 ``{basename}:{digest}`` joined with ``\\n`` and no trailing newline, then
 sha256 of that UTF-8 string.

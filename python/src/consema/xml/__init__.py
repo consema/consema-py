@@ -33,8 +33,7 @@ arbitration; https://github.com/consema/consema-go/blob/main/go/xml as a cross-r
   projection.rs; materialization.rs; edit.rs) and
   https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs for the
   core.edit.*@1 and core.materialization.*@1 codes consumed by this
-  family. The xml.* diagnostic codes are registered by RFC 0012 §12
-  (lines 428-434) and do not enter the consema-protocol core registry.
+  family. The xml.* diagnostic codes are registered by RFC 0012 §12 and do not enter the consema-protocol core registry.
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies (python/ zero-dependency runtime policy).

@@ -1,6 +1,6 @@
 """Query golden transcriptions (json-family-v2.json cases).
 
-Cases covered: json5.query.syntax-v2-identifier (json-family-v2.json:114-
+Cases covered: json5.query.syntax-v2-identifier (json-family-v2.json-
 118) and json5.query.native-v2-binary (120-124); both pin ``v1_rejected``
 — a v1-domain query on a JSON5 document is rejected with a domain
 mismatch (RFC 0005 §7: JSON5 requires the v2 domains).
@@ -53,7 +53,7 @@ def executable(domain_id: str, version: int, operators: list[OperatorCall]):
 
 
 def test_json5_query_syntax_v2_identifier():
-    # Case json5.query.syntax-v2-identifier (json-family-v2.json:114-118).
+    # Case json5.query.syntax-v2-identifier (json-family-v2.json).
     document = parse(b"{key:1,true:2}", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     operator = OperatorCall("json.syntax-kind-is", 1).with_argument(
         "kind", PortableValue.string("Identifier")
@@ -74,7 +74,7 @@ def test_json5_query_syntax_v2_identifier():
 
 def test_json5_query_syntax_v1_rejected():
     # v1_rejected fact of case json5.query.syntax-v2-identifier
-    # (json-family-v2.json:117). With a v1-valid kind ("Number") the
+    # (json-family-v2.json). With a v1-valid kind ("Number") the
     # executor itself raises the domain mismatch for a JSON5 document
     # (RFC 0005 §7: JSON5 requires the v2 domains).
     document = parse(b"{key:1,true:2}", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
@@ -99,7 +99,7 @@ def test_json5_query_syntax_v1_rejected():
 
 
 def test_json5_query_native_v2_binary():
-    # Case json5.query.native-v2-binary (json-family-v2.json:120-124).
+    # Case json5.query.native-v2-binary (json-family-v2.json).
     document = parse(b"-Infinity", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     execution = execute_json_query(
         executable("json.native-semantic-query", 2, []),
@@ -115,7 +115,7 @@ def test_json5_query_native_v2_binary():
 
 def test_json5_query_native_v1_rejected():
     # v1_rejected fact of case json5.query.native-v2-binary
-    # (json-family-v2.json:123).
+    # (json-family-v2.json).
     document = parse(b"-Infinity", JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
     with pytest.raises(QueryFailure) as caught:
         execute_json_query(

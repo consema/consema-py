@@ -2,7 +2,7 @@
 
 Cases covered:
 
-- java-properties-v1.json: edit.all-five-operations (lines 106-109),
+- java-properties-v1.json: edit.all-five-operations,
   edit.dry-run-patch-proof-conflict-atomicity (111-114).
 - Round-trip (RFC 0004 section 16): the committed SourcePatch reapplies
   to the base snapshot and reproduces the exact committed bytes; the
@@ -50,7 +50,7 @@ def commit_one(document, operation):
 
 
 def test_all_five_operations():
-    # Case edit.all-five-operations (java-properties-v1.json:106-109).
+    # Case edit.all-five-operations (java-properties-v1.json).
     document = reader(b"a=1\nb=2\n")
     first = document.properties[0].node
     second = document.properties[1].node
@@ -271,7 +271,7 @@ def test_snapshot_role_recovery_and_resource_contracts_are_enforced():
 
 def test_dry_run_patch_proof_and_conflict_atomicity():
     # Case edit.dry-run-patch-proof-conflict-atomicity
-    # (java-properties-v1.json:111-114).
+    # (java-properties-v1.json).
     document = reader(b"a=one\nb=two\n")
     builder = EditTransactionBuilder(document)
     builder.rename_property(

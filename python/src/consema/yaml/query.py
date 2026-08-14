@@ -4,7 +4,7 @@ Authority (Rust arbitration for the executor semantics):
 
 - Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/query.rs
   (native) and 213-255 (syntax) — domains yaml.native-semantic-query@1 and
-  yaml.lossless-syntax-query@1 (RFC 0007 s9, lines 229-251).
+  yaml.lossless-syntax-query@1 (RFC 0007 s9).
 - Native operators: query.rs (yaml.documents, yaml.document-root,
   yaml.where-node-kind, yaml.where-tag, yaml.scalar-canonical-equals,
   yaml.try-sequence-elements, yaml.sequence-element-node,

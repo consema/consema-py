@@ -15,9 +15,10 @@ Authority:
   UnsupportedOperation, UnrepresentableValue, ResourceLimit,
   NewDocumentFormationFailed).
 - The transaction algebra transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs
-  RepresentationPolicy 16-26; ScalarReplacement/EditOperation 28-99;
-  the atomic commit pipeline 281-430; dry-run 432-447; every prepare_*
-  function 449-1062 (including delimiter-adjacent comma ownership,
+  (symbol names are the anchors; line numbers may drift):
+  RepresentationPolicy; ScalarReplacement/EditOperation;
+  the atomic commit pipeline; dry-run; every prepare_*
+  function (including delimiter-adjacent comma ownership,
   table-line insertion with newline inference from the first Newline
   piece, and key rename replacing only the key literal); the conflict
   preflight 1064-1100; canonical literal writers 1472-1636; exact-literal

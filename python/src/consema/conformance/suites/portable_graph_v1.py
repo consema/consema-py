@@ -60,7 +60,7 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
 
 
 # ---------------------------------------------------------------------------
-# graph building (portable_graph_v1.go:51-169)
+# graph building (portable_graph_v1.go)
 # ---------------------------------------------------------------------------
 
 

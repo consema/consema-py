@@ -33,7 +33,7 @@ Authority (Rust arbitration for exact bytes):
   (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
-cases materialization.* (lines 91-104).
+cases materialization.*.
 """
 
 from __future__ import annotations

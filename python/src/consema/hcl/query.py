@@ -20,7 +20,6 @@ Authority (Rust arbitration for the executor semantics):
   as TargetUnavailable (the conformance layer maps it to
   hcl.query.non-literal@1), a type mismatch as RequiredTypeMismatch
   (hcl.query.type-mismatch@1) — https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs
- .（区间定义处）
 - Limits and cancellation: the common QueryLimits defaults
   max_steps=100_000, max_results=100_000.
 

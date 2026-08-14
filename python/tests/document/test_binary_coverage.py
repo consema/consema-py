@@ -1,11 +1,11 @@
 """Binary structural coverage tests.
 
 Golden cases transcribed from conformance/vectors/source-v1.json:
-- ``source.binary.empty-coverage`` (lines 101-106): source_len 0, no regions
+- ``source.binary.empty-coverage``: source_len 0, no regions
   -> region_count 0;
-- ``source.binary.region-coverage`` (lines 107-112): source_len 4, regions
+- ``source.binary.region-coverage``: source_len 4, regions
   [0,1) header, [1,4) payload -> region_count 2;
-- ``source.binary.reject-gap`` (lines 113-118): regions [0,1) and [2,4) leave
+- ``source.binary.reject-gap``: regions [0,1) and [2,4) leave
   a gap -> expected code "IncompleteStructuralCoverage".
 
 Contract: RFC 0003 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md

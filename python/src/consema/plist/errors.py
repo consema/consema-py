@@ -323,7 +323,7 @@ class PlistEditFailure(Exception):
 
     Code mapping authority: edit.rs (RFC 0013 §11 conflict list,
     https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md). ``name`` is the exact Rust variant spelling
-    the conformance vectors reference (plist-v1.json:1557-1561).
+    the conformance vectors reference (plist-v1.json).
     """
 
     def __init__(

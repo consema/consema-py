@@ -19,7 +19,7 @@ Authority:
   Supported operations and the total count of seven.
 - The argument-kind spellings follow consema-document operation_registry.rs
   (OperationArgumentKind) and are cross-checked by https://github.com/consema/consema-go/blob/main/go/toml
-  operation_registry.go:24-37.
+  operation_registry.go.
 """
 
 from __future__ import annotations

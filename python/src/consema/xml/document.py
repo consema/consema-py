@@ -25,7 +25,7 @@ Authority:
 - Text semantic concatenation and line-end normalization transcribe
   document.rs (text_semantic, push_normalized).
 - Snapshot-bound identity roles are the closed consema.document NodeRole
-  vocabulary (document/structural.py:132-144).
+  vocabulary (document/structural.py).
 
 https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """

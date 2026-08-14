@@ -12,7 +12,7 @@ Semantics are pinned by RFC 0009 §7 (https://github.com/consema/consema/blob/ma
 v1.md: option comparison and duplicate detection use the Python
 3.14 default lowercase ``optionxform`` pinned to Unicode 16.0) and by the
 vector case formation.python-unicode16-optionxform
-(conformance/vectors/ini-v1.json:35-38: ``İ`` and ``i̇`` become the same
+(conformance/vectors/ini-v1.json: ``İ`` and ``i̇`` become the same
 comparison name and formation recovers with ini.formation.case-collision@1).
 """
 

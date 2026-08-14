@@ -48,7 +48,7 @@ registered code (RFC 0016 §6). Error text is human presentation only and
 never participates in conformance comparison. The vector-facing failure
 *names* ("RecoveredDocument", "Collision", ...) are exposed as ``name``
 properties using the exact Rust variant spellings that the conformance
-vectors reference (conformance/vectors/ini-v1.json:42, 67, 86).
+vectors reference (conformance/vectors/ini-v1.json, 67, 86).
 """
 
 from __future__ import annotations
@@ -125,7 +125,7 @@ def sort_diagnostics(diagnostics: list[IniDiagnostic]) -> None:
 class IniFormationFailureKind(enum.Enum):
     """Fatal formation failure categories (FatalFormationFailure of
     consema-document; the resource names follow the Rust spellings used by
-    parser.rs and pinned by conformance/vectors/ini-v1.json:108-128)."""
+    parser.rs and pinned by conformance/vectors/ini-v1.json)."""
 
     SOURCE_BYTES = "source-bytes"
     TOKEN_COUNT = "token-count"
@@ -181,7 +181,7 @@ class IniFormationFailure(Exception):
     @property
     def name(self) -> str:
         """The exact resource-name or failure spelling the conformance
-        vectors reference (ini-v1.json:109-127)."""
+        vectors reference (ini-v1.json)."""
         if self.kind is IniFormationFailureKind.PROFILE_ENCODING:
             return "profile-encoding"
         if self.kind is IniFormationFailureKind.SOURCE:
@@ -228,7 +228,7 @@ class IniProjectionFailure(Exception):
 
     Code mapping authority: projection.rs. ``name`` is the exact
     Rust variant spelling the conformance vectors reference
-    (ini-v1.json:67 "rejects" via the Collision diagnostic reason).
+    (ini-v1.json "rejects" via the Collision diagnostic reason).
     """
 
     def __init__(
@@ -308,7 +308,7 @@ class IniEditFailure(Exception):
 
     Code mapping authority: edit.rs (RFC 0004 §17). ``name`` is
     the exact Rust variant spelling referenced by the conformance vectors
-    (ini-v1.json:105 "wrong_snapshot_code").
+    (ini-v1.json "wrong_snapshot_code").
     """
 
     def __init__(

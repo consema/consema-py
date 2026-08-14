@@ -9,8 +9,7 @@ groups, exact syntax coverage, and byte-exact rendering.
 
 Cases covered here:
 
-- java-properties-v1.json: formation.reader-lines-escapes-duplicates
-  (lines 5-9), formation.empty-blank-comment-empty-key (11-14),
+- java-properties-v1.json: formation.reader-lines-escapes-duplicates, formation.empty-blank-comment-empty-key (11-14),
   formation.mixed-line-terminators (16-19),
   formation.continuation-and-backslash-parity (21-29),
   formation.escape-and-java-utf16-matrix (31-34) — the UTF-16 escape
@@ -67,7 +66,7 @@ def diagnostics_of(document) -> list[str]:
 
 def test_reader_lines_escapes_duplicates():
     # Case formation.reader-lines-escapes-duplicates
-    # (java-properties-v1.json:5-9).
+    # (java-properties-v1.json).
     source = b"  # retained comment\\\r\nkey\\ with\\ spaces : first\\\r\n \tsecond\\u0021\ndup=first\rdup:last\nempty\nexplicit="
     document = parse_reader(source, SourceEncoding.utf8(), DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -119,7 +118,7 @@ def test_reader_lines_escapes_duplicates():
 
 def test_empty_blank_comment_empty_key():
     # Case formation.empty-blank-comment-empty-key
-    # (java-properties-v1.json:11-14).
+    # (java-properties-v1.json).
     samples = ["", "\n", "# comment\n", "! comment\r", "implicit", "explicit=", "=value", "a=1\nb=2\n"]
     for sample, expected_properties, expected_comments in zip(
         samples, [0, 0, 0, 0, 1, 1, 1, 2], [0, 0, 1, 1, 0, 0, 0, 0]
@@ -132,7 +131,7 @@ def test_empty_blank_comment_empty_key():
 
 
 def test_mixed_line_terminators():
-    # Case formation.mixed-line-terminators (java-properties-v1.json:16-19).
+    # Case formation.mixed-line-terminators (java-properties-v1.json).
     source = b"a=1\nb=2\rc=3\r\nd=4"
     document = parse_reader(source, SourceEncoding.utf8(), DEFAULT_LIMITS)
     assert len(document.natural_lines) == 4
@@ -156,7 +155,7 @@ def test_mixed_line_terminators():
 
 def test_continuation_and_backslash_parity():
     # Case formation.continuation-and-backslash-parity
-    # (java-properties-v1.json:21-29).
+    # (java-properties-v1.json).
     samples = [
         (b"key=value\\", "00760061006c00750065", 1, 1),
         (b"key=value\\\\", "00760061006c00750065005c", 1, 1),
@@ -190,7 +189,7 @@ def test_terminal_odd_backslash_matches_jdk_eof_rule():
 
 def test_escape_and_java_utf16_matrix():
     # Case formation.escape-and-java-utf16-matrix
-    # (java-properties-v1.json:31-34) — the UTF-16 escape semantics test.
+    # (java-properties-v1.json) — the UTF-16 escape semantics test.
     source = (
         b"named=\\t\\n\\r\\f\n"
         b"slash=\\\\\n"
@@ -263,7 +262,7 @@ def test_unicode_escape_is_not_recursively_decoded():
 
 def test_malformed_unicode_recovery_matrix():
     # Case formation.malformed-unicode-recovery-matrix
-    # (java-properties-v1.json:36-39).
+    # (java-properties-v1.json).
     samples = ["a=\\u", "a=\\u1", "a=\\u12", "a=\\u123", "a=\\u12G4", "a=\\U0041"]
     for sample, formation, property_count, error_count in zip(
         samples,
@@ -290,7 +289,7 @@ def test_malformed_unicode_recovery_matrix():
 
 
 def test_reader_explicit_encodings():
-    # Case formation.reader-explicit-encodings (java-properties-v1.json:41-49).
+    # Case formation.reader-explicit-encodings (java-properties-v1.json).
     cases = [
         (SourceEncoding.utf8(), bytes.fromhex("e5908d3de580bc0a"), "名", "值", None),
         (SourceEncoding.utf16le(), bytes.fromhex("fffe6b003d007600"), "k", "v", "Utf16Le"),
@@ -311,10 +310,10 @@ def test_reader_explicit_encodings():
 
 def test_reader_explicit_cp1252_encoding():
     # Case formation.reader-explicit-encodings, WindowsCodePage(1252)
-    # sample (java-properties-v1.json:46-47): "name=caf\xE9\n" decodes
+    # sample (java-properties-v1.json): "name=caf\xE9\n" decodes
     # under the strict code page.
     #
-    # BLOCKED by a document-domain defect: consema/document/source.py:838
+    # BLOCKED by a document-domain defect: consema/document/source.py
     # unpacks a two-tuple from the Python 3.12 incremental decoder, which
     # returns the decoded string only. The properties family depends on
     # SourceSnapshot.from_raw for every decode; the fix belongs to the
@@ -330,7 +329,7 @@ def test_reader_explicit_cp1252_encoding():
 
 def test_latin1_treats_bom_bytes_as_content():
     # Case formation.latin1-byte-and-bom-content
-    # (java-properties-v1.json:51-54) — the Latin-1 versus Reader dialect
+    # (java-properties-v1.json) — the Latin-1 versus Reader dialect
     # test: a UTF-8 BOM byte sequence has no BOM meaning and is ordinary
     # Latin-1 data (RFC 0010 section 3.2).
     source = bytes.fromhex("efbbbf6b3dff")
@@ -359,7 +358,7 @@ def test_reader_dialect_recognizes_a_supported_bom():
 
 def test_recovery_never_publishes_partial_operation():
     # Case formation.recovery-never-publishes-partial-operation
-    # (java-properties-v1.json:56-59).
+    # (java-properties-v1.json).
     source = b"good=ok\nbad=\\u12G4\nafter=yes"
     document = parse_reader(source, SourceEncoding.utf8(), DEFAULT_LIMITS)
     assert document.formation_status().value == "Recovered"

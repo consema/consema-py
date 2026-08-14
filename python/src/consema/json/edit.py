@@ -31,8 +31,8 @@ Authority (Rust arbitration for exact byte semantics):
 - Operation metadata: edit.rs (operation.{index} =
   "json.edit.*@1" forms) and operation summaries edit.rs.
 - The v1/v2 vector goldens this module must reproduce byte-for-byte:
-  conformance/vectors/v1.json:107-141 (scalar edits) and
-  json-family-v2.json:174-190 (move-member and preserve-scalars).
+  conformance/vectors/v1.json (scalar edits) and
+  json-family-v2.json (move-member and preserve-scalars).
 
 Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-json/src/operation_registry.rs):
 json.edit.insert-member@1, remove-member@1, move-member@1, rename-member@1,

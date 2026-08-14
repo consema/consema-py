@@ -32,7 +32,7 @@ VECTOR_PATH = (
 @pytest.fixture(scope="session")
 def xml_vectors():
     """The full machine-readable suite (conformance/vectors/
-    xml-1-0-safe-v1.json:1-594)."""
+    xml-1-0-safe-v1.json)."""
     with open(VECTOR_PATH, encoding="utf-8") as handle:
         return json.load(handle)
 

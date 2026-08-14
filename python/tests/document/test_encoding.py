@@ -1,19 +1,22 @@
 """Encoding resolution, decoding, and error-code tests.
 
-Golden cases transcribed from conformance/vectors/source-v1.json:
-- round-trips: ``source.encoding.utf8-roundtrip`` (lines 23-28),
-  ``utf16le-roundtrip`` (29-34), ``utf16be-roundtrip`` (35-40),
-  ``latin1-roundtrip`` (41-46), ``binary-roundtrip`` (47-52);
-- conflicts: ``source.encoding.bom-declaration-conflict`` (53-58),
-  ``declaration-caller-conflict`` (59-64) -> core.source.encoding-conflict@1;
-- ``source.encoding.reject-utf32-bom`` (65-70) ->
+Golden cases transcribed from conformance/vectors/source-v1.json (case ids
+are the anchors — the vector file is provisioned by CI, its line numbers
+are not stable):
+- round-trips: ``source.encoding.utf8-roundtrip``,
+  ``utf16le-roundtrip``, ``utf16be-roundtrip``,
+  ``latin1-roundtrip``, ``binary-roundtrip``;
+- conflicts: ``source.encoding.bom-declaration-conflict``,
+  ``declaration-caller-conflict`` -> core.source.encoding-conflict@1;
+- ``source.encoding.reject-utf32-bom`` ->
   core.source.unsupported-bom@1;
-- ``source.encoding.reject-utf16-odd`` (71-76) and
-  ``reject-utf16-surrogate`` (77-82) -> core.source.invalid-sequence@1.
+- ``source.encoding.reject-utf16-odd`` and
+  ``reject-utf16-surrogate`` -> core.source.invalid-sequence@1.
 
 Contract: RFC 0003 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md
 ). Code registry: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
-(encoding-conflict@1:366, invalid-sequence@1:372, unsupported-bom@1:405).
+(encoding-conflict@1, invalid-sequence@1, unsupported-bom@1 — code names
+are the anchors).
 """
 
 from __future__ import annotations

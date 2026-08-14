@@ -8,10 +8,10 @@ closure).
 
 Cases covered here:
 
-- plist-v1.json: plist.conversion.xml-to-binary-round-trip (lines 1565-
-  1590), plist.conversion.binary-to-xml-round-trip (1591-1610),
-  plist.conversion.uid-inexpressible-to-xml (1611-1622),
-  plist.conversion.duplicate-keys-preserved (1623-1641).
+- plist-v1.json: plist.conversion.xml-to-binary-round-trip,
+  plist.conversion.binary-to-xml-round-trip,
+  plist.conversion.uid-inexpressible-to-xml,
+  plist.conversion.duplicate-keys-preserved.
 """
 
 from __future__ import annotations
@@ -48,12 +48,12 @@ def binary_document(hex_string: str):
 
 
 # ---------------------------------------------------------------------------
-# plist.conversion.xml-to-binary-round-trip (plist-v1.json:1565-1590)
+# plist.conversion.xml-to-binary-round-trip (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_xml_to_binary_round_trip():
-    # Case plist.conversion.xml-to-binary-round-trip (plist-v1.json:1566-
+    # Case plist.conversion.xml-to-binary-round-trip (plist-v1.json-
     # 1589).
     source = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -89,12 +89,12 @@ def test_xml_to_binary_round_trip():
 
 
 # ---------------------------------------------------------------------------
-# plist.conversion.binary-to-xml-round-trip (plist-v1.json:1591-1610)
+# plist.conversion.binary-to-xml-round-trip (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_binary_to_xml_round_trip():
-    # Case plist.conversion.binary-to-xml-round-trip (plist-v1.json:1592-
+    # Case plist.conversion.binary-to-xml-round-trip (plist-v1.json-
     # 1609).
     document = binary_document(
         "62706c6973743030517810020908a20203233ff80000000000005161516251635164d40607080900010405080a0c0d0e111a1c1e20220000000000000101000000000000000b000000000000000a000000000000002b"
@@ -110,12 +110,12 @@ def test_binary_to_xml_round_trip():
 
 
 # ---------------------------------------------------------------------------
-# plist.conversion.uid-inexpressible-to-xml (plist-v1.json:1611-1622)
+# plist.conversion.uid-inexpressible-to-xml (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_uid_inexpressible_to_xml():
-    # Case plist.conversion.uid-inexpressible-to-xml (plist-v1.json:1612-
+    # Case plist.conversion.uid-inexpressible-to-xml (plist-v1.json-
     # 1621): UID values are binary-only and block conversion to XML
     # atomically (RFC 0013 §7, hard gate 3).
     document = binary_document(
@@ -128,7 +128,7 @@ def test_uid_inexpressible_to_xml():
 
 def test_binary_to_xml_conversion_render_golden():
     # The conversion render of the normalization-and-conversion case
-    # (plist-v1.json:1298-1308): the root value element is written at
+    # (plist-v1.json): the root value element is written at
     # depth 0 (document.rs).
     document = binary_document(
         "62706c6973743030d1010251611001080b0d000000000000010100000000000000030000000000000000000000000000000f"
@@ -158,12 +158,12 @@ def test_same_representation_is_not_a_conversion():
 
 
 # ---------------------------------------------------------------------------
-# plist.conversion.duplicate-keys-preserved (plist-v1.json:1623-1641)
+# plist.conversion.duplicate-keys-preserved (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_duplicate_keys_preserved_through_conversion():
-    # Case plist.conversion.duplicate-keys-preserved (plist-v1.json:1624-
+    # Case plist.conversion.duplicate-keys-preserved (plist-v1.json-
     # 1640).
     source = (
         '<plist version="1.0"><dict>'

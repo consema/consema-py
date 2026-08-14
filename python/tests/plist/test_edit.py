@@ -5,7 +5,7 @@ each test cites the vector case id.
 
 Cases covered here:
 
-- plist-v1.json: plist.edit.xml-six-operations (lines 1379-1450),
+- plist-v1.json: plist.edit.xml-six-operations,
   plist.edit.binary-structural (1451-1496),
   plist.edit.conflicts (1497-1564).
 """
@@ -64,12 +64,12 @@ def path(*steps: EditPathStep) -> EditPath:
 
 
 # ---------------------------------------------------------------------------
-# plist.edit.xml-six-operations (plist-v1.json:1379-1450)
+# plist.edit.xml-six-operations (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_xml_six_operations():
-    # Case plist.edit.xml-six-operations (plist-v1.json:1380-1449).
+    # Case plist.edit.xml-six-operations (plist-v1.json).
     source = (
         '<plist version="1.0"><dict>'
         "<key>a</key><dict><key>b</key><string>old</string></dict>"
@@ -128,12 +128,12 @@ def test_xml_six_operations():
 
 
 # ---------------------------------------------------------------------------
-# plist.edit.binary-structural (plist-v1.json:1451-1496)
+# plist.edit.binary-structural (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_binary_structural_edit():
-    # Case plist.edit.binary-structural (plist-v1.json:1452-1495).
+    # Case plist.edit.binary-structural (plist-v1.json).
     document = binary_document(
         "62706c6973743030a2010210015162080b0d000000000000010100000000000000030000000000000000000000000000000f"
     )
@@ -173,12 +173,12 @@ def test_binary_structural_edit():
 
 
 # ---------------------------------------------------------------------------
-# plist.edit.conflicts (plist-v1.json:1497-1564)
+# plist.edit.conflicts (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_edit_conflicts():
-    # Case plist.edit.conflicts (plist-v1.json:1498-1563).
+    # Case plist.edit.conflicts (plist-v1.json).
     from consema.plist import PlistEditFailure, PlistUid
 
     uid_in_xml = xml_document('<plist version="1.0"><dict><key>a</key><string>x</string></dict></plist>')

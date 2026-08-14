@@ -9,18 +9,18 @@ only for registry/byte arbitration):
   https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md).
 - ``PlistEncodingSelection``: ProfileDefault | Explicit — lib.rs;
   the XML profile follows the RFC 0012 UTF-8/UTF-16 document-entity table
-  (RFC 0013 §2.1, lines 59-76) and the binary profile admits only the
-  opaque Binary source (RFC 0013 §2.2, lines 78-88).
+  (RFC 0013 §2.1) and the binary profile admits only the
+  opaque Binary source (RFC 0013 §2.2).
 - ``PlistSyntaxKind``: the closed 47-kind lossless classification with the
   exact stable names ("Bom", "Whitespace", "LineBreak", "DeclarationOpen",
   ..., "ErrorRegion") — parser_xml.rs (enum), parser_xml.rs
   (as_str); the lossless syntax domain lists exactly this vocabulary
-  (RFC 0013 §8.2, lines 565-582).
+  (RFC 0013 §8.2).
 - ``PlistStringStatus``: WellFormedUnicode | UnpairedSurrogate —
-  native.rs (RFC 0013 §6, lines 488-492; the
+  native.rs (RFC 0013 §6; the
   ``core.java-utf16-string@1`` wire pattern).
 - ``RealWidth``: Float64 | Float32 — native.rs (the binary-only
-  ``0x22`` width fact, RFC 0013 §5.5, lines 350-354).
+  ``0x22`` width fact, RFC 0013 §5.5).
 - ``PlistParseLimits`` defaults — lib.rs (RFC 0013 §12, lines
 ); every limit failure is fatal and never masquerades as an empty
   tree or truncated data (hard gate 4).

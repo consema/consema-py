@@ -45,7 +45,7 @@ def value_record(kind: str, **members) -> PortableValue:
 
 
 def test_canonical_document_golden():
-    # Case hcl.materialization.canonical-document (hcl-v1.json:1153-1283).
+    # Case hcl.materialization.canonical-document (hcl-v1.json).
     record = PortableValue.object(
         (
             ("record", PortableValue.string("hcl.body@1")),
@@ -141,7 +141,7 @@ def test_canonical_document_golden():
 
 
 def test_reparse_closure_with_expression():
-    # Case hcl.materialization.reparse-closure (hcl-v1.json:1285-1329):
+    # Case hcl.materialization.reparse-closure (hcl-v1.json):
     # `hcl.expression@1` values emit their canonical text and must reparse
     # to the same structural fingerprint.
     record = PortableValue.object(
@@ -180,7 +180,7 @@ def test_reparse_closure_with_expression():
 
 
 def test_unrepresentable_cases():
-    # Case hcl.materialization.unrepresentable (hcl-v1.json:1331-1411).
+    # Case hcl.materialization.unrepresentable (hcl-v1.json).
     block_record = PortableValue.object(
         (
             ("record", PortableValue.string("hcl.body@1")),
@@ -234,7 +234,7 @@ def test_unrepresentable_cases():
 
 
 def test_typed_member_form():
-    # Case hcl.materialization.typed-member-form (hcl-v1.json:1413-1460):
+    # Case hcl.materialization.typed-member-form (hcl-v1.json):
     # the RFC 0014 §8.2 raw typed member is accepted for every attribute
     # value and materializes identical bytes.
     record = PortableValue.object(
@@ -269,7 +269,7 @@ def test_typed_member_form():
 
 
 def test_tfvars_canonical():
-    # Case hcl.materialization.tfvars-canonical (hcl-v1.json:1973-2045).
+    # Case hcl.materialization.tfvars-canonical (hcl-v1.json).
     record = PortableValue.object(
         (
             ("record", PortableValue.string("hcl.body@1")),

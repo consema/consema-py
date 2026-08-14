@@ -25,7 +25,7 @@ Authority:
   provenance), whose failure-to-code mapping is frozen there
   (error_registry.rs).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
-  ``xml.materialization.canonical-round-trip`` (lines 352-388),
+  ``xml.materialization.canonical-round-trip``,
   ``xml.materialization.escapes-content`` (390-417),
   ``xml.materialization.invalid-record-rejected`` (419-435).
 

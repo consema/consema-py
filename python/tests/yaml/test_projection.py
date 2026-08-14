@@ -2,24 +2,24 @@
 
 Cases covered with the vector case ids cited:
 
-- graph.shared-cycle (yaml-v1.json:44-48): node_count 2, root_count 1, and
+- graph.shared-cycle (yaml-v1.json): node_count 2, root_count 1, and
   the byte-exact PGCE hex (the graph encoder is consema.graph, the shared
   L0 codec).
-- projection.sharing-policy (yaml-v1.json:70-74): the default Reject code
+- projection.sharing-policy (yaml-v1.json): the default Reject code
   yaml.projection.sharing@1; explicit DuplicateAcyclic completes with
   fidelity Transformed and exactly three SharingDuplicated events.
-- projection.cycle (yaml-v1.json:75-78): cycles never enter a PortableValue
+- projection.cycle (yaml-v1.json): cycles never enter a PortableValue
   (yaml.projection.cycle@1) even under DuplicateAcyclic.
-- projection.tag-policy (yaml-v1.json:80-84): default unsupported-tag@1;
+- projection.tag-policy (yaml-v1.json): default unsupported-tag@1;
   StripToNodeKind completes with fidelity Lossy and value "value".
-- projection.mapping-policy (yaml-v1.json:85-89): RequireObject fails with
+- projection.mapping-policy (yaml-v1.json): RequireObject fails with
   mapping-not-object@1; RequireEntryMapping preserves both entries.
-- projection.graph-provenance (yaml-v1.json:90-93): reference_origins 1,
+- projection.graph-provenance (yaml-v1.json): reference_origins 1,
   association_entries 2 for the shared-cycle source.
-- resource.graph-provenance (yaml-v1.json:129-133): the provenance limit
+- resource.graph-provenance (yaml-v1.json): the provenance limit
   fails atomically with yaml.projection.provenance-limit@1.
 
-Projection semantics: RFC 0007 s10 (lines 260-301); failure carries no
+Projection semantics: RFC 0007 s10; failure carries no
 PortableGraph/PortableValue and no partial provenance.
 """
 
@@ -53,7 +53,7 @@ from tests.yaml.conftest import parse_source
 
 
 def test_graph_shared_cycle():
-    # Case graph.shared-cycle (yaml-v1.json:44-48). The PGCE hex is the
+    # Case graph.shared-cycle (yaml-v1.json). The PGCE hex is the
     # byte-exact golden: 50474345 01 01 02 00 40 15 "tag:yaml.org,2002:seq"
     # 02 01 00 20 15 "tag:yaml.org,2002:str" 03 "one".
     document = parse_source("&root [one, *root]\n", YamlProfile.YAML12_CORE_V1)
@@ -68,7 +68,7 @@ def test_graph_shared_cycle():
 
 
 def test_projection_sharing_policy():
-    # Case projection.sharing-policy (yaml-v1.json:70-74).
+    # Case projection.sharing-policy (yaml-v1.json).
     document = parse_source("[&x {k: v}, *x]\n", YamlProfile.YAML12_CORE_V1)
     default = project_value(document, ValueProjectionRequest.best_exact_v1())
     assert isinstance(default, FailedValueProjection)
@@ -88,7 +88,7 @@ def test_projection_sharing_policy():
 
 
 def test_projection_cycle():
-    # Case projection.cycle (yaml-v1.json:75-78): a cycle always fails
+    # Case projection.cycle (yaml-v1.json): a cycle always fails
     # value projection, even with explicit acyclic duplication.
     document = parse_source("&x [*x]\n", YamlProfile.YAML12_CORE_V1)
     result = project_value(
@@ -101,7 +101,7 @@ def test_projection_cycle():
 
 
 def test_projection_tag_policy():
-    # Case projection.tag-policy (yaml-v1.json:80-84).
+    # Case projection.tag-policy (yaml-v1.json).
     document = parse_source("!example value\n", YamlProfile.YAML12_CORE_V1)
     default = project_value(document, ValueProjectionRequest.best_exact_v1())
     assert isinstance(default, FailedValueProjection)
@@ -120,7 +120,7 @@ def test_projection_tag_policy():
 
 
 def test_projection_mapping_policy():
-    # Case projection.mapping-policy (yaml-v1.json:85-89).
+    # Case projection.mapping-policy (yaml-v1.json).
     document = parse_source("{a: 1, a: 2}\n", YamlProfile.YAML12_CORE_V1)
     object_result = project_value(
         document,
@@ -138,7 +138,7 @@ def test_projection_mapping_policy():
 
 
 def test_projection_graph_provenance():
-    # Case projection.graph-provenance (yaml-v1.json:90-93): the alias edge
+    # Case projection.graph-provenance (yaml-v1.json): the alias edge
     # is an additional Reference origin; both sequence associations are
     # association entries.
     document = parse_source("&root [one, *root]\n", YamlProfile.YAML12_CORE_V1)
@@ -148,7 +148,7 @@ def test_projection_graph_provenance():
 
 
 def test_resource_graph_provenance():
-    # Case resource.graph-provenance (yaml-v1.json:129-133): the
+    # Case resource.graph-provenance (yaml-v1.json): the
     # provenance limit fails atomically with yaml.projection.provenance-limit@1.
     document = parse_source("[one, two]\n", YamlProfile.YAML12_CORE_V1)
     request = GraphProjectionRequest(

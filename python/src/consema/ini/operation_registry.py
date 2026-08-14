@@ -8,7 +8,7 @@ per profile and eight total records) and by RFC 0009 §12
 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md: all three profiles
 publish the same frozen eight-operation surface, independently typed per
 profile) and the vector case registry.frozen-eight-operation-surface
-(conformance/vectors/ini-v1.json:136-139: direct_structural 6).
+(conformance/vectors/ini-v1.json: direct_structural 6).
 
 Frozen records (operation_registry.rs):
 
@@ -188,7 +188,7 @@ def format_operation_registry(profile: IniProfile) -> IniFormatOperationRegistry
     profile (operation_registry.rs).
 
     Operations are presented in frozen sorted-id order — the vector case
-    registry.frozen-eight-operation-surface (ini-v1.json:138) and the
+    registry.frozen-eight-operation-surface (ini-v1.json) and the
     registry test (operation_registry.rs) pin the sorted list.
     """
     return IniFormatOperationRegistry(
