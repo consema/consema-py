@@ -1,7 +1,8 @@
 # Consema Python implementation
 
 The Python implementation of the language-neutral Consema
-configuration-processing contracts (RFC 0016; equal footing with
+configuration-processing contracts (RFC 0002/0003/0004/0006 contract
+family; authority: the spec repository docs/rfcs/; equal footing with
 Rust/Go/TS/Kotlin per the 2026-08-11 owner decision). Zero third-party
 runtime dependencies (`dependencies = []`, pyproject.toml:35; pytest is a
 dev extra only) and never imports or calls the other implementations.
