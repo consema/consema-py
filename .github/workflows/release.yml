@@ -18,6 +18,13 @@ on:
   push:
     tags: ['v*']
 
+# G122 (adversarial audit, 2026-08-14): one release run per tag — a re-push
+# or continued run while the previous run is still going would start a
+# second concurrent publish (mirrors the consema-rs release.yml shape).
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   id-token: write
