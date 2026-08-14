@@ -271,6 +271,78 @@ def test_json5_security_depth_limit():
     assert caught.value.kind is JsonFormationFailureKind.NESTING_DEPTH
 
 
+def test_strict_integer_above_cpython_int_digits_parses_exactly():
+    """A >4300-digit integer (within the 100_000 magnitude bound) parses
+    exactly instead of surfacing the interpreter's int() conversion
+    ValueError: conversion is interpreter-limit-immune below the bound."""
+    source = ("[" + "9" * 5000 + "]").encode("utf-8")
+    document = parse(source, JsonProfile.STRICT_V1, DEFAULT_LIMITS)
+    assert document.formation_status().value == "Complete"
+    availability = document.root().array_elements()
+    assert availability.is_available
+    value = availability.value[0].value().as_integer()
+    assert value.is_available
+    assert value.value == 10**5000 - 1
+
+
+def test_strict_integer_above_magnitude_limit_is_resource_limit():
+    """A >100_000-digit integer is rejected before any conversion with the
+    frozen number-digits resource-limit failure (never a bare ValueError)."""
+    source = ("[" + "9" * 100_001 + "]").encode("utf-8")
+    with pytest.raises(JsonFormationFailure) as caught:
+        parse(source, JsonProfile.STRICT_V1, DEFAULT_LIMITS)
+    assert caught.value.kind is JsonFormationFailureKind.NUMBER_DIGITS
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.observed == 100_001
+    assert caught.value.limit == 100_000
+
+
+def test_strict_decimal_exponent_path_is_interpreter_limit_immune():
+    """The decimal path (coefficient/exponent split) is checked before
+    int() and converts exactly: a >4300-digit exponent parses within the
+    bound, a >100_000-digit exponent fails as number-digits — never a
+    bare ValueError."""
+    within = ("[" + "1e" + "9" * 5000 + "]").encode("utf-8")
+    document = parse(within, JsonProfile.STRICT_V1, DEFAULT_LIMITS)
+    assert document.formation_status().value == "Complete"
+    availability = document.root().array_elements()
+    assert availability.is_available
+    decimal = availability.value[0].value().as_decimal()
+    assert decimal.is_available
+    assert decimal.value.coefficient == 1
+    assert decimal.value.exponent == 10**5000 - 1
+    above = ("[" + "1e" + "9" * 100_001 + "]").encode("utf-8")
+    with pytest.raises(JsonFormationFailure) as caught:
+        parse(above, JsonProfile.STRICT_V1, DEFAULT_LIMITS)
+    assert caught.value.kind is JsonFormationFailureKind.NUMBER_DIGITS
+    assert caught.value.observed == 100_002  # coefficient 1 plus exponent digits
+    assert caught.value.limit == 100_000
+
+
+def test_json5_hex_above_magnitude_limit_is_resource_limit():
+    """JSON5 hex literals count hex digits against the same bound before
+    int(x, 16)."""
+    source = ("[" + "0x" + "1" * 100_001 + "]").encode("utf-8")
+    with pytest.raises(JsonFormationFailure) as caught:
+        parse(source, JsonProfile.JSON5_STANDARD_V1, DEFAULT_LIMITS)
+    assert caught.value.kind is JsonFormationFailureKind.NUMBER_DIGITS
+    assert caught.value.observed == 100_001
+    assert caught.value.limit == 100_000
+
+
+def test_number_at_exact_magnitude_limit_parses():
+    """The bound is inclusive: a 100_000-digit integer still forms a
+    Complete document (no truncation, no silent rejection)."""
+    source = ("[" + "9" * 100_000 + "]").encode("utf-8")
+    document = parse(source, JsonProfile.STRICT_V1, DEFAULT_LIMITS)
+    assert document.formation_status().value == "Complete"
+    availability = document.root().array_elements()
+    assert availability.is_available
+    value = availability.value[0].value().as_integer()
+    assert value.is_available
+    assert value.value == 10**100_000 - 1
+
+
 # ---------------------------------------------------------------------------
 # v1.json json formation cases
 # ---------------------------------------------------------------------------

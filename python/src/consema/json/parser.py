@@ -162,6 +162,19 @@ class _Parser:
 
     # -- value parsing -----------------------------------------------------
 
+    def check_number_digits(self, text: str) -> None:
+        """Rejects one number token whose magnitude digits (coefficient
+        plus exponent) exceed ``limits.max_number_digits`` before any
+        integer conversion (the same-wave cross-language magnitude bound;
+        a bare interpreter ValueError is never a formation result)."""
+        observed = _count_number_digits(text)
+        if observed > self.limits.max_number_digits:
+            raise JsonFormationFailure(
+                JsonFormationFailureKind.NUMBER_DIGITS,
+                observed=observed,
+                limit=self.limits.max_number_digits,
+            )
+
     def parse_value(self, depth: int) -> int:
         if depth > self.limits.max_nesting_depth:
             raise JsonFormationFailure(
@@ -193,6 +206,7 @@ class _Parser:
         if token.kind is TokenKind.NUMBER:
             self.position += 1
             text = self.source[token.start : token.end].decode("utf-8")
+            self.check_number_digits(text)
             if self.profile.is_json5():
                 internal = parse_json5_number(text)
             elif "." in text or "e" in text or "E" in text:
@@ -200,7 +214,7 @@ class _Parser:
                     InternalKind.DECIMAL, parse_json_decimal(text)
                 )
             else:
-                internal = InternalValue(InternalKind.INTEGER, int(text))
+                internal = InternalValue(InternalKind.INTEGER, _int_decimal(text))
             return self.alloc_scalar(token, internal)
         if token.kind is TokenKind.STRING:
             self.position += 1
@@ -742,6 +756,30 @@ def decode_json_string(literal: str, profile: JsonProfile) -> tuple[str, bool] |
 # ---------------------------------------------------------------------------
 
 
+def _count_number_digits(text: str) -> int:
+    """One number token's magnitude digit count (coefficient plus
+    exponent; JSON5 hex literals count their hex digits)."""
+    unsigned = text[1:] if text[:1] in ("+", "-") else text
+    if unsigned[:2].lower() == "0x":
+        return sum(1 for ch in unsigned[2:] if ch in "0123456789abcdefABCDEF")
+    return sum(1 for ch in unsigned if "0" <= ch <= "9")
+
+
+def _int_decimal(text: str) -> int:
+    """Exact decimal-string to int, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits; the magnitude
+    bound above it already passed, so digits are 0-9)."""
+    negative = text.startswith("-")
+    digits = text[1:] if text[:1] in ("+", "-") else text
+    try:
+        value = int(digits)
+    except ValueError:
+        value = 0
+        for index in range(0, len(digits), 4):
+            value = value * 10_000 + int(digits[index : index + 4])
+    return -value if negative else value
+
+
 def parse_json_decimal(text: str) -> Decimal:
     """Parses one validated strict-JSON decimal number to exact Decimal."""
     sign = -1 if text.startswith("-") else 1
@@ -759,8 +797,8 @@ def parse_json_decimal(text: str) -> Decimal:
         digits = whole + fraction
     else:
         digits = mantissa
-    coefficient = sign * int(digits) if digits else 0
-    exponent = int(exponent_text) - scale if exponent_text else -scale
+    coefficient = sign * _int_decimal(digits) if digits else 0
+    exponent = _int_decimal(exponent_text) - scale if exponent_text else -scale
     return Decimal(coefficient, exponent)
 
 
@@ -798,7 +836,7 @@ def parse_json5_number(text: str) -> InternalValue:
         normalized = normalized[:exponent_index] + "0" + normalized[exponent_index:]
     if "." in normalized or "e" in normalized or "E" in normalized:
         return InternalValue(InternalKind.DECIMAL, parse_json_decimal(normalized))
-    return InternalValue(InternalKind.INTEGER, int(normalized))
+    return InternalValue(InternalKind.INTEGER, _int_decimal(normalized))
 
 
 # ---------------------------------------------------------------------------

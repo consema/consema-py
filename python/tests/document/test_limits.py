@@ -43,6 +43,7 @@ def test_parse_limits_defaults() -> None:
     assert limits.max_token_count == 2_000_000
     assert limits.max_node_count == 1_000_000
     assert limits.max_diagnostics == 10_000
+    assert limits.max_number_digits == 100_000
 
 
 def test_source_limits_defaults() -> None:

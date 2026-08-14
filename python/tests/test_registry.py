@@ -119,6 +119,22 @@ def test_parse_document_unknown_profile_raises_typed_error():
         raise AssertionError("unknown profile must raise ProfileError")
 
 
+def test_facade_json_oversized_number_is_resource_limit_not_value_error():
+    """A >100_000-digit JSON number through the facade parse_document is a
+    frozen number-digits resource-limit failure, never the interpreter's
+    bare ValueError (wave-4 magnitude bound, consema-py P1)."""
+    source = ('{"a":' + "9" * 100_001 + "}").encode("utf-8")
+    try:
+        parse_document(source, ProfileId.new("json.strict", 1))
+    except Exception as error:
+        assert type(error).__name__ == "JsonFormationFailure"
+        assert error.code == "core.parse.resource-limit@1"
+        assert error.observed == 100_001
+        assert error.limit == 100_000
+    else:
+        raise AssertionError("oversized JSON number must fail as resource-limit")
+
+
 def test_document_typed_adapters_dispatch_by_family():
     json_document = parse_document(b'{"a":1}', ProfileId.new("json.strict", 1))
     assert json_document.as_json() is not None

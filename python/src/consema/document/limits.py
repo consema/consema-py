@@ -3,6 +3,10 @@
 Authority:
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs — the exact fields and frozen
   defaults (64 MiB source, depth 256, 2M tokens, 1M nodes, 10k diagnostics).
+  ``max_number_digits`` (100_000, coefficient plus exponent digits of one
+  number literal) is the same-wave cross-language magnitude bound for the
+  json/toml/yaml number paths; HCL carries the same default in its own
+  HclParseLimits.
 - RFC 0016 §5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md) — ParseLimits
   (and per-family limits) mirror the Rust defaults; exceeding a limit is a
   fatal formation failure carrying the frozen limit code.
@@ -24,6 +28,10 @@ _DEFAULT_MAX_NESTING_DEPTH = 256
 _DEFAULT_MAX_TOKEN_COUNT = 2_000_000
 _DEFAULT_MAX_NODE_COUNT = 1_000_000
 _DEFAULT_MAX_DIAGNOSTICS = 10_000
+# Same-wave cross-language default for the per-number digit magnitude bound
+# (coefficient plus exponent; the reference family fix lands in the same
+# wave, HCL precedent HclParseLimits.max_number_digits = 100_000).
+_DEFAULT_MAX_NUMBER_DIGITS = 100_000
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,3 +50,4 @@ class ParseLimits:
     max_token_count: int = _DEFAULT_MAX_TOKEN_COUNT
     max_node_count: int = _DEFAULT_MAX_NODE_COUNT
     max_diagnostics: int = _DEFAULT_MAX_DIAGNOSTICS
+    max_number_digits: int = _DEFAULT_MAX_NUMBER_DIGITS

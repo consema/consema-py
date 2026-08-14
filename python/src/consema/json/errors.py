@@ -116,6 +116,7 @@ class JsonFormationFailureKind(enum.Enum):
     TOKEN_COUNT = "token-count"
     NESTING_DEPTH = "nesting-depth"
     NODE_COUNT = "node-count"
+    NUMBER_DIGITS = "number-digits"
     INVALID_UTF8 = "invalid-utf8"
 
 
