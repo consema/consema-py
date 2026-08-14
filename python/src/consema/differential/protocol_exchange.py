@@ -1,7 +1,8 @@
 """Cross-language protocol exchange of the Python implementation against the
 Rust authority (L5 differential harness, multi-language-implementation-plan
 L5; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4;
-roadmap §16.6 line 1555; the Go twin:
+roadmap §16.6（`0.19.0`：双语言一致性与产品 Beta — the cross-language
+protocol-exchange item）; the Go twin:
 https://github.com/consema/consema-go/blob/main/go/conformance/differential/protocol-exchange/exchange_test.go).
 
 The provisioned case set (conformance/differential/protocol-exchange/
