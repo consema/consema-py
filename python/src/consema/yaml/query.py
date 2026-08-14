@@ -2,21 +2,21 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/query.rs:167-197
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/query.rs
   (native) and 213-255 (syntax) — domains yaml.native-semantic-query@1 and
   yaml.lossless-syntax-query@1 (RFC 0007 s9, lines 229-251).
-- Native operators: query.rs:394-596 (yaml.documents, yaml.document-root,
+- Native operators: query.rs (yaml.documents, yaml.document-root,
   yaml.where-node-kind, yaml.where-tag, yaml.scalar-canonical-equals,
   yaml.try-sequence-elements, yaml.sequence-element-node,
   yaml.try-mapping-entries, yaml.mapping-entry-key, yaml.mapping-entry-value,
   yaml.anchor-definition, yaml.anchor-node, yaml.alias-occurrences,
   yaml.alias-target, core.take, core.distinct-by-identity).
-- Syntax operators: query.rs:598-649 (yaml.syntax-kind-is,
+- Syntax operators: query.rs (yaml.syntax-kind-is,
   yaml.syntax-text-equals, core.take, core.distinct-by-identity), with the
-  encoded-text comparison query.rs:651-660.
-- Expression evaluation and StructureOrderMerge: query.rs:313-392; selection
-  algebra query.rs:690-707; limits and cancellation query.rs:278-288.
-- Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:108-118)
+  encoded-text comparison query.rs.
+- Expression evaluation and StructureOrderMerge: query.rs; selection
+  algebra query.rs; limits and cancellation query.rs.
+- Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs)
   via consema.protocol.query.QueryFailure.
 - Vector surface: conformance/vectors/yaml-v1.json cases query.mapping-entries
   (roles), query.alias-target (roles), query.syntax-comments (ordinals),
@@ -61,7 +61,7 @@ SYNTAX_DOMAIN_ID = "yaml.lossless-syntax-query"
 
 
 class YamlMatchKind(enum.Enum):
-    """Match role of one native query result (query.rs:13-99)."""
+    """Match role of one native query result (query.rs)."""
 
     STREAM = "Stream"
     DOCUMENT = "Document"
@@ -74,7 +74,7 @@ class YamlMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class YamlMatch:
-    """One snapshot-bound native semantic query match (query.rs:13-99)."""
+    """One snapshot-bound native semantic query match (query.rs)."""
 
     kind: YamlMatchKind
     node: NodeRef
@@ -93,13 +93,13 @@ class YamlMatch:
 
     @property
     def identity(self) -> NodeRef:
-        """Primary process-local identity (query.rs:101-114)."""
+        """Primary process-local identity (query.rs)."""
         return self.node
 
 
 @dataclass(frozen=True, slots=True)
 class YamlSyntaxMatch:
-    """One snapshot-bound lossless syntax query match (query.rs:131-164)."""
+    """One snapshot-bound lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -113,13 +113,13 @@ class YamlSyntaxMatch:
 
 @dataclass(frozen=True, slots=True)
 class YamlQueryExecution:
-    """Complete ordered query result (query.rs:167-197, 213-255)."""
+    """Complete ordered query result (query.rs)."""
 
     matches: tuple[object, ...]
 
 
 class YamlCancellationToken:
-    """Cooperative cancellation signal (query.rs:278-288)."""
+    """Cooperative cancellation signal (query.rs)."""
 
     def __init__(self) -> None:
         self._cancelled = False
@@ -132,7 +132,7 @@ class YamlCancellationToken:
 
 
 class YamlQueryLimits:
-    """Query resource limits (consema-core/src/query.rs:2967-2981)."""
+    """Query resource limits (consema-core/src/query.rs)."""
 
     def __init__(self, max_steps: int = 100_000, max_results: int = 100_000) -> None:
         self.max_steps = max_steps
@@ -206,7 +206,7 @@ def execute_yaml_query(
     limits: YamlQueryLimits,
     cancellation: YamlCancellationToken,
 ) -> YamlQueryExecution:
-    """Executes a validated YAML native semantic query (query.rs:167-197)."""
+    """Executes a validated YAML native semantic query (query.rs)."""
     definition = executable.definition
     if definition.domain.id != NATIVE_DOMAIN_ID or definition.domain.version != 1:
         raise QueryFailure(QueryFailureKind.DOMAIN_MISMATCH, domain=definition.domain)
@@ -231,7 +231,7 @@ def execute_yaml_syntax_query(
     limits: YamlQueryLimits,
     cancellation: YamlCancellationToken,
 ) -> YamlQueryExecution:
-    """Executes a validated YAML lossless syntax query (query.rs:213-255)."""
+    """Executes a validated YAML lossless syntax query (query.rs)."""
     definition = executable.definition
     if definition.domain.id != SYNTAX_DOMAIN_ID or definition.domain.version != 1:
         raise QueryFailure(QueryFailureKind.DOMAIN_MISMATCH, domain=definition.domain)
@@ -270,7 +270,7 @@ def _execute_expression(
             context.step(len(output))
         return output
     # StructureOrderMerge: source order by (start, end, role order, index)
-    # (query.rs:335-356).
+    # (query.rs).
     output = []
     for branch in expression.branches:
         output.extend(_execute_expression(branch, input_matches, context))
@@ -504,7 +504,7 @@ def _apply_syntax_operator(
 
 def _encoded_text(value: str, source) -> bytes:
     """Encodes the comparison text in the source's selected encoding
-    (query.rs:651-660)."""
+    (query.rs)."""
     encoding = source.encoding_facts().selected
     kind = encoding.kind
     from consema.document.source import SourceEncodingKind

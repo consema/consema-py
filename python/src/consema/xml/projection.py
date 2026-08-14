@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:313-348): the
+- RFC 0012 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md): the
   exact default target is the versioned ``xml.element-tree@1`` record
   containing declaration facts, admitted internal entity declarations, one
   namespace-aware root, ordered namespace declarations, ordered attributes,
@@ -18,16 +18,16 @@ Authority:
   There is no ``xml-to-json-default``, automatic attribute ``@`` prefix,
   automatic text ``#text`` key, or child grouping.
 - The record shapes and every policy transcribe
-  https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs:20-469 (ProjectionTarget:21-29,
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs (ProjectionTarget:21-29,
   TextContentInclude:31-38, AttributePolicy:39-49, TextKeyPolicy:51-58,
   RepeatedChildPolicy:60-69, ExpandedNameKeyPolicy:71-81, CollisionPolicy:
-  116-124, ProjectionRequest:126-213, ProjectionLimits:215-237,
+ ProjectionRequest, ProjectionLimits,
   Fidelity:239-248, ProjectedLocation:250-257, ProvenanceRelation:259-270,
   SourceOrigin:272-283, ProvenanceEntry:285-292, ProvenanceMap:294-323,
   ProjectionEventKind:325-346, ProjectionEvent:348-357, ProjectionReport:
-  359-388, CompleteProjection:390-401, FailedProjectionAttempt:403-410,
+ CompleteProjection, FailedProjectionAttempt,
   ProjectionResult:412-419, ProjectionFailure:421-469) and the tree walk
-  projection.rs:471-1455 — byte/registry arbitration only.
+  projection.rs — byte/registry arbitration only.
 - Provenance is the reverse-direction map of materialization provenance
   (RFC 0004 §8, lines 193-197); value/association paths are the
   semantic-model records (consema.xml.paths).
@@ -72,7 +72,7 @@ from consema.xml.paths import (
 
 
 class ProjectionTarget(enum.Enum):
-    """Versioned XML projection target (projection.rs:21-29)."""
+    """Versioned XML projection target (projection.rs)."""
 
     ELEMENT_TREE_V1 = "xml.element-tree@1"
     TEXT_CONTENT_V1 = "xml.projection.text-content@1"
@@ -80,14 +80,14 @@ class ProjectionTarget(enum.Enum):
 
 
 class TextContentInclude(enum.Enum):
-    """Descendant text inclusion for TextContentV1 (projection.rs:31-38)."""
+    """Descendant text inclusion for TextContentV1 (projection.rs)."""
 
     TEXT_AND_CDATA = "TextAndCdata"
     TEXT_ONLY = "TextOnly"
 
 
 class AttributePolicy(enum.Enum):
-    """Attribute handling for SimpleEntryMappingV1 (projection.rs:39-49)."""
+    """Attribute handling for SimpleEntryMappingV1 (projection.rs)."""
 
     REJECT_ATTRIBUTES = "RejectAttributes"
     IGNORE_ATTRIBUTES = "IgnoreAttributes"
@@ -95,14 +95,14 @@ class AttributePolicy(enum.Enum):
 
 
 class TextKeyPolicy(enum.Enum):
-    """Text child handling for SimpleEntryMappingV1 (projection.rs:51-58)."""
+    """Text child handling for SimpleEntryMappingV1 (projection.rs)."""
 
     REJECT_TEXT = "RejectText"
     IGNORE_TEXT = "IgnoreText"
 
 
 class RepeatedChildPolicy(enum.Enum):
-    """Repeated expanded-child-name handling (projection.rs:60-69)."""
+    """Repeated expanded-child-name handling (projection.rs)."""
 
     REJECT = "Reject"
     FIRST = "First"
@@ -110,7 +110,7 @@ class RepeatedChildPolicy(enum.Enum):
 
 
 class ExpandedNameKeyPolicy(enum.Enum):
-    """Entry-key spelling for SimpleEntryMappingV1 (projection.rs:71-81)."""
+    """Entry-key spelling for SimpleEntryMappingV1 (projection.rs)."""
 
     LOCAL_ONLY = "LocalOnly"
     PREFIXED_SPELLING = "PrefixedSpelling"
@@ -118,7 +118,7 @@ class ExpandedNameKeyPolicy(enum.Enum):
 
 
 class CollisionPolicy(enum.Enum):
-    """Collision resolution direction (projection.rs:116-124)."""
+    """Collision resolution direction (projection.rs)."""
 
     REJECT = "Reject"
     FIRST = "First"
@@ -128,7 +128,7 @@ class CollisionPolicy(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class ProjectionRequest:
     """Explicit XML projection request; every policy is mandatory
-    (projection.rs:126-213)."""
+    (projection.rs)."""
 
     target: ProjectionTarget
     subtree: int | None = None
@@ -143,7 +143,7 @@ class ProjectionRequest:
     @classmethod
     def element_tree(cls) -> ProjectionRequest:
         """Exact ``xml.element-tree@1`` record request for the document
-        root (projection.rs:141-155)."""
+        root (projection.rs)."""
         return cls(target=ProjectionTarget.ELEMENT_TREE_V1)
 
     @classmethod
@@ -157,7 +157,7 @@ class ProjectionRequest:
         collision: CollisionPolicy,
     ) -> ProjectionRequest:
         """Explicit SimpleEntryMappingV1 request over one subtree
-        (projection.rs:158-178)."""
+        (projection.rs)."""
         return cls(
             target=ProjectionTarget.SIMPLE_ENTRY_MAPPING_V1,
             subtree=subtree.index,
@@ -171,7 +171,7 @@ class ProjectionRequest:
     @classmethod
     def text_content(cls, subtree: NodeRef, include: TextContentInclude) -> ProjectionRequest:
         """Explicit TextContentV1 request over one subtree
-        (projection.rs:180-194)."""
+        (projection.rs)."""
         return cls(
             target=ProjectionTarget.TEXT_CONTENT_V1,
             subtree=subtree.index,
@@ -181,7 +181,7 @@ class ProjectionRequest:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionLimits:
-    """XML projection resource limits (projection.rs:215-237)."""
+    """XML projection resource limits (projection.rs)."""
 
     max_source_nodes: int = 2_000_000
     max_value_nodes: int = 2_000_000
@@ -190,7 +190,7 @@ class ProjectionLimits:
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:239-248)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -198,7 +198,7 @@ class Fidelity(enum.Enum):
 
 
 class ProjectedLocationKind(enum.Enum):
-    """Projected value or association location kind (projection.rs:250-257)."""
+    """Projected value or association location kind (projection.rs)."""
 
     VALUE = "Value"
     ASSOCIATION = "Association"
@@ -206,7 +206,7 @@ class ProjectedLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """Projected value or association location (projection.rs:250-257)."""
+    """Projected value or association location (projection.rs)."""
 
     kind: ProjectedLocationKind
     path: ValuePath | None = None
@@ -224,7 +224,7 @@ class ProjectedLocation:
 
 
 class ProvenanceRelation(enum.Enum):
-    """Source-to-projection relation (projection.rs:259-270)."""
+    """Source-to-projection relation (projection.rs)."""
 
     DIRECT = "Direct"
     DERIVED = "Derived"
@@ -234,7 +234,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One exact source origin (projection.rs:272-283)."""
+    """One exact source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -244,7 +244,7 @@ class SourceOrigin:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
-    """One many-valued provenance entry (projection.rs:285-292)."""
+    """One many-valued provenance entry (projection.rs)."""
 
     projected: ProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -252,13 +252,13 @@ class ProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
-    """Immutable many-valued provenance mapping (projection.rs:294-323)."""
+    """Immutable many-valued provenance mapping (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = field(default_factory=tuple)
 
 
 class ProjectionEventKind(enum.Enum):
-    """Projection report category (projection.rs:325-346)."""
+    """Projection report category (projection.rs)."""
 
     ELEMENT_DISCARDED = "element-discarded"
     ATTRIBUTE_DISCARDED = "attribute-discarded"
@@ -273,7 +273,7 @@ class ProjectionEventKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectionEvent:
-    """One explicit transformation event (projection.rs:348-357)."""
+    """One explicit transformation event (projection.rs)."""
 
     kind: ProjectionEventKind
     discarded: NodeRef
@@ -282,14 +282,14 @@ class ProjectionEvent:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
-    """Complete ordered projection report (projection.rs:359-388)."""
+    """Complete ordered projection report (projection.rs)."""
 
     events: tuple[ProjectionEvent, ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True, slots=True)
 class CompleteProjection:
-    """Complete successful projection (projection.rs:390-401)."""
+    """Complete successful projection (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -300,13 +300,13 @@ class CompleteProjection:
 @dataclass(frozen=True, slots=True)
 class FailedProjectionAttempt:
     """Failed projection attempt without a partial value
-    (projection.rs:403-410)."""
+    (projection.rs)."""
 
     diagnostics: tuple[XmlDiagnostic, ...]
     report: ProjectionReport = field(default_factory=ProjectionReport)
 
 
-# The closed projection completion algebra (projection.rs:412-419):
+# The closed projection completion algebra (projection.rs):
 # Complete success or failure with no value or provenance map.
 ProjectionResult = CompleteProjection | FailedProjectionAttempt
 
@@ -381,7 +381,7 @@ class _Context:
 
 def project_document(document: Document, request: ProjectionRequest) -> ProjectionResult:
     """Projects one snapshot under one explicit target and policy contract
-    (projection.rs:471-503)."""
+    (projection.rs)."""
     if document.status is not FormationStatus.COMPLETE:
         return _failed(XmlProjectionFailure(XmlProjectionFailureKind.RECOVERED_DOCUMENT))
     context = _Context(document, request.limits)
@@ -414,7 +414,7 @@ def _item_path(container: ValuePath, field_name: str, index: int) -> ValuePath:
 
 def _project_element_tree(context: _Context) -> tuple[PortableValue, Fidelity]:
     """Exact ``xml.element-tree@1`` record for the document root
-    (projection.rs:600-644)."""
+    (projection.rs)."""
     root = context.document.root()
     if root is None:
         raise XmlProjectionFailure(
@@ -445,7 +445,7 @@ def _project_element_tree(context: _Context) -> tuple[PortableValue, Fidelity]:
 
 
 def _declaration_value(declared: XmlDeclarationData) -> PortableValue:
-    """One declaration record (projection.rs:646-667)."""
+    """One declaration record (projection.rs)."""
     entries: list[tuple[str, PortableValue]] = [
         ("version", PortableValue.string(declared.version))
     ]
@@ -459,7 +459,7 @@ def _declaration_value(declared: XmlDeclarationData) -> PortableValue:
 def _element_value(
     context: _Context, index: int, path: ValuePath
 ) -> tuple[PortableValue, int]:
-    """Recursive element record (projection.rs:671-797)."""
+    """Recursive element record (projection.rs)."""
     context.step()
     data = context.element_data(index)
     span = data.span
@@ -553,7 +553,7 @@ def _element_value(
 def _content_value(
     context: _Context, index: int, path: ValuePath
 ) -> tuple[PortableValue, int]:
-    """One ordered content item record (projection.rs:800-973)."""
+    """One ordered content item record (projection.rs)."""
     context.step()
     content: XmlContent = context.document._nodes[index]
     if content.kind is XmlContentKind.ELEMENT:
@@ -674,7 +674,7 @@ def _content_value(
 def _project_text_content(
     context: _Context, subtree: int | None, include: TextContentInclude
 ) -> tuple[PortableValue, Fidelity]:
-    """Always-transformed descendant text content (projection.rs:976-1095)."""
+    """Always-transformed descendant text content (projection.rs)."""
     root = context.document.root()
     if root is None:
         raise XmlProjectionFailure(
@@ -699,7 +699,7 @@ def _project_text_content(
 def _collect_text(
     context: _Context, index: int, include: TextContentInclude, output: list[str]
 ) -> None:
-    """One descendant text walk (projection.rs:1009-1095)."""
+    """One descendant text walk (projection.rs)."""
     data = context.element_data(index)
     for child in data.children:
         content = context.document._nodes[child]
@@ -759,7 +759,7 @@ def _collect_text(
 
 class _EntrySet:
     """Ordered mapping entries with their expanded-name identities
-    (projection.rs:91-113)."""
+    (projection.rs)."""
 
     __slots__ = ("ordered", "seen")
 
@@ -772,7 +772,7 @@ def _project_entry_mapping(
     context: _Context, request: ProjectionRequest
 ) -> tuple[PortableValue, Fidelity]:
     """Explicit-policy entry mapping of one selected subtree
-    (projection.rs:1098-1126)."""
+    (projection.rs)."""
     root = context.document.root()
     if root is None:
         raise XmlProjectionFailure(
@@ -814,7 +814,7 @@ def _entry_ordinal(
     collapse: ProjectionEventKind,
 ) -> int:
     """Resolves the entry ordinal under the explicit request policies
-    (projection.rs:1144-1200)."""
+    (projection.rs)."""
     keep_repeated = _keep_from_repeated(request.repeated_child)
     keep_collision = _keep_from_collision(request.collision)
     seen = entries.seen.get(key)
@@ -842,7 +842,7 @@ def _commit_entry(
     container: ValuePath,
 ) -> None:
     """Records one committed entry and its value/association provenance
-    (projection.rs:1202-1236)."""
+    (projection.rs)."""
     if ordinal < len(entries.ordered):
         entries.ordered[ordinal] = (key, value)
     else:
@@ -872,7 +872,7 @@ def _map_children(
     entries: _EntrySet,
     request: ProjectionRequest,
 ) -> None:
-    """One subtree mapping walk (projection.rs:1238-1402)."""
+    """One subtree mapping walk (projection.rs)."""
     data = context.element_data(element)
     if data.namespaces:
         raise XmlProjectionFailure(
@@ -1003,7 +1003,7 @@ def _leaf_value(
     context: _Context, element: int, request: ProjectionRequest
 ) -> PortableValue:
     """The leaf value of one element without element children
-    (projection.rs:1405-1455)."""
+    (projection.rs)."""
     data = context.element_data(element)
     text_parts: list[str] = []
     for child in data.children:

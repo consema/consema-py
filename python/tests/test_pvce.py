@@ -3,7 +3,7 @@
 Golden byte vectors are copied verbatim from conformance/vectors/v1.json
 (`pvce.null-vector`, `pvce.negative-integer-vector`, `pvce.object-vector`,
 `pvce.reject-nonminimal-varint`) and re-pinned by the Rust tests
-(https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs:1191-1342).
+(https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs).
 """
 
 import pytest
@@ -27,19 +27,19 @@ def _hex(data: bytes) -> str:
 
 
 def test_null_vector():
-    # conformance/vectors/v1.json pvce.null-vector (and lib.rs:1337-1338).
+    # conformance/vectors/v1.json pvce.null-vector (and lib.rs).
     assert _hex(encode(PortableValue.null())) == "50564345010000"
     assert decode(bytes.fromhex("50564345010000")) == PortableValue.null()
 
 
 def test_negative_integer_vector():
-    # conformance/vectors/v1.json pvce.negative-integer-vector (lib.rs:1339-1341).
+    # conformance/vectors/v1.json pvce.negative-integer-vector (lib.rs).
     assert _hex(encode(PortableValue.integer(-256))) == "5056434501100402020100"
     assert decode(bytes.fromhex("5056434501100402020100")) == PortableValue.integer(-256)
 
 
 def test_object_vector():
-    # conformance/vectors/v1.json pvce.object-vector (lib.rs:1191-1201):
+    # conformance/vectors/v1.json pvce.object-vector (lib.rs):
     # {"a": 1} → 50 56 43 45 01 41 0a 01 20 02 01 61 10 03 01 01 01.
     value = PortableValue.object([("a", PortableValue.integer(1))])
     assert _hex(encode(value)) == "5056434501410a01200201611003010101"
@@ -60,7 +60,7 @@ def test_reject_nonminimal_varint_vector():
 
 
 def test_decode_rejects_noncanonical_zero_integer():
-    # lib.rs:1327-1333: [PVCE, 1, 0x10, 3, 1, 1, 0] fails NonCanonicalInteger.
+    # lib.rs: [PVCE, 1, 0x10, 3, 1, 1, 0] fails NonCanonicalInteger.
     with pytest.raises(PVCEError) as caught:
         decode(b"PVCE\x01\x10\x03\x01\x01\x00")
     assert caught.value.kind is PVCEErrorKind.NON_CANONICAL_INTEGER
@@ -160,11 +160,11 @@ def test_encode_and_decode_error_codes_are_frozen():
 
 
 def test_extension_roots_round_trip_opaquely():
-    # lib.rs:1287-1299.
+    # lib.rs.
     extension = ExtendedValue("example.uuid", 1, "example.raw@1", b"\x01\x02\x03")
     stream = encode_value(extension)
     assert decode_value(stream) == extension
-    # The core-only decoder rejects extension roots (lib.rs:1302-1314).
+    # The core-only decoder rejects extension roots (lib.rs).
     with pytest.raises(PVCEError) as caught:
         decode(stream)
     assert caught.value.kind is PVCEErrorKind.EXPECTED_CORE

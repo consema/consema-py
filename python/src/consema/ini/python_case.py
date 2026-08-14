@@ -1,15 +1,15 @@
 """Pinned Python 3.14 / Unicode 16.0 default ``optionxform`` semantics.
 
 The data is transcribed verbatim from
-https://github.com/consema/consema-rs/blob/main/consema-ini/src/python_case.rs:9-199 — the ordered unconditional
+https://github.com/consema/consema-rs/blob/main/consema-ini/src/python_case.rs — the ordered unconditional
 simple-lowercase ranges and single mappings of Rust 1.85's Unicode 16.0
 tables, plus the U+0130 (LATIN CAPITAL LETTER I WITH DOT ABOVE) special case
-expanding to two scalars (python_case.rs:205-207). Keeping the tables in
+expanding to two scalars (python_case.rs). Keeping the tables in
 this module prevents host Unicode-table upgrades from changing an already
-selected INI profile (python_case.rs:6-8).
+selected INI profile (python_case.rs).
 
 Semantics are pinned by RFC 0009 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-
-v1.md:235-239: option comparison and duplicate detection use the Python
+v1.md: option comparison and duplicate detection use the Python
 3.14 default lowercase ``optionxform`` pinned to Unicode 16.0) and by the
 vector case formation.python-unicode16-optionxform
 (conformance/vectors/ini-v1.json:35-38: ``İ`` and ``i̇`` become the same
@@ -19,7 +19,7 @@ comparison name and formation recovers with ini.formation.case-collision@1).
 from __future__ import annotations
 
 # (start, end, step, delta): every code in [start, end] with
-# (code - start) % step == 0 maps to code + delta (python_case.rs:9-99).
+# (code - start) % step == 0 maps to code + delta (python_case.rs).
 _LOWER_RANGES: tuple[tuple[int, int, int, int], ...] = (
     (0x000041, 0x00005A, 1, 32),
     (0x0000C0, 0x0000D6, 1, 32),
@@ -112,7 +112,7 @@ _LOWER_RANGES: tuple[tuple[int, int, int, int], ...] = (
     (0x01E900, 0x01E921, 1, 34),
 )
 
-# (from, to) single unconditional mappings (python_case.rs:101-199).
+# (from, to) single unconditional mappings (python_case.rs).
 _LOWER_SINGLES: tuple[tuple[int, int], ...] = (
     (0x000178, 0x0000FF),
     (0x000181, 0x000253),
@@ -218,7 +218,7 @@ _SINGLE_TO = tuple(mapped for _, mapped in _LOWER_SINGLES)
 
 
 def _simple_lowercase(code: int) -> int | None:
-    """Unicode 16.0 unconditional simple lowercase (python_case.rs:217-232)."""
+    """Unicode 16.0 unconditional simple lowercase (python_case.rs)."""
     for start, end, step, delta in _LOWER_RANGES:
         if start <= code <= end and (code - start) % step == 0:
             return code + delta
@@ -230,10 +230,10 @@ def _simple_lowercase(code: int) -> int | None:
 
 def optionxform(value: str) -> str:
     """Python 3.14 default lowercase ``optionxform`` pinned to Unicode 16.0
-    (python_case.rs:201-215).
+    (python_case.rs).
 
     U+0130 expands to the two scalars ``i`` + U+0307, exactly like the Rust
-    special case (python_case.rs:205-207).
+    special case (python_case.rs).
     """
     output: list[str] = []
     for character in value:

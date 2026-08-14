@@ -696,7 +696,7 @@ def _source_bom_policy(vector: runner.Case) -> str | None:
 
 
 def _decoded_position_resolves(snapshot: SourceSnapshot, raw_byte: int) -> bool:
-    """Whether one raw offset is a decoded scalar boundary (source.rs:623-641).
+    """Whether one raw offset is a decoded scalar boundary (source.rs).
 
     The Go decoder resolves the terminal boundary (``raw_byte == len``) when
     the final scalar ends at the source end, while the Python document layer
@@ -936,7 +936,7 @@ def _materialization_request_v2_from_value(value: PortableValue) -> dict:
 
 def _materialization_request_v1_from_value(value: PortableValue) -> None:
     """The v1 decoder: encoding is a lowercase string, so a disguised v2
-    payload fails with wrong-type at $.encoding (materialization.rs:59-66)."""
+    payload fails with wrong-type at $.encoding (materialization.rs)."""
     fields = schema_fields(
         value,
         "core.materialization-request@1",
@@ -1157,7 +1157,7 @@ def _parse_java_unit(text: str) -> int | None:
 
 def _java_utf16_from_value(value: PortableValue, limits: ProtocolLimits) -> PortableValue:
     """Strictly decodes and canonically re-verifies one exact Java string
-    (java_utf16.rs:84-146)."""
+    (java_utf16.rs)."""
     fields = schema_fields(
         value,
         "core.java-utf16-string@1",

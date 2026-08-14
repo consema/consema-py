@@ -3,27 +3,27 @@
 Authority (Rust arbitration for exact byte semantics):
 
 - Parse entry, encoding selection, and profile encoding gates:
-  https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs:16-104 — encoding_request
-  (parser.rs:37-59; ProfileDefault defaults to UTF-8, explicit caller
+  https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs — encoding_request
+  (parser.rs; ProfileDefault defaults to UTF-8, explicit caller
   overrides, code pages force BomPolicy::TreatAsContent, Portable accepts
   only UTF-8, Binary is rejected with ini.profile.encoding@1) and
-  validate_profile_encoding (parser.rs:61-94: Portable requires UTF-8
+  validate_profile_encoding (parser.rs: Portable requires UTF-8
   without BOM; Windows accepts UTF-16LE-with-BOM or an explicitly
   selected code page, or an ASCII-only no-BOM UTF-8 source; Python
   accepts any non-Binary selected encoding).
-- Physical-line scanning: parser.rs:228-301 (line split on LF with CRLF
+- Physical-line scanning: parser.rs (line split on LF with CRLF
   handling, per-line byte/scalar limits, BOM skip when the decoded text
   starts with U+FEFF).
-- Profile line grammars: parser.rs:303-346 (common line gates), 348-399
+- Profile line grammars: parser.rs (common line gates), 348-399
   (portable), 401-467 (windows), 469-578 (python), 580-747 (python
   continuation joins and limits), 749-867 (section/entry/logical records),
-  869-905 (recovery), 907-949 (BOM/comment/section pieces), 1039-1107
+ (recovery), (BOM/comment/section pieces), 
   (line break/whitespace/value pieces).
-- Comparison and duplicate groups: parser.rs:1197-1304 (section/key
+- Comparison and duplicate groups: parser.rs (section/key
   comparison per profile; duplicate/case-collision groups with stable
   group identities; diagnostic codes ini.formation.duplicate-section@1 /
   duplicate-entry@1 / case-collision@1; recovery only for non-Windows).
-- Limits and fatal failures: parser.rs:1132-1195 (nodes, syntax pieces,
+- Limits and fatal failures: parser.rs (nodes, syntax pieces,
   diagnostics); the resource names are pinned by
   conformance/vectors/ini-v1.json:108-128 (resource.formation-limit-
   matrix: 17 fatal outcomes, no partial documents).
@@ -34,11 +34,11 @@ Authority (Rust arbitration for exact byte semantics):
   and every profile invariant and configured limit holds; Recovered
   retains the complete source with exhaustive syntax/error-region
   coverage and every independently proven section or entry (RFC 0009 §4,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:118-147).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 
 The parser indexes the decoded text by UTF-8 byte offsets and maps every
 decoded boundary back to exact raw bytes via SourceSnapshot.raw_byte_at
-(RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:70-73).
+(RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 """
 
 from __future__ import annotations
@@ -91,7 +91,7 @@ _FEFF_UTF8_LEN = len("﻿".encode("utf-8"))
 
 
 # ---------------------------------------------------------------------------
-# Snapshot-bound INI records (RFC 0009 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:273-283)
+# Snapshot-bound INI records (RFC 0009 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)
 # ---------------------------------------------------------------------------
 # The immutable records below are the native model handles
 # (IniDocument / IniPhysicalLine / IniLogicalLine / IniSection /
@@ -100,18 +100,18 @@ _FEFF_UTF8_LEN = len("﻿".encode("utf-8"))
 # are cited in each field comment): ``node`` is the snapshot-bound NodeRef
 # handle, ``span``/``content_span``/``line_break_span`` are raw-byte
 # ranges, and the name/value/state/group facts are decoded strings and
-# enums (lib.rs:239-263, 273-291, 306-354, 373-445, 457-487).
+# enums (lib.rs).
 
 
 @dataclass(frozen=True, slots=True)
 class IniPhysicalLine:
-    """One exact physical source line (lib.rs:231-237).
+    """One exact physical source line (lib.rs).
 
-    ``node`` is the snapshot-bound physical-line identity (lib.rs:242-245),
-    ``span`` the complete raw line including its line break (lib.rs:248-
-    251), ``content_span`` the raw content excluding the break (lib.rs:254-
+    ``node`` is the snapshot-bound physical-line identity (lib.rs),
+    ``span`` the complete raw line including its line break (lib.rs
+    251), ``content_span`` the raw content excluding the break (lib.rs
     257), and ``line_break_span`` the exact LF/CRLF range, absent at EOF
-    (lib.rs:260-263).
+    (lib.rs).
     """
 
     node: NodeRef
@@ -123,11 +123,11 @@ class IniPhysicalLine:
 @dataclass(frozen=True, slots=True)
 class IniLogicalLine:
     """One logical record and its ordered physical constituents
-    (lib.rs:266-271).
+    (lib.rs).
 
-    ``node`` is the logical-line identity (lib.rs:276-279), ``kind`` the
-    Section | Entry | Error record kind (lib.rs:282-285), and
-    ``physical_nodes`` the ordered physical-line identities (lib.rs:288-
+    ``node`` is the logical-line identity (lib.rs), ``kind`` the
+    Section | Entry | Error record kind (lib.rs), and
+    ``physical_nodes`` the ordered physical-line identities (lib.rs
     291).
     """
 
@@ -138,17 +138,17 @@ class IniLogicalLine:
 
 @dataclass(frozen=True, slots=True)
 class IniSection:
-    """One distinct section-header occurrence (lib.rs:294-304).
+    """One distinct section-header occurrence (lib.rs).
 
-    ``node`` is the section occurrence identity (lib.rs:309-312),
-    ``logical_line`` the owning logical line (lib.rs:315-318), ``span``
+    ``node`` is the section occurrence identity (lib.rs),
+    ``logical_line`` the owning logical line (lib.rs), ``span``
     the complete header content span excluding the line break
-    (lib.rs:321-324), ``name_span`` the exact section-name span
-    (lib.rs:327-330), ``name`` the original decoded spelling (lib.rs:333-
+    (lib.rs), ``name_span`` the exact section-name span
+    (lib.rs), ``name`` the original decoded spelling (lib.rs
     336), ``comparison_name`` the profile-specific comparison name
-    (lib.rs:339-342), ``is_default`` whether this is Python's exact
-    ``DEFAULT`` section (lib.rs:345-348), and ``duplicate_group`` the
-    deterministic duplicate/case-equivalence group identity (lib.rs:351-
+    (lib.rs), ``is_default`` whether this is Python's exact
+    ``DEFAULT`` section (lib.rs), and ``duplicate_group`` the
+    deterministic duplicate/case-equivalence group identity (lib.rs
     354).
     """
 
@@ -164,21 +164,21 @@ class IniSection:
 
 @dataclass(frozen=True, slots=True)
 class IniEntry:
-    """One distinct key/value occurrence (lib.rs:357-371).
+    """One distinct key/value occurrence (lib.rs).
 
-    ``node`` is the entry occurrence identity (lib.rs:376-379),
-    ``logical_line`` the owning logical line (lib.rs:382-385), ``section``
-    the owning section occurrence (lib.rs:388-391), ``span`` the complete
-    first physical-line content span (lib.rs:394-397), ``key_span`` the
-    exact original key span (lib.rs:400-403), ``value_span`` the exact
-    first-line semantic value span (lib.rs:406-409), ``key`` the original
-    decoded key spelling (lib.rs:412-415), ``comparison_key`` the profile-
-    specific comparison key (lib.rs:418-421), ``value`` the stored
+    ``node`` is the entry occurrence identity (lib.rs),
+    ``logical_line`` the owning logical line (lib.rs), ``section``
+    the owning section occurrence (lib.rs), ``span`` the complete
+    first physical-line content span (lib.rs), ``key_span`` the
+    exact original key span (lib.rs), ``value_span`` the exact
+    first-line semantic value span (lib.rs), ``key`` the original
+    decoded key spelling (lib.rs), ``comparison_key`` the profile-
+    specific comparison key (lib.rs), ``value`` the stored
     semantic string including deterministic continuation joins
-    (lib.rs:424-427), ``state`` the Missing | Empty | Present value fact
-    (lib.rs:430-433), ``quote_style`` the profile-recognized outer quote
-    style (lib.rs:436-439), and ``duplicate_group`` the deterministic
-    duplicate/case-equivalence group identity (lib.rs:442-445).
+    (lib.rs), ``state`` the Missing | Empty | Present value fact
+    (lib.rs), ``quote_style`` the profile-recognized outer quote
+    style (lib.rs), and ``duplicate_group`` the deterministic
+    duplicate/case-equivalence group identity (lib.rs).
     """
 
     node: NodeRef
@@ -197,13 +197,13 @@ class IniEntry:
 
 @dataclass(frozen=True, slots=True)
 class IniErrorLine:
-    """One recovered physical error record (lib.rs:448-455).
+    """One recovered physical error record (lib.rs).
 
-    ``node`` is the error identity (lib.rs:460-463), ``logical_line`` the
-    owning logical line (lib.rs:466-469), ``physical_line`` the physical
-    line retained by recovery (lib.rs:472-475), ``span`` the exact
-    malformed content span (lib.rs:478-481), and ``code`` the stable
-    diagnostic code (lib.rs:484-487).
+    ``node`` is the error identity (lib.rs), ``logical_line`` the
+    owning logical line (lib.rs), ``physical_line`` the physical
+    line retained by recovery (lib.rs), ``span`` the exact
+    malformed content span (lib.rs), and ``code`` the stable
+    diagnostic code (lib.rs).
     """
 
     node: NodeRef
@@ -226,7 +226,7 @@ class _ScannedLine:
 
 @dataclass(slots=True)
 class _PythonEntryState:
-    """Active Python multiline entry accumulation (parser.rs:116-124)."""
+    """Active Python multiline entry accumulation (parser.rs)."""
 
     entry_index: int
     logical_index: int
@@ -271,7 +271,7 @@ class _Parser:
     # -- scan ---------------------------------------------------------------
 
     def scan_physical_lines(self) -> None:
-        """Splits the decoded text into physical lines (parser.rs:228-301)."""
+        """Splits the decoded text into physical lines (parser.rs)."""
         start = _FEFF_UTF8_LEN if (
             self.source.encoding_facts().bom is not None and self.text.startswith("﻿")
         ) else 0
@@ -320,7 +320,7 @@ class _Parser:
 
     def parse_line(self, line_index: int) -> None:
         """One physical line: common gates, comments, profile dispatch
-        (parser.rs:303-346)."""
+        (parser.rs)."""
         line = self.lines[line_index]
         content = self.decoded(line)
         if "\0" in content or "\r" in content:
@@ -360,7 +360,7 @@ class _Parser:
     # -- profile line grammars ----------------------------------------------
 
     def parse_portable_line(self, line_index: int) -> None:
-        """Portable grammar (parser.rs:348-399; RFC 0009 §5)."""
+        """Portable grammar (parser.rs; RFC 0009 §5)."""
         self.python_entry = None
         line = self.lines[line_index]
         content = self.decoded(line)
@@ -411,10 +411,10 @@ class _Parser:
             )
 
     def parse_windows_line(self, line_index: int) -> None:
-        """Windows grammar (parser.rs:401-467; RFC 0009 §6).
+        """Windows grammar (parser.rs; RFC 0009 §6).
 
         All offsets are byte offsets into the decoded line content, exactly
-        like the Rust byte slicing (parser.rs:404-465).
+        like the Rust byte slicing (parser.rs).
         """
         self.python_entry = None
         line = self.lines[line_index]
@@ -474,10 +474,10 @@ class _Parser:
             )
 
     def parse_python_line(self, line_index: int) -> None:
-        """Python grammar (parser.rs:469-578; RFC 0009 §7).
+        """Python grammar (parser.rs; RFC 0009 §7).
 
         All offsets are byte offsets into the decoded line content, exactly
-        like the Rust byte slicing (parser.rs:471-577).
+        like the Rust byte slicing (parser.rs).
         """
         line = self.lines[line_index]
         content = self.decoded(line)
@@ -563,7 +563,7 @@ class _Parser:
 
     def add_python_continuation(self, line_index: int, indent: int) -> None:
         """Joins one more-indented physical line into the active entry
-        (parser.rs:580-747)."""
+        (parser.rs)."""
         line = self.lines[line_index]
         content = self.decoded(line)
         content_bytes = content.encode("utf-8")
@@ -643,7 +643,7 @@ class _Parser:
     def add_section(
         self, line_index: int, name_start: int, name_end: int, name: str, is_default: bool
     ) -> None:
-        """One section occurrence (parser.rs:749-785)."""
+        """One section occurrence (parser.rs)."""
         self.check_limit("sections", len(self.sections) + 1, self.limits.max_sections)
         line = self.lines[line_index]
         logical_index = self.add_logical(line_index, IniLogicalLineKind.SECTION)
@@ -679,7 +679,7 @@ class _Parser:
         value: str,
         quote_style: IniQuoteStyle,
     ) -> int:
-        """One entry occurrence (parser.rs:788-834)."""
+        """One entry occurrence (parser.rs)."""
         self.check_limit("entries", len(self.entries) + 1, self.limits.max_entries)
         line = self.lines[line_index]
         logical_index = self.add_logical(line_index, IniLogicalLineKind.ENTRY)
@@ -711,7 +711,7 @@ class _Parser:
         return entry_index
 
     def add_logical(self, line_index: int, kind: IniLogicalLineKind) -> int:
-        """One logical record over the first physical line (parser.rs:836-867)."""
+        """One logical record over the first physical line (parser.rs)."""
         self.check_limit("logical-lines", len(self.logical_lines) + 1, self.limits.max_logical_lines)
         line = self.lines[line_index]
         physical = self.physical_lines[line.physical_index]
@@ -727,7 +727,7 @@ class _Parser:
         return index
 
     def recover_line(self, line_index: int, code: str) -> None:
-        """One recovered physical error record (parser.rs:869-905)."""
+        """One recovered physical error record (parser.rs)."""
         self.check_limit("recovery-regions", len(self.error_lines) + 1, self.limits.max_recovery_regions)
         self.python_entry = None
         line = self.lines[line_index]
@@ -761,12 +761,12 @@ class _Parser:
     # -- syntax pieces ------------------------------------------------------
 
     def push_bom(self) -> None:
-        """The BOM scalar is trivia with kind Bom (parser.rs:907-919)."""
+        """The BOM scalar is trivia with kind Bom (parser.rs)."""
         if self.source.encoding_facts().bom is not None and self.text.startswith("﻿"):
             self.push_piece(0, _FEFF_UTF8_LEN, StructuralPieceKind.TRIVIA, IniSyntaxKind.BOM)
 
     def push_comment(self, line: _ScannedLine, leading: int) -> None:
-        """Comment marker and payload trivia (parser.rs:921-943)."""
+        """Comment marker and payload trivia (parser.rs)."""
         self.push_optional_whitespace(line, 0, leading)
         self.push_piece_local(
             line, leading, leading + 1, StructuralPieceKind.TRIVIA, IniSyntaxKind.COMMENT_MARKER
@@ -784,7 +784,7 @@ class _Parser:
     def push_section_syntax(
         self, line: _ScannedLine, open_start: int, name_start: int, name_end: int, close_end: int
     ) -> None:
-        """SectionOpen / SectionName / SectionClose tokens (parser.rs:945-971)."""
+        """SectionOpen / SectionName / SectionClose tokens (parser.rs)."""
         self.push_piece_local(line, open_start, name_start, StructuralPieceKind.TOKEN, IniSyntaxKind.SECTION_OPEN)
         self.push_piece_local(line, name_start, name_end, StructuralPieceKind.TOKEN, IniSyntaxKind.SECTION_NAME)
         self.push_piece_local(line, name_end, close_end, StructuralPieceKind.TOKEN, IniSyntaxKind.SECTION_CLOSE)
@@ -801,7 +801,7 @@ class _Parser:
         quote: tuple[int, int, int, int] | None,
     ) -> None:
         """EntryKey / Delimiter / [Quote] EntryValue [Quote] pieces
-        (parser.rs:973-1018)."""
+        (parser.rs)."""
         self.push_piece_local(line, key_start, key_end, StructuralPieceKind.TOKEN, IniSyntaxKind.ENTRY_KEY)
         self.push_piece_local(
             line, delimiter_start, delimiter_end, StructuralPieceKind.TOKEN, IniSyntaxKind.DELIMITER
@@ -834,7 +834,7 @@ class _Parser:
         value_end: int,
         quote_style: IniQuoteStyle,
     ) -> None:
-        """Windows value pieces (parser.rs:1020-1037)."""
+        """Windows value pieces (parser.rs)."""
         if quote_style is IniQuoteStyle.NONE:
             return self.push_entry_syntax(
                 line, 0, 0, 0, 0, literal_start, literal_end, None
@@ -851,7 +851,7 @@ class _Parser:
         )
 
     def push_line_break(self, line_index: int) -> None:
-        """Exact LF/CRLF trivia (parser.rs:1039-1049)."""
+        """Exact LF/CRLF trivia (parser.rs)."""
         line = self.lines[line_index]
         if line.decoded_break_start < line.decoded_end:
             self.push_piece(
@@ -862,7 +862,7 @@ class _Parser:
             )
 
     def push_optional_whitespace(self, line: _ScannedLine, start: int, end: int) -> None:
-        """Optional horizontal whitespace trivia (parser.rs:1051-1065)."""
+        """Optional horizontal whitespace trivia (parser.rs)."""
         if start < end:
             self.push_piece_local(line, start, end, StructuralPieceKind.TRIVIA, IniSyntaxKind.WHITESPACE)
 
@@ -874,7 +874,7 @@ class _Parser:
         kind: StructuralPieceKind,
         syntax: IniSyntaxKind,
     ) -> None:
-        """One line-relative piece (parser.rs:1067-1082)."""
+        """One line-relative piece (parser.rs)."""
         if start == end:
             return
         self.push_piece(line.decoded_start + start, line.decoded_start + end, kind, syntax)
@@ -882,7 +882,7 @@ class _Parser:
     def push_piece(
         self, decoded_start: int, decoded_end: int, kind: StructuralPieceKind, syntax: IniSyntaxKind
     ) -> None:
-        """One exhaustive source piece (parser.rs:1084-1107)."""
+        """One exhaustive source piece (parser.rs)."""
         observed = len(self.pieces) + 1
         self.check_limit("syntax-pieces", observed, self.limits.common.max_token_count)
         span = self.raw_span(decoded_start, decoded_end)
@@ -900,7 +900,7 @@ class _Parser:
 
     def raw_span(self, decoded_start: int, decoded_end: int) -> object:
         """Maps decoded UTF-8 byte offsets to raw-byte spans
-        (parser.rs:1109-1125)."""
+        (parser.rs)."""
         try:
             start = self.source.raw_byte_at(DecodedOffset.utf8_byte(decoded_start))
             end = self.source.raw_byte_at(DecodedOffset.utf8_byte(decoded_end))
@@ -926,7 +926,7 @@ class _Parser:
         return self.text_utf8[line.decoded_start : line.decoded_content_end].decode("utf-8")
 
     def issue_node(self, role: NodeRole) -> NodeRef:
-        """One fresh node identity (parser.rs:1132-1142)."""
+        """One fresh node identity (parser.rs)."""
         observed = self.next_node + 1
         self.check_limit("nodes", observed, self.limits.common.max_node_count)
         node = self.authority.node_ref(self.next_node, role)
@@ -934,7 +934,7 @@ class _Parser:
         return node
 
     def check_limit(self, name: str, observed: int, limit: int) -> None:
-        """Fatal when a configured limit is exceeded (parser.rs:1144-1156)."""
+        """Fatal when a configured limit is exceeded (parser.rs)."""
         if observed > limit:
             raise IniFormationFailure(
                 IniFormationFailureKind.DIAGNOSTICS if name == "diagnostics" else
@@ -963,7 +963,7 @@ class _Parser:
     def diagnostic(
         self, code: str, category: DiagnosticCategory, start: int, end: int, recovered: bool
     ) -> None:
-        """One ordered diagnostic (parser.rs:1158-1195)."""
+        """One ordered diagnostic (parser.rs)."""
         self.check_limit("diagnostics", len(self.diagnostics) + 1, self.limits.common.max_diagnostics)
         try:
             primary = self.authority.span(start, end)
@@ -989,13 +989,13 @@ class _Parser:
     # -- comparison and duplicate groups -------------------------------------
 
     def section_comparison(self, name: str) -> str:
-        """Profile-specific section comparison name (parser.rs:1197-1202)."""
+        """Profile-specific section comparison name (parser.rs)."""
         if self.profile is IniProfile.WINDOWS_V1:
             return name.lower()
         return name
 
     def key_comparison(self, key: str) -> str:
-        """Profile-specific key comparison name (parser.rs:1204-1210)."""
+        """Profile-specific key comparison name (parser.rs)."""
         if self.profile is IniProfile.WINDOWS_V1:
             return key.lower()
         if self.profile is IniProfile.PYTHON_CONFIGPARSER_V1:
@@ -1004,7 +1004,7 @@ class _Parser:
 
     def assign_duplicate_groups(self) -> None:
         """Deterministic duplicate/case-equivalence groups
-        (parser.rs:1212-1304; RFC 0009 §5/§6/§7 duplicate rules)."""
+        (parser.rs; RFC 0009 §5/§6/§7 duplicate rules)."""
         section_groups: dict[str, list[int]] = {}
         for index, section in enumerate(self.sections):
             section_groups.setdefault(section.comparison_name, []).append(index)
@@ -1087,11 +1087,11 @@ def parse(
     limits: IniParseLimits,
 ) -> object:
     """Parses one immutable INI snapshot under exactly one selected profile
-    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:664-671, parser.rs:16-35).
+    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs, parser.rs).
 
     Returns the ``IniDocument`` from :mod:`consema.ini.document`; raises
     :class:`IniFormationFailure` for fatal encoding, source, or limit
-    failures — no Document exists then (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:70-
+    failures — no Document exists then (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md
     73).
     """
     request = _encoding_request(profile, selection)
@@ -1149,7 +1149,7 @@ def parse(
 def _encoding_request(
     profile: IniProfile, selection: IniEncodingSelection
 ) -> EncodingRequest:
-    """Builds the source resolution request (parser.rs:37-59)."""
+    """Builds the source resolution request (parser.rs)."""
     encoding = SourceEncoding.utf8() if selection.kind == "ProfileDefault" else selection.encoding
     if encoding is not None and encoding.kind is SourceEncodingKind.BINARY:
         raise IniFormationFailure(IniFormationFailureKind.PROFILE_ENCODING)
@@ -1167,7 +1167,7 @@ def _encoding_request(
 def _validate_profile_encoding(
     source: SourceSnapshot, profile: IniProfile, selection: IniEncodingSelection
 ) -> None:
-    """Profile-specific encoding acceptance (parser.rs:61-94; RFC 0009 §3)."""
+    """Profile-specific encoding acceptance (parser.rs; RFC 0009 §3)."""
     facts = source.encoding_facts()
     if profile is IniProfile.PORTABLE_V1:
         valid = facts.selected == SourceEncoding.utf8() and facts.bom is None
@@ -1206,12 +1206,12 @@ def _validate_profile_encoding(
 
 
 # ---------------------------------------------------------------------------
-# Character helpers (parser.rs:1307-1362)
+# Character helpers (parser.rs)
 # ---------------------------------------------------------------------------
 
 
 def _leading_horizontal(value: str) -> int:
-    """Byte count of the leading space/tab run (parser.rs:1307-1312)."""
+    """Byte count of the leading space/tab run (parser.rs)."""
     count = 0
     for byte in value.encode("utf-8"):
         if not is_horizontal(byte):
@@ -1222,7 +1222,7 @@ def _leading_horizontal(value: str) -> int:
 
 def _trim_horizontal_bounds(value) -> tuple[int, int]:
     """Byte range of the content with horizontal edges removed
-    (parser.rs:1314-1321); accepts str or utf-8 bytes."""
+    (parser.rs); accepts str or utf-8 bytes."""
     raw = value.encode("utf-8") if isinstance(value, str) else value
     start = 0
     for byte in raw:
@@ -1246,7 +1246,7 @@ def _find_byte(raw: bytes, targets: tuple[int, ...], start: int = 0) -> int | No
 
 
 def _quoted_windows_value(value, absolute_start: int) -> tuple[int, int, IniQuoteStyle]:
-    """Exact outer-quote recognition (parser.rs:1341-1358; RFC 0009 §6:
+    """Exact outer-quote recognition (parser.rs; RFC 0009 §6:
     an exactly single- or double-quoted value has a semantic content span
     without the outer marks)."""
     raw = value.encode("utf-8") if isinstance(value, str) else value
@@ -1264,7 +1264,7 @@ def _quoted_windows_value(value, absolute_start: int) -> tuple[int, int, IniQuot
 
 
 def _first_python_delimiter(value) -> int | None:
-    """First ``=`` or ``:`` position (parser.rs:1360-1362; RFC 0009 §7:
+    """First ``=`` or ``:`` position (parser.rs; RFC 0009 §7:
     the first configured delimiter occurrence splits option and value)."""
     raw = value.encode("utf-8") if isinstance(value, str) else value
     for index, byte in enumerate(raw):

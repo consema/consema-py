@@ -2,7 +2,7 @@
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
 test); https://github.com/consema/consema-rs/blob/main/consema-xml/src/query.rs (byte/registry arbitration);
-RFC 0012 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:285-311).
+RFC 0012 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md).
 
 These tests are delivered: the full suite runs in CI (ci-python.yml
 python-gates job) against the provisioned conformance data.
@@ -173,7 +173,7 @@ def test_vector_native_descendants_order(xml_vectors):
 
 def test_mixed_content_children_preserve_order():
     """element-children preserves mixed-content order
-    (query.rs:696-723; RFC 0012 §8, lines 308-311)."""
+    (query.rs; RFC 0012 §8, lines 308-311)."""
     doc = _doc(b"<root>a<child/>b</root>")
     expression = _input_then(_op("xml.document-root"), _op("xml.element-children"))
     matches = execute_xml_query(_native(expression), doc)
@@ -184,7 +184,7 @@ def test_mixed_content_children_preserve_order():
 
 def test_text_references_kinds_and_names():
     """text-references exposes each reference with its kind, name, and
-    resolved character data (query.rs:1006-1053)."""
+    resolved character data (query.rs)."""
     doc = _doc(b'<!DOCTYPE root [<!ENTITY e "expanded">]><root>&lt; &e; &#65;</root>')
     expression = _input_then(
         _op("xml.document-root"),
@@ -201,7 +201,7 @@ def test_text_references_kinds_and_names():
 
 def test_name_equals_original_and_expanded():
     """name-equals compares original spelling or expanded names, never the
-    prefix (query.rs:1055-1114)."""
+    prefix (query.rs)."""
     doc = _doc(b'<p:root xmlns:p="urn:x"><p:child/></p:root>')
     expression = _input_then(
         _op("xml.document-root"),
@@ -235,7 +235,7 @@ def test_name_equals_original_and_expanded():
 
 def test_in_scope_namespaces_include_ancestors():
     """element-in-scope-namespaces is the full ancestry-derived chain
-    oldest first (query.rs:925-959)."""
+    oldest first (query.rs)."""
     doc = _doc(b'<a xmlns="urn:a"><b xmlns:p="urn:p"><c/></b></a>')
     expression = _input_then(
         _op("xml.document-root"),
@@ -248,7 +248,7 @@ def test_in_scope_namespaces_include_ancestors():
 
 
 def test_node_kind_is_filters_mixed_output():
-    """node-kind-is filters any match kind (query.rs:1197-1228)."""
+    """node-kind-is filters any match kind (query.rs)."""
     doc = _doc(b"<root><!--c--><?pi x?></root>")
     expression = _input_then(
         _op("xml.document-root"),
@@ -281,7 +281,7 @@ def test_core_take_and_distinct_by_identity():
 
 def test_domain_mismatch_is_rejected():
     """A foreign domain never executes against the XML executor
-    (query.rs:223-235)."""
+    (query.rs)."""
     doc = _doc(b"<root/>")
     expression = _input_then(_op("ini.all-entries"))
     definition = (
@@ -297,7 +297,7 @@ def test_domain_mismatch_is_rejected():
 
 def test_require_one_cardinality_is_enforced():
     """RequireOne cardinality is enforced on the final result
-    (query.rs:252-269)."""
+    (query.rs)."""
     doc = _doc(b"<root><a/><b/></root>")
     expression = _input_then(
         _op("xml.document-root"),
@@ -316,7 +316,7 @@ def test_require_one_cardinality_is_enforced():
 
 def test_syntax_text_equals_compares_raw_bytes():
     """syntax-text-equals compares the exact raw span bytes
-    (query.rs:1345-1354)."""
+    (query.rs)."""
     doc = _doc(b"<root>a<b/>c</root>")
     expression = _input_then(_op("xml.syntax-text-equals", text="a"))
     matches = execute_xml_syntax_query(_syntax(expression), doc)

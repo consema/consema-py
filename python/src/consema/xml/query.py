@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:285-311): the
+- RFC 0012 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md): the
   frozen domains ``xml.native-semantic-query@1`` and
   ``xml.lossless-syntax-query@1``; native order is document order; element
   attributes and namespace declarations preserve their respective source
@@ -13,7 +13,7 @@ Authority:
   core.take@1, core.distinct-by-identity@1, limits, cancellation, and
   explicit Completed/Cancelled/Failed terminal states.
 - The match shapes and every operator transcribe
-  https://github.com/consema/consema-rs/blob/main/consema-xml/src/query.rs:22-220 (XmlMatch), 187-220
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/query.rs (XmlMatch), 187-220
   (XmlSyntaxMatch), 223-249 (execute_xml_query), 286-335
   (execute_xml_syntax_query), 578-622 (operator dispatch), 624-1376
   (operator implementations) — byte/registry arbitration only.
@@ -84,7 +84,7 @@ class CancellationToken:
 
 
 class XmlMatchKind(enum.Enum):
-    """Closed native match category (query.rs:31-165)."""
+    """Closed native match category (query.rs)."""
 
     DOCUMENT = "document"
     DECLARATION = "declaration"
@@ -102,7 +102,7 @@ class XmlMatchKind(enum.Enum):
 
 
 class XmlReferenceKind(enum.Enum):
-    """One XML reference occurrence kind (query.rs:20-29)."""
+    """One XML reference occurrence kind (query.rs)."""
 
     CHARACTER = "Character"
     PREDEFINED = "Predefined"
@@ -111,7 +111,7 @@ class XmlReferenceKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class XmlMatch:
-    """One snapshot-bound XML native semantic query match (query.rs:31-165)."""
+    """One snapshot-bound XML native semantic query match (query.rs)."""
 
     kind: XmlMatchKind
     node: NodeRef
@@ -136,13 +136,13 @@ class XmlMatch:
 
     def identity(self) -> NodeRef:
         """The identity used by core.distinct-by-identity and
-        structure-order-merge (query.rs:167-185)."""
+        structure-order-merge (query.rs)."""
         return self.node
 
 
 @dataclass(frozen=True, slots=True)
 class XmlSyntaxMatch:
-    """One snapshot-bound XML lossless syntax query match (query.rs:187-220)."""
+    """One snapshot-bound XML lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -229,7 +229,7 @@ def execute_xml_query(
     cancellation: CancellationToken | None = None,
 ) -> list[XmlMatch]:
     """Executes a validated XML native semantic query against one immutable
-    snapshot (query.rs:223-249). Raises QueryFailure."""
+    snapshot (query.rs). Raises QueryFailure."""
     _require_domain(executable, "xml.native-semantic-query")
     limits = limits or QueryLimits.default()
     cancellation = cancellation or CancellationToken()
@@ -252,7 +252,7 @@ def execute_xml_syntax_query(
     cancellation: CancellationToken | None = None,
 ) -> list[XmlSyntaxMatch]:
     """Executes a validated XML lossless syntax query against every source
-    piece in raw order (query.rs:286-335). Raises QueryFailure."""
+    piece in raw order (query.rs). Raises QueryFailure."""
     _require_domain(executable, "xml.lossless-syntax-query")
     limits = limits or QueryLimits.default()
     cancellation = cancellation or CancellationToken()
@@ -314,7 +314,7 @@ def _execute_syntax_expression(
 
 
 def _source_order(item: XmlMatch) -> int:
-    """Document-order key (query.rs:556-576)."""
+    """Document-order key (query.rs)."""
     if item.kind is XmlMatchKind.DOCUMENT:
         return 0
     if item.kind is XmlMatchKind.ERROR_REGION:
@@ -593,7 +593,7 @@ def _apply_operator(operator, input_matches: list[XmlMatch], context: _Context) 
 
 
 def _content_match(context: _Context, index: int, parent: NodeRef) -> XmlMatch:
-    """One child content occurrence match (query.rs:696-772)."""
+    """One child content occurrence match (query.rs)."""
     content = context.document._nodes[index]
     if content.kind is XmlContentKind.ELEMENT:
         return context.element_match(index)
@@ -636,7 +636,7 @@ def _content_match(context: _Context, index: int, parent: NodeRef) -> XmlMatch:
 
 
 def _element_from_node(context: _Context, node: NodeRef) -> XmlMatch:
-    """One step back to the owning element (query.rs:1262-1274)."""
+    """One step back to the owning element (query.rs)."""
     try:
         data = context.document._element_data(node.index)
         return context.element_match(data.index)

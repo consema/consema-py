@@ -1,14 +1,14 @@
 """The closed fifteen-kind PortableValue model.
 
 Authority: RFC 0016 §4.1 and the kind registry of
-https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs:622-653 (PortableValueKind) — the
+https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs (PortableValueKind) — the
 language-neutral list is: Null, Boolean, Integer, Decimal, BinaryFloat32,
 BinaryFloat64, String, Bytes, Date, Time, LocalDateTime, OffsetDateTime,
 Sequence, Object, EntryMapping. The kind *names* are the language-neutral
 spellings used by the tagged JSON transport
 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/value_transport.rs). Decimal normalization and
-temporal validation follow https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs:277-292,
-337-352, 420-576; https://github.com/consema/consema-go/blob/main/go/core is a cross-reference.
+temporal validation follow https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs,
+（temporal validation 区间定义处）; https://github.com/consema/consema-go/blob/main/go/core is a cross-reference.
 
 Design: a single immutable class (Python has no closed interface types; a
 closed *kind* is enforced by the enum and the private constructor), with
@@ -47,7 +47,7 @@ class Kind(enum.Enum):
 
 def _leap_year(year: int) -> bool:
     # Proleptic Gregorian leap rule over the absolute magnitude of the year
-    # (value.rs:433-434): year -400 is a leap year, year -100 is not.
+    # (value.rs): year -400 is a leap year, year -100 is not.
     magnitude = abs(year)
     return magnitude % 4 == 0 and (magnitude % 100 != 0 or magnitude % 400 == 0)
 
@@ -71,7 +71,7 @@ def _decimal_digits(value: int) -> int:
 class Decimal:
     """A canonical exact finite decimal, coefficient × 10^exponent.
 
-    The canonical form (value.rs:277-292): a zero coefficient always has
+    The canonical form (value.rs): a zero coefficient always has
     exponent zero, and trailing decimal zeros of the coefficient are
     stripped into the exponent (10 × 10^0 → 1 × 10^1). Instances are
     immutable and hashable.
@@ -90,7 +90,7 @@ class Decimal:
         self.exponent = exponent
 
     def is_fraction(self) -> bool:
-        """True when the value is an exact decimal in [0, 1) (value.rs:337-352)."""
+        """True when the value is an exact decimal in [0, 1) (value.rs)."""
         if self.coefficient < 0:
             return False
         if self.coefficient == 0:
@@ -229,7 +229,7 @@ class PortableValue:
         entries: Sequence[tuple["PortableValue", "PortableValue"]]
     ) -> "PortableValue":
         # Arbitrary keys; duplicates and association order are value semantics
-        # (EntryMappingBuilder::push, value.rs:973-978).
+        # (EntryMappingBuilder::push, value.rs).
         return PortableValue(Kind.ENTRY_MAPPING, tuple(entries))
 
     # -- typed accessors ---------------------------------------------------
@@ -328,7 +328,7 @@ class PortableValue:
 class ExtendedValue:
     """A formally versioned PVCE extension root (record tag 0x7f).
 
-    Extensions remain separate from the closed core tree (lib.rs:45-52):
+    Extensions remain separate from the closed core tree (lib.rs):
     they may appear only as the stream root and are never nested inside a
     PortableValue. ``encode_value``/``decode_value`` handle them; the
     core-only ``encode``/``decode`` reject them.
@@ -407,7 +407,7 @@ class ObjectBuilder:
 class EntryMappingBuilder:
     """Incrementally constructs an ordered arbitrary-key EntryMapping.
 
-    No deduplication: arbitrary keys may repeat (value.rs:973-978).
+    No deduplication: arbitrary keys may repeat (value.rs).
     """
 
     def __init__(self):

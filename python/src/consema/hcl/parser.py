@@ -23,11 +23,11 @@ the native body tree with the §3 recovery semantics:
   failure never masquerades as a partial document (hard gate 4).
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/parser.rs — codes parser.rs:77-98,
-formation entry parser.rs:200-218, the parser body parser.rs:313-726,
-attributes/blocks parser.rs:729-978, the expression grammar parser.rs:980-
-2016, templates and heredocs parser.rs:2018-2366, literal decoding
-parser.rs:2387-2531, fatal limit mapping parser.rs:2549-2565.
+arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/parser.rs — codes parser.rs,
+formation entry parser.rs, the parser body parser.rs,
+attributes/blocks parser.rs, the expression grammar parser.rs
+2016, templates and heredocs parser.rs, literal decoding
+parser.rs, fatal limit mapping parser.rs.
 """
 
 from __future__ import annotations
@@ -88,7 +88,7 @@ from consema.hcl.native import (
 from consema.protocol.error_registry import DiagnosticCategory
 
 # Stable `hcl.parse.*@1` parser diagnostic codes (RFC 0014 §3, §4, §11;
-# parser.rs:77-98).
+# parser.rs).
 CODE_ITEM = "hcl.parse.item@1"
 CODE_ATTRIBUTE = "hcl.parse.attribute@1"
 CODE_BLOCK = "hcl.parse.block@1"
@@ -102,21 +102,21 @@ CODE_DUPLICATE_ATTRIBUTE = "hcl.parse.duplicate-attribute@1"
 
 class ExprMode(enum.Enum):
     """Expression context: whether newline sequences are whitespace
-    (parser.rs:261-269)."""
+    (parser.rs)."""
 
     TOP = "Top"  # body-level: newlines and line comments end the expression
     NESTED = "Nested"  # inside brackets/parens/calls/templates: ignored
 
 
 class BodyEnd(enum.Enum):
-    """The terminator of one body parse (parser.rs:271-278)."""
+    """The terminator of one body parse (parser.rs)."""
 
     EOF = "Eof"
     BRACE_CLOSE = "BraceClose"
 
 
 class Delim(enum.Enum):
-    """One open bracket of the expression parser (parser.rs:280-296)."""
+    """One open bracket of the expression parser (parser.rs)."""
 
     BRACE = "Brace"
     BRACKET = "Bracket"
@@ -141,7 +141,7 @@ def _delim_of(kind: HclTokenKind) -> Delim | None:
 
 
 class AttributeFailure(enum.Enum):
-    """Why one attribute occurrence failed to form (parser.rs:298-311)."""
+    """Why one attribute occurrence failed to form (parser.rs)."""
 
     MISSING_EQUALS = "MissingEquals"
     MISSING_EXPRESSION = "MissingExpression"
@@ -153,7 +153,7 @@ class AttributeFailure(enum.Enum):
 
 
 class AttributeOutcome:
-    """The outcome of one attribute parse (parser.rs:307-311)."""
+    """The outcome of one attribute parse (parser.rs)."""
 
     __slots__ = ("attribute", "failure")
 
@@ -172,7 +172,7 @@ class AttributeOutcome:
 
 class _DiagnosticSink:
     """Bounded ordered diagnostic recording with the house truncation
-    marker (parser.rs:220-259)."""
+    marker (parser.rs)."""
 
     def __init__(self, max_diagnostics: int) -> None:
         self.diagnostics: list[HclDiagnostic] = []
@@ -215,7 +215,7 @@ class _DiagnosticSink:
 
 @dataclass(frozen=True, slots=True)
 class HclFormed:
-    """One formed native HCL document (RFC 0014 §3; parser.rs:100-187).
+    """One formed native HCL document (RFC 0014 §3; parser.rs).
 
     The profile layer that gates Complete formation (the tfvars top-level
     restriction) is added by consema.hcl.document.
@@ -304,7 +304,7 @@ class _Parser:
 
     def text(self, token: HclToken) -> str:
         """Exact token text derived from the frozen source; spans are raw
-        byte ranges (parser.rs:451-456)."""
+        byte ranges (parser.rs)."""
         return self.bytes[token.span.start_byte : token.span.end_byte].decode("utf-8")
 
     def span(self, start: int, end: int) -> object:
@@ -716,7 +716,7 @@ class _Parser:
             return None
         return HclBody(items=tuple()), close_end
 
-    # -- expression grammar (RFC 0014 §4.3; parser.rs:980-2016) -------------
+    # -- expression grammar (RFC 0014 §4.3; parser.rs) -------------
 
     def parse_expression(self, mode: ExprMode, depth: int) -> HclExpression | None:
         if depth >= self.limits.max_expression_depth:
@@ -1699,7 +1699,7 @@ class _Parser:
 
 def parse_hcl(raw: bytes, limits: HclParseLimits) -> HclFormed:
     """Forms one native HCL document from raw bytes under the frozen UTF-8
-    source contract (RFC 0014 §2; parser.rs:200-218).
+    source contract (RFC 0014 §2; parser.rs).
 
     The source contract is enforced by the lexer: UTF-8 only, BOM as
     content with `hcl.parse.byte-order-mark@1` recovery, lone CR never a
@@ -1748,8 +1748,8 @@ def parse_hcl(raw: bytes, limits: HclParseLimits) -> HclFormed:
 
 
 def _assign_ordinals(body: HclBody) -> tuple[dict[int, int], int]:
-    """Assigns the deterministic pre-order tree ordinals (projection.rs:
-    124-130): the root body first, then each item in source order; an
+    """Assigns the deterministic pre-order tree ordinals (projection.rs
+): the root body first, then each item in source order; an
     attribute consumes one ordinal for itself and then every node of its
     expression subtree; a block consumes one ordinal for itself, one per
     label, and then its nested body's items. Template parts are tree nodes;
@@ -1817,7 +1817,7 @@ def _assign_ordinals(body: HclBody) -> tuple[dict[int, int], int]:
 
 
 # ---------------------------------------------------------------------------
-# Literal decoding (parser.rs:2387-2531)
+# Literal decoding (parser.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1825,7 +1825,7 @@ def decode_quoted_literal(text: str) -> str:
     """Decodes one quoted-template literal run: the frozen escape sequences
     `\\n` `\\r` `\\t` `\\"` `\\\\` `\\uNNNN` `\\UNNNNNNNN` and the escaped
     openers `$${`/`%%{` (RFC 0014 §4.4). An invalid escape (already
-    recovered by the lexer) passes through unchanged (parser.rs:2387-2482).
+    recovered by the lexer) passes through unchanged (parser.rs).
     """
     out: list[str] = []
     index = 0
@@ -1901,7 +1901,7 @@ def decode_quoted_literal(text: str) -> str:
 
 def decode_heredoc_literal(text: str) -> str:
     """Decodes one heredoc literal run: only the `$${`/`%%{` escapes apply;
-    heredoc text is otherwise raw (RFC 0014 §4.5; parser.rs:2484-2518)."""
+    heredoc text is otherwise raw (RFC 0014 §4.5; parser.rs)."""
     out: list[str] = []
     index = 0
     while index < len(text):

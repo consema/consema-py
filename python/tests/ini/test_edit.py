@@ -14,12 +14,12 @@ Cases covered here (conformance/vectors/ini-v1.json, suite
 
 RFC 0009 §12 contract facts pinned here: duplicate/case-collision rules
 are validated before any patch exists (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-
-v1.md:463-466: Rename validates portable character rules, Windows ASCII
+v1.md: Rename validates portable character rules, Windows ASCII
 case equivalence, or Python optionxform collisions); removing a section
 removes its owned entries atomically without reparenting (lines 465-466);
 Windows keeps ordered case-equivalent occurrences (RFC 0009 §6, lines
-207-213); Python multiline entries own their continuations only
-(edit.rs:2347-2356); comments are never moved or deleted without explicit
+); Python multiline entries own their continuations only
+(edit.rs); comments are never moved or deleted without explicit
 ownership (RFC 0009 §12, lines 459-462).
 """
 
@@ -167,7 +167,7 @@ def test_dry_run_patch_proof_and_atomic_failure():
 
 
 def test_patch_metadata_carries_operation_ids():
-    # RFC 0004 §14 / edit.rs:1604-1627: each patch metadata key
+    # RFC 0004 §14 / edit.rs: each patch metadata key
     # operation.{index} equals the canonical id@version form.
     document = portable(b"[s]\nk=old\n")
     builder = EditTransactionBuilder(document)
@@ -189,7 +189,7 @@ def test_patch_metadata_carries_operation_ids():
 def test_windows_rename_keeps_ordered_case_equivalent_occurrences():
     # RFC 0009 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:207-213): repeated/case-equivalent
     # keys stay ordered native facts marked as an ambiguity set; Windows
-    # rename never rejects case equivalence (edit.rs:1048-1050).
+    # rename never rejects case equivalence (edit.rs).
     document = windows(b"[S]\r\nKey=1\r\nother=2\r\n")
     builder = EditTransactionBuilder(document)
     builder.rename_entry(document.entries[1].node, "KEY")
@@ -201,7 +201,7 @@ def test_windows_rename_keeps_ordered_case_equivalent_occurrences():
 def test_python_optionxform_collision_is_rejected_before_a_patch_exists():
     # RFC 0009 §12 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:463-464): rename validates Python
     # optionxform collisions before any patch exists; the code is
-    # ini.edit.case-collision@1 (edit.rs:1767).
+    # ini.edit.case-collision@1 (edit.rs).
     document = python(b"[S]\nKey=1\nother=2\n")
     builder = EditTransactionBuilder(document)
     builder.rename_entry(document.entries[1].node, "KEY")
@@ -241,7 +241,7 @@ def test_section_removal_owns_entries_atomically_but_not_comments():
 
 
 def test_python_multiline_entry_removal_owns_continuations_only():
-    # RFC 0009 §7 continuation ownership (edit.rs:2347-2356).
+    # RFC 0009 §7 continuation ownership (edit.rs).
     document = python(b"[S]\nmulti=first\n  second\n\n  fourth\n# keep\nnext=value\n")
     builder = EditTransactionBuilder(document)
     builder.remove_entry(document.entries[0].node)
@@ -250,7 +250,7 @@ def test_python_multiline_entry_removal_owns_continuations_only():
 
 
 def test_python_preserve_compatible_keeps_multiline_trivia():
-    # edit.rs:1892-1917: PreserveCompatible retains the compatible
+    # edit.rs: PreserveCompatible retains the compatible
     # multiline representation line for line.
     source = b"[S]\nkey : first  \n\tsecond\t\n\n\tthird\nnext=x\n"
     document = python(source)
@@ -264,7 +264,7 @@ def test_python_preserve_compatible_keeps_multiline_trivia():
 
 
 def test_windows_preserve_compatible_keeps_quotes():
-    # edit.rs:1866-1889: semantic replacement preserves a compatible quote
+    # edit.rs: semantic replacement preserves a compatible quote
     # representation; the fallback diagnostic ini.edit.canonical-fallback@1
     # is emitted for the unquoted whitespace case.
     document = windows(b"[S]\r\na='old'\r\nb=plain\r\n")
@@ -299,7 +299,7 @@ def test_conflicting_edits_fail_before_a_patch_exists():
 
 
 def test_duplicate_target_fails_atomically():
-    # edit.rs:328-332: more than one operation naming the same exact target
+    # edit.rs: more than one operation naming the same exact target
     # is rejected before any patch exists.
     document = portable(b"[s]\nk=old\n")
     builder = EditTransactionBuilder(document)
@@ -325,7 +325,7 @@ def test_recovered_documents_refuse_edits():
 
 
 def test_appending_after_eof_entry_introduces_one_profile_newline():
-    # edit.rs:2179-2185.
+    # edit.rs.
     document = portable(b"[one]\na=1")
     builder = EditTransactionBuilder(document)
     builder.insert_section(document.node_ref(), "two", AssociationPlacement("End"))

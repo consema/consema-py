@@ -14,7 +14,7 @@
 
 - source: consema@0146e6f1（母仓 HEAD，2026-08-14 同步时刻；内容 sha256 `5c263ed4…`）
 - synced: 2026-08-14（波 3 W3-04 修复，agent F3）
-- 同步范围：`feature_complete_judgment.open_items[].evidence`（C-2 条，:812）残留行号区间 `docs/fuzz-evidence-0.13.0.md:139-145` → 母仓现行节锚 `docs/fuzz-evidence-0.13.0.md §7（完成路径）`。
+- 同步范围：`feature_complete_judgment.open_items[].evidence`（C-2 条，:812）残留行号区间 `docs/fuzz-evidence-0.13.0.md` → 母仓现行节锚 `docs/fuzz-evidence-0.13.0.md §7（完成路径）`。
 - 同步后 sha256：`5c263ed466483ff5d316d1845b5feaff7fbf62eafc44d10f04eda804eed452ca`（与 consema@0146e6f1 的 `docs/fc-manifest-0.13.0.json` 逐字节一致）。
 
 ## 同步 / 比对命令

@@ -3,7 +3,7 @@
 Authority (language-neutral first; Rust only for arbitration):
 
 - RFC 0004 §3 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
-  edit-v1.md:56-94): the common immutable MaterializationRequest records
+  edit-v1.md): the common immutable MaterializationRequest records
   (target_profile, style, encoding, newline, mapping_policy,
   representability, limits); the closed v1 MaterializationLimits fields and
   semantics; ExactOnly is intentionally the only v1 representability value;
@@ -18,13 +18,13 @@ Authority (language-neutral first; Rust only for arbitration):
   portable input locations (Value/Association) to target origins
   (snapshot identity, NodeRef, raw Span, relation Direct/Reencoded/
   Generated).
-- RFC 0016 §5.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:178-182): the
+- RFC 0016 §5.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md): the
   conservative default policy is core.projection.exact-or-reject@1 (never
   invented).
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs — arbitration:
-  MaterializationLimits defaults materialization.rs:95-105;
-  MaterializationRequest defaults materialization.rs:122-132;
-  failure code mapping materialization.rs:379-390.
+  MaterializationLimits defaults materialization.rs;
+  MaterializationRequest defaults materialization.rs;
+  failure code mapping materialization.rs.
 - Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
   (core.materialization.formation-failed@1:556, invalid-request@1:562,
   resource-limit@1:574, unrepresentable@1:580, unsupported-encoding@1:586,
@@ -43,7 +43,7 @@ from consema.document.ids import MaterializationStyleId, ProfileId
 from consema.document.source import SourceEncoding
 from consema.document.structural import NodeRef, SnapshotIdentity, Span
 
-# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs:95-105
+# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs
 _DEFAULT_MAX_INPUT_NODES = 1_000_000
 _DEFAULT_MAX_OUTPUT_BYTES = 64 * 1024 * 1024
 _DEFAULT_MAX_DEPTH = 256
@@ -52,7 +52,7 @@ _DEFAULT_MAX_PROVENANCE_ENTRIES = 2_000_000
 
 
 class NewlinePolicy(enum.Enum):
-    """Explicit output newline policy (materialization.rs:42-62)."""
+    """Explicit output newline policy (materialization.rs)."""
 
     NONE = "None"
     LF = "Lf"
@@ -60,20 +60,20 @@ class NewlinePolicy(enum.Enum):
 
     @property
     def bytes(self) -> bytes:
-        """Exact selected newline bytes (materialization.rs:55-61)."""
+        """Exact selected newline bytes (materialization.rs)."""
         return {NewlinePolicy.NONE: b"", NewlinePolicy.LF: b"\n", NewlinePolicy.CRLF: b"\r\n"}[self]
 
 
 class MappingPolicy(enum.Enum):
     """Explicit treatment of ordered mappings at object-only targets
-    (materialization.rs:65-71; RFC 0004 §3)."""
+    (materialization.rs; RFC 0004 §3)."""
 
     REQUIRE_OBJECT = "RequireObject"
     UNIQUE_STRING_ENTRIES_TO_OBJECT = "UniqueStringEntriesToObject"
 
 
 class RepresentabilityPolicy(enum.Enum):
-    """Closed v1 representability policy (materialization.rs:74-78; RFC 0004
+    """Closed v1 representability policy (materialization.rs; RFC 0004
     §3: ExactOnly is intentionally the only v1 value)."""
 
     EXACT_ONLY = "ExactOnly"
@@ -82,7 +82,7 @@ class RepresentabilityPolicy(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class MaterializationLimits:
     """Resource limits for one complete materialization
-    (materialization.rs:81-105; RFC 0004 §3).
+    (materialization.rs; RFC 0004 §3).
 
     All limits apply before or during allocation; a failure returns no
     Document, no partial bytes, and no provenance that can be mistaken for a
@@ -99,10 +99,10 @@ class MaterializationLimits:
 @dataclass(frozen=True, slots=True)
 class MaterializationRequest:
     """Complete immutable request for creating one new target document
-    (materialization.rs:108-203; RFC 0004 §3).
+    (materialization.rs; RFC 0004 §3).
 
     ``new(target_profile, style)`` creates a strict request with UTF-8, LF,
-    Object-only, and ExactOnly defaults (materialization.rs:122-132).
+    Object-only, and ExactOnly defaults (materialization.rs).
     Materialization consumes one complete PortableValue; it never consumes a
     format AST, process-local handle, partial projection, or arbitrary bytes
     (RFC 0004 §3, lines 58-59).
@@ -121,7 +121,7 @@ class MaterializationRequest:
         cls, target_profile: ProfileId, style: MaterializationStyleId
     ) -> MaterializationRequest:
         """Creates a strict request with UTF-8, LF, Object-only, and ExactOnly
-        defaults (materialization.rs:122-132)."""
+        defaults (materialization.rs)."""
         return cls(target_profile=target_profile, style=style)
 
     def with_encoding(self, encoding: SourceEncoding) -> MaterializationRequest:
@@ -138,7 +138,7 @@ class MaterializationRequest:
 
 
 class MaterializationFidelity(enum.Enum):
-    """Whole-operation semantic fidelity (materialization.rs:206-212)."""
+    """Whole-operation semantic fidelity (materialization.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -146,7 +146,7 @@ class MaterializationFidelity(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class MaterializationReport:
-    """Complete ordered materialization report (materialization.rs:215-237).
+    """Complete ordered materialization report (materialization.rs).
 
     Report events are stable, ordered, machine-readable diagnostics; human
     wording is not a contract (RFC 0004 §7, lines 189-191).
@@ -167,7 +167,7 @@ class MaterializationReport:
 
 
 class MaterializationInputLocationKind(enum.Enum):
-    """Portable input location kind (materialization.rs:240-246; RFC 0004 §8)."""
+    """Portable input location kind (materialization.rs; RFC 0004 §8)."""
 
     VALUE = "Value"
     ASSOCIATION = "Association"
@@ -175,7 +175,7 @@ class MaterializationInputLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class MaterializationInputLocation:
-    """Portable input value or association location (materialization.rs:240-246).
+    """Portable input value or association location (materialization.rs).
 
     The location payload is the protocol/core value-path or association-
     location record (ValuePath / AssociationLocation of the semantic model,
@@ -198,7 +198,7 @@ class MaterializationInputLocation:
 
 class MaterializationRelation(enum.Enum):
     """Relationship from portable input fact to generated target syntax
-    (materialization.rs:249-257; RFC 0004 §8)."""
+    (materialization.rs; RFC 0004 §8)."""
 
     DIRECT = "Direct"
     REENCODED = "Reencoded"
@@ -208,7 +208,7 @@ class MaterializationRelation(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class MaterializedOrigin:
     """One exact output origin in the newly materialized snapshot
-    (materialization.rs:260-270)."""
+    (materialization.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -219,7 +219,7 @@ class MaterializedOrigin:
 @dataclass(frozen=True, slots=True)
 class MaterializationProvenanceEntry:
     """One input location mapped to one or more target origins
-    (materialization.rs:273-279)."""
+    (materialization.rs)."""
 
     input: MaterializationInputLocation
     outputs: tuple[MaterializedOrigin, ...] = field(default_factory=tuple)
@@ -227,7 +227,7 @@ class MaterializationProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class MaterializationProvenanceMap:
-    """Complete input-to-output provenance map (materialization.rs:282-325).
+    """Complete input-to-output provenance map (materialization.rs).
 
     Provenance points from portable input locations to the new Document; it
     is not the reverse-direction Projection provenance map (RFC 0004 §8).
@@ -243,7 +243,7 @@ class MaterializationProvenanceMap:
         limits: MaterializationLimits,
     ) -> MaterializationProvenanceMap:
         """Validates snapshot binding, non-empty outputs, and configured size
-        (materialization.rs:289-318)."""
+        (materialization.rs)."""
         units = len(entries)
         for entry in entries:
             if not entry.outputs:
@@ -270,7 +270,7 @@ class MaterializationProvenanceMap:
 
 
 class MaterializationFailureKind(enum.Enum):
-    """Stable materialization failure category (materialization.rs:328-351)."""
+    """Stable materialization failure category (materialization.rs)."""
 
     INVALID_REQUEST = "invalid-request"
     UNSUPPORTED_PROFILE = "unsupported-profile"
@@ -297,8 +297,8 @@ _CODE_BY_MATERIALIZATION_KIND = {
 class MaterializationFailure(Exception):
     """Stable materialization failure with a frozen registered code.
 
-    Code mapping authority: materialization.rs:379-390 and
-    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:556-604. Error text is
+    Code mapping authority: materialization.rs and
+    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs. Error text is
     human presentation only (RFC 0016 §6).
     """
 
@@ -322,7 +322,7 @@ class MaterializationFailure(Exception):
 @dataclass(frozen=True, slots=True)
 class FailedMaterializationAttempt:
     """Failed attempt without a Document or partial output bytes
-    (materialization.rs:394-402; RFC 0004 §7)."""
+    (materialization.rs; RFC 0004 §7)."""
 
     failure: MaterializationFailure
     report: MaterializationReport = field(default_factory=MaterializationReport)
@@ -332,7 +332,7 @@ class FailedMaterializationAttempt:
 @dataclass(frozen=True, slots=True, eq=False)
 class CompleteMaterialization:
     """Complete successful materialization; its document and audit facts are
-    never partial (materialization.rs:405-415; RFC 0004 §7)."""
+    never partial (materialization.rs; RFC 0004 §7)."""
 
     document: object
     fidelity: MaterializationFidelity
@@ -340,7 +340,7 @@ class CompleteMaterialization:
     provenance: MaterializationProvenanceMap = field(default_factory=MaterializationProvenanceMap)
 
 
-# The closed materialization completion algebra (materialization.rs:418-424;
+# The closed materialization completion algebra (materialization.rs;
 # RFC 0004 §7): a format materializer returns exactly one of these two
 # shapes. The protocol-layer transport core.materialization-result@1
 # (RFC 0004 §18) distinguishes present complete results from failure without

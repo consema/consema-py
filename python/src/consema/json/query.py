@@ -2,23 +2,23 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-json/src/query.rs:91-125
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-json/src/query.rs
   (native) and 142-183 (syntax) — domains json.native-semantic-query@1/2
   and json.lossless-syntax-query@1/2; JSON5 documents require version 2
-  (query.rs:100-104, 151-155; RFC 0005 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:152-172).
-- Operators: query.rs:307-356 (syntax: json.syntax-kind-is,
+  (query.rs; RFC 0005 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md).
+- Operators: query.rs (syntax: json.syntax-kind-is,
   json.syntax-text-equals, core.take, core.distinct-by-identity) and
-  query.rs:358-477 (native: json.try-object-members, json.member-name-
+  query.rs (native: json.try-object-members, json.member-name-
   equals, json.member-value, json.try-array-elements, json.array-element-
   value, core.take, core.distinct-by-identity).
-- Expression evaluation and StructureOrderMerge: query.rs:230-305.
-- Selection algebra: query.rs:479-496 (All/First/Last/ZeroOrOne/RequireOne
+- Expression evaluation and StructureOrderMerge: query.rs.
+- Selection algebra: query.rs (All/First/Last/ZeroOrOne/RequireOne
   with CardinalityViolation).
-- Limits and cancellation: consema-core/src/query.rs:2967-2981 (QueryLimits
+- Limits and cancellation: consema-core/src/query.rs (QueryLimits
   defaults max_steps=100_000, max_results=100_000); the step accounting
-  query.rs:204-213.
+  query.rs.
 - Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
-  error_registry.rs:108-118) via consema.protocol.query.QueryFailure.
+  error_registry.rs) via consema.protocol.query.QueryFailure.
 
 The transferable query model (QueryDomain, QueryExpression, OperatorCall,
 QuerySelection, QueryDefinition, ValidatedQuery, ExecutableQuery,
@@ -56,7 +56,7 @@ SYNTAX_DOMAIN_ID = "json.lossless-syntax-query"
 
 
 class JsonMatchKind(enum.Enum):
-    """Match role of one native query result (query.rs:11-43)."""
+    """Match role of one native query result (query.rs)."""
 
     VALUE = "Value"
     OBJECT_MEMBER = "ObjectMember"
@@ -65,7 +65,7 @@ class JsonMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class JsonMatch:
-    """One snapshot-bound native semantic query match (query.rs:11-43)."""
+    """One snapshot-bound native semantic query match (query.rs)."""
 
     kind: JsonMatchKind
     node: NodeRef
@@ -81,7 +81,7 @@ class JsonMatch:
 
 @dataclass(frozen=True, slots=True)
 class JsonSyntaxMatch:
-    """One snapshot-bound lossless syntax query match (query.rs:55-88)."""
+    """One snapshot-bound lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -91,13 +91,13 @@ class JsonSyntaxMatch:
 
 @dataclass(frozen=True, slots=True)
 class JsonQueryExecution:
-    """Complete ordered query result (query.rs:90-125, 142-183)."""
+    """Complete ordered query result (query.rs)."""
 
     matches: tuple[object, ...]
 
 
 class JsonCancellationToken:
-    """Cooperative cancellation signal (query.rs:204-213; consema-core)."""
+    """Cooperative cancellation signal (query.rs; consema-core)."""
 
     def __init__(self) -> None:
         self._cancelled = False
@@ -110,7 +110,7 @@ class JsonCancellationToken:
 
 
 class JsonQueryLimits:
-    """Query resource limits (consema-core/src/query.rs:2967-2981)."""
+    """Query resource limits (consema-core/src/query.rs)."""
 
     def __init__(self, max_steps: int = 100_000, max_results: int = 100_000) -> None:
         self.max_steps = max_steps
@@ -151,7 +151,7 @@ def execute_json_query(
     limits: JsonQueryLimits,
     cancellation: JsonCancellationToken,
 ) -> JsonQueryExecution:
-    """Executes a validated JSON native semantic query (query.rs:91-125)."""
+    """Executes a validated JSON native semantic query (query.rs)."""
     definition = executable.definition
     version = definition.domain.version
     if (
@@ -179,7 +179,7 @@ def execute_json_syntax_query(
     limits: JsonQueryLimits,
     cancellation: JsonCancellationToken,
 ) -> JsonQueryExecution:
-    """Executes a validated JSON lossless syntax query (query.rs:142-183)."""
+    """Executes a validated JSON lossless syntax query (query.rs)."""
     definition = executable.definition
     version = definition.domain.version
     if (
@@ -223,7 +223,7 @@ def _execute_expression(
             context.step(len(output))
         return output
     # StructureOrderMerge: source-order by (start, end, entity index)
-    # (query.rs:252-269).
+    # (query.rs).
     output = []
     for branch in expression.branches:
         output.extend(_execute_expression(branch, input_matches, context))

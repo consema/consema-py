@@ -5,18 +5,18 @@ Frozen names/numbers with authority citations:
 - ``ContentDigest``: algorithm exactly ``"sha256"``, hex exactly 64 lowercase
   hexadecimal characters, digest of the complete original byte sequence with
   no decoding/BOM removal/newline normalization mixed in — RFC 0003 §3
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:45-58);
-  https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:16-54 (arbitration).
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md);
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs (arbitration).
   Golden values: conformance/vectors/source-v1.json cases
   ``source.digest.sha256-empty`` (lines 4-10) and ``source.digest.sha256-abc``
   (lines 11-16).
 - ``ProfileId`` / ``FormatFamilyId``: namespaced ID + immutable version —
-  https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:345-402.
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs.
 - ``FormatOperationId``: namespaced operation identifier; its Display form
   ``id@version`` is frozen by the edit-plan metadata matching rule —
-  https://github.com/consema/consema-rs/blob/main/consema-document/src/operation_registry.rs:10-42, edit_plan.rs:91-98.
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/operation_registry.rs, edit_plan.rs.
 - ``MaterializationStyleId``: versioned format-owned style identifier —
-  https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs:13-39.
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs.
 
 The vector suite name ``consema.source.conformance@1`` and the capability ids
 of its cases (``core.source.snapshot@1``, ``core.source.encoding@1``,
@@ -38,7 +38,7 @@ class ContentDigest:
     """Stable SHA-256 identity of exact raw source bytes.
 
     Frozen by RFC 0003 §3 (algorithm "sha256", 64 lowercase hex characters);
-    arbitration: https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:16-54. Equal raw bytes
+    arbitration: https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs. Equal raw bytes
     always produce equal content digests across processes and languages; a
     digest mismatch proves different bytes. Digest equality is not a claim
     about Profile, encoding, native meaning, or document identity.
@@ -52,7 +52,7 @@ class ContentDigest:
 
     @classmethod
     def of(cls, raw: bytes) -> ContentDigest:
-        """Computes the digest of exact raw bytes (SHA-256, source.rs:22-24)."""
+        """Computes the digest of exact raw bytes (SHA-256, source.rs)."""
         return cls(hashlib.sha256(raw).digest())
 
     @classmethod
@@ -84,10 +84,10 @@ class ContentDigest:
 
 @dataclass(frozen=True, slots=True)
 class ProfileId:
-    """Immutable named language profile (lib.rs:375-402).
+    """Immutable named language profile (lib.rs).
 
     Example: ``ProfileId.new("json.strict", 1)`` — supported target profiles
-    are frozen by RFC 0004 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:106-113).
+    are frozen by RFC 0004 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md).
     """
 
     id: str
@@ -100,7 +100,7 @@ class ProfileId:
 
 @dataclass(frozen=True, slots=True)
 class FormatFamilyId:
-    """Stable namespaced format family contract (lib.rs:345-372)."""
+    """Stable namespaced format family contract (lib.rs)."""
 
     id: str
     version: int
@@ -112,10 +112,10 @@ class FormatFamilyId:
 
 @dataclass(frozen=True, slots=True)
 class FormatOperationId:
-    """Immutable namespaced operation identifier (operation_registry.rs:10-42).
+    """Immutable namespaced operation identifier (operation_registry.rs).
 
     Its canonical string form ``id@version`` is frozen by the EditPlan
-    operation-metadata matching rule (edit_plan.rs:91-98): the SourcePatch
+    operation-metadata matching rule (edit_plan.rs): the SourcePatch
     metadata key ``operation.{index}`` must equal this form.
     """
 
@@ -127,18 +127,18 @@ class FormatOperationId:
         return cls(id=id, version=version)
 
     def to_string(self) -> str:
-        """Canonical ``id@version`` spelling (operation_registry.rs:38-42)."""
+        """Canonical ``id@version`` spelling (operation_registry.rs)."""
         return f"{self.id}@{self.version}"
 
 
 @dataclass(frozen=True, slots=True)
 class MaterializationStyleId:
     """Versioned format-owned materialization style identifier
-    (materialization.rs:13-39).
+    (materialization.rs).
 
     Frozen style IDs for 0.5.0: ``json.canonical-compact@1``,
     ``json.canonical-pretty@1``, ``toml.canonical-document@1``
-    (RFC 0004 §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:98-105).
+    (RFC 0004 §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md).
     """
 
     id: str

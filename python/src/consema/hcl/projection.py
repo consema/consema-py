@@ -25,11 +25,11 @@ rendered.
 
 Authority (language-neutral first; Rust only for byte/registry
 arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/projection.rs — the record contract
-projection.rs:24-65, the target and policy projection.rs:155-239, limits
-projection.rs:241-268, failure algebra projection.rs:432-477, the
-`hcl.expression@1` contract projection.rs:479-592, kind-family mapping
-projection.rs:996-1040, the body walk projection.rs:602-1000, and the
-provenance pre-order walk projection.rs:117-131.
+projection.rs, the target and policy projection.rs, limits
+projection.rs, failure algebra projection.rs, the
+`hcl.expression@1` contract projection.rs, kind-family mapping
+projection.rs, the body walk projection.rs, and the
+provenance pre-order walk projection.rs.
 """
 
 from __future__ import annotations
@@ -62,14 +62,14 @@ HCL_EXPRESSION_RECORD = "hcl.expression@1"
 
 
 class ProjectionTarget(enum.Enum):
-    """Versioned HCL projection target (projection.rs:166-172)."""
+    """Versioned HCL projection target (projection.rs)."""
 
     BODY_V1 = "hcl.projection.body@1"
 
 
 class ExpressionPolicy(enum.Enum):
     """Derived-expression handling for the body target (RFC 0014 §8.2;
-    projection.rs:173-183)."""
+    projection.rs)."""
 
     FAIL = "Fail"
     PROJECT_EXPRESSION = "ProjectExpression"
@@ -77,7 +77,7 @@ class ExpressionPolicy(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectionLimits:
-    """HCL projection resource limits (projection.rs:241-268)."""
+    """HCL projection resource limits (projection.rs)."""
 
     max_source_nodes: int = 2_000_000
     max_value_nodes: int = 2_000_000
@@ -88,7 +88,7 @@ class ProjectionLimits:
 @dataclass(frozen=True, slots=True)
 class ProjectionRequest:
     """Explicit HCL projection request; every policy is mandatory
-    (projection.rs:185-239)."""
+    (projection.rs)."""
 
     target: ProjectionTarget = ProjectionTarget.BODY_V1
     expression_policy: ExpressionPolicy = ExpressionPolicy.FAIL
@@ -97,18 +97,18 @@ class ProjectionRequest:
     @classmethod
     def body(cls) -> ProjectionRequest:
         """Exact `hcl.projection.body@1` record request; a derived
-        expression fails the projection atomically (projection.rs:195-203)."""
+        expression fails the projection atomically (projection.rs)."""
         return cls()
 
     @classmethod
     def body_with_expression_policy(cls, policy: ExpressionPolicy) -> ProjectionRequest:
         """Exact body request with an explicit derived-expression policy
-        (projection.rs:205-214)."""
+        (projection.rs)."""
         return cls(expression_policy=policy)
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:270-279)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -116,7 +116,7 @@ class Fidelity(enum.Enum):
 
 
 class ProvenanceRelation(enum.Enum):
-    """Source-to-projection relation (projection.rs:281-292)."""
+    """Source-to-projection relation (projection.rs)."""
 
     DIRECT = "Direct"
     DERIVED = "Derived"
@@ -126,7 +126,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One exact source origin (projection.rs:294-305)."""
+    """One exact source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -137,7 +137,7 @@ class SourceOrigin:
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
     """One many-valued provenance entry: one projected record location and
-    its ordered source origins (projection.rs:307-315)."""
+    its ordered source origins (projection.rs)."""
 
     projected: ValuePath
     origins: tuple[SourceOrigin, ...]
@@ -145,20 +145,20 @@ class ProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
-    """Immutable many-valued provenance mapping (projection.rs:317-346)."""
+    """Immutable many-valued provenance mapping (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = ()
 
 
 class ProjectionEventKind(enum.Enum):
-    """Projection report category (projection.rs:348-355)."""
+    """Projection report category (projection.rs)."""
 
     EXPRESSION_SUBSTITUTED = "ExpressionSubstituted"
 
 
 @dataclass(frozen=True, slots=True)
 class ProjectionEvent:
-    """One explicit transformation event (projection.rs:357-368)."""
+    """One explicit transformation event (projection.rs)."""
 
     kind: ProjectionEventKind
     expression: NodeRef
@@ -168,14 +168,14 @@ class ProjectionEvent:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
-    """Complete ordered projection report (projection.rs:370-399)."""
+    """Complete ordered projection report (projection.rs)."""
 
     events: tuple[ProjectionEvent, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class CompleteProjection:
-    """Complete successful projection (projection.rs:401-412)."""
+    """Complete successful projection (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -186,7 +186,7 @@ class CompleteProjection:
 @dataclass(frozen=True, slots=True)
 class FailedProjectionAttempt:
     """Failed projection attempt without a partial value
-    (projection.rs:414-421)."""
+    (projection.rs)."""
 
     diagnostics: tuple[HclDiagnostic, ...]
     report: ProjectionReport
@@ -410,7 +410,7 @@ class _Context:
     def expression_record(self, expression: HclExpression) -> PortableValue:
         """The authorized `hcl.expression@1` ExtendedValue record (RFC
         0014 §8.2): kind family spelling, exact source text, structural
-        fingerprint (projection.rs:67-97)."""
+        fingerprint (projection.rs)."""
         self.reserve_value(4)
         return PortableValue.object(
             (
@@ -499,7 +499,7 @@ def _decimal_value(canonical: str) -> PortableValue:
 
 def project(document: HclDocument, request: ProjectionRequest) -> ProjectionResult:
     """Projects one complete HCL document under one explicit target and
-    policy contract (RFC 0014 §8; projection.rs:594-629).
+    policy contract (RFC 0014 §8; projection.rs).
 
     The projection is atomic: a recovered source, a derived expression
     under the default policy, an unrepresentable native fact, or a resource

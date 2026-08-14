@@ -1,15 +1,15 @@
 """The Java Properties format operation registry (5 frozen records).
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-properties/src/operation_registry.rs:16-48 — the
+Authority: https://github.com/consema/consema-rs/blob/main/consema-properties/src/operation_registry.rs — the
 exact operation ids, target roles, argument schemas, and support
 classifications; the surface is frozen by the registry test
-(operation_registry.rs:67-95: exactly five Supported structural operations
+(operation_registry.rs: exactly five Supported structural operations
 for every profile) and RFC 0010 section 13 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-
-profiles-v1.md:385-393). The vector suite pins the exact five-operation
+profiles-v1.md). The vector suite pins the exact five-operation
 surface (conformance/vectors/java-properties-v1.json:147-149,
 "registry.frozen-five-operation-surface").
 
-Frozen records (operation_registry.rs:17-47):
+Frozen records (operation_registry.rs):
 
 1. java-properties.edit.insert-property@1         java-properties.document   key(PortableValue), value(PortableValue), placement(Placement)   Supported
 2. java-properties.edit.remove-property@1         java-properties.property   (no arguments)                                                  Supported
@@ -18,9 +18,9 @@ Frozen records (operation_registry.rs:17-47):
 5. java-properties.edit.replace-semantic-value@1  java-properties.property   value(PortableValue)                                            Supported
 
 Operation ids/versions and the ``id@version`` display form are frozen by
-consema-document (FormatOperationId, operation_registry.rs:10-42); the
+consema-document (FormatOperationId, operation_registry.rs); the
 EditPlan operation-metadata matching rule requires that form
-(edit_plan.rs:84-121).
+(edit_plan.rs).
 """
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ from consema.properties.kinds import PropertiesProfile
 
 
 class OperationSupport(enum.Enum):
-    """Support classification (operation_registry.rs:56-60, 71-78)."""
+    """Support classification (operation_registry.rs)."""
 
     SUPPORTED = "Supported"
     EXISTING_TYPED_CAPABILITY = "ExistingTypedCapability"
@@ -51,7 +51,7 @@ class OperationArgumentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class OperationArgumentDescriptor:
-    """One operation argument schema (operation_registry.rs:63-65)."""
+    """One operation argument schema (operation_registry.rs)."""
 
     name: str
     kind: OperationArgumentKind
@@ -60,7 +60,7 @@ class OperationArgumentDescriptor:
 
 @dataclass(frozen=True, slots=True)
 class FormatOperationDescriptor:
-    """One validated immutable operation record (operation_registry.rs:50-61)."""
+    """One validated immutable operation record (operation_registry.rs)."""
 
     id: FormatOperationId
     target_role: str
@@ -75,7 +75,7 @@ class FormatOperationDescriptor:
 @dataclass(frozen=True, slots=True)
 class PropertiesFormatOperationRegistry:
     """Validated operation registry for one exact Java Properties profile
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
 
     profile: ProfileId
     operations: tuple[FormatOperationDescriptor, ...]
@@ -112,7 +112,7 @@ def _argument(name: str, kind: OperationArgumentKind) -> tuple[str, OperationArg
 
 def descriptors() -> tuple[FormatOperationDescriptor, ...]:
     """The frozen five-record descriptor set
-    (operation_registry.rs:16-48)."""
+    (operation_registry.rs)."""
     return (
         _descriptor(
             "java-properties.edit.insert-property@1",
@@ -150,7 +150,7 @@ def format_operation_registry(
     profile: PropertiesProfile,
 ) -> PropertiesFormatOperationRegistry:
     """Returns the validated operation registry for one exact Java
-    Properties profile (operation_registry.rs:9-14)."""
+    Properties profile (operation_registry.rs)."""
     return PropertiesFormatOperationRegistry(
         profile=profile.id(),
         operations=descriptors(),

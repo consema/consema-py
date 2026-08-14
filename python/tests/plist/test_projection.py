@@ -184,7 +184,7 @@ def test_projection_atomic_failures():
 def test_projection_uid_policy():
     # UIDs project only under an explicit Include policy into a typed UID
     # member and are never disguised as integers (RFC 0013 §9;
-    # projection.rs:63-71).
+    # projection.rs).
     document = binary_document(
         "62706c6973743030800508000000000000010100000000000000010000000000000000000000000000000a"
     )

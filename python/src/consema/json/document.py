@@ -2,25 +2,25 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:170-286 —
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs —
   snapshot identity, exact source, render() (exact current source bytes,
-  lib.rs:198-202), format family (lib.rs:204-208), profile (lib.rs:210-214),
-  formation status (lib.rs:216-220), diagnostics (lib.rs:222-226), lossless
-  structural index (lib.rs:228-232), syntax kinds (lib.rs:234-238), root
-  (lib.rs:240-247).
-- Native value views: lib.rs:344-611 — JsonValue (kind/typed accessors),
+  lib.rs), format family (lib.rs), profile (lib.rs),
+  formation status (lib.rs), diagnostics (lib.rs), lossless
+  structural index (lib.rs), syntax kinds (lib.rs), root
+  (lib.rs).
+- Native value views: lib.rs — JsonValue (kind/typed accessors),
   JsonObjectMember (ordinal, key/value node refs, name), JsonArrayElement;
-  the regional availability model lib.rs:288-321; node roles
+  the regional availability model lib.rs; node roles
   (NodeRole::Value / ObjectMember / ObjectKey / ArrayElement / JsonSyntaxPiece,
-  consema-document lib.rs:113-251).
-- Span/nodes/identity: consema-document (Span lib.rs:295-342, NodeRef
-  lib.rs:254-292, DocumentAuthority lib.rs:54-110) — reused as-is from
+  consema-document lib.rs).
+- Span/nodes/identity: consema-document (Span lib.rs, NodeRef
+  lib.rs, DocumentAuthority lib.rs) — reused as-is from
   consema.document.structural.
 
 The document is logically immutable; every NodeRef and Span is bound to one
 snapshot identity. Recovered documents retain exact bytes and explicit
 recovery structure but never fabricate native semantics
-(RFC 0005 §2, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:34-48).
+(RFC 0005 §2, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md).
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ from consema.json.parser import (
 @dataclass(frozen=True, slots=True)
 class JsonDocument:
     """Complete immutable JSON/JSONC/JSON5 document snapshot
-    (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:170-183)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs)."""
 
     authority: DocumentAuthority
     source: SourceSnapshot
@@ -74,42 +74,42 @@ class JsonDocument:
 
     def snapshot_identity(self) -> object:
         """Snapshot identity to which every NodeRef and Span belongs
-        (lib.rs:187-190)."""
+        (lib.rs)."""
         return self.authority.identity
 
     def render(self) -> bytes:
         """Exact current source bytes; the default rendering
-        (lib.rs:198-202)."""
+        (lib.rs)."""
         return self.source.bytes()
 
     def format_family(self) -> FormatFamilyId:
-        """JSON format family contract (lib.rs:204-208)."""
+        """JSON format family contract (lib.rs)."""
         return FormatFamilyId.new("json", 1)
 
     def profile_id(self) -> ProfileId:
-        """Exact language profile (lib.rs:210-214)."""
+        """Exact language profile (lib.rs)."""
         return self.profile.id()
 
     def formation_status(self) -> FormationStatus:
-        """Whether recovery structure was required (lib.rs:216-220)."""
+        """Whether recovery structure was required (lib.rs)."""
         return self._formation_status
 
     def diagnostic_records(self) -> tuple[JsonDiagnostic, ...]:
-        """Deterministically ordered document diagnostics (lib.rs:222-226)."""
+        """Deterministically ordered document diagnostics (lib.rs)."""
         return self.diagnostics
 
     def lossless_structural_index(self) -> LosslessStructuralIndex:
         """Exhaustive token/trivia/error-region byte coverage
-        (lib.rs:228-232)."""
+        (lib.rs)."""
         return self.structural_index
 
     def lossless_syntax_kinds(self) -> tuple[JsonSyntaxKind, ...]:
         """Format-specific kind for every structural piece in source order
-        (lib.rs:234-238)."""
+        (lib.rs)."""
         return self.syntax_kinds
 
     def root(self) -> JsonValue:
-        """Root native semantic value (lib.rs:240-247)."""
+        """Root native semantic value (lib.rs)."""
         return JsonValue(self, self.root_index)
 
     # -- internal entity access ---------------------------------------------
@@ -130,7 +130,7 @@ class JsonDocument:
 
     def validate_ref(self, node: NodeRef, roles: tuple[NodeRole, ...]) -> int:
         """Resolves one snapshot-bound handle to an entity index
-        (lib.rs:268-285)."""
+        (lib.rs)."""
         if node.snapshot != self.authority.identity:
             raise JsonAccessError(JsonAccessErrorKind.WRONG_SNAPSHOT)
         if node.role not in roles:
@@ -141,8 +141,7 @@ class JsonDocument:
 
 
 class JsonAccessErrorKind:
-    """Stable node-resolution failures (consema-json lib.rs ``JsonAccessError``,
-    :614-621; line numbers may drift, the symbol name is the anchor)."""
+    """Stable node-resolution failures (consema-json lib.rs ``JsonAccessError``)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"
@@ -150,8 +149,7 @@ class JsonAccessErrorKind:
 
 
 class JsonAccessError(Exception):
-    """Node resolution failure (consema-json lib.rs ``JsonAccessError``,
-    :614-621; line numbers may drift, the symbol name is the anchor)."""
+    """Node resolution failure (consema-json lib.rs ``JsonAccessError``)."""
 
     def __init__(self, kind: str) -> None:
         super().__init__(kind)
@@ -159,7 +157,7 @@ class JsonAccessError(Exception):
 
 
 class JsonValue:
-    """Immutable view of one native value entity (lib.rs:344-495)."""
+    """Immutable view of one native value entity (lib.rs)."""
 
     __slots__ = ("document", "index")
 
@@ -174,7 +172,7 @@ class JsonValue:
         return self.document.span(self.index)
 
     def kind(self) -> SemanticAvailability[JsonValueKind]:
-        """Native category when locally available (lib.rs:364-388)."""
+        """Native category when locally available (lib.rs)."""
         internal = self.document.value_entity(self.index).internal
         if internal.kind is InternalKind.UNAVAILABLE:
             return SemanticAvailability.unavailable(internal.payload)
@@ -249,7 +247,7 @@ class JsonValue:
 
 class JsonObjectMember:
     """One ordered object member with duplicate identity preserved
-    (lib.rs:497-563)."""
+    (lib.rs)."""
 
     __slots__ = ("document", "index")
 
@@ -273,7 +271,7 @@ class JsonObjectMember:
         return self.document.node_ref(self.entity().value, NodeRole.VALUE)
 
     def name(self) -> SemanticAvailability[str]:
-        """Decoded member name when locally available (lib.rs:543-551)."""
+        """Decoded member name when locally available (lib.rs)."""
         internal = self.document.value_entity(self.entity().key).internal
         if internal.kind is InternalKind.STRING:
             return SemanticAvailability.available(internal.payload)
@@ -289,7 +287,7 @@ class JsonObjectMember:
 
 
 class JsonArrayElement:
-    """One ordered array element (lib.rs:565-611)."""
+    """One ordered array element (lib.rs)."""
 
     __slots__ = ("document", "index")
 

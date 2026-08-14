@@ -2,7 +2,7 @@
 (formerly tests/yaml/_verify_grammar.py, deleted after transcription).
 
 The %TAG directive test is the only %TAG coverage in the Python suite
-(backend.rs:184-213); the remaining tests pin parser paths the vector
+(backend.rs); the remaining tests pin parser paths the vector
 suite does not cover directly: multiline plain scalars, compact mappings,
 nested collections, same-line marker content, explicit keys, quoted
 escapes, block scalar folding/chomping/indent indicators, anchors before
@@ -34,7 +34,7 @@ def _projected_root(source: str):
 
 
 def test_tag_directive_resolution():
-    # backend.rs:184-213: a %TAG directive prefix resolves the tagged
+    # backend.rs: a %TAG directive prefix resolves the tagged
     # scalar to the full handle and keeps the alias edge in the same
     # stream as a second document.
     document = parse_source(

@@ -9,17 +9,17 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   limit cases lines 155-172.
 - RFC 0003 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md): content
   digest §3 lines 45-62; closed v1 encoding IDs §4.1 lines 66-77; resolution
-  inputs and priority §4.2 lines 79-107; decoding rejections §4.3 lines
-  109-122; raw spans and decoded boundaries §5 lines 124-141;
+  inputs and priority §4.2、decoding rejections §4.3、raw spans and decoded
+  boundaries §5（行号已删除，以 § 锚为准）;
   core.source-snapshot@1 exact fields §6 lines 143-160; resource behavior
   §12 lines 311-317.
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs — byte/registry arbitration only:
-  SourceEncoding wire ids source.rs:141-150; WindowsCodePage registry
-  source.rs:57-119; BOM detection source.rs:784-804; resolution priority
-  source.rs:727-782; UTF-16 decode source.rs:806-869; Latin-1 decode
-  source.rs:880-894; code-page decode source.rs:901-992; SourceLimits
-  defaults source.rs:401-409; decoded-boundary conversion source.rs:622-665,
-  1090-1157.
+  SourceEncoding wire ids source.rs; WindowsCodePage registry
+  source.rs; BOM detection source.rs; resolution priority
+  source.rs; UTF-16 decode source.rs; Latin-1 decode
+  source.rs; code-page decode source.rs; SourceLimits
+  defaults source.rs; decoded-boundary conversion source.rs,
+ .（区间定义处）
 - Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
   (core.source.invalid-utf8@1:207, core.source.encoding-conflict@1:366,
   core.source.invalid-sequence@1:372, core.source.unsupported-bom@1:405,
@@ -40,15 +40,15 @@ from dataclasses import dataclass, field, replace
 from consema.document.ids import ContentDigest
 from consema.document.structural import LocationError, LocationErrorKind
 
-# CHECKPOINT_STRIDE, https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:13
+# CHECKPOINT_STRIDE, https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs
 _CHECKPOINT_STRIDE = 256
 
-# Source limits defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:401-409
+# Source limits defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs
 _DEFAULT_MAX_RAW_BYTES = 64 * 1024 * 1024
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
 _DEFAULT_MAX_DECODED_SCALARS = 64 * 1024 * 1024
 
-# Frozen Windows code-page registry, https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:63-68
+# Frozen Windows code-page registry, https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs
 _FROZEN_CODE_PAGES = frozenset((874, 932, 936, 949, 950) + tuple(range(1250, 1259)) + (65001,))
 
 # Python stdlib codec name per frozen code page (zero-dependency bridge; the
@@ -74,7 +74,7 @@ _CODEC_BY_CODE_PAGE = {
 
 
 class SourceEncodingKind(enum.Enum):
-    """Closed source encoding kinds (source.rs:121-155; RFC 0003 §4.1)."""
+    """Closed source encoding kinds (source.rs; RFC 0003 §4.1)."""
 
     BINARY = "binary"
     UTF8 = "utf-8"
@@ -87,12 +87,12 @@ class SourceEncodingKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class WindowsCodePage:
     """One deterministic Windows code page admitted by source contract v2
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:57-119).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs).
 
     Only the frozen set {874, 932, 936, 949, 950, 1250-1258, 65001} is
-    published (source.rs:63-68). Windows code pages are never resolved from
+    published (source.rs). Windows code pages are never resolved from
     the host locale. The v6 codes core.source.code-page-required@1 and
-    core.source.unsupported-code-page@1 (error_registry.rs:967,973) belong to
+    core.source.unsupported-code-page@1 (error_registry.rs) belong to
     the declaring format Profile layer, not to this resolver.
     """
 
@@ -113,7 +113,7 @@ class WindowsCodePage:
 
     @property
     def name(self) -> str:
-        """Canonical ``windows-{number}`` spelling (source.rs:76-96)."""
+        """Canonical ``windows-{number}`` spelling (source.rs)."""
         return f"windows-{self.number}"
 
     @property
@@ -125,7 +125,7 @@ class WindowsCodePage:
 @dataclass(frozen=True, slots=True)
 class SourceEncoding:
     """Closed source encoding set supported by source contracts v1 and v2
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:121-155).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs).
 
     Wire identifiers match the vector suite's ``selected`` values exactly
     (conformance/vectors/source-v1.json lines 27, 33, 39, 45, 51):
@@ -168,7 +168,7 @@ class SourceEncoding:
 
     @property
     def as_str(self) -> str:
-        """Stable wire identifier (source.rs:141-150)."""
+        """Stable wire identifier (source.rs)."""
         if self.kind is SourceEncodingKind.WINDOWS_CODE_PAGE:
             return self.code_page.name
         return self.kind.value
@@ -180,10 +180,10 @@ class SourceEncoding:
 
 class BomPolicy(enum.Enum):
     """Whether marker-shaped leading bytes participate in BOM resolution
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:158-164).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs).
 
     Wire spellings "DetectUnicode"/"TreatAsContent" are frozen by
-    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/source.rs:606-609.
+    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/source.rs.
     """
 
     DETECT_UNICODE = "DetectUnicode"
@@ -191,7 +191,7 @@ class BomPolicy(enum.Enum):
 
 
 class BomKind(enum.Enum):
-    """Recognized Unicode byte-order mark (source.rs:167-187)."""
+    """Recognized Unicode byte-order mark (source.rs)."""
 
     UTF8 = "Utf8"
     UTF16LE = "Utf16Le"
@@ -207,7 +207,7 @@ class BomKind(enum.Enum):
 
 
 class UnsupportedBomKind(enum.Enum):
-    """Recognized but unsupported Unicode marker (source.rs:719-725)."""
+    """Recognized but unsupported Unicode marker (source.rs)."""
 
     UTF32LE = "Utf32Le"
     UTF32BE = "Utf32Be"
@@ -216,10 +216,10 @@ class UnsupportedBomKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EncodingRequest:
     """Caller inputs to deterministic encoding resolution
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:190-260; RFC 0003 §4.2).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs; RFC 0003 §4.2).
 
     Resolution priority is caller_override -> declaration -> bom ->
-    profile_default (RFC 0003 §4.2, https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:95-104); priority
+    profile_default (RFC 0003 §4.2, https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md); priority
     chooses only when higher evidence is absent. Any two present BOM,
     declaration, and caller facts that disagree produce an EncodingConflict;
     the resolver never guesses or silently lets priority hide a contradiction.
@@ -237,7 +237,7 @@ class EncodingRequest:
 
     @classmethod
     def binary(cls) -> EncodingRequest:
-        """Opaque-binary request (source.rs:211-214)."""
+        """Opaque-binary request (source.rs)."""
         return cls(profile_default=SourceEncoding.binary())
 
     def with_declaration(self, declaration: SourceEncoding) -> EncodingRequest:
@@ -253,7 +253,7 @@ class EncodingRequest:
 @dataclass(frozen=True, slots=True)
 class EncodingFacts:
     """Complete, auditable result of encoding resolution
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:263-379; RFC 0003 §4.2).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs; RFC 0003 §4.2).
 
     ``selected`` is the first present value in the frozen priority order
     caller_override -> declaration -> bom -> profile_default, and only when
@@ -276,7 +276,7 @@ class EncodingFacts:
         caller_override: SourceEncoding | None,
         selected: SourceEncoding,
     ) -> EncodingFacts:
-        """Validates a structurally complete encoding-facts claim (source.rs:278-300).
+        """Validates a structurally complete encoding-facts claim (source.rs).
 
         Proves resolution consistency only; the caller must still verify that
         the claimed BOM is present in the supplied raw bytes.
@@ -307,7 +307,7 @@ class EncodingFacts:
         selected: SourceEncoding,
     ) -> EncodingFacts:
         """Validates a source-v2 claim including explicit BOM interpretation
-        (source.rs:303-333)."""
+        (source.rs)."""
         if bom_policy is BomPolicy.TREAT_AS_CONTENT and bom is not None:
             raise SourceError(
                 SourceErrorKind.ENCODING_CONFLICT,
@@ -334,7 +334,7 @@ class EncodingFacts:
 @dataclass(frozen=True, slots=True)
 class DecodedPosition:
     """One exact boundary expressed in every supported coordinate system
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:412-422; RFC 0003 §5).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs; RFC 0003 §5).
 
     Only scalar boundaries are addressable; a raw offset inside a UTF-8 scalar
     or between a UTF-16 surrogate pair is rejected rather than rounded.
@@ -347,7 +347,7 @@ class DecodedPosition:
 
 
 class DecodedOffsetKind(enum.Enum):
-    """Decoded coordinate system for raw-byte resolution (source.rs:425-433)."""
+    """Decoded coordinate system for raw-byte resolution (source.rs)."""
 
     UTF8_BYTE = "utf8-byte"
     UNICODE_SCALAR = "unicode-scalar"
@@ -376,7 +376,7 @@ class DecodedOffset:
 
 class SourceErrorKind(enum.Enum):
     """Closed set of source construction failures
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:669-708)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs)."""
 
     INVALID_UTF8 = "invalid-utf8"
     INVALID_SEQUENCE = "invalid-sequence"
@@ -403,9 +403,9 @@ class SourceError(Exception):
     (core.source.invalid-utf8@1:207, core.source.invalid-sequence@1:372,
     core.source.encoding-conflict@1:366, core.source.unsupported-bom@1:405,
     core.source.resource-limit@1:399); variant semantics per
-    https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:669-708. The OffsetOverflow variant
+    https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs. The OffsetOverflow variant
     shares the resource-limit code (FatalFormationFailure mapping,
-    lib.rs:701-705). Error text is human presentation only (RFC 0016 §6).
+    lib.rs). Error text is human presentation only (RFC 0016 §6).
     """
 
     def __init__(
@@ -464,7 +464,7 @@ class SourceError(Exception):
 @dataclass(frozen=True, slots=True)
 class SourceLimits:
     """Resource bounds applied while a source snapshot is constructed
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:382-409; RFC 0003 §12).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs; RFC 0003 §12).
 
     Limits apply before or during allocation; a limit failure returns no
     partial snapshot, mapping, or patch result.
@@ -477,7 +477,7 @@ class SourceLimits:
     @classmethod
     def unbounded(cls) -> SourceLimits:
         """Compatibility limits for already-bounded format parsers
-        (source.rs:394-399)."""
+        (source.rs)."""
         return cls(
             max_raw_bytes=sys.maxsize,
             max_decoded_utf8_bytes=sys.maxsize,
@@ -505,7 +505,7 @@ class _DecodedIndex:
 @dataclass(frozen=True, slots=True)
 class SourceSnapshot:
     """Immutable ownership of exact raw bytes plus explicitly derived text facts
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:477-666; RFC 0003 §3/§4/§6).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs; RFC 0003 §3/§4/§6).
 
     The raw bytes, the content digest, and the encoding facts are exact and
     immutable; the decoded text is derived once at construction. Binary
@@ -527,7 +527,7 @@ class SourceSnapshot:
         cls, raw: bytes, request: EncodingRequest, limits: SourceLimits
     ) -> SourceSnapshot:
         """Constructs a source from raw bytes using explicit resolution inputs
-        and limits (source.rs:488-550)."""
+        and limits (source.rs)."""
         _check_limit("raw-bytes", len(raw), limits.max_raw_bytes)
         encoding = _resolve_encoding(raw, request)
         digest = ContentDigest.of(raw)
@@ -560,7 +560,7 @@ class SourceSnapshot:
 
     @classmethod
     def from_utf8(cls, raw: bytes) -> SourceSnapshot:
-        """Compatibility constructor for exact UTF-8 sources (source.rs:553-568).
+        """Compatibility constructor for exact UTF-8 sources (source.rs).
 
         Uses the caller-override form of the UTF-8 request with unbounded
         limits; an invalid UTF-8 sequence surfaces as InvalidUtf8 carrying the
@@ -587,7 +587,7 @@ class SourceSnapshot:
     @classmethod
     def from_binary(cls, raw: bytes, limits: SourceLimits) -> SourceSnapshot:
         """Constructs an opaque binary source without decoding or BOM
-        interpretation (source.rs:571-576)."""
+        interpretation (source.rs)."""
         return cls.from_raw(raw, EncodingRequest.binary(), limits)
 
     # -- accessors --------------------------------------------------------
@@ -620,13 +620,13 @@ class SourceSnapshot:
 
     def decoded_position(self, raw_byte: int) -> DecodedPosition:
         """Resolves one raw byte offset only when it is a decoded scalar
-        boundary (source.rs:623-641; vector cases source.location.*,
+        boundary (source.rs; vector cases source.location.*,
         conformance/vectors/source-v1.json:83-100).
 
         The terminal raw offset (``raw_byte == len``) is the valid half-open
         end of the source and resolves to the terminal DecodedPosition, the
         same way the Rust decoder accepts ``raw_byte <= bytes.len()``
-        (source.rs:624-626) and the Go decoder accepts ``rawByte <= len``
+        (source.rs) and the Go decoder accepts ``rawByte <= len``
         (https://github.com/consema/consema-go/blob/main/go/document/source.go:322-323); only offsets beyond the source are
         out of bounds. Raises LocationError(OutOfBounds) for offsets beyond
         the source, LocationError(NotDecodedBoundary) for offsets inside one
@@ -648,7 +648,7 @@ class SourceSnapshot:
 
     def raw_byte_at(self, offset: DecodedOffset) -> int:
         """Resolves one decoded offset only when it denotes a scalar boundary
-        (source.rs:644-665)."""
+        (source.rs)."""
         text = self.decoded
         if text is None:
             raise LocationError(LocationErrorKind.NO_DECODED_TEXT)
@@ -670,7 +670,7 @@ class SourceSnapshot:
 
 
 def _resolve_encoding(raw: bytes, request: EncodingRequest) -> EncodingFacts:
-    """Deterministic encoding resolution (source.rs:727-738)."""
+    """Deterministic encoding resolution (source.rs)."""
     has_explicit_text = (request.declaration is not None and request.declaration.is_text) or (
         request.caller_override is not None and request.caller_override.is_text
     )
@@ -683,7 +683,7 @@ def _resolve_encoding(raw: bytes, request: EncodingRequest) -> EncodingFacts:
 
 def _resolve_assertions(request: EncodingRequest, bom: BomKind | None) -> EncodingFacts:
     """Resolution core with the frozen priority and conflict rules
-    (source.rs:740-782; RFC 0003 §4.2)."""
+    (source.rs; RFC 0003 §4.2)."""
     if request.profile_default.kind is SourceEncodingKind.BINARY and (
         (request.declaration is not None and request.declaration.is_text)
         or (request.caller_override is not None and request.caller_override.is_text)
@@ -725,7 +725,7 @@ def _resolve_assertions(request: EncodingRequest, bom: BomKind | None) -> Encodi
 
 def _detect_bom(raw: bytes) -> BomKind | None:
     """BOM detection; UTF-32 BOMs are recognized but unsupported
-    (source.rs:784-804; RFC 0003 §4.2: "UTF-32 BOMs are explicitly
+    (source.rs; RFC 0003 §4.2: "UTF-32 BOMs are explicitly
     unsupported in v1")."""
     if raw.startswith(b"\xff\xfe\x00\x00"):
         raise SourceError(
@@ -750,7 +750,7 @@ def _detect_bom(raw: bytes) -> BomKind | None:
 
 
 def _decode_utf16(raw: bytes, encoding: SourceEncoding, limits: SourceLimits) -> str:
-    """Strict UTF-16 decode (source.rs:806-869; RFC 0003 §4.3).
+    """Strict UTF-16 decode (source.rs; RFC 0003 §4.3).
 
     Rejects odd-length input and isolated or reversed surrogate pairs. The
     BOM code unit decodes to U+FEFF and remains part of the raw source and
@@ -801,7 +801,7 @@ def _decode_utf16(raw: bytes, encoding: SourceEncoding, limits: SourceLimits) ->
 
 
 def _decode_latin1(raw: bytes, limits: SourceLimits) -> str:
-    """ISO-8859-1 byte-to-U+0000..U+00FF decoding (source.rs:880-894).
+    """ISO-8859-1 byte-to-U+0000..U+00FF decoding (source.rs).
 
     Latin-1 is not Windows-1252 (RFC 0003 §4.1, lines 76-77).
     """
@@ -820,13 +820,13 @@ def _decode_windows_code_page(
     raw: bytes, encoding: SourceEncoding, limits: SourceLimits
 ) -> tuple[str, tuple[_BoundaryStep, ...]]:
     """Strict code-page decode with exact per-scalar raw boundaries
-    (source.rs:901-992).
+    (source.rs).
 
     Bridges the frozen code-page registry to the Python stdlib incremental
     codecs (zero runtime dependencies). Malformed sequences fail with
     InvalidSequence at the first pending byte; a trailing incomplete sequence
     surfaces as the coordinate-overflow limit code (the InputEmpty-with-
-    pending branch of source.rs:964-975). Byte-exactness of the DBCS pages
+    pending branch of source.rs). Byte-exactness of the DBCS pages
     against encoding_rs is a differential verification item.
     """
     assert encoding.code_page is not None
@@ -911,12 +911,12 @@ def _append_group_steps(
     limits: SourceLimits,
 ) -> None:
     """One decoded scalar group from a raw-byte run: the last scalar is the
-    exact boundary at the accumulated raw width (source.rs:994-1014)."""
+    exact boundary at the accumulated raw width (source.rs)."""
     chars = list(chunk)
     if pending == 0:
         # A decoded scalar group with no consumed raw bytes cannot happen for
         # the frozen codec set; the Rust path reports OffsetOverflow
-        # (source.rs:1005-1007).
+        # (source.rs).
         raise SourceError(
             SourceErrorKind.OFFSET_OVERFLOW,
             name="code-page-step",
@@ -941,7 +941,7 @@ def _build_index(
     limits: SourceLimits,
     variable_steps: tuple[_BoundaryStep, ...] | None,
 ) -> _DecodedIndex:
-    """Builds the checkpointed boundary index (source.rs:1016-1067)."""
+    """Builds the checkpointed boundary index (source.rs)."""
     _check_limit("decoded-utf8-bytes", len(text.encode("utf-8")), limits.max_decoded_utf8_bytes)
     current = DecodedPosition(0, 0, 0, 0)
     checkpoints: list[DecodedPosition] = [current]
@@ -966,7 +966,7 @@ def _raw_step(
     scalar_offset: int,
     character: str,
 ) -> _BoundaryStep:
-    """Raw width of one scalar under the selected encoding (source.rs:1159-1181)."""
+    """Raw width of one scalar under the selected encoding (source.rs)."""
     if variable_steps is not None:
         return variable_steps[scalar_offset]
     kind = encoding.kind
@@ -982,7 +982,7 @@ def _raw_step(
 
 
 def _advance(position: DecodedPosition, character: str, raw_width: int) -> DecodedPosition:
-    """Advances one boundary by one decoded scalar (source.rs:1069-1080).
+    """Advances one boundary by one decoded scalar (source.rs).
 
     Python integers are unbounded, so the checked-arithmetic overflow
     (SourceError::OffsetOverflow) cannot occur here; the variant remains part
@@ -1020,7 +1020,7 @@ def _scan_to_raw(
     position: DecodedPosition,
     requested: int,
 ) -> DecodedPosition:
-    """Scans from one checkpoint until the requested raw byte (source.rs:1090-1116)."""
+    """Scans from one checkpoint until the requested raw byte (source.rs)."""
     if position.raw_byte == requested:
         return position
     for scalar, character in enumerate(
@@ -1043,7 +1043,7 @@ def _scan_to_decoded(
     offset: DecodedOffset,
 ) -> DecodedPosition:
     """Scans from one checkpoint until the requested decoded coordinate
-    (source.rs:1118-1150)."""
+    (source.rs)."""
     target = offset.value
     if _component(position, offset) == target:
         return position

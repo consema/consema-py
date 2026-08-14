@@ -3,7 +3,7 @@
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
 test); https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs (byte/registry arbitration);
-RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:374-404): each
+RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md): each
 operation targets one exact NodeRef; commit preserves every byte outside
 operation-owned spans, reparses the target, produces a complete ChangeSet,
 derives an UntouchedByteProof, and emits a replayable SourcePatch.
@@ -182,7 +182,7 @@ def test_vector_rename_attribute(xml_vectors):
 def test_replace_text_rejects_cdata_target():
     """replace-text targets RoleXmlText only; a CDATA occurrence is never a
     target (RFC 0012 §11; the Rust text_for maps the role mismatch to
-    WrongSnapshot, edit.rs:1101-1108)."""
+    WrongSnapshot, edit.rs)."""
     doc = _doc(b"<root><![CDATA[x]]></root>")
     cdata_ordinal = next(
         content.data.ordinal
@@ -210,7 +210,7 @@ def test_replace_text_rejects_cdata_target():
 def test_commit_artifacts_are_complete_and_verifiable():
     """One atomic commit produces the new Document, a complete ChangeSet,
     a replayable SourcePatch, and a verifiable UntouchedByteProof
-    (edit.rs:410-570; RFC 0004 §13-§16)."""
+    (edit.rs; RFC 0004 §13-§16)."""
     doc = _doc(b"<root>old</root>")
     builder = EditTransactionBuilder(doc)
     builder.replace_text(_text_ref(doc, 0), "new")
@@ -234,7 +234,7 @@ def test_commit_artifacts_are_complete_and_verifiable():
     # An attribute-value replacement maps Unmapped: attributes are not
     # arena content nodes, so no reparsed node is uniquely located by the
     # value span (find_node_by_span iterates content nodes only,
-    # edit.rs:1309-1336).
+    # edit.rs).
     doc = _doc(b'<root a="1"/>')
     builder = EditTransactionBuilder(doc)
     builder.set_attribute_value(_attribute_ref(doc, "a"), "2")
@@ -246,7 +246,7 @@ def test_commit_artifacts_are_complete_and_verifiable():
 def test_dry_run_matches_commit_exactly():
     """Dry-run performs every deterministic validation and byte-planning
     step; dry-run and commit have identical replacement sets and target
-    digest (edit.rs:572-588; RFC 0004 §14, lines 338-356)."""
+    digest (edit.rs; RFC 0004 §14, lines 338-356)."""
     doc = _doc(b"<root>old</root>")
     builder = EditTransactionBuilder(doc)
     builder.replace_text(_text_ref(doc, 0), "new")
@@ -264,7 +264,7 @@ def test_dry_run_matches_commit_exactly():
 
 def test_transaction_conflicts_fail_atomically():
     """Two operations on the same exact target are a conflict; no partial
-    document is published (validate_dependencies, edit.rs:598-641)."""
+    document is published (validate_dependencies, edit.rs)."""
     doc = _doc(b'<root a="1"/>')
     attribute = _attribute_ref(doc, "a")
     builder = EditTransactionBuilder(doc)
@@ -277,7 +277,7 @@ def test_transaction_conflicts_fail_atomically():
 
 def test_wrong_snapshot_is_rejected():
     """A transaction bound to another snapshot is rejected before any span
-    is computed (edit.rs:413-416)."""
+    is computed (edit.rs)."""
     first = _doc(b"<root/>")
     second = _doc(b"<root/>")
     builder = EditTransactionBuilder(second)
@@ -288,7 +288,7 @@ def test_wrong_snapshot_is_rejected():
 
 
 def test_root_element_cannot_be_removed():
-    """The document element cannot be removed (edit.rs:1011-1016)."""
+    """The document element cannot be removed (edit.rs)."""
     doc = _doc(b"<root/>")
     builder = EditTransactionBuilder(doc)
     builder.remove_element(doc.root().node_ref())
@@ -299,10 +299,10 @@ def test_root_element_cannot_be_removed():
 
 def test_duplicate_expanded_attribute_is_rejected():
     """Inserting to a duplicate expanded attribute fails before commit
-    (edit.rs:1289-1306). The duplicate check needs name facts that promise
+    (edit.rs). The duplicate check needs name facts that promise
     a namespace: unprefixed facts promise none, so the duplicate surfaces
     as a reparse failure instead (the reparsed document would be
-    Recovered, NewDocumentFormationFailed, edit.rs:467-476)."""
+    Recovered, NewDocumentFormationFailed, edit.rs)."""
     doc = _doc(b'<root xmlns:p="urn:u" p:a="1"/>')
     builder = EditTransactionBuilder(doc)
     builder.insert_attribute(

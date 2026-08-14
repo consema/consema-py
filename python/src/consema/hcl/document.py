@@ -9,7 +9,7 @@ blocks (RFC 0014 §5).
 
 Formation runs the frozen native pipeline first, then the tfvars gate
 rejects any top-level block with `hcl.tfvars.block-not-allowed@1` and
-Recovered status (https://github.com/consema/consema-rs/blob/main/consema-hcl/src/document.rs:46-116). The rejected
+Recovered status (https://github.com/consema/consema-rs/blob/main/consema-hcl/src/document.rs). The rejected
 block stays a native item of the Recovered document (RFC 0014 §3, §7):
 recovery retains every independently proven construct, and the tfvars
 restriction is a profile-level rule that does not break the native model's
@@ -20,12 +20,12 @@ The encoding contract is the frozen UTF-8-only source contract (RFC 0014
 `hcl.parse.byte-order-mark@1`, invalid UTF-8 is a fatal formation failure
 with `hcl.parse.invalid-utf8@1`, and a lone CR is Recovered with
 `hcl.parse.lone-cr@1`. The caller-side explicit selection surface admits
-UTF-8 only (https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lib.rs:120-164): any other explicit
+UTF-8 only (https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lib.rs): any other explicit
 encoding is a source-contract conflict that fails fatally with
 `hcl.parse.encoding@1` before any byte is read.
 
 Node identity: every native node of the body tree carries a deterministic
-pre-order ordinal (parser.py `_assign_ordinals`; projection.rs:124-130);
+pre-order ordinal (parser.py `_assign_ordinals`; projection.rs);
 this document exposes the ordinal map for snapshot-bound query handles.
 """
 
@@ -60,7 +60,7 @@ T_FVARS_BLOCK_NOT_ALLOWED = "hcl.tfvars.block-not-allowed@1"
 
 class HclEncodingSelection(enum.Enum):
     """Explicit source-encoding selection for the UTF-8-only HCL source
-    contract (RFC 0014 §2; lib.rs:120-164).
+    contract (RFC 0014 §2; lib.rs).
 
     HCL has no declaration, prolog, or encoding negotiation: the encoding
     is always UTF-8 and always selected before formation. `PROFILE_DEFAULT`
@@ -75,7 +75,7 @@ class HclEncodingSelection(enum.Enum):
     @classmethod
     def explicit(cls, encoding: SourceEncoding) -> HclEncodingSelection:
         """Builds the selection for one caller-selected encoding
-        (lib.rs:138-150)."""
+        (lib.rs)."""
         if encoding == SourceEncoding.utf8():
             return cls.EXPLICIT_UTF8
         return cls.EXPLICIT_OTHER
@@ -84,7 +84,7 @@ class HclEncodingSelection(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class HclDocument:
     """One formed HCL document under one exact profile (RFC 0014 §1, §3,
-    §5; document.rs:50-217).
+    §5; document.rs).
 
     The profile is a private field, not a representation choice: both
     profiles share the one syntax system and the one native model, and the
@@ -117,11 +117,11 @@ class HclDocument:
         return self.source.bytes()
 
     def format_family(self) -> FormatFamilyId:
-        """Stable HCL format family identity (document.rs:162-166)."""
+        """Stable HCL format family identity (document.rs)."""
         return FormatFamilyId.new("hcl", 1)
 
     def profile_id(self) -> ProfileId:
-        """Exact language profile (document.rs:156-160)."""
+        """Exact language profile (document.rs)."""
         return self.profile.id()
 
     def formation_status(self) -> FormationStatus:
@@ -211,7 +211,7 @@ def parse(
     limits: HclParseLimits = None,
 ) -> HclDocument:
     """Forms one HCL document from raw bytes under one exact profile (RFC
-    0014 §1, §3, §5; lib.rs:275-310, document.rs:87-116).
+    0014 §1, §3, §5; lib.rs, document.rs).
 
     The profile is selected by the caller before formation; neither the
     `.tf` nor the `.tfvars` extension selects a profile, representation, or

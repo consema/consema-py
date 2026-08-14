@@ -4,7 +4,7 @@ The TOML family forms lossless immutable document snapshots (byte-exact
 render, exhaustive token/trivia coverage), exposes the closed TOML native
 item model (scalar categories, root/standard/implicit/dotted tables,
 inline tables, arrays, and arrays-of-tables with their own identities —
-never JSON object/member types, RFC 0001 §1; IMPLEMENTATION.md:102),
+never JSON object/member types, RFC 0001 §1; IMPLEMENTATION.md),
 executes the ``toml.native-semantic-query@1`` and
 ``toml.lossless-syntax-query@1`` domains, projects native semantics onto
 the ``toml.best-exact-core@1`` target with provenance, materializes
@@ -22,9 +22,9 @@ arbitration; https://github.com/consema/consema-go/blob/main/go/toml as a cross-
   TOML contract; RFC 0004 (materialization/structural edit); RFC 0016
   §5-§6 (API shapes, error classification, frozen spellings);
 - https://github.com/consema/consema-rs/blob/main/consema-toml/src/*.rs — byte/registry arbitration
-  (operation_registry.rs:16-74; projection.rs; materialization.rs;
-  edit.rs:1280-1332; parser.rs) and https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
-  error_registry.rs:339-361 for the toml-family codes.
+  (operation_registry.rs; projection.rs; materialization.rs;
+  edit.rs; parser.rs) and https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
+  error_registry.rs for the toml-family codes.
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies (pyproject policy: python/ zero-dependency

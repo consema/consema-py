@@ -36,7 +36,7 @@ from consema.yaml.projection import ValueProjectionRequest
 _ROOT = pathlib.Path(__file__).resolve().parents[3]
 _FIXTURES = _ROOT / "conformance" / "fixtures" / "yaml"
 
-# Rust https://github.com/consema/consema-rs/blob/main/consema-conformance/tests/yaml_fixtures.rs:22-51 fixture
+# Rust https://github.com/consema/consema-rs/blob/main/consema-conformance/tests/yaml_fixtures.rs fixture
 # facts (document_count / alias_count).
 FIXTURE_FACTS = {
     "kubernetes-workload.yaml": (2, 0),

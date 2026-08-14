@@ -178,7 +178,7 @@ def test_query_typed_accessors():
             mismatch, document, PlistQueryLimits(), PlistCancellationToken()
         )
     # The conformance runner maps RequiredTypeMismatch to
-    # plist.query.type-mismatch@1 (consema-conformance plist_v1.rs:1149).
+    # plist.query.type-mismatch@1 (consema-conformance plist_v1.rs).
     assert excinfo.value.kind.value == "required-type-mismatch"
 
 
@@ -192,7 +192,7 @@ def test_query_binary_structure():
     # binary structure facts are document-level (RFC 0013 §8.3): every
     # structure operator projects its fact set once from any binary-
     # structure match, and the runner executes each filter standalone
-    # (consema-conformance plist_v1.rs:1400-1412).
+    # (consema-conformance plist_v1.rs).
     document = binary_document(
         "62706c6973743030d1010251611001080b0d000000000000010100000000000000030000000000000000000000000000000f"
     )
@@ -248,7 +248,7 @@ def test_query_binary_structure():
 
 def test_query_domain_mismatch_on_wrong_representation():
     # A binary-structure query against an XML document is a DomainMismatch
-    # (hard gate 1, query.rs:388-402).
+    # (hard gate 1, query.rs).
     document = xml_document('<plist version="1.0"><string>ok</string></plist>')
     executable = chain(
         domain_plist_binary_structure_v1(),

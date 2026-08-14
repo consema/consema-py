@@ -187,7 +187,7 @@ def test_corpus_pyproject(fixture_bytes):
 
 def test_native_inline_table_entries():
     """Inline tables are native items with their own entries, not JSON
-    objects (RFC 0001 §1; IMPLEMENTATION.md:102)."""
+    objects (RFC 0001 §1; IMPLEMENTATION.md)."""
     document = _parse(b"point = { x = 1, y = 2 }\n")
     point = document.root().table_entries()[0].item()
     assert point.kind() is TomlItemKind.INLINE_TABLE
@@ -207,7 +207,7 @@ def test_snapshot_identity_is_fresh_per_parse():
 
 def test_structural_index_piece_kinds():
     """Trivia pieces cover whitespace/newlines/comments; token pieces cover
-    the rest (parser.rs:370-412)."""
+    the rest (parser.rs)."""
     document = _parse(b"a = 1 # note\nb = 2\n")
     kinds = [piece.kind for piece in document.lossless_structural_index().pieces]
     assert StructuralPieceKind.TRIVIA in kinds

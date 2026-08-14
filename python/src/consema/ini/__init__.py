@@ -128,19 +128,19 @@ from consema.ini.query import (
     execute_ini_syntax_query,
 )
 
-# Frozen profile and domain ids (RFC 0009 §1/§9; lib.rs:49-55).
+# Frozen profile and domain ids (RFC 0009 §1/§9; lib.rs).
 INI_PORTABLE_PROFILE = "ini.portable@1"
 INI_WINDOWS_PROFILE = "ini.windows@1"
 INI_PYTHON_CONFIGPARSER_PROFILE = "ini.python-configparser@1"
 NATIVE_QUERY_DOMAIN_V1 = "ini.native-semantic-query@1"
 LOSSLESS_SYNTAX_QUERY_DOMAIN_V1 = "ini.lossless-syntax-query@1"
 
-# Frozen materialization styles (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:393-399).
+# Frozen materialization styles (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 INI_PORTABLE_CANONICAL_STYLE = "ini.portable-canonical@1"
 INI_WINDOWS_CANONICAL_STYLE = "ini.windows-canonical@1"
 INI_PYTHON_CONFIGPARSER_CANONICAL_STYLE = "ini.python-configparser-canonical@1"
 
-# Frozen projection targets (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:375-376).
+# Frozen projection targets (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 INI_PROJECTION_BEST_EXACT_ENTRY_MAPPING = "ini.projection.best-exact-entry-mapping@1"
 INI_PROJECTION_REQUIRE_OBJECT = "ini.projection.require-object@1"
 

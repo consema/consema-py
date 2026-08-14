@@ -4,33 +4,33 @@ profiles.
 Authority (Rust arbitration for exact bytes):
 
 - Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
-  materialization.rs:26-77 - profile resolution (materialization.rs:79-90),
-  request validation (materialization.rs:92-122: style/newline/encoding
+  materialization.rs - profile resolution (materialization.rs),
+  request validation (materialization.rs: style/newline/encoding
   contracts), bounded text output, reparse under the exact target profile,
-  verify_closure (materialization.rs:348-395), and provenance
-  (materialization.rs:397-468).
+  verify_closure (materialization.rs), and provenance
+  (materialization.rs).
 - Styles: java-properties.reader-canonical@1 and
   java-properties.latin1-canonical@1 (RFC 0010 section 12,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:357-375). Both emit
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md). Both emit
   associations in input order as ``key=value`` with the selected newline,
   omit timestamp/comments, and escape backslash, control characters, key
   spaces, leading value spaces, ``#``, ``!``, ``=``, and ``:``
   deterministically; Unicode escape hex digits are uppercase and exactly
   four per UTF-16 code unit.
-- Escaping and encoding: materialization.rs:308-346 (write_string,
+- Escaping and encoding: materialization.rs (write_string,
   write_unicode_scalar), 520-534 (text_budget), 536-564 (encode_text with
   BOM emission), 566-631 (encode_fragment for UTF-8 / UTF-16LE / UTF-16BE
   / Latin-1 / Windows code pages), 633-652 (the frozen code-page
   registry).
-- Failure names and codes: consema-document/src/materialization.rs:328-351,
-  379-390 and RFC 0004 section 17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:386-423) -
+- Failure names and codes: consema-document/src/materialization.rs,
+ and RFC 0004 section 17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md) -
   UnsupportedProfile, UnsupportedStyle, UnsupportedEncoding,
   UnsupportedNewline, Unrepresentable, ResourceLimit, FormationFailed.
-- Closure (RFC 0010 section 12, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:377-381): every result
+- Closure (RFC 0010 section 12, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md): every result
   reparses under the exact target profile and reprojects under the
   request's policy; output bytes, fidelity/report, and provenance are
   atomic and bounded. No source BOM is generated for Latin-1
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:375).
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
 cases materialization.* (lines 91-104).
@@ -78,7 +78,7 @@ from consema.properties.projection import (
     project,
 )
 
-# Frozen code-page registry (materialization.rs:633-652); bridged to the
+# Frozen code-page registry (materialization.rs); bridged to the
 # Python stdlib codecs by consema.document.source.
 _CODEC_BY_CODE_PAGE = {
     874: "cp874",
@@ -100,14 +100,14 @@ _CODEC_BY_CODE_PAGE = {
 
 
 class PropertiesStyle:
-    """Resolved generation style (materialization.rs:96-110)."""
+    """Resolved generation style (materialization.rs)."""
 
     READER_CANONICAL = "reader-canonical"
     LATIN1_CANONICAL = "latin1-canonical"
 
 
 def requested_profile(request: MaterializationRequest) -> PropertiesProfile:
-    """Resolves the target profile (materialization.rs:79-90)."""
+    """Resolves the target profile (materialization.rs)."""
     profile_id = request.target_profile.id
     version = request.target_profile.version
     if profile_id == "java-properties.reader" and version == 1:
@@ -120,7 +120,7 @@ def requested_profile(request: MaterializationRequest) -> PropertiesProfile:
 def requested_style(
     request: MaterializationRequest, profile: PropertiesProfile
 ) -> str:
-    """Resolves the generation style (materialization.rs:96-110)."""
+    """Resolves the generation style (materialization.rs)."""
     style_id = request.style.id
     version = request.style.version
     if (
@@ -141,7 +141,7 @@ def requested_style(
 def _validate_request(
     request: MaterializationRequest, profile: PropertiesProfile
 ) -> None:
-    """Request contract validation (materialization.rs:92-122)."""
+    """Request contract validation (materialization.rs)."""
     if request.newline not in (NewlinePolicy.LF, NewlinePolicy.CRLF):
         raise MaterializationFailure(MaterializationFailureKind.UNSUPPORTED_NEWLINE)
     if profile is PropertiesProfile.READER_V1:
@@ -152,7 +152,7 @@ def _validate_request(
 
 
 class _BoundedText:
-    """Byte-budgeted output accumulation (materialization.rs:470-518)."""
+    """Byte-budgeted output accumulation (materialization.rs)."""
 
     def __init__(self, max_bytes: int) -> None:
         self._text = ""
@@ -173,7 +173,7 @@ class _BoundedText:
 
 
 class _InputEntry:
-    """Input locations of one emitted association (materialization.rs:152-157)."""
+    """Input locations of one emitted association (materialization.rs)."""
 
     __slots__ = ("association", "key", "value")
 
@@ -195,7 +195,7 @@ class _MappingItem:
 
 
 class _Writer:
-    """One canonical document writer (materialization.rs:167-346)."""
+    """One canonical document writer (materialization.rs)."""
 
     def __init__(
         self,
@@ -213,7 +213,7 @@ class _Writer:
 
     def document(self, value: PortableValue, path: ValuePath, depth: int) -> list:
         """Emits one canonical record per association
-        (materialization.rs:177-211)."""
+        (materialization.rs)."""
         items = self.mapping_items(value, path, depth)
         input_entries: list[_InputEntry] = []
         for item in items:
@@ -239,7 +239,7 @@ class _Writer:
 
     def mapping_items(self, value: PortableValue, path: ValuePath, depth: int) -> list:
         """Flattens one Object/EntryMapping into ordered mapping items
-        (materialization.rs:213-288)."""
+        (materialization.rs)."""
         self.analyze(path, depth)
         if value.kind is Kind.OBJECT:
             entries = value.as_object()
@@ -301,7 +301,7 @@ class _Writer:
         return items
 
     def analyze(self, path: ValuePath, depth: int) -> None:
-        """Input-node accounting (materialization.rs:290-306)."""
+        """Input-node accounting (materialization.rs)."""
         if depth > self.limits.max_depth:
             raise MaterializationFailure(
                 MaterializationFailureKind.RESOURCE_LIMIT, name="input-depth"
@@ -314,7 +314,7 @@ class _Writer:
         self.analyzed.append(path)
 
     def write_string(self, value: str, is_key: bool) -> None:
-        """Deterministic canonical escaping (materialization.rs:308-336;
+        """Deterministic canonical escaping (materialization.rs;
         RFC 0010 section 12)."""
         leading_value_space = not is_key
         for character in value:
@@ -324,7 +324,7 @@ class _Writer:
 
     def write_scalar(self, character: str, is_key: bool, leading_value_space: bool) -> bool:
         """Emits one scalar under the canonical rules and returns the
-        updated leading-value-space state (materialization.rs:308-336)."""
+        updated leading-value-space state (materialization.rs)."""
         if character == " " and (is_key or leading_value_space):
             self.output.push_str("\\ ")
         elif character == "\t":
@@ -354,7 +354,7 @@ class _Writer:
 
     def write_unicode_scalar(self, value: str) -> None:
         """Uppercase exactly-four-hex-digit escapes per UTF-16 code unit
-        (materialization.rs:338-346)."""
+        (materialization.rs)."""
         for unit in _utf16_units(value):
             self.output.push_hex_unit(unit)
 
@@ -379,7 +379,7 @@ def materialize(
     value: PortableValue, request: MaterializationRequest
 ) -> MaterializationResult:
     """Materializes one complete PortableValue into a new canonical
-    Java Properties document (materialization.rs:26-39)."""
+    Java Properties document (materialization.rs)."""
     analyzed: list[ValuePath] = []
     try:
         complete = _materialize_complete(value, request, analyzed)
@@ -433,7 +433,7 @@ def _verify_closure(
     request: MaterializationRequest,
     document: PropertiesDocument,
 ) -> None:
-    """Exact reparse-and-reproject closure (materialization.rs:348-395)."""
+    """Exact reparse-and-reproject closure (materialization.rs)."""
     projection_limits = ProjectionLimits(
         max_source_associations=request.limits.max_input_nodes,
         max_value_nodes=request.limits.max_input_nodes * 2 + 1,
@@ -476,7 +476,7 @@ def _build_provenance(
     limits,
 ) -> MaterializationProvenanceMap:
     """Input-to-output provenance with Reencoded relations
-    (materialization.rs:397-468)."""
+    (materialization.rs)."""
     if len(input_entries) != len(document.properties):
         raise MaterializationFailure(MaterializationFailureKind.FORMATION_FAILED)
     entries: list[MaterializationProvenanceEntry] = []
@@ -539,7 +539,7 @@ def _build_provenance(
 
 def _parse_limits(limits) -> PropertiesParseLimits:
     """Reparse limits derived from the materialization budget
-    (materialization.rs:124-150)."""
+    (materialization.rs)."""
     from consema.document.limits import ParseLimits
 
     common = ParseLimits(
@@ -571,7 +571,7 @@ def _parse_limits(limits) -> PropertiesParseLimits:
 
 
 def _text_budget(encoding: SourceEncoding, max_output_bytes: int) -> int:
-    """Decoded text budget per source encoding (materialization.rs:520-534)."""
+    """Decoded text budget per source encoding (materialization.rs)."""
     kind = encoding.kind
     if kind in (
         SourceEncodingKind.UTF16LE,
@@ -591,7 +591,7 @@ def _text_budget(encoding: SourceEncoding, max_output_bytes: int) -> int:
 
 
 def _encode_text(text: str, encoding: SourceEncoding, max_output_bytes: int) -> bytes:
-    """Exact output encoding with optional BOM (materialization.rs:536-564)."""
+    """Exact output encoding with optional BOM (materialization.rs)."""
     kind = encoding.kind
     bom_bytes = 2 if kind in (SourceEncodingKind.UTF16LE, SourceEncodingKind.UTF16BE) else 0
     fragment_limit = max_output_bytes - bom_bytes
@@ -609,7 +609,7 @@ def _encode_text(text: str, encoding: SourceEncoding, max_output_bytes: int) -> 
 
 def _encode_fragment(text: str, encoding: SourceEncoding, max_output_bytes: int) -> bytes:
     """Encodes one text fragment under one published source encoding
-    (materialization.rs:566-631)."""
+    (materialization.rs)."""
     kind = encoding.kind
     if kind is SourceEncodingKind.UTF8:
         output = text.encode("utf-8")
@@ -657,12 +657,12 @@ def canonical_fragment(
     limit: int,
 ) -> str:
     """Canonical escaped text for one exact Java string (edit insertion,
-    rename, and canonical fallback; edit.rs:601-613, canonical_java_string
-    edit.rs:925-1027).
+    rename, and canonical fallback; edit.rs, canonical_java_string
+    edit.rs).
 
     Surrogate pairs combine into one Unicode scalar before profile escaping;
     every unpaired code unit emits an uppercase ``\\uXXXX`` escape and
-    contributes no other code unit (edit.rs:936-951).
+    contributes no other code unit (edit.rs).
     """
     style = (
         PropertiesStyle.LATIN1_CANONICAL

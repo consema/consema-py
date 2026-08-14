@@ -5,37 +5,37 @@ The `hcl.*@1` diagnostic codes are registered by RFC 0014 §11 and are part
 of the `hcl.native@1` and `hcl.tfvars@1` contracts; they deliberately do not
 enter the consema-protocol core error registry, which covers only
 core/protocol and line-format contract codes (RFC 0014 §11,
-https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md:696-715). The spelling authority for every code below is
+https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md). The spelling authority for every code below is
 the vector suite plus the Rust family's StableFailure impls:
 
-- Parser recovery codes: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/parser.rs:77-98
+- Parser recovery codes: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/parser.rs
   (item/attribute/block/label/expression/directive/newline/separator/
-  duplicate-attribute) and lexer.rs:457-487 (byte-order-mark, lone-cr,
+  duplicate-attribute) and lexer.rs (byte-order-mark, lone-cr,
   invalid-utf8, identifier, invalid-number, invalid-character,
   invalid-escape, unterminated-comment, unterminated-string,
   unterminated-interpolation, unterminated-directive,
   unterminated-heredoc, heredoc-marker).
-- Fatal limit codes: ``hcl.limit.<name>@1`` (parser.rs:2549-2565,
-  lexer.rs:2126-2142; the conformance vectors pin
+- Fatal limit codes: ``hcl.limit.<name>@1`` (parser.rs,
+  lexer.rs; the conformance vectors pin
   hcl.limit.expression-depth@1, hcl.limit.body-depth@1,
   hcl.limit.number-digits@1, hcl.limit.attribute-count@1,
   hcl.limit.block-count@1, hcl.limit.body-item-count@1,
   hcl.limit.label-count@1, hcl.limit.template-len@1,
   hcl.limit.heredoc-bytes@1, hcl.limit.tuple-elements@1,
   hcl.limit.object-entries@1).
-- Profile gate: hcl.tfvars.block-not-allowed@1 (document.rs:46-48).
-- Projection codes: projection.rs:468-476 (incomplete-document,
+- Profile gate: hcl.tfvars.block-not-allowed@1 (document.rs).
+- Projection codes: projection.rs (incomplete-document,
   non-literal-expression, unrepresentable, resource-limit,
   core-invariant).
-- Edit codes: edit.rs:599-611 (hcl.edit.duplicate-attribute@1,
+- Edit codes: edit.rs (hcl.edit.duplicate-attribute@1,
   hcl.edit.block-in-tfvars@1, hcl.edit.unrepresentable@1, plus the shared
   core.edit.*@1 codes).
 - Materialization codes: the suite maps the shared MaterializationFailure
   to hcl.materialization.unrepresentable@1 /
   hcl.materialization.resource-limit@1 and the InvalidRequest spelling
-  ``"invalid-record"`` (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs:1611-1616).
+  ``"invalid-record"`` (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs).
 - Query failures: the suite maps the shared QueryFailure to the
-  hcl.query.*@1 spellings (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs:658-668;
+  hcl.query.*@1 spellings (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs;
   hcl.query.type-mismatch@1 for RequiredTypeMismatch,
   hcl.query.non-literal@1 for TargetUnavailable).
 
@@ -88,7 +88,7 @@ class HclDiagnostic:
     notes: tuple[str, ...] = field(default_factory=tuple, repr=False)
 
     def sort_key(self) -> tuple:
-        """Deterministic order key (consema-core diagnostic.rs:107-123).
+        """Deterministic order key (consema-core diagnostic.rs).
 
         Missing primary sorts last (u64::MAX in Rust; Python's None-in-
         tuple comparison is avoided by using an explicit sentinel).
@@ -99,7 +99,7 @@ class HclDiagnostic:
 
 def sort_diagnostics(diagnostics: list[HclDiagnostic]) -> None:
     """Sorts in place by (primary start, category, code, occurrence)
-    (diagnostic.rs:107-123)."""
+    (diagnostic.rs)."""
     diagnostics.sort(key=lambda diagnostic: diagnostic.sort_key())
 
 
@@ -171,7 +171,7 @@ class HclFormationFailure(Exception):
 
 
 class HclProjectionFailureKind(enum.Enum):
-    """Stable projection failure categories (projection.rs:432-451)."""
+    """Stable projection failure categories (projection.rs)."""
 
     INCOMPLETE_DOCUMENT = "IncompleteDocument"
     NON_LITERAL_EXPRESSION = "NonLiteralExpression"
@@ -183,7 +183,7 @@ class HclProjectionFailureKind(enum.Enum):
 class HclProjectionFailure(Exception):
     """Stable projection failure with a frozen registered code.
 
-    Code mapping authority: projection.rs:468-476 (RFC 0014 §8, hard
+    Code mapping authority: projection.rs (RFC 0014 §8, hard
     gate 4). ``name`` is the exact Rust variant spelling.
     """
 
@@ -225,7 +225,7 @@ _PROJECTION_CODES = {
 
 
 class HclEditFailureKind(enum.Enum):
-    """Stable edit failure categories (edit.rs:547-578)."""
+    """Stable edit failure categories (edit.rs)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"
@@ -242,7 +242,7 @@ class HclEditFailureKind(enum.Enum):
 class HclEditFailure(Exception):
     """Stable edit failure with a frozen registered code.
 
-    Code mapping authority: edit.rs:599-611 (RFC 0014 §10; the conformance
+    Code mapping authority: edit.rs (RFC 0014 §10; the conformance
     vectors pin hcl.edit.duplicate-attribute@1, hcl.edit.block-in-tfvars@1,
     hcl.edit.unrepresentable@1, core.edit.incomplete-target@1,
     core.edit.wrong-snapshot@1).
@@ -296,7 +296,7 @@ class HclMaterializationFailureKind(enum.Enum):
     hcl.materialization.unrepresentable@1, ResourceLimit to
     hcl.materialization.resource-limit@1, and InvalidRequest to the
     published spelling ``"invalid-record"``
-    (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs:1611-1616; RFC 0014 §9).
+    (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs; RFC 0014 §9).
     """
 
     UNREPRESENTABLE = "Unrepresentable"

@@ -4,7 +4,7 @@ toml.lossless-syntax-query@1 domains.
 Vector cases transcribed: toml.query.nested-entry-order,
 toml.query.aot-element-order (conformance/vectors/toml-v1.json); the
 domain/operator rows are frozen by consema.protocol query.py:523-529 and
-597-602; execution semantics per https://github.com/consema/consema-rs/blob/main/consema-toml/src/query.rs.
+; execution semantics per https://github.com/consema/consema-rs/blob/main/consema-toml/src/query.rs.
 """
 
 from __future__ import annotations

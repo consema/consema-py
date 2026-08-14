@@ -2,40 +2,40 @@
 
 Authority (Rust arbitration for exact bytes):
 
-- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-json/src/materialization.rs:
-  19-32 (materialize), 54-93 (materialize_complete) — profile/style
-  resolution (materialization.rs:113-142), UTF-8-only encoding
-  (materialization.rs:61-63), pretty requires an explicit newline
-  (materialization.rs:64-66), the requested newline is appended exactly
-  once (materialization.rs:70-72), output reparses and reprojects before
-  completion (materialization.rs:74-78), fidelity Exact and an empty
-  report (materialization.rs:87-92), provenance covers every emitted
-  value/association (materialization.rs:80-86, 507-747).
+- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-json/src/materialization.rs
+ (materialize), (materialize_complete) — profile/style
+  resolution (materialization.rs), UTF-8-only encoding
+  (materialization.rs), pretty requires an explicit newline
+  (materialization.rs), the requested newline is appended exactly
+  once (materialization.rs), output reparses and reprojects before
+  completion (materialization.rs), fidelity Exact and an empty
+  report (materialization.rs), provenance covers every emitted
+  value/association (materialization.rs).
 - Style ids: json.canonical-compact@1 / json.canonical-pretty@1 (RFC 0004
-  §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:98-105) and json5.canonical-compact@1 /
-  json5.canonical-pretty@1 (RFC 0005 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:195-212).
-- Literal spellings: write_integer (materialization.rs:249-255), the
-  canonical decimal "CeE" form (materialization.rs:257-268), string
-  escaping with lowercase \\uXXXX (materialization.rs:270-297; U+2028/
+  §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md) and json5.canonical-compact@1 /
+  json5.canonical-pretty@1 (RFC 0005 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md).
+- Literal spellings: write_integer (materialization.rs), the
+  canonical decimal "CeE" form (materialization.rs), string
+  escaping with lowercase \\uXXXX (materialization.rs; U+2028/
   U+2029 escaped only under JSON5 styles), the four frozen non-finite
-  spellings (materialization.rs:299-316; RFC 0005 §9), compact layout
-  (materialization.rs:319-416), pretty layout with two ASCII spaces per
-  level (materialization.rs:447-453).
+  spellings (materialization.rs; RFC 0005 §9), compact layout
+  (materialization.rs), pretty layout with two ASCII spaces per
+  level (materialization.rs).
 - Failures: MaterializationFailure names and codes
-  (consema-document/src/materialization.rs:328-351, 379-390; RFC 0004
+  (consema-document/src/materialization.rs; RFC 0004
   §17) — UnsupportedProfile, UnsupportedStyle, UnsupportedEncoding,
   UnsupportedNewline, Unrepresentable, ResourceLimit, FormationFailed.
 - Provenance: input Value paths and Object/EntryMapping associations map
-  to target origins with relation Direct/Generated (materialization.rs:
-  507-747); every emitted value and supported association is covered.
+  to target origins with relation Direct/Generated (materialization.rs
+); every emitted value and supported association is covered.
 - Mapping policy: an exactly representable EntryMapping is not collapsed;
-  mapping_policy is irrelevant to it (RFC 0004 §5, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:
-  131-143; the v1 JSON materializer never converts under
-  UniqueStringEntriesToObject — materialization.rs:379-416).
+  mapping_policy is irrelevant to it (RFC 0004 §5, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md
+ ; the v1 JSON materializer never converts under
+  UniqueStringEntriesToObject — materialization.rs).
 
 Closure: canonical output reparses under the exact requested profile and
 reprojects to the identical PortableValue before completion (RFC 0005 §9,
-https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:210-213).
+https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md).
 """
 
 from __future__ import annotations
@@ -78,7 +78,7 @@ from consema.json.projection import (
 
 
 class JsonStyle(enum.Enum):
-    """Resolved generation style (materialization.rs:95-111)."""
+    """Resolved generation style (materialization.rs)."""
 
     COMPACT = "compact"
     PRETTY = "pretty"
@@ -95,7 +95,7 @@ class JsonStyle(enum.Enum):
 def requested_profile(
     request: MaterializationRequest,
 ) -> JsonProfile:
-    """Resolves the target profile (materialization.rs:113-125)."""
+    """Resolves the target profile (materialization.rs)."""
     profile_id = request.target_profile.id
     version = request.target_profile.version
     if profile_id == "json.strict" and version == 1:
@@ -108,7 +108,7 @@ def requested_profile(
 
 
 def requested_style(request: MaterializationRequest, profile: JsonProfile) -> JsonStyle:
-    """Resolves the generation style (materialization.rs:127-142)."""
+    """Resolves the generation style (materialization.rs)."""
     style_id = request.style.id
     version = request.style.version
     if profile in (JsonProfile.STRICT_V1, JsonProfile.JSONC_BOUNDED_V1):
@@ -330,7 +330,7 @@ def materialize(
     value: PortableValue, request: MaterializationRequest
 ) -> MaterializationResult:
     """Materializes one complete PortableValue into a new immutable
-    JSON/JSONC/JSON5 document (materialization.rs:19-32)."""
+    JSON/JSONC/JSON5 document (materialization.rs)."""
     analyzed: list[ValuePath] = []
     try:
         complete = _materialize_complete(value, request, analyzed)
@@ -608,7 +608,7 @@ _FAILURE_NAME_BY_KIND = {
 def materialization_failure_name(failure: MaterializationFailure) -> str:
     """Exact Rust variant spelling referenced by the conformance vectors
     (json-family-v2.json:147 "Unrepresentable", :153 "UnsupportedStyle";
-    consema-document/src/materialization.rs:328-351)."""
+    consema-document/src/materialization.rs)."""
     return _FAILURE_NAME_BY_KIND[failure.kind]
 
 
@@ -627,7 +627,7 @@ _EXPECTED_KIND_BY_INPUT = {
 
 def canonical_fragment(value: PortableValue, profile: JsonProfile, limits) -> bytes:
     """Canonical compact fragment for one PortableValue (edit insertion and
-    rename; materialization.rs:34-52)."""
+    rename; materialization.rs)."""
     analyzed: list[ValuePath] = []
     writer = _JsonWriter(
         JsonStyle.JSON5_COMPACT if profile.is_json5() else JsonStyle.COMPACT,

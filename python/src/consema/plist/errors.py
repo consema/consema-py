@@ -2,8 +2,8 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (the ``plist.*`` codes are
-registered by RFC 0013 §12 — https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:
-738-752 — and do not enter the ``consema-protocol`` core error registry;
+registered by RFC 0013 §12 — https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md
+ — and do not enter the ``consema-protocol`` core error registry;
 the Rust family's StableFailure impls and parser emission sites are the
 arbitration for the exact spellings):
 
@@ -27,25 +27,25 @@ arbitration for the exact spellings):
   (785+), offset-table@1 (942), marker@1 (1110), extent@1 (1137),
   string@1 (1156), date@1 (1170), uid@1 (1181), reference@1 (1218),
   extended-size@1 (1296), non-string-key@1 (1342), overflow@1 (1604),
-  internal@1 (1614); plus the fatal plist.binary.encoding@1 (lib.rs:251).
-- Limit failures ``plist.limit.*@1``: parser_xml.rs:4146-4300 and
-  parser_binary.rs:2897-3155 — string-code-units, data-bytes, array-elements,
+  internal@1 (1614); plus the fatal plist.binary.encoding@1 (lib.rs).
+- Limit failures ``plist.limit.*@1``: parser_xml.rs and
+  parser_binary.rs — string-code-units, data-bytes, array-elements,
   dict-entries, duplicate-key-group, nesting-depth, container-depth,
   object-count, syntax-pieces, recovery-regions, uid-count,
   extended-size-value, extended-size-integers, offset-int-size,
   object-ref-size, offset-table-bytes, binary-facts, conversion-nodes,
   report-events.
-- Projection codes: projection.rs:393-402 (incomplete-document@1,
+- Projection codes: projection.rs (incomplete-document@1,
   unpaired-surrogate@1, collision@1, unrepresentable@1, resource-limit@1,
   core-invariant@1).
-- Edit codes: edit.rs:442-454 (core.edit.wrong-snapshot@1 / wrong-role@1 /
+- Edit codes: edit.rs (core.edit.wrong-snapshot@1 / wrong-role@1 /
   target-not-found@1 / incomplete-target@1 / conflicting-edits@1 /
   resource-limit@1 / formation-failed@1, plist.edit.uid-in-xml@1,
   plist.edit.unrepresentable@1).
-- Conversion codes: document.rs:264 (same-representation@1), 270-276
+- Conversion codes: document.rs (same-representation@1), 270-276
   (formation@1), 718 (inexpressible@1), 1297 (internal@1), 1303
   (reparse@1).
-- Materialization: materialization.rs:149 (fractional-date@1); the shared
+- Materialization: materialization.rs (fractional-date@1); the shared
   core.materialization.*@1 codes of consema.document (RFC 0004 §17).
 - Conformance vector spellings: https://github.com/consema/consema-rs/blob/main/consema-conformance/src/plist_v1.rs
   — query failures map to plist.query.*@1 (1143-1154, type-mismatch@1 at
@@ -110,14 +110,14 @@ class PlistDiagnostic:
     notes: tuple[str, ...] = field(default_factory=tuple, repr=False)
 
     def sort_key(self) -> tuple:
-        """Deterministic order key (diagnostic.rs:107-123)."""
+        """Deterministic order key (diagnostic.rs)."""
         start = self.primary.start_byte if self.primary is not None else 2**64 - 1
         return (start, self.category.value, self.code, self.occurrence)
 
 
 def sort_diagnostics(diagnostics: list[PlistDiagnostic]) -> None:
     """Sorts in place by (primary start, category, code, occurrence)
-    (diagnostic.rs:107-123)."""
+    (diagnostic.rs)."""
     diagnostics.sort(key=lambda diagnostic: diagnostic.sort_key())
 
 
@@ -130,7 +130,7 @@ class PlistFormationFailureKind(enum.Enum):
     """Fatal formation failure categories (FatalFormationFailure of
     consema-document); the resource names follow the Rust spellings used by
     parser_xml.rs / parser_binary.rs and pinned by the RFC 0013 §12 limit
-    list (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:718-732)."""
+    list (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md)."""
 
     SOURCE_BYTES = "source-bytes"
     DECODED_UTF8_BYTES = "decoded-utf8-bytes"
@@ -174,7 +174,7 @@ class PlistFormationFailure(Exception):
     """Fatal formation failure; no Document exists.
 
     Exceeding a configured limit is fatal with no truncation-then-success
-    (RFC 0016 §6; RFC 0013 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:729-732); an invalid or
+    (RFC 0016 §6; RFC 0013 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md); an invalid or
     profile-conflicting encoding is likewise fatal before a Document exists
     (RFC 0013 §2). The frozen codes are the ``plist.limit.*@1`` resource
     names, the fatal ``plist.xml.*@1`` / ``plist.binary.*@1`` codes, or the
@@ -248,7 +248,7 @@ class PlistFormationFailure(Exception):
 
 
 class PlistProjectionFailureKind(enum.Enum):
-    """Stable projection failure categories (projection.rs:355-375)."""
+    """Stable projection failure categories (projection.rs)."""
 
     INCOMPLETE_DOCUMENT = "IncompleteDocument"
     UNPAIRED_SURROGATE = "UnpairedSurrogate"
@@ -261,7 +261,7 @@ class PlistProjectionFailureKind(enum.Enum):
 class PlistProjectionFailure(Exception):
     """Stable projection failure with a frozen registered code.
 
-    Code mapping authority: projection.rs:393-402. ``name`` is the exact
+    Code mapping authority: projection.rs. ``name`` is the exact
     Rust variant spelling the conformance vectors reference.
     """
 
@@ -304,7 +304,7 @@ _PROJECTION_CODES = {
 
 
 class PlistEditFailureKind(enum.Enum):
-    """Stable edit failure categories (edit.rs:391-420)."""
+    """Stable edit failure categories (edit.rs)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"
@@ -321,8 +321,8 @@ class PlistEditFailureKind(enum.Enum):
 class PlistEditFailure(Exception):
     """Stable edit failure with a frozen registered code.
 
-    Code mapping authority: edit.rs:442-454 (RFC 0013 §11 conflict list,
-    https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:703-714). ``name`` is the exact Rust variant spelling
+    Code mapping authority: edit.rs (RFC 0013 §11 conflict list,
+    https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md). ``name`` is the exact Rust variant spelling
     the conformance vectors reference (plist-v1.json:1557-1561).
     """
 
@@ -367,8 +367,8 @@ _EDIT_CODES = {
 
 
 class PlistConversionFailureKind(enum.Enum):
-    """Stable conversion failure categories (document.rs:262-288,
-    1292-1303)."""
+    """Stable conversion failure categories (document.rs,
+)."""
 
     SAME_REPRESENTATION = "SameRepresentation"
     FORMATION = "Formation"
@@ -382,7 +382,7 @@ class PlistConversionFailure(Exception):
 
     A failed conversion returns no target document, no partial bytes, and no
     partial report; the ordered diagnostics explain which facts blocked the
-    conversion and why (document.rs:436-459).
+    conversion and why (document.rs).
     """
 
     def __init__(

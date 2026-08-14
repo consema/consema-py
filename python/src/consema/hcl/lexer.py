@@ -10,25 +10,24 @@ HclSyntaxKind set — there is no ``Bom`` kind because a BOM is excluded at
 formation (RFC 0014 §7.2).
 
 The scanner is a faithful Python-idiomatic port of the lexical contract,
-arbitrated by https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lexer.rs:
-
-- Token kinds and piece mapping: lexer.rs:137-314.
+arbitrated by https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lexer.rs
+- Token kinds and piece mapping: lexer.rs.
 - Scan dispatch (root / template interior absorb / quoted / heredoc):
-  lexer.rs:632-643; root token table lexer.rs:654-887; interior absorb
-  lexer.rs:892-1127.
-- Identifiers: lexer.rs:1594-1615 (UAX #31 with hyphen continuation; the
-  leading-underscore rejection lexer.rs:864-872 is the §12 D-4 exclusion).
-- Numbers: lexer.rs:1619-1684 (decimal-only grammar; a continuation that
+  lexer.rs; root token table lexer.rs; interior absorb
+  lexer.rs.
+- Identifiers: lexer.rs (UAX #31 with hyphen continuation; the
+  leading-underscore rejection lexer.rs is the §12 D-4 exclusion).
+- Numbers: lexer.rs (decimal-only grammar; a continuation that
   cannot start a fresh token makes the whole run one invalid-number
   region).
-- Quoted templates: lexer.rs:1131-1254 (escape validation lexer.rs:1535-
-  1591; unterminated-string boundary lexer.rs:1738-1777).
-- Heredocs: lexer.rs:1257-1375 (closing-line TrimSpace matching; the
-  introducer gate lexer.rs:1396-1484).
-- Interpolation/directive sequences: lexer.rs:1489-1531 (strip markers)
-  and the absorb close lexer.rs:892-967.
-- Recovery semantics: the module docstring of lexer.rs:46-69.
-- Fatal limit failures: `hcl.limit.<name>@1` (lexer.rs:2126-2142).
+- Quoted templates: lexer.rs (escape validation lexer.rs
+  1591; unterminated-string boundary lexer.rs).
+- Heredocs: lexer.rs (closing-line TrimSpace matching; the
+  introducer gate lexer.rs).
+- Interpolation/directive sequences: lexer.rs (strip markers)
+  and the absorb close lexer.rs.
+- Recovery semantics: the module docstring of lexer.rs.
+- Fatal limit failures: `hcl.limit.<name>@1` (lexer.rs).
 """
 
 from __future__ import annotations
@@ -71,7 +70,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 class HclTokenKind(enum.Enum):
     """Closed token kind set of the self-owned HCL tokenizer (RFC 0014 §2,
-    §4.1; lexer.rs:137-245).
+    §4.1; lexer.rs).
 
     The set is richer than the 30-piece HclSyntaxKind closure: operator
     spellings, the exact trivia runs, and the zero-length Eof terminal are
@@ -129,7 +128,7 @@ class HclTokenKind(enum.Enum):
 
     def syntax_kind(self) -> HclSyntaxKind | None:
         """The closed lossless syntax kind of this token; None for the
-        zero-length Eof terminal (RFC 0014 §7.2; lexer.rs:247-301)."""
+        zero-length Eof terminal (RFC 0014 §7.2; lexer.rs)."""
         if self is HclTokenKind.EOF:
             return None
         if self in (
@@ -156,7 +155,7 @@ class HclTokenKind(enum.Enum):
 
     def structural_kind(self) -> StructuralPieceKind:
         """The structural classification of this token's piece
-        (lexer.rs:303-314)."""
+        (lexer.rs)."""
         if self in (
             HclTokenKind.WHITESPACE,
             HclTokenKind.LINE_BREAK,
@@ -172,14 +171,14 @@ class HclTokenKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class HclToken:
     """One lexical token with its exact half-open raw-byte span
-    (lexer.rs:105-135)."""
+    (lexer.rs)."""
 
     kind: HclTokenKind
     span: object  # consema.document.Span
 
 
 class _TemplateFrame:
-    """One open template construct of the scanner stack (lexer.rs:489-537)."""
+    """One open template construct of the scanner stack (lexer.rs)."""
 
     __slots__ = ("kind", "open", "marker", "content_start", "bytes", "lines", "interpolations", "depth", "directive", "interior_start", "buffer")
 
@@ -208,7 +207,7 @@ class _TemplateFrame:
 
 class _DiagnosticSink:
     """Bounded ordered diagnostic recording with the house truncation
-    marker (lexer.rs:539-578)."""
+    marker (lexer.rs)."""
 
     def __init__(self, max_diagnostics: int) -> None:
         self.diagnostics: list[HclDiagnostic] = []
@@ -253,7 +252,7 @@ class _DiagnosticSink:
 class HclLexOutput:
     """Result of one lexer pass: the ordered token stream, the recovered
     error regions, the ordered diagnostics, and the lossless 30-kind piece
-    index (RFC 0014 §2, §7.2; lexer.rs:316-386).
+    index (RFC 0014 §2, §7.2; lexer.rs).
 
     ``syntax`` is None for a region lex (an interpolation interior), whose
     tokens still carry exact spans bound to the same authority.
@@ -320,7 +319,7 @@ class _Lexer:
 
     def char_at(self, position: int) -> str | None:
         """The decoded character whose UTF-8 encoding starts at the byte
-        `position` (lexer.rs:2045-2047: `decoded.get(pos..).chars().next()`).
+        `position` (lexer.rs: `decoded.get(pos..).chars().next()`).
 
         Scan positions are char boundaries; under the UTF-8-only source
         contract the byte slice at `position` decodes to exactly one
@@ -424,7 +423,7 @@ class _Lexer:
             )
         )
 
-    # -- root-level scanning (lexer.rs:654-887) ------------------------------
+    # -- root-level scanning (lexer.rs) ------------------------------
 
     def scan_root(self) -> None:
         byte = self.byte()
@@ -592,7 +591,7 @@ class _Lexer:
                 )
                 self.pos += len(ch.encode("utf-8"))
 
-    # -- interior absorb (lexer.rs:892-1127) ---------------------------------
+    # -- interior absorb (lexer.rs) ---------------------------------
 
     def scan_absorb(self) -> None:
         byte = self.byte()
@@ -809,7 +808,7 @@ class _Lexer:
                 )
             self.pos = self.end
 
-    # -- identifiers and numbers (lexer.rs:1594-1684) ------------------------
+    # -- identifiers and numbers (lexer.rs) ------------------------
 
     def scan_identifier(self, emit: bool) -> None:
         start = self.pos
@@ -890,7 +889,7 @@ class _Lexer:
         elif emit:
             self.emit_kind(HclTokenKind.NUMBER, start, self.pos)
 
-    # -- quoted templates (lexer.rs:1131-1254) -------------------------------
+    # -- quoted templates (lexer.rs) -------------------------------
 
     def scan_quoted(self) -> None:
         emit = self.emitting()
@@ -1164,7 +1163,7 @@ class _Lexer:
                 limit=self.limits.max_template_depth,
             )
 
-    # -- heredocs (lexer.rs:1257-1375) ---------------------------------------
+    # -- heredocs (lexer.rs) ---------------------------------------
 
     def scan_heredoc(self) -> None:
         if self.pos >= self.end:
@@ -1431,7 +1430,7 @@ class _Lexer:
 
 def lex(raw: bytes, limits: HclParseLimits) -> HclLexOutput:
     """Lexes one whole HCL source under the frozen UTF-8 source contract
-    (RFC 0014 §2; lexer.rs:388-431).
+    (RFC 0014 §2; lexer.rs).
 
     The source is decoded with ``BomPolicy.TREAT_AS_CONTENT``: a UTF-8 BOM
     stays in the decoded text where the lexer reports it as
@@ -1494,7 +1493,7 @@ def lex_region(
     limits: HclParseLimits,
 ) -> HclLexOutput:
     """Lexes one expression region of an already-formed source (the M3
-    re-lex of interpolation/directive interiors; lexer.rs:423-431).
+    re-lex of interpolation/directive interiors; lexer.rs).
 
     The region's spans are bound to the caller's authority; the returned
     output carries no source-covering index.

@@ -8,18 +8,18 @@ tree.
 
 Authority (language-neutral first; Rust for arbitration):
 
-- Value types and semantics: https://github.com/consema/consema-rs/blob/main/consema-plist/src/native.rs:31-100
+- Value types and semantics: https://github.com/consema/consema-rs/blob/main/consema-plist/src/native.rs
   (PLIST_EPOCH_OFFSET_UNIX / PlistStringStatus / PlistString), 135-195
   (PlistKey), 196-215 (PlistInteger), 219-293 (RealWidth / PlistReal),
-  296-311 (PlistBoolean), 322-366 (PlistDate), 369-392 (PlistData),
-  394-414 (PlistUid), 416-442 (PlistValueRef), 444-473 (PlistDictEntry),
-  475-519 (PlistDict), 521-553 (PlistArray), 555-597 (PlistValueKind),
-  599-734 (PlistValue), 736-812 (PlistArenaLimits / PlistArenaError).
-- Arena and structural equality: native.rs:813-1004 (PlistDocument; the
+ (PlistBoolean), (PlistDate), (PlistData),
+ (PlistUid), (PlistValueRef), (PlistDictEntry),
+ (PlistDict), (PlistArray), (PlistValueKind),
+ (PlistValue), (PlistArenaLimits / PlistArenaError).
+- Arena and structural equality: native.rs (PlistDocument; the
   round-trip equality of RFC 0013 §10.3), 1006-1146
   (PlistDocumentBuilder; iterative Kahn validation).
-- Freezing: RFC 0013 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:
-  462-510) — duplicate keys are ordered native facts, strings hold exact
+- Freezing: RFC 0013 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md
+) — duplicate keys are ordered native facts, strings hold exact
   UTF-16 code units with a bounded validation result, integers are signed
   64-bit, reals keep the Float32 width fact, dates are exact double seconds
   since 2001-01-01T00:00:00Z, data is exact bytes, and UIDs are values
@@ -42,13 +42,13 @@ from consema.plist.kinds import PlistStringStatus, RealWidth
 
 # Seconds between the Unix epoch (1970-01-01T00:00:00Z) and the plist epoch
 # (2001-01-01T00:00:00Z), the origin of every PlistDate value (RFC 0013
-# §5.5; native.rs:31-35). The Unix epoch is exactly this many seconds after
+# §5.5; native.rs). The Unix epoch is exactly this many seconds after
 # the plist epoch: 11,323 days x 86,400.
 PLIST_EPOCH_OFFSET_UNIX = 978_307_200.0
 
 
 def classify_string(units: tuple[int, ...]) -> PlistStringStatus:
-    """Exact surrogate pairing status (native.rs:1154-1170)."""
+    """Exact surrogate pairing status (native.rs)."""
     from consema.plist.kinds import PlistStringStatus
 
     index = 0
@@ -67,13 +67,13 @@ def classify_string(units: tuple[int, ...]) -> PlistStringStatus:
 
 class PlistStringConversionError(Exception):
     """An exact plist string cannot enter a Unicode-only host string
-    (native.rs:118-128)."""
+    (native.rs)."""
 
 
 @dataclass(frozen=True, slots=True)
 class PlistString:
     """Exact plist string content as immutable UTF-16 code units
-    (native.rs:46-115; RFC 0013 §6).
+    (native.rs; RFC 0013 §6).
 
     A string holds exact UTF-16 code units with a bounded validation result
     (``WellFormedUnicode | UnpairedSurrogate``) following the
@@ -98,7 +98,7 @@ class PlistString:
     @classmethod
     def from_unicode(cls, value: str) -> PlistString:
         """Converts one valid Unicode scalar string to its exact UTF-16
-        units (native.rs:71-74)."""
+        units (native.rs)."""
         return cls(_utf16_units(value))
 
     def status(self) -> PlistStringStatus:
@@ -110,12 +110,12 @@ class PlistString:
         return status
 
     def utf16be_bytes(self) -> bytes:
-        """Canonical BOM-free big-endian UTF-16BE bytes (native.rs:83-87)."""
+        """Canonical BOM-free big-endian UTF-16BE bytes (native.rs)."""
         return b"".join(unit.to_bytes(2, "big") for unit in self.code_units)
 
     def to_unicode(self) -> str:
         """Converts only well-formed content to a Unicode string
-        (native.rs:97-101)."""
+        (native.rs)."""
         if not _well_formed(self.code_units):
             raise PlistStringConversionError()
         # chr() round trip: surrogate pairs encode back to the astral
@@ -141,7 +141,7 @@ class PlistString:
 
 
 def _utf16_units(value: str) -> tuple[int, ...]:
-    """Exact UTF-16 code units of one Unicode string (native.rs:72-74)."""
+    """Exact UTF-16 code units of one Unicode string (native.rs)."""
     encoded = value.encode("utf-16-le")
     return tuple(
         encoded[index] | (encoded[index + 1] << 8) for index in range(0, len(encoded), 2)
@@ -156,7 +156,7 @@ def _well_formed(units: tuple[int, ...]) -> bool:
 
 @dataclass(frozen=True, slots=True)
 class PlistKey:
-    """String key identity of one dictionary association (native.rs:135-194).
+    """String key identity of one dictionary association (native.rs).
 
     Keys are strings in both profiles (RFC 0013 §4.4, §5.9); each physical
     association keeps its own key identity, and duplicate keys are preserved
@@ -189,7 +189,7 @@ class PlistKey:
 
 @dataclass(frozen=True, slots=True)
 class PlistInteger:
-    """Exact signed 64-bit plist integer (native.rs:196-215).
+    """Exact signed 64-bit plist integer (native.rs).
 
     Both profiles freeze the signed 64-bit range (RFC 0013 §4.5, §5.3, §6);
     wider source inputs are Recovered rather than widening this type.
@@ -204,7 +204,7 @@ class PlistInteger:
 
 @dataclass(frozen=True, slots=True)
 class PlistReal:
-    """Exact IEEE 754 real with its source width fact (native.rs:226-293).
+    """Exact IEEE 754 real with its source width fact (native.rs).
 
     The value is the exact bit pattern of the source width; NaN and the
     infinities are admitted values (RFC 0013 §4.6, §5.5). Equality and
@@ -217,24 +217,24 @@ class PlistReal:
 
     @classmethod
     def double(cls, value: float) -> PlistReal:
-        """Creates a Float64 real from an exact double (native.rs:241-247)."""
+        """Creates a Float64 real from an exact double (native.rs)."""
         return cls(_f64_bits(value), RealWidth.FLOAT64)
 
     @classmethod
     def single(cls, value: float) -> PlistReal:
-        """Creates a Float32 real from an exact single (native.rs:250-256)."""
+        """Creates a Float32 real from an exact single (native.rs)."""
         return cls(_f32_bits(value), RealWidth.FLOAT32)
 
     @classmethod
     def from_bits(cls, width: RealWidth, bits: int) -> PlistReal:
         """Creates a real from the exact source-width bit pattern; for
-        Float32 only the low 32 bits are retained (native.rs:262-271)."""
+        Float32 only the low 32 bits are retained (native.rs)."""
         if width is RealWidth.FLOAT32:
             bits = bits & 0xFFFF_FFFF
         return cls(bits, width)
 
     def as_f64(self) -> float:
-        """Exact double-converted value (RFC 0013 §5.5; native.rs:286-292)."""
+        """Exact double-converted value (RFC 0013 §5.5; native.rs)."""
         if self.width is RealWidth.FLOAT64:
             return _f64_from_bits(self.bits)
         return _f32_from_bits(self.bits)
@@ -251,14 +251,14 @@ class PlistReal:
 @dataclass(frozen=True, slots=True)
 class PlistBoolean:
     """One plist boolean value (``<true/>``/``<false/>``, markers
-    ``0x09``/``0x08``; native.rs:296-311)."""
+    ``0x09``/``0x08``; native.rs)."""
 
     value: bool
 
 
 @dataclass(frozen=True, slots=True)
 class PlistDate:
-    """Exact double seconds since the plist epoch (native.rs:321-366).
+    """Exact double seconds since the plist epoch (native.rs).
 
     Construction rejects non-finite payloads: ``plist.binary@1`` marks them
     Recovered (RFC 0013 §5.5) and XML calendar validation always yields a
@@ -284,12 +284,12 @@ class PlistDate:
 
 
 class PlistDateError(Exception):
-    """A plist date value must be a finite double (native.rs:357-367)."""
+    """A plist date value must be a finite double (native.rs)."""
 
 
 @dataclass(frozen=True, slots=True)
 class PlistData:
-    """Exact plist data bytes (native.rs:369-392).
+    """Exact plist data bytes (native.rs).
 
     Data is exact bytes in the native layer; base64 exists only as
     ``plist.xml@1`` representation text (RFC 0013 §6).
@@ -303,7 +303,7 @@ class PlistData:
 
 @dataclass(frozen=True, slots=True)
 class PlistUid:
-    """Unsigned 32-bit UID value (binary profile only; native.rs:394-414).
+    """Unsigned 32-bit UID value (binary profile only; native.rs).
 
     A UID is a value whose reference meaning belongs to an application layer
     such as NSKeyedArchiver; Consema preserves the value but never resolves
@@ -319,7 +319,7 @@ class PlistUid:
 
 @dataclass(frozen=True, slots=True)
 class PlistValueRef:
-    """Arena reference to one native value node (native.rs:416-442).
+    """Arena reference to one native value node (native.rs).
 
     The same source object referenced several times is the same reference
     (shared identity); the arena is bound to one document snapshot at the
@@ -332,7 +332,7 @@ class PlistValueRef:
 @dataclass(frozen=True, slots=True)
 class PlistDictEntry:
     """One ordered dictionary association: key identity and value reference
-    (native.rs:444-473)."""
+    (native.rs)."""
 
     key: PlistKey
     value: PlistValueRef
@@ -340,7 +340,7 @@ class PlistDictEntry:
 
 @dataclass(frozen=True, slots=True)
 class PlistDict:
-    """Ordered plist dictionary value (native.rs:475-519).
+    """Ordered plist dictionary value (native.rs).
 
     A dictionary preserves physical key/value association order and
     duplicate occurrences; there is no implicit first-wins or last-wins
@@ -354,7 +354,7 @@ class PlistDict:
 
     def positions_of_key(self, key: PlistKey) -> tuple[int, ...]:
         """Source-ordered positions of every association whose key equals
-        ``key`` (native.rs:512-518)."""
+        ``key`` (native.rs)."""
         return tuple(
             position
             for position, entry in enumerate(self.entries)
@@ -364,7 +364,7 @@ class PlistDict:
 
 @dataclass(frozen=True, slots=True)
 class PlistArray:
-    """Ordered plist array value (native.rs:521-553)."""
+    """Ordered plist array value (native.rs)."""
 
     elements: tuple[PlistValueRef, ...]
 
@@ -373,7 +373,7 @@ class PlistArray:
 
 
 class PlistValueKind(enum.Enum):
-    """Closed native plist value kind (native.rs:555-597).
+    """Closed native plist value kind (native.rs).
 
     The kind set is closed by RFC 0013 §6: both profiles share exactly
     these nine kinds. ``Uid`` values are binary-only.
@@ -390,13 +390,13 @@ class PlistValueKind(enum.Enum):
     UID = "uid"
 
     def as_str(self) -> str:
-        """Stable query/protocol name (native.rs:581-596)."""
+        """Stable query/protocol name (native.rs)."""
         return self.value
 
 
 @dataclass(frozen=True, slots=True)
 class PlistValue:
-    """One native plist value node (native.rs:599-734).
+    """One native plist value node (native.rs).
 
     The variant set is closed by RFC 0013 §6. ``Uid`` values are binary-only
     and are never reachable from an XML document.
@@ -470,7 +470,7 @@ class PlistValue:
 
     def references(self) -> tuple[PlistValueRef, ...]:
         """Ordered direct child references: dictionary values, then array
-        elements (native.rs:727-733)."""
+        elements (native.rs)."""
         if self.kind is PlistValueKind.DICT:
             return tuple(entry.value for entry in self.payload.entries)
         if self.kind is PlistValueKind.ARRAY:
@@ -479,7 +479,7 @@ class PlistValue:
 
 
 class PlistArenaErrorKind(enum.Enum):
-    """Native arena validation failures (native.rs:756-782)."""
+    """Native arena validation failures (native.rs)."""
 
     OBJECT_LIMIT_EXCEEDED = "ObjectLimitExceeded"
     REFERENCE_OUT_OF_BOUNDS = "ReferenceOutOfBounds"
@@ -488,7 +488,7 @@ class PlistArenaErrorKind(enum.Enum):
 
 
 class PlistArenaError(Exception):
-    """Native arena validation failure (native.rs:756-782)."""
+    """Native arena validation failure (native.rs)."""
 
     def __init__(
         self,
@@ -509,14 +509,14 @@ class PlistArenaError(Exception):
 
 @dataclass(frozen=True, slots=True)
 class PlistArenaLimits:
-    """Resource bounds for one native arena (native.rs:736-752)."""
+    """Resource bounds for one native arena (native.rs)."""
 
     max_objects: int = 1_000_000
     max_container_depth: int = 256
 
 
 class PlistDocument:
-    """Immutable native plist value arena (native.rs:813-864).
+    """Immutable native plist value arena (native.rs).
 
     The arena owns every native value node of one document (in binary
     object-table order) and the root reference. Nodes may be referenced by
@@ -536,7 +536,7 @@ class PlistDocument:
         self._limits = limits
 
     def root(self) -> PlistValueRef:
-        """Root value reference (native.rs:836-839)."""
+        """Root value reference (native.rs)."""
         return self._root
 
     def root_value(self) -> PlistValue:
@@ -544,7 +544,7 @@ class PlistDocument:
         return self._nodes[self._root.index]
 
     def get(self, reference: PlistValueRef) -> PlistValue | None:
-        """Resolves one reference within this arena (native.rs:848-852)."""
+        """Resolves one reference within this arena (native.rs)."""
         if 0 <= reference.index < len(self._nodes):
             return self._nodes[reference.index]
         return None
@@ -558,7 +558,7 @@ class PlistDocument:
 
     def __eq__(self, other: object) -> bool:
         """Structural equality of the reachable value graphs
-        (native.rs:866-947): content-based, ignoring sharing patterns,
+        (native.rs): content-based, ignoring sharing patterns,
         arena indices, and unreachable objects. This is the equality the
         reparse closure and round trips use (RFC 0013 §7, §10.3)."""
         if not isinstance(other, PlistDocument):
@@ -600,7 +600,7 @@ class PlistDocument:
 
     def __hash__(self) -> int:
         """Content-based structural hash; shared nodes are hashed per
-        occurrence (native.rs:951-1004)."""
+        occurrence (native.rs)."""
         value = 0
         stack = [self._root.index]
         while stack:
@@ -626,7 +626,7 @@ class PlistDocument:
 
 
 class PlistDocumentBuilder:
-    """Builds one immutable PlistDocument arena (native.rs:1014-1146).
+    """Builds one immutable PlistDocument arena (native.rs).
 
     Nodes are added in object-table order so arena indices equal object
     indices; the same source object is added once and referenced many times,
@@ -646,7 +646,7 @@ class PlistDocumentBuilder:
 
     def add(self, value: PlistValue) -> PlistValueRef:
         """Adds one node and returns its arena reference
-        (native.rs:1048-1057)."""
+        (native.rs)."""
         if len(self._nodes) >= self._limits.max_objects:
             raise PlistArenaError(
                 PlistArenaErrorKind.OBJECT_LIMIT_EXCEEDED, limit=self._limits.max_objects
@@ -656,7 +656,7 @@ class PlistDocumentBuilder:
 
     def build(self, root: PlistValueRef) -> PlistDocument:
         """Validates the arena and freezes it into one immutable document
-        (native.rs:1065-1145). The root must be in bounds, every reference
+        (native.rs). The root must be in bounds, every reference
         must index an existing node, the reference graph must be acyclic,
         and no container may be nested deeper than ``max_container_depth``.
         Validation is iterative (Kahn's algorithm plus a reversed

@@ -14,7 +14,7 @@ transport facts:
   terminators under the portable profile.
 
 Facts (sections/entries) mirror https://github.com/consema/consema-rs/blob/main/consema-conformance/tests/
-line_format_fixtures.rs:48-99. When the shared tree is not reachable the
+line_format_fixtures.rs. When the shared tree is not reachable the
 tests FAIL (G68 guard, same as tests/toml/conftest.py) — a partially
 provisioned checkout must not go green. Fixtures are read-only; tests
 never modify them.
@@ -96,7 +96,7 @@ def test_ini_fixtures_reparse_is_byte_stable():
 
 def test_windows_cp1252_fixture_keeps_declared_transport_facts():
     # The CP1252 bytes are not accidentally UTF-8, and the explicit code
-    # page decodes the accents (line_format_fixtures.rs:267-277).
+    # page decodes the accents (line_format_fixtures.rs).
     document, raw = _form("windows-cp1252.ini.hex")
     assert raw.count(b"\xe9") >= 1  # "Montr\xe9al"
     assert raw.count(b"\x80") >= 1  # "€"

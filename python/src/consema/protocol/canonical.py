@@ -299,7 +299,7 @@ class _Parser:
 
 
 def parse_json_document(data: bytes, limits: ProtocolLimits) -> tuple:
-    """Strictly parses one complete JSON document (value_transport.rs:26-53)."""
+    """Strictly parses one complete JSON document (value_transport.rs)."""
     if len(data) > limits.max_bytes:
         raise resource("$", "transport bytes")
     parser = _Parser(data, limits)

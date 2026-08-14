@@ -1,8 +1,8 @@
 """Typed PortableGraph construction and PGCE/1 codec failures.
 
 Stable diagnostic codes (semantic-model v5 registry arbitration,
-https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:692-705 and the StableFailure
-mappings in https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs:230-242 and pgce.rs:96-216):
+https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs and the StableFailure
+mappings in https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs and pgce.rs):
 
 - construction: `core.graph.resource-limit@1` (ResourceLimit, SizeOverflow)
   and `core.graph.invalid@1` (all structural failures);
@@ -31,7 +31,7 @@ class GraphBuildErrorKind(enum.Enum):
 
 
 class GraphBuildError(Exception):
-    """A stable graph construction failure (https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs:194-218).
+    """A stable graph construction failure (https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs).
 
     ``name``/``observed``/``limit`` carry the resource-limit facts;
     ``node_id`` carries the offending graph-local ID when relevant.
@@ -54,7 +54,7 @@ class GraphBuildError(Exception):
 
     @property
     def code(self) -> str:
-        """The frozen registered code (lib.rs:230-242)."""
+        """The frozen registered code (lib.rs)."""
         if self.kind in (GraphBuildErrorKind.RESOURCE_LIMIT, GraphBuildErrorKind.SIZE_OVERFLOW):
             return "core.graph.resource-limit@1"
         return "core.graph.invalid@1"
@@ -83,7 +83,7 @@ class PgceErrorKind(enum.Enum):
 
 
 class PgceDecodeError(Exception):
-    """A strict PGCE/1 decoding failure (pgce.rs:116-152).
+    """A strict PGCE/1 decoding failure (pgce.rs).
 
     ``name``/``observed``/``limit`` carry the resource-limit facts;
     ``value`` carries the offending version, node-kind octet, or reference.
@@ -108,7 +108,7 @@ class PgceDecodeError(Exception):
 
     @property
     def code(self) -> str:
-        """The frozen registered code (pgce.rs:164-184)."""
+        """The frozen registered code (pgce.rs)."""
         if self.kind is PgceErrorKind.UNSUPPORTED_VERSION:
             return "core.pgce.unsupported-version@1"
         if self.kind in (
@@ -133,7 +133,7 @@ class PgceDecodeError(Exception):
 
 
 class PgceEncodeError(Exception):
-    """A bounded PGCE/1 encoding failure (pgce.rs:72-84). No partial output."""
+    """A bounded PGCE/1 encoding failure (pgce.rs). No partial output."""
 
     def __init__(
         self,

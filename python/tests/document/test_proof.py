@@ -1,9 +1,9 @@
 """UntouchedByteProof tests.
 
 Intended behavior mirrors the Rust arbitration tests
-(https://github.com/consema/consema-rs/blob/main/consema-document/src/untouched_proof.rs:319-402) against the
+(https://github.com/consema/consema-rs/blob/main/consema-document/src/untouched_proof.rs) against the
 contract of RFC 0004 §15 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
-structural-edit-v1.md:358-371): the proof is an ordered cover of all
+structural-edit-v1.md): the proof is an ordered cover of all
 old-source intervals outside replacements mapped to target intervals;
 verification rechecks digests, original-byte preconditions, exact target
 bytes, and every region fact; regions are canonical maximal intervals.
@@ -81,7 +81,7 @@ def test_no_replacements_prove_the_complete_snapshot() -> None:
 
 def test_transferred_proof_rejects_noncanonical_regions() -> None:
     """Adjacent regions must have been merged; from_facts rejects
-    non-canonical covers (untouched_proof.rs:388-401)."""
+    non-canonical covers (untouched_proof.rs)."""
     digest = ContentDigest.of(b"abc")
     with pytest.raises(UntouchedByteProofError) as caught:
         UntouchedByteProof.from_facts(

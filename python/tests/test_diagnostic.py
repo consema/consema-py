@@ -2,7 +2,7 @@
 
 Construction validates the code against the frozen error registry and the
 category against the registry record (RFC 0016 §6: unknown code or category
-contradiction is a protocol error; diagnostic.rs:336-351).
+contradiction is a protocol error; diagnostic.rs).
 """
 
 import pytest

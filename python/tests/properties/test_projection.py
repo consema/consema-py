@@ -7,7 +7,7 @@ Cases covered:
   (81-84), projection.explicit-jdk-table-collapse (86-89).
 - Empty keys and values produce exact zero-width provenance anchors
   (Rust test empty_keys_and_values_have_exact_zero_width_provenance
-  _anchors, projection.rs:959-982).
+  _anchors, projection.rs).
 """
 
 from __future__ import annotations
@@ -148,7 +148,7 @@ def test_explicit_jdk_table_collapse():
 
 def test_empty_keys_and_values_have_zero_width_anchors():
     # Exact zero-width provenance anchors for empty keys and values
-    # (projection.rs:959-982).
+    # (projection.rs).
     document = parse("=x\nempty=\nimplicit\n")
     result = project(document, ProjectionRequest.best_exact_entry_mapping())
     assert isinstance(result, CompleteProjection)

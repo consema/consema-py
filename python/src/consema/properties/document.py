@@ -2,24 +2,24 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs:
-  590-775 - snapshot identity (lib.rs:613-615), exact source
-  (lib.rs:618-621), render() (byte-for-byte source identity, lib.rs:624-628),
-  format family java-properties@1 (lib.rs:631-633), profile (lib.rs:636-639),
-  formation status (lib.rs:654-657), diagnostics (lib.rs:659-663), lossless
-  structural index (lib.rs:665-669), syntax kinds (lib.rs:671-675),
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs
+ - snapshot identity (lib.rs), exact source
+  (lib.rs), render() (byte-for-byte source identity, lib.rs),
+  format family java-properties@1 (lib.rs), profile (lib.rs),
+  formation status (lib.rs), diagnostics (lib.rs), lossless
+  structural index (lib.rs), syntax kinds (lib.rs),
   natural/logical lines, properties, comments, escapes, error lines
-  (lib.rs:677-711), parse limits (lib.rs:713-717), and the snapshot-bound
+  (lib.rs), parse limits (lib.rs), and the snapshot-bound
   record resolvers property/natural_line/logical_line/escape
-  (lib.rs:719-774).
-- Record shapes: PropertiesNaturalLine (lib.rs:309-342), PropertiesLogicalLine
-  (lib.rs:344-370), PropertiesComment (lib.rs:372-405), PropertiesEscape
-  (lib.rs:407-455), Property (lib.rs:457-546), PropertiesErrorLine
-  (lib.rs:548-588); the seven native roles are frozen by RFC 0010 section 9
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:253-267) and the NodeRole
-  vocabulary consema-document lib.rs:113-251.
-- Spans/nodes/identity: consema-document (Span lib.rs:295-342, NodeRef
-  lib.rs:254-292, DocumentAuthority lib.rs:54-110) - reused as-is from
+  (lib.rs).
+- Record shapes: PropertiesNaturalLine (lib.rs), PropertiesLogicalLine
+  (lib.rs), PropertiesComment (lib.rs), PropertiesEscape
+  (lib.rs), Property (lib.rs), PropertiesErrorLine
+  (lib.rs); the seven native roles are frozen by RFC 0010 section 9
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md) and the NodeRole
+  vocabulary consema-document lib.rs.
+- Spans/nodes/identity: consema-document (Span lib.rs, NodeRef
+  lib.rs, DocumentAuthority lib.rs) - reused as-is from
   consema.document.structural.
 
 Design: records are frozen dataclasses whose public fields are the
@@ -60,7 +60,7 @@ from consema.properties.limits import PropertiesParseLimits
 
 @dataclass(frozen=True, slots=True)
 class PropertiesNaturalLine:
-    """One exact natural source line (lib.rs:309-342).
+    """One exact natural source line (lib.rs).
 
     ``span`` covers the complete line including its terminator;
     ``content_span`` excludes it; ``line_break_span`` is absent for an EOF
@@ -76,7 +76,7 @@ class PropertiesNaturalLine:
 @dataclass(frozen=True, slots=True)
 class PropertiesLogicalLine:
     """One property/error logical line and its natural-line constituents
-    (lib.rs:344-370)."""
+    (lib.rs)."""
 
     node: NodeRef
     kind: PropertiesLogicalLineKind
@@ -85,7 +85,7 @@ class PropertiesLogicalLine:
 
 @dataclass(frozen=True, slots=True)
 class PropertiesComment:
-    """One comment natural line (lib.rs:372-405).
+    """One comment natural line (lib.rs).
 
     ``marker`` is the exact ``#`` or ``!`` comment character.
     """
@@ -99,7 +99,7 @@ class PropertiesComment:
 @dataclass(frozen=True, slots=True)
 class PropertiesEscape:
     """One source escape and its exact Java-string output range
-    (lib.rs:407-455)."""
+    (lib.rs)."""
 
     node: NodeRef
     property: NodeRef
@@ -111,13 +111,13 @@ class PropertiesEscape:
 
     def output_range(self) -> range:
         """Half-open output code-unit range in the owning key or value
-        (lib.rs:450-454)."""
+        (lib.rs)."""
         return range(self.output_start, self.output_end)
 
 
 @dataclass(frozen=True, slots=True)
 class Property:
-    """One distinct source-ordered property association (lib.rs:457-546).
+    """One distinct source-ordered property association (lib.rs).
 
     ``key_fragments``/``value_fragments`` are the ordered raw source spans
     contributing to the decoded strings (escape spellings are owned by the
@@ -141,7 +141,7 @@ class Property:
 
 @dataclass(frozen=True, slots=True)
 class PropertiesErrorLine:
-    """One recovered malformed logical line (lib.rs:548-588)."""
+    """One recovered malformed logical line (lib.rs)."""
 
     node: NodeRef
     logical_line: NodeRef
@@ -153,9 +153,9 @@ class PropertiesErrorLine:
 @dataclass(frozen=True, slots=True)
 class PropertiesDocument:
     """Immutable, duplicate-preserving Java Properties document
-    (lib.rs:590-608).
+    (lib.rs).
 
-    Public fields mirror the Rust accessors one-to-one (lib.rs:610-775):
+    Public fields mirror the Rust accessors one-to-one (lib.rs):
     ``natural_lines``, ``logical_lines``, ``properties``, ``comments``,
     ``escapes``, ``error_lines`` are the ordered record tuples; ``source``,
     ``profile``, ``structural_index``, ``syntax_kinds``, ``diagnostics``,
@@ -183,51 +183,51 @@ class PropertiesDocument:
 
     def snapshot_identity(self) -> object:
         """Snapshot identity to which every Properties handle and span
-        belongs (lib.rs:613-615)."""
+        belongs (lib.rs)."""
         return self.authority.identity
 
     def render(self) -> bytes:
         """Default rendering is byte-for-byte source identity
-        (lib.rs:624-628)."""
+        (lib.rs)."""
         return self.source.bytes()
 
     def format_family(self) -> FormatFamilyId:
-        """Stable Java Properties format family (lib.rs:631-633)."""
+        """Stable Java Properties format family (lib.rs)."""
         return FormatFamilyId.new("java-properties", 1)
 
     def profile_id(self) -> ProfileId:
-        """Exact selected profile (lib.rs:636-639)."""
+        """Exact selected profile (lib.rs)."""
         return self.profile.id()
 
     def selected_profile(self) -> PropertiesProfile:
-        """Concrete selected profile (lib.rs:641-645)."""
+        """Concrete selected profile (lib.rs)."""
         return self.profile
 
     def node_ref(self) -> NodeRef:
-        """Root Properties document identity (lib.rs:647-651)."""
+        """Root Properties document identity (lib.rs)."""
         return self.root_node
 
     def formation_status(self) -> FormationStatus:
-        """Complete or explicitly recovered formation state (lib.rs:654-657)."""
+        """Complete or explicitly recovered formation state (lib.rs)."""
         return self._formation_status
 
     def diagnostic_records(self) -> tuple[PropertiesDiagnostic, ...]:
-        """Stable ordered diagnostics (lib.rs:659-663)."""
+        """Stable ordered diagnostics (lib.rs)."""
         return self.diagnostics
 
     def lossless_structural_index(self) -> LosslessStructuralIndex:
-        """Exhaustive ordered source coverage (lib.rs:665-669)."""
+        """Exhaustive ordered source coverage (lib.rs)."""
         return self.structural_index
 
     def lossless_syntax_kinds(self) -> tuple[PropertiesSyntaxKind, ...]:
-        """Format kind aligned with every structural piece (lib.rs:671-675)."""
+        """Format kind aligned with every structural piece (lib.rs)."""
         return self.syntax_kinds
 
     # -- snapshot-bound resolution -----------------------------------------
 
     def property(self, node: NodeRef) -> Property:
         """Resolves one property handle only within this snapshot
-        (lib.rs:719-729)."""
+        (lib.rs)."""
         self.authority.verify(node)
         if node.role is not NodeRole.PROPERTIES_PROPERTY:
             raise LocationError(LocationErrorKind.WRONG_ROLE)
@@ -238,7 +238,7 @@ class PropertiesDocument:
 
     def natural_line(self, node: NodeRef) -> PropertiesNaturalLine:
         """Resolves one natural-line handle only within this snapshot
-        (lib.rs:731-744)."""
+        (lib.rs)."""
         self.authority.verify(node)
         if node.role is not NodeRole.PROPERTIES_NATURAL_LINE:
             raise LocationError(LocationErrorKind.WRONG_ROLE)
@@ -249,7 +249,7 @@ class PropertiesDocument:
 
     def logical_line(self, node: NodeRef) -> PropertiesLogicalLine:
         """Resolves one logical-line handle only within this snapshot
-        (lib.rs:746-759)."""
+        (lib.rs)."""
         self.authority.verify(node)
         if node.role is not NodeRole.PROPERTIES_LOGICAL_LINE:
             raise LocationError(LocationErrorKind.WRONG_ROLE)
@@ -260,7 +260,7 @@ class PropertiesDocument:
 
     def escape(self, node: NodeRef) -> PropertiesEscape:
         """Resolves one escape handle only within this snapshot
-        (lib.rs:761-774)."""
+        (lib.rs)."""
         self.authority.verify(node)
         if node.role is not NodeRole.PROPERTIES_ESCAPE:
             raise LocationError(LocationErrorKind.WRONG_ROLE)

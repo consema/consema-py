@@ -2,7 +2,7 @@
 
 The envelope shape (schema / contract_id / contract_version / payload) and
 the transport round trips are defined by RFC 0016 §3.2 and
-https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs:419-521; the registered-payload
+https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs; the registered-payload
 dispatch follows https://github.com/consema/consema-rs/blob/main/consema-protocol/src/payload.rs.
 """
 
@@ -25,7 +25,7 @@ LIMITS = ProtocolLimits()
 
 
 def _completion_like_payload() -> PortableValue:
-    # A complete core.completion@1 record (execution.rs:40-49) that the
+    # A complete core.completion@1 record (execution.rs) that the
     # registered-payload validation decodes fully.
     return PortableValue.object(
         [
@@ -88,7 +88,7 @@ def test_unknown_contract_and_schema_mismatch_are_distinct():
 
 def test_matching_schema_does_not_bypass_full_payload_validation():
     # A core.diagnostic@1 payload with an unknown field fails the record
-    # decode (contract.rs:651-663).
+    # decode (contract.rs).
     payload = PortableValue.object(
         [
             ("schema", PortableValue.string("core.diagnostic@1")),

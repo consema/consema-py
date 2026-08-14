@@ -2,17 +2,17 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:490-661 —
-  snapshot identity (lib.rs:511-514), source (lib.rs:517-520), render()
-  (byte-for-byte source identity, lib.rs:523-525), format family "ini@1"
-  (lib.rs:529-531), profile (lib.rs:535-538), root document identity
-  (lib.rs:541-543), formation status (lib.rs:546-549), diagnostics
-  (lib.rs:552-555), lossless structural index (lib.rs:558-561), syntax
-  kinds (lib.rs:564-567), ordered physical/logical lines, sections,
-  entries, error records (lib.rs:570-597), parse limits (lib.rs:600-603),
-  and the snapshot-bound handle resolution methods (lib.rs:605-660).
-- Native model: RFC 0009 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:
-  254-283) — ordered physical lines with exact raw and decoded ranges,
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs —
+  snapshot identity (lib.rs), source (lib.rs), render()
+  (byte-for-byte source identity, lib.rs), format family "ini@1"
+  (lib.rs), profile (lib.rs), root document identity
+  (lib.rs), formation status (lib.rs), diagnostics
+  (lib.rs), lossless structural index (lib.rs), syntax
+  kinds (lib.rs), ordered physical/logical lines, sections,
+  entries, error records (lib.rs), parse limits (lib.rs),
+  and the snapshot-bound handle resolution methods (lib.rs).
+- Native model: RFC 0009 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md
+) — ordered physical lines with exact raw and decoded ranges,
   ordered logical lines with constituent physical-line identities, BOM/
   newline/indentation/delimiter/quote/comment facts, section header
   identity and original/comparison names, entry identity with owning
@@ -25,12 +25,12 @@ Authority (Rust arbitration for the public surface):
   snapshot-bound NodeRefs with the INI-specific roles (NodeRole of
   consema.document.structural: IniDocument, IniPhysicalLine,
   IniLogicalLine, IniSection, IniDefaultSection, IniEntry, IniErrorLine,
-  IniSyntaxPiece — consema-document lib.rs:113-251).
+  IniSyntaxPiece — consema-document lib.rs).
 
 The document is logically immutable; every NodeRef and Span is bound to
 one snapshot identity. Recovered documents retain exact bytes and explicit
 recovery structure but never fabricate native semantics (RFC 0009 §4,
-https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:132-137).
+https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 """
 
 from __future__ import annotations
@@ -76,7 +76,7 @@ class IniAccessError(Exception):
 
 @dataclass(frozen=True, slots=True)
 class IniDocument:
-    """Complete immutable INI document snapshot (lib.rs:490-506)."""
+    """Complete immutable INI document snapshot (lib.rs)."""
 
     authority: DocumentAuthority
     source: object  # consema.document.source.SourceSnapshot
@@ -97,52 +97,52 @@ class IniDocument:
 
     def snapshot_identity(self) -> object:
         """Snapshot identity to which every INI handle and span belongs
-        (lib.rs:511-514)."""
+        (lib.rs)."""
         return self.authority.identity
 
     def source_snapshot(self) -> object:
-        """Exact immutable source snapshot (lib.rs:517-520)."""
+        """Exact immutable source snapshot (lib.rs)."""
         return self.source
 
     def render(self) -> bytes:
         """Default rendering is byte-for-byte source identity
-        (lib.rs:523-525)."""
+        (lib.rs)."""
         return self.source.bytes()
 
     def format_family(self) -> FormatFamilyId:
-        """Stable INI format family (lib.rs:529-531)."""
+        """Stable INI format family (lib.rs)."""
         return FormatFamilyId.new("ini", 1)
 
     def profile_id(self) -> ProfileId:
-        """Exact selected profile (lib.rs:535-538)."""
+        """Exact selected profile (lib.rs)."""
         return self.profile.id()
 
     def node_ref(self) -> NodeRef:
-        """Root INI document identity (lib.rs:541-543)."""
+        """Root INI document identity (lib.rs)."""
         return self.root_node
 
     def formation_status(self) -> FormationStatus:
-        """Complete or explicitly recovered formation state (lib.rs:546-549)."""
+        """Complete or explicitly recovered formation state (lib.rs)."""
         return self._formation_status
 
     def diagnostic_records(self) -> tuple[IniDiagnostic, ...]:
-        """Stable ordered diagnostics (lib.rs:552-555)."""
+        """Stable ordered diagnostics (lib.rs)."""
         return self.diagnostics
 
     def lossless_structural_index(self) -> LosslessStructuralIndex:
-        """Exhaustive ordered source coverage (lib.rs:558-561)."""
+        """Exhaustive ordered source coverage (lib.rs)."""
         return self.structural_index
 
     def lossless_syntax_kinds(self) -> tuple[IniSyntaxKind, ...]:
-        """Format kind aligned with each structural piece (lib.rs:564-567)."""
+        """Format kind aligned with each structural piece (lib.rs)."""
         return self.syntax_kinds
 
     # -- native records -----------------------------------------------------
     # The tuple fields are the ordered native-record accessors: physical
-    # lines (lib.rs:571-573), logical records (lib.rs:576-578), distinct
-    # section occurrences (lib.rs:581-583), distinct entry occurrences
-    # (lib.rs:586-588), recovered error records (lib.rs:591-593), and the
-    # resource contract used to form this snapshot (lib.rs:600-603). They
+    # lines (lib.rs), logical records (lib.rs), distinct
+    # section occurrences (lib.rs), distinct entry occurrences
+    # (lib.rs), recovered error records (lib.rs), and the
+    # resource contract used to form this snapshot (lib.rs). They
     # are dataclass fields (Python-idiomatic access) with the same frozen
     # spellings as the Rust accessors.
 
@@ -150,7 +150,7 @@ class IniDocument:
 
     def resolve_physical_line(self, node: NodeRef) -> IniPhysicalLine:
         """Resolves one physical-line handle only within this snapshot
-        (lib.rs:606-618)."""
+        (lib.rs)."""
         self._verify(node, NodeRole.INI_PHYSICAL_LINE)
         for line in self.physical_lines:
             if line.node == node:
@@ -159,7 +159,7 @@ class IniDocument:
 
     def resolve_logical_line(self, node: NodeRef) -> IniLogicalLine:
         """Resolves one logical-line handle only within this snapshot
-        (lib.rs:621-633)."""
+        (lib.rs)."""
         self._verify(node, NodeRole.INI_LOGICAL_LINE)
         for line in self.logical_lines:
             if line.node == node:
@@ -168,7 +168,7 @@ class IniDocument:
 
     def resolve_section(self, node: NodeRef) -> IniSection:
         """Resolves one section/default-section handle only within this
-        snapshot (lib.rs:636-648)."""
+        snapshot (lib.rs)."""
         self._verify(node, NodeRole.INI_SECTION, NodeRole.INI_DEFAULT_SECTION)
         for section in self.sections:
             if section.node == node:
@@ -177,7 +177,7 @@ class IniDocument:
 
     def resolve_entry(self, node: NodeRef) -> IniEntry:
         """Resolves one entry handle only within this snapshot
-        (lib.rs:651-660)."""
+        (lib.rs)."""
         self._verify(node, NodeRole.INI_ENTRY)
         for entry in self.entries:
             if entry.node == node:

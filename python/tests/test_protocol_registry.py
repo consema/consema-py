@@ -1,10 +1,10 @@
 """Intent documents for the contract and error-code registries.
 
 Frozen facts: contract registry counts 16/18/25/25/30/38/41 across v1-v7
-(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs:696-702) and error-code counts
-55/62/90/92/132/166/187 (error_registry.rs:1717-1723); every version is
-sorted; later versions are supersets of earlier ones (contract.rs:703-716,
-error_registry.rs:1726-1774).
+(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs) and error-code counts
+55/62/90/92/132/166/187 (error_registry.rs); every version is
+sorted; later versions are supersets of earlier ones (contract.rs,
+error_registry.rs).
 """
 
 import pytest
@@ -45,7 +45,7 @@ def test_v7_contracts_include_the_cli_records():
     assert registry.recognizes(ContractId("core.cli-output", 1))
     assert registry.recognizes(ContractId("core.batch-plan", 1))
     assert registry.recognizes(ContractId("core.batch-result", 1))
-    # The v6 registry does not know the CLI records (contract.rs:734-741).
+    # The v6 registry does not know the CLI records (contract.rs).
     for contract in (
         ContractId("core.cli-output", 1),
         ContractId("core.batch-plan", 1),
@@ -74,13 +74,13 @@ def test_contract_id_validation():
 def test_error_code_registry_counts(version):
     codes = ErrorCodeRegistry(version).codes()
     assert len(codes) == ERROR_COUNTS[version]
-    # Sorted and unique (error_registry.rs:1700-1716).
+    # Sorted and unique (error_registry.rs).
     for left, right in zip(codes, codes[1:]):
         assert left.code < right.code
 
 
 def test_error_registry_growth_and_specific_codes():
-    # error_registry.rs:1757-1774.
+    # error_registry.rs.
     assert not ErrorCodeRegistry(1).contains("core.source.patch-base-mismatch@1")
     assert ErrorCodeRegistry(2).contains("core.source.patch-base-mismatch@1")
     assert not ErrorCodeRegistry(2).contains("core.materialization.unrepresentable@1")
@@ -108,8 +108,8 @@ def test_error_code_descriptor_fields():
 
 def test_protocol_and_graph_codes_are_registered():
     # The v1 registry registers every core.protocol.* code
-    # (error_registry.rs:75-139); the v5 registry adds the graph/PGCE codes
-    # (error_registry.rs:692-725).
+    # (error_registry.rs); the v5 registry adds the graph/PGCE codes
+    # (error_registry.rs).
     registry = ErrorCodeRegistry(1)
     for code in (
         "core.protocol.invalid-json@1",
@@ -133,7 +133,7 @@ def test_protocol_and_graph_codes_are_registered():
 
 def test_pvce_codes_are_codec_emitted_but_not_registry_registered():
     # The `core.pvce.*@1` codes are the codec's StableFailure diagnostic
-    # codes (https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs:1062-1087); the error-code
+    # codes (https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs); the error-code
     # registry does NOT register them (error_registry.rs has no core.pvce.*
     # entry), so Diagnostic construction cannot use them.
     registry = ErrorCodeRegistry(7)

@@ -21,11 +21,11 @@ formation (root body first, then each item in source order; an attribute
 consumes one ordinal for itself and then every node of its expression
 subtree in ``children()`` source order; a block consumes one ordinal for
 itself, one per label, and then its nested body's items —
-https://github.com/consema/consema-rs/blob/main/consema-hcl/src/projection.rs:124-130). Query and projection issue
+https://github.com/consema/consema-rs/blob/main/consema-hcl/src/projection.rs). Query and projection issue
 snapshot-bound NodeRefs from these ordinals.
 
 Authority: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/native.rs (types and accessors,
-native.rs:28-325); HclSyntaxKind spellings are frozen in
+native.rs); HclSyntaxKind spellings are frozen in
 consema.hcl.kinds (RFC 0014 §7.2).
 """
 
@@ -39,7 +39,7 @@ from consema.hcl.expression import HclExpression
 
 @dataclass(frozen=True, slots=True)
 class HclBody:
-    """Ordered body item container (RFC 0014 §6; native.rs:67-103).
+    """Ordered body item container (RFC 0014 §6; native.rs).
 
     A body holds attributes and blocks interleaved in source order; the
     root body of a document and every nested block body share this
@@ -53,7 +53,7 @@ class HclBody:
 @dataclass(frozen=True, slots=True)
 class HclBodyItem:
     """One body item: an attribute or a block occurrence (RFC 0014 §4.2,
-    §6; native.rs:105-136).
+    §6; native.rs).
 
     Identity is per-occurrence: an attribute and a block may share a name
     in one body, blocks of the same type and labels may repeat, and every
@@ -81,7 +81,7 @@ class HclBodyItem:
 @dataclass(frozen=True, slots=True)
 class HclAttribute:
     """One attribute occurrence: name, equals sign, and expression (RFC
-    0014 §4.2, §6; native.rs:138-193).
+    0014 §4.2, §6; native.rs).
 
     The expression is a first-class native role with its own exact span;
     the attribute's full source range is the union of the name, equals,
@@ -98,7 +98,7 @@ class HclAttribute:
 @dataclass(frozen=True, slots=True)
 class HclBlock:
     """One block occurrence: type, ordered labels, and nested body (RFC
-    0014 §4.2, §6; native.rs:195-251).
+    0014 §4.2, §6; native.rs).
 
     A one-line block is the same native shape with at most one attribute
     and no nested blocks. Keyword spellings are valid block types, and
@@ -116,7 +116,7 @@ class HclBlock:
 @dataclass(frozen=True, slots=True)
 class HclBlockLabel:
     """One block label with its quote/naked fact (RFC 0014 §4.2, §6;
-    native.rs:253-291).
+    native.rs).
 
     A label is either a naked identifier or a quoted literal string
     without interpolation; the ``quoted`` fact and the exact span preserve
@@ -132,7 +132,7 @@ class HclBlockLabel:
 @dataclass(frozen=True, slots=True)
 class HclErrorRegion:
     """One recovered HCL error region with its stable diagnostic code (RFC
-    0014 §3, §7.2; native.rs:293-325)."""
+    0014 §3, §7.2; native.rs)."""
 
     span: Span
     code: str

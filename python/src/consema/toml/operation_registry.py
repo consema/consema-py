@@ -3,19 +3,19 @@
 Authority:
 
 - RFC 0004 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
-  edit-v1.md:244-269) freezes the five structural operation ids
+  edit-v1.md) freezes the five structural operation ids
   (toml.edit.insert-entry@1, remove-entry@1, rename-entry@1,
   insert-array-element@1, remove-array-element@1) and declares the two
   existing scalar capabilities (replace-scalar-semantic@1,
   replace-scalar-literal@1) through the registry as
   ExistingTypedCapability.
 - The exact seven descriptors transcribe
-  https://github.com/consema/consema-rs/blob/main/consema-toml/src/operation_registry.rs:16-74 (ids, target roles
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/operation_registry.rs (ids, target roles
   toml.table-item@1 / toml.entry@1 / toml.array-item@1 /
   toml.array-element@1 / toml.scalar-item@1, argument kinds String /
   PortableValue / Placement / RepresentationPolicy / ExactBytes, and the
   support classification Supported / ExistingTypedCapability); the
-  structural surface test operation_registry.rs:94-119 pins the five
+  structural surface test operation_registry.rs pins the five
   Supported operations and the total count of seven.
 - The argument-kind spellings follow consema-document operation_registry.rs
   (OperationArgumentKind) and are cross-checked by https://github.com/consema/consema-go/blob/main/go/toml
@@ -63,7 +63,7 @@ class OperationArgumentDescriptor:
 @dataclass(frozen=True, slots=True)
 class OperationDescriptor:
     """One validated format operation descriptor
-    (consema-toml/src/operation_registry.rs:76-92)."""
+    (consema-toml/src/operation_registry.rs)."""
 
     id: FormatOperationId
     target_role: str
@@ -84,7 +84,7 @@ class OperationDescriptor:
 @dataclass(frozen=True, slots=True)
 class FormatOperationRegistry:
     """The validated operation registry for one exact TOML profile
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
 
     profile: ProfileId
     _operations: tuple[OperationDescriptor, ...] = field(default_factory=tuple)
@@ -98,7 +98,7 @@ class FormatOperationRegistry:
 
 def format_operation_registry(profile_id: ProfileId) -> FormatOperationRegistry:
     """Returns the validated operation registry for the frozen TOML
-    profile (operation_registry.rs:11-14); the profile must be
+    profile (operation_registry.rs); the profile must be
     ``toml.1.0@1``."""
     if (profile_id.id, profile_id.version) != ("toml.1.0", 1):
         raise ValueError("unsupported TOML profile for the frozen operation registry")
@@ -123,9 +123,9 @@ def _descriptor(
     )
 
 
-# The frozen seven descriptors, operation_registry.rs:16-74, in the
+# The frozen seven descriptors, operation_registry.rs, in the
 # canonical emission order: FormatOperationRegistry sorts by operation id
-# (https://github.com/consema/consema-rs/blob/main/consema-document/src/operation_registry.rs:234), so the
+# (https://github.com/consema/consema-rs/blob/main/consema-document/src/operation_registry.rs), so the
 # published surface is alphabetical (insert-array-element, insert-entry,
 # remove-array-element, remove-entry, rename-entry, replace-scalar-literal,
 # replace-scalar-semantic).

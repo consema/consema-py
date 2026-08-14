@@ -37,7 +37,7 @@ def _complete(result):
 def test_canonical_document_round_trips_all_core_kinds():
     """Scalar, container, and temporal values round-trip: the materialized
     document reparses and projects to the identical PortableValue
-    (materialization.rs:908-959)."""
+    (materialization.rs)."""
     local = PortableValue.local_date_time(
         PortableValue.date(2026, 8, 4),
         PortableValue.time(12, 34, 56, decimal(123, -3)),
@@ -67,7 +67,7 @@ def test_canonical_document_round_trips_all_core_kinds():
 
 def test_mapping_conversion_is_explicit_and_transformed():
     """UniqueStringEntriesToObject is explicit, reportable, and reversed
-    by projection (materialization.rs:961-994)."""
+    by projection (materialization.rs)."""
     mapping = PortableValue.entry_mapping(
         [
             (PortableValue.string("a"), PortableValue.boolean(True)),
@@ -97,7 +97,7 @@ def test_mapping_conversion_is_explicit_and_transformed():
 def test_unrepresentable_values_fail_without_document():
     """Integer overflow, implicit mapping conversion, duplicate mapping
     keys, and non-canonical NaN payloads fail with no partial output
-    (materialization.rs:996-1113)."""
+    (materialization.rs)."""
     from consema.document.materialization import MaterializationFailure
 
     too_large = PortableValue.object(

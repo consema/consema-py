@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for arbitration):
 
-- RFC 0007 s10 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:260-301):
+- RFC 0007 s10 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md):
   yaml.projection.best-exact-graph@1 preserves all standard resolved tags,
   arbitrary keys, association order, sharing, and cycles; provenance relates
   graph nodes and edges to every relevant source node/alias occurrence
@@ -10,16 +10,16 @@ Authority (language-neutral first; Rust only for arbitration):
   (RequireExactlyOneDocument, Reject sharing, Reject cycles,
   RequireKnownPortableTag, BestExactObjectOrEntryMapping, alias expansion
   disabled) freeze SharingPolicy/TagPolicy/MappingPolicy.
-- Policies and limits: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/projection.rs:18-62 (graph
+- Policies and limits: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/projection.rs (graph
   request/limits), 204-258 (SharingPolicy, TagPolicy, MappingPolicy,
   ValueProjectionLimits), 260-332 (ValueProjectionRequest), 334-420
   (Fidelity, events, report), 436-529 (failures and codes).
-- Graph projection with provenance: projection.rs:531-754 — the root/node/
+- Graph projection with provenance: projection.rs — the root/node/
   edge origin order, the Reference relation for alias edges, and the
   provenance-unit limit.
-- Value projection: projection.rs:771-1147 — cycle detection on the active
+- Value projection: projection.rs — cycle detection on the active
   stack, sharing events, tag stripping, object/entry-mapping selection
-  (object_names projection.rs:1149-1170), timestamp/binary lowering, and
+  (object_names projection.rs), timestamp/binary lowering, and
   provenance.
 - Vector surface: conformance/vectors/yaml-v1.json cases graph.shared-cycle
   (node_count/root_count/pgce_hex), projection.sharing-policy (default
@@ -81,7 +81,7 @@ BITS_NAN = 0x7FF8000000000000
 
 class SharingPolicy(enum.Enum):
     """Explicit YAML graph-sharing policy for PortableValue projection
-    (projection.rs:204-211)."""
+    (projection.rs)."""
 
     REJECT = "Reject"
     DUPLICATE_ACYCLIC = "DuplicateAcyclic"
@@ -89,14 +89,14 @@ class SharingPolicy(enum.Enum):
 
 class TagPolicy(enum.Enum):
     """Explicit YAML tag policy for PortableValue projection
-    (projection.rs:213-220)."""
+    (projection.rs)."""
 
     REQUIRE_KNOWN_PORTABLE_TAG = "RequireKnownPortableTag"
     STRIP_TO_NODE_KIND = "StripToNodeKind"
 
 
 class MappingPolicy(enum.Enum):
-    """YAML mapping-to-tree selection policy (projection.rs:222-231)."""
+    """YAML mapping-to-tree selection policy (projection.rs)."""
 
     BEST_EXACT_OBJECT_OR_ENTRY_MAPPING = "BestExactObjectOrEntryMapping"
     REQUIRE_OBJECT = "RequireObject"
@@ -105,7 +105,7 @@ class MappingPolicy(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class GraphProjectionLimits:
-    """Graph projection resource contract (projection.rs:19-33)."""
+    """Graph projection resource contract (projection.rs)."""
 
     graph: GraphLimits = field(default_factory=GraphLimits)
     max_provenance_entries: int = 2_000_000
@@ -114,7 +114,7 @@ class GraphProjectionLimits:
 @dataclass(frozen=True, slots=True)
 class GraphProjectionRequest:
     """Immutable ``yaml.projection.best-exact-graph@1`` request
-    (projection.rs:35-62)."""
+    (projection.rs)."""
 
     limits: GraphProjectionLimits = field(default_factory=GraphProjectionLimits)
 
@@ -127,7 +127,7 @@ class GraphProjectionRequest:
 
 
 class ProjectedLocationKind(enum.Enum):
-    """Graph-projected location kinds (projection.rs:64-92)."""
+    """Graph-projected location kinds (projection.rs)."""
 
     ROOT = "Root"
     NODE = "Node"
@@ -138,7 +138,7 @@ class ProjectedLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class GraphProjectedLocation:
-    """One exact projected graph location (projection.rs:64-92)."""
+    """One exact projected graph location (projection.rs)."""
 
     kind: ProjectedLocationKind
     parent: GraphNodeId | None = None
@@ -148,7 +148,7 @@ class GraphProjectedLocation:
 
 class ProvenanceRelation(enum.Enum):
     """Source relation shared by graph and tree projection provenance
-    (projection.rs:94-105)."""
+    (projection.rs)."""
 
     DIRECT = "Direct"
     REFERENCE = "Reference"
@@ -158,7 +158,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One exact YAML source origin (projection.rs:107-119)."""
+    """One exact YAML source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -168,7 +168,7 @@ class SourceOrigin:
 
 @dataclass(frozen=True, slots=True)
 class GraphProvenanceEntry:
-    """One graph provenance multimap entry (projection.rs:121-127)."""
+    """One graph provenance multimap entry (projection.rs)."""
 
     projected: GraphProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -176,7 +176,7 @@ class GraphProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class GraphProvenanceMap:
-    """Complete deterministic graph provenance multimap (projection.rs:129-141)."""
+    """Complete deterministic graph provenance multimap (projection.rs)."""
 
     entries: tuple[GraphProvenanceEntry, ...] = ()
 
@@ -207,7 +207,7 @@ class GraphProvenanceMap:
 
 @dataclass(frozen=True, slots=True)
 class CompleteGraphProjection:
-    """Complete exact graph projection (projection.rs:143-152)."""
+    """Complete exact graph projection (projection.rs)."""
 
     graph: object
     provenance: GraphProvenanceMap
@@ -218,7 +218,7 @@ class CompleteGraphProjection:
 
 @dataclass(frozen=True, slots=True)
 class ValueProjectionLimits:
-    """PortableValue projection resource contract (projection.rs:233-258)."""
+    """PortableValue projection resource contract (projection.rs)."""
 
     max_value_nodes: int = 1_000_000
     max_depth: int = 256
@@ -230,7 +230,7 @@ class ValueProjectionLimits:
 @dataclass(frozen=True, slots=True)
 class ValueProjectionRequest:
     """Immutable ``yaml.projection.best-exact-value@1`` request
-    (projection.rs:260-332)."""
+    (projection.rs)."""
 
     sharing: SharingPolicy = SharingPolicy.REJECT
     tags: TagPolicy = TagPolicy.REQUIRE_KNOWN_PORTABLE_TAG
@@ -255,7 +255,7 @@ class ValueProjectionRequest:
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:334-343)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -263,7 +263,7 @@ class Fidelity(enum.Enum):
 
 
 class ProjectionEventKind(enum.Enum):
-    """Structured YAML value projection event category (projection.rs:377-384)."""
+    """Structured YAML value projection event category (projection.rs)."""
 
     SHARING_DUPLICATED = "SharingDuplicated"
     TAG_STRIPPED = "TagStripped"
@@ -272,7 +272,7 @@ class ProjectionEventKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class ProjectionEvent:
     """One machine-readable projection transformation/loss event
-    (projection.rs:386-405)."""
+    (projection.rs)."""
 
     kind: ProjectionEventKind
     policy: str
@@ -286,7 +286,7 @@ class ProjectionEvent:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
-    """Complete ordered value projection report (projection.rs:407-419)."""
+    """Complete ordered value projection report (projection.rs)."""
 
     events: tuple[ProjectionEvent, ...] = ()
 
@@ -324,10 +324,10 @@ class ValuePath:
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """One PortableValue or association location (projection.rs:345-352).
+    """One PortableValue or association location (projection.rs).
 
     An association location is identified by its container path plus the
-    entry ordinal and role (AssociationLocation, projection.rs:330-344):
+    entry ordinal and role (AssociationLocation, projection.rs):
     distinct (path, ordinal, role) triples are distinct provenance
     locations even when they share one container path.
     """
@@ -340,7 +340,7 @@ class ProjectedLocation:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
-    """One PortableValue provenance entry (projection.rs:354-362)."""
+    """One PortableValue provenance entry (projection.rs)."""
 
     projected: ProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -349,14 +349,14 @@ class ProvenanceEntry:
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
     """Complete deterministic PortableValue provenance multimap
-    (projection.rs:364-375)."""
+    (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class CompleteValueProjection:
-    """Complete successful PortableValue projection (projection.rs:422-432)."""
+    """Complete successful PortableValue projection (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -367,7 +367,7 @@ class CompleteValueProjection:
 @dataclass(frozen=True, slots=True)
 class FailedValueProjection:
     """Value projection failure; no partial value or provenance is returned
-    (projection.rs:436-476, 522-529)."""
+    (projection.rs)."""
 
     kind: YamlProjectionFailureKind
     code: str
@@ -383,7 +383,7 @@ def project_graph_with_provenance(
     request: GraphProjectionRequest,
 ) -> CompleteGraphProjection:
     """Applies exact graph projection with complete node/edge/alias
-    provenance (projection.rs:531-554)."""
+    provenance (projection.rs)."""
     limits = request.limits
     builder = GraphBuilder(limits.graph)
     ids: list[GraphNodeId] = []
@@ -428,7 +428,7 @@ def project_graph_with_provenance(
 
 
 def project_graph(document: Document, graph_limits: GraphLimits | None = None):
-    """Projects all document roots to one exact PortableGraph (lib.rs:433-448)."""
+    """Projects all document roots to one exact PortableGraph (lib.rs)."""
     request = GraphProjectionRequest(
         limits=GraphProjectionLimits(graph=graph_limits or GraphLimits())
     )
@@ -436,7 +436,7 @@ def project_graph(document: Document, graph_limits: GraphLimits | None = None):
 
 
 def _graph_provenance(document: Document, ids: list[GraphNodeId], max_entries: int) -> GraphProvenanceMap:
-    """Root/node/edge provenance in construction order (projection.rs:605-754)."""
+    """Root/node/edge provenance in construction order (projection.rs)."""
     entries: list[GraphProvenanceEntry] = []
     index: dict[tuple, int] = {}
     units = 0
@@ -559,7 +559,7 @@ def _is_standard_graph_tag(tag: str) -> bool:
 
 def project_value(document: Document, request: ValueProjectionRequest):
     """Applies explicit YAML-to-PortableValue tree projection
-    (projection.rs:556-603)."""
+    (projection.rs)."""
     if document.document_count() != 1:
         return FailedValueProjection(
             kind=YamlProjectionFailureKind.DOCUMENT_CARDINALITY,
@@ -813,7 +813,7 @@ class _ValueContext:
                 return self.fail(YamlProjectionFailureKind.UNREPRESENTABLE_TIMESTAMP)
             return value
         # Custom/Tagged scalars lower exactly to their decoded string only
-        # under an explicit tag policy (projection.rs:1017-1019).
+        # under an explicit tag policy (projection.rs).
         return PortableValue.string(scalar.decoded)
 
     def add_mapping_origins(self, path: ValuePath, ordinal: int, entry, object_: bool):
@@ -920,7 +920,7 @@ _CODE_BY_PROJECTION_KIND = {
 
 def _object_names(document: Document, entries) -> list[str] | None:
     """Object eligibility: every key is a unique str tag scalar
-    (projection.rs:1149-1170)."""
+    (projection.rs)."""
     seen: set[str] = set()
     names: list[str] = []
     for entry in entries:
@@ -1022,7 +1022,7 @@ def _decode_base64(value: str) -> bytes | None:
 
 
 def _project_timestamp(value: str) -> PortableValue | None:
-    """Timestamp lowering to Date/OffsetDateTime (projection.rs:1230-1269)."""
+    """Timestamp lowering to Date/OffsetDateTime (projection.rs)."""
     try:
         year = int(value[0:4])
         month = int(value[5:7])

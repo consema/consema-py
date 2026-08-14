@@ -2,34 +2,34 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-properties/src/query.rs:
-  124-150 (native) and 167-211 (syntax) — domains
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-properties/src/query.rs
+ (native) and (syntax) — domains
   java-properties.native-semantic-query@1 and
   java-properties.lossless-syntax-query@1 (RFC 0010 section 10,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:269-308).
-- Operators: query.rs:398-532 (native: properties.document-properties,
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
+- Operators: query.rs (native: properties.document-properties,
   properties.natural-lines, properties.logical-lines,
   properties.logical-line-natural-lines, properties.property-key-equals,
   properties.property-value-state-is, properties.property-escapes,
   properties.duplicate-group, core.take, core.distinct-by-identity) and
-  query.rs:534-607 (syntax: properties.syntax-kind-is,
+  query.rs (syntax: properties.syntax-kind-is,
   properties.syntax-text-equals, properties.syntax-raw-bytes-equals,
   properties.syntax-utf16be-equals, core.take,
   core.distinct-by-identity).
-- Expression evaluation and StructureOrderMerge: query.rs:326-396.
-- Selection algebra: query.rs:675-692 (All/First/Last/ZeroOrOne/RequireOne
+- Expression evaluation and StructureOrderMerge: query.rs.
+- Selection algebra: query.rs (All/First/Last/ZeroOrOne/RequireOne
   with CardinalityViolation).
-- Limits and cancellation: consema-core/src/query.rs:2967-2981 (QueryLimits
+- Limits and cancellation: consema-core/src/query.rs (QueryLimits
   defaults max_steps=100_000, max_results=100_000); step accounting
-  query.rs:234-277.
+  query.rs.
 - Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
-  error_registry.rs:108-118) via consema.protocol.query.QueryFailure;
+  error_registry.rs) via consema.protocol.query.QueryFailure;
   the argument vocabulary for the Properties operators is validated by
   the transferable query model (consema.protocol.query.
   _check_operator_arguments, query.py:964-1053) before binding.
 - Key matching takes exact UTF-16 code units encoded as ``UTF16BE/1``; it
   does not normalize Unicode or case (RFC 0010 section 10,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:284-286). Decoded-text matching is available only
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md). Decoded-text matching is available only
   when a piece is well-formed Unicode; exact raw-byte and exact
   UTF-16-code-unit filters cover all other pieces (lines 304-308).
 
@@ -68,7 +68,7 @@ from consema.protocol.query import (
 
 
 class PropertiesMatchKind(enum.Enum):
-    """Match role of one native query result (query.rs:12-74)."""
+    """Match role of one native query result (query.rs)."""
 
     DOCUMENT = "Document"
     PROPERTY = "Property"
@@ -79,7 +79,7 @@ class PropertiesMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class PropertiesMatch:
-    """One snapshot-bound native semantic query match (query.rs:12-74).
+    """One snapshot-bound native semantic query match (query.rs).
 
     Only the fields relevant to the match kind are populated; ``node`` is
     the match identity for every kind.
@@ -104,7 +104,7 @@ class PropertiesMatch:
 
 @dataclass(frozen=True, slots=True)
 class PropertiesSyntaxMatch:
-    """One snapshot-bound lossless syntax query match (query.rs:88-121)."""
+    """One snapshot-bound lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -114,13 +114,13 @@ class PropertiesSyntaxMatch:
 
 @dataclass(frozen=True, slots=True)
 class PropertiesQueryExecution:
-    """Complete ordered query result (query.rs:124-150, 167-211)."""
+    """Complete ordered query result (query.rs)."""
 
     matches: tuple[object, ...]
 
 
 class PropertiesCancellationToken:
-    """Cooperative cancellation signal (query.rs:234-247; consema-core)."""
+    """Cooperative cancellation signal (query.rs; consema-core)."""
 
     def __init__(self) -> None:
         self._cancelled = False
@@ -133,7 +133,7 @@ class PropertiesCancellationToken:
 
 
 class PropertiesQueryLimits:
-    """Query resource limits (consema-core/src/query.rs:2967-2981)."""
+    """Query resource limits (consema-core/src/query.rs)."""
 
     def __init__(self, max_steps: int = 100_000, max_results: int = 100_000) -> None:
         self.max_steps = max_steps
@@ -142,7 +142,7 @@ class PropertiesQueryLimits:
 
 class _NativeContext:
     """One execution context bound to an immutable snapshot
-    (query.rs:227-324)."""
+    (query.rs)."""
 
     def __init__(
         self,
@@ -157,7 +157,7 @@ class _NativeContext:
 
     def step(self, results: int) -> None:
         """Step accounting with cancellation and limit enforcement
-        (query.rs:234-247)."""
+        (query.rs)."""
         if self.cancellation.is_cancelled():
             raise QueryFailure(QueryFailureKind.CANCELLED)
         self.steps += 1
@@ -231,7 +231,7 @@ def execute_properties_query(
     cancellation: PropertiesCancellationToken,
 ) -> PropertiesQueryExecution:
     """Executes a validated Properties native semantic query
-    (query.rs:124-150)."""
+    (query.rs)."""
     definition = executable.definition
     domain = definition.domain
     if domain.id != NATIVE_QUERY_DOMAIN_ID or domain.version != 1:
@@ -253,7 +253,7 @@ def execute_properties_syntax_query(
     cancellation: PropertiesCancellationToken,
 ) -> PropertiesQueryExecution:
     """Executes a validated Properties lossless syntax query
-    (query.rs:167-211)."""
+    (query.rs)."""
     definition = executable.definition
     domain = definition.domain
     if domain.id != SYNTAX_QUERY_DOMAIN_ID or domain.version != 1:
@@ -277,8 +277,8 @@ def execute_properties_syntax_query(
 
 
 class _PropertiesCursor:
-    """Ordered cursor with cooperative cancellation (query.rs:153-164,
-    214-225; consema-core OrderedQueryCursor)."""
+    """Ordered cursor with cooperative cancellation (query.rs,
+ ; consema-core OrderedQueryCursor)."""
 
     def __init__(
         self,
@@ -314,7 +314,7 @@ def execute_properties_query_cursor(
     cancellation: PropertiesCancellationToken,
 ) -> _PropertiesCursor:
     """Executes and exposes a complete Properties native result through an
-    ordered cursor (query.rs:153-164)."""
+    ordered cursor (query.rs)."""
     result = execute_properties_query(executable, document, limits, cancellation)
     return _PropertiesCursor(list(result.matches), cancellation)
 
@@ -326,13 +326,13 @@ def execute_properties_syntax_query_cursor(
     cancellation: PropertiesCancellationToken,
 ) -> _PropertiesCursor:
     """Executes and exposes a complete Properties syntax result through an
-    ordered cursor (query.rs:214-225)."""
+    ordered cursor (query.rs)."""
     result = execute_properties_syntax_query(executable, document, limits, cancellation)
     return _PropertiesCursor(list(result.matches), cancellation)
 
 
 # ---------------------------------------------------------------------------
-# Expression evaluation (query.rs:326-396)
+# Expression evaluation (query.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -353,7 +353,7 @@ def _execute_expression(
             context.step(len(output))
         return output
     # StructureOrderMerge: source order by property span start, then
-    # ordinal (query.rs:349-359, 609-634).
+    # ordinal (query.rs).
     output = []
     for branch in expression.branches:
         output.extend(_execute_expression(branch, input_matches, context))
@@ -379,7 +379,7 @@ def _execute_syntax_expression(
             context.step(len(output))
         return output
     # StructureOrderMerge: raw source order with ties preserved
-    # (query.rs:385-395); the sort is stable, so equal spans keep their
+    # (query.rs); the sort is stable, so equal spans keep their
     # branch order (the vector pins the merged kinds and the non-strict
     # ordinal increase; java-properties-v1.json:66-69).
     output = []
@@ -391,7 +391,7 @@ def _execute_syntax_expression(
 
 
 def _source_order(document: PropertiesDocument, item: PropertiesMatch) -> tuple[int, int]:
-    """Deterministic source-order key (query.rs:609-634)."""
+    """Deterministic source-order key (query.rs)."""
     if item.kind is PropertiesMatchKind.DOCUMENT:
         return (0, 0)
     if item.kind is PropertiesMatchKind.PROPERTY:
@@ -399,7 +399,7 @@ def _source_order(document: PropertiesDocument, item: PropertiesMatch) -> tuple[
     if item.kind in (PropertiesMatchKind.NATURAL_LINE, PropertiesMatchKind.ESCAPE):
         return (item.span.start_byte if item.span is not None else 0, item.ordinal or 0)
     # LogicalLine: start of the first constituent natural line
-    # (query.rs:622-632).
+    # (query.rs).
     logical = document.logical_line(item.node)
     start = 0
     if logical.natural_lines:
@@ -412,7 +412,7 @@ def _source_order(document: PropertiesDocument, item: PropertiesMatch) -> tuple[
 
 
 # ---------------------------------------------------------------------------
-# Native operators (query.rs:398-532)
+# Native operators (query.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -499,7 +499,7 @@ def _apply_operator(
 
 
 # ---------------------------------------------------------------------------
-# Syntax operators (query.rs:534-607)
+# Syntax operators (query.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -560,7 +560,7 @@ def _apply_syntax_operator(
 
 
 # ---------------------------------------------------------------------------
-# Selection algebra (query.rs:675-692)
+# Selection algebra (query.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -632,7 +632,7 @@ def _natural_ordinal(document: PropertiesDocument, node: NodeRef) -> int | None:
 
 
 def _decoded_span_text(document: PropertiesDocument, span: Span) -> str:
-    """Decoded text of one syntax span (query.rs:636-651).
+    """Decoded text of one syntax span (query.rs).
 
     ``decoded_utf8_byte`` offsets address the decoded text's UTF-8 byte
     sequence (RFC 0003 section 5); the Python ``str`` is sliced through
@@ -647,7 +647,7 @@ def _decoded_span_text(document: PropertiesDocument, span: Span) -> str:
 
 
 def _java_string_equals_utf16be(value: JavaString, expected: bytes) -> bool:
-    """Exact UTF16BE/1 key comparison (query.rs:653-660)."""
+    """Exact UTF16BE/1 key comparison (query.rs)."""
     units = value.code_units()
     if len(units) * 2 != len(expected):
         return False
@@ -658,7 +658,7 @@ def _java_string_equals_utf16be(value: JavaString, expected: bytes) -> bool:
 
 
 def _unicode_text_equals_utf16be(value: str, expected: bytes) -> bool:
-    """Exact UTF16BE/1 comparison of decoded text (query.rs:662-673)."""
+    """Exact UTF16BE/1 comparison of decoded text (query.rs)."""
     pairs = list(_chunks(expected, 2))
     encoded = value.encode("utf-16-be")
     units = [

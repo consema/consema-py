@@ -2,9 +2,9 @@
 
 Authority (language-neutral first; Rust only for arbitration):
 
-- RFC 0016 §5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:171-176): FormStatus is
+- RFC 0016 §5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md): FormStatus is
   a closed two-value enum (Complete, Recovered) — the 0.13.0 F10 disposition.
-- RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:124-141):
+- RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md):
   Span is the half-open [start_byte, end_byte) range over original raw bytes;
   §7 (lines 162-171): text Documents retain exhaustive ordered
   Token/Trivia/ErrorRegion coverage; binary Documents use a
@@ -12,12 +12,12 @@ Authority (language-neutral first; Rust only for arbitration):
   and non-empty format-owned region kind; no-gap/no-overlap/final-length
   invariant; empty source has an empty valid index.
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs — arbitration: SnapshotIdentity
-  lib.rs:41-51; DocumentAuthority lib.rs:54-110; the closed NodeRole
-  vocabulary lib.rs:113-251; NodeRef lib.rs:254-292; Span lib.rs:295-342;
-  AssociationPlacement lib.rs:262-272; FormationStatus lib.rs:405-411;
-  StructuralPieceKind/StructuralPiece lib.rs:414-449; LosslessStructuralIndex
-  lib.rs:452-490; BinaryRegion/BinaryStructuralIndex lib.rs:493-579;
-  LocationError lib.rs:582-604.
+  lib.rs; DocumentAuthority lib.rs; the closed NodeRole
+  vocabulary lib.rs; NodeRef lib.rs; Span lib.rs;
+  AssociationPlacement lib.rs; FormationStatus lib.rs;
+  StructuralPieceKind/StructuralPiece lib.rs; LosslessStructuralIndex
+  lib.rs; BinaryRegion/BinaryStructuralIndex lib.rs;
+  LocationError lib.rs.
 
 Vector coverage: conformance/vectors/source-v1.json cases
 ``source.binary.empty-coverage`` (lines 101-106), ``source.binary.region-
@@ -40,7 +40,7 @@ _SNAPSHOT_COUNTER = itertools.count(1)
 @dataclass(frozen=True, slots=True)
 class SnapshotIdentity:
     """Opaque identity of exactly one immutable document snapshot
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:41-51; RFC 0003 §3, lines 60-62).
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs; RFC 0003 §3, lines 60-62).
 
     A fresh opaque process-local identity for every formed Document; parsing
     the same bytes twice produces equal content digests and distinct snapshot
@@ -58,7 +58,7 @@ class SnapshotIdentity:
 @dataclass(frozen=True, slots=True)
 class DocumentAuthority:
     """Authority owned by one document implementation for issuing
-    snapshot-bound handles (lib.rs:54-110).
+    snapshot-bound handles (lib.rs).
 
     Allocates fresh snapshot identities, issues opaque node handles, and
     validates snapshot-bound spans.
@@ -68,28 +68,28 @@ class DocumentAuthority:
 
     @classmethod
     def fresh(cls) -> DocumentAuthority:
-        """Allocates a fresh snapshot identity (lib.rs:61-65)."""
+        """Allocates a fresh snapshot identity (lib.rs)."""
         return cls(identity=SnapshotIdentity(next(_SNAPSHOT_COUNTER)))
 
     def node_ref(self, index: int, role: NodeRole) -> NodeRef:
-        """Issues one opaque node handle (lib.rs:75-81)."""
+        """Issues one opaque node handle (lib.rs)."""
         return NodeRef(snapshot=self.identity, index=index, role=role)
 
     def span(self, start_byte: int, end_byte: int) -> Span:
-        """Creates a snapshot-bound span after range validation (lib.rs:84-93)."""
+        """Creates a snapshot-bound span after range validation (lib.rs)."""
         if start_byte > end_byte:
             raise LocationError(LocationErrorKind.INVERTED_SPAN)
         return Span(snapshot=self.identity, start_byte=start_byte, end_byte=end_byte)
 
     def verify(self, node: NodeRef) -> None:
-        """Verifies that a node handle belongs to this snapshot (lib.rs:96-102)."""
+        """Verifies that a node handle belongs to this snapshot (lib.rs)."""
         if node.snapshot != self.identity:
             raise LocationError(LocationErrorKind.WRONG_SNAPSHOT)
 
 
 class NodeRole(enum.Enum):
     """Semantic role of a document structural identity
-    (https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:113-251 — closed vocabulary,
+    (https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs — closed vocabulary,
     transcribed verbatim)."""
 
     SYNTAX_NODE = "SyntaxNode"
@@ -162,7 +162,7 @@ class NodeRole(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class NodeRef:
     """Opaque handle to one structural identity in exactly one snapshot
-    (lib.rs:254-292).
+    (lib.rs).
 
     Carries the owning snapshot identity, a process-local ordinal, and the
     structural role; identity is never cross-snapshot. The three fields are
@@ -176,7 +176,7 @@ class NodeRef:
 
 @dataclass(frozen=True, slots=True)
 class Span:
-    """Half-open byte range bound to one snapshot (lib.rs:295-342).
+    """Half-open byte range bound to one snapshot (lib.rs).
 
     [start_byte, end_byte) over original raw bytes; offsets never become
     UTF-8 indices after decoding UTF-16 or Latin-1 (RFC 0003 §5,
@@ -199,14 +199,14 @@ class Span:
 @dataclass(frozen=True, slots=True)
 class AssociationPlacement:
     """Placement of a new association relative to one container or exact anchor
-    (lib.rs:262-272)."""
+    (lib.rs)."""
 
     kind: str  # "Start" | "End" | "Before" | "After"
     anchor: NodeRef | None = None
 
 
 class FormationStatus(enum.Enum):
-    """Successful document formation state (lib.rs:405-411; RFC 0016 §5.1).
+    """Successful document formation state (lib.rs; RFC 0016 §5.1).
 
     A closed two-value enum: Complete (entire syntax formed without recovery)
     and Recovered (a complete snapshot with explicit recovery structure was
@@ -219,7 +219,7 @@ class FormationStatus(enum.Enum):
 
 
 class StructuralPieceKind(enum.Enum):
-    """One exhaustive source-byte classification (lib.rs:414-422)."""
+    """One exhaustive source-byte classification (lib.rs)."""
 
     TOKEN = "Token"
     TRIVIA = "Trivia"
@@ -228,7 +228,7 @@ class StructuralPieceKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class StructuralPiece:
-    """One source byte interval and its lossless class (lib.rs:425-449)."""
+    """One source byte interval and its lossless class (lib.rs)."""
 
     span: Span
     kind: StructuralPieceKind
@@ -236,7 +236,7 @@ class StructuralPiece:
 
 @dataclass(frozen=True, slots=True)
 class LosslessStructuralIndex:
-    """Exhaustive ordered token/trivia/error-region coverage (lib.rs:452-490;
+    """Exhaustive ordered token/trivia/error-region coverage (lib.rs;
     RFC 0003 §7)."""
 
     pieces: tuple[StructuralPiece, ...]
@@ -249,7 +249,7 @@ class LosslessStructuralIndex:
         pieces: list[StructuralPiece],
     ) -> LosslessStructuralIndex:
         """Validates exact source coverage and stores pieces in structural
-        order (lib.rs:459-483)."""
+        order (lib.rs)."""
         next_byte = 0
         for piece in pieces:
             if piece.span.snapshot != identity:
@@ -268,7 +268,7 @@ class LosslessStructuralIndex:
 
 @dataclass(frozen=True, slots=True)
 class BinaryRegion:
-    """One format-owned region in an opaque binary source (lib.rs:493-528)."""
+    """One format-owned region in an opaque binary source (lib.rs)."""
 
     node: NodeRef
     span: Span
@@ -278,7 +278,7 @@ class BinaryRegion:
 @dataclass(frozen=True, slots=True)
 class BinaryStructuralIndex:
     """Exhaustive ordered format-owned region coverage for one opaque binary
-    source (lib.rs:531-579; RFC 0003 §7, lines 162-171).
+    source (lib.rs; RFC 0003 §7, lines 162-171).
 
     Binary coverage obeys the same no-gap/no-overlap/final-length invariant
     but does not call bytes tokens or trivia. Empty source has an empty valid
@@ -295,7 +295,7 @@ class BinaryStructuralIndex:
         regions: list[BinaryRegion],
     ) -> BinaryStructuralIndex:
         """Validates exact raw-byte coverage, snapshot binding, roles, kinds,
-        and unique identities (lib.rs:538-572)."""
+        and unique identities (lib.rs)."""
         next_byte = 0
         identities: set[NodeRef] = set()
         for region in regions:
@@ -326,7 +326,7 @@ class BinaryStructuralIndex:
 
 
 class LocationErrorKind(enum.Enum):
-    """Span, identity, or coverage failure (lib.rs:582-604).
+    """Span, identity, or coverage failure (lib.rs).
 
     The variant names are the exact Rust spellings; the conformance vectors
     reference them by name (conformance/vectors/source-v1.json lines 99 and
@@ -346,7 +346,7 @@ class LocationErrorKind(enum.Enum):
 
 
 class LocationError(Exception):
-    """Span, identity, or coverage failure (lib.rs:582-604).
+    """Span, identity, or coverage failure (lib.rs).
 
     Location failures are internal (format-layer) errors; they carry no
     registered error code — the registered source codes belong to content

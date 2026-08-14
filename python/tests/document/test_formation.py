@@ -1,8 +1,8 @@
 """FormationStatus closure and structural identity tests.
 
 FormationStatus is a closed two-value enum (Complete, Recovered) per RFC 0016
-§5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:171-176) and
-https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:405-411; the 0.13.0 review's F10
+§5.1 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md) and
+https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs; the 0.13.0 review's F10
 disposition pins this as the only formation-status surface (no alias).
 """
 
@@ -68,7 +68,7 @@ def test_node_refs_are_snapshot_bound() -> None:
 
 def test_node_role_vocabulary_is_frozen() -> None:
     """The closed NodeRole vocabulary carries the exact Rust spellings
-    (lib.rs:113-251); spot-check the L1-adjacent members."""
+    (lib.rs); spot-check the L1-adjacent members."""
     assert NodeRole.BINARY_REGION.value == "BinaryRegion"
     assert NodeRole.JSON_SYNTAX_PIECE.value == "JsonSyntaxPiece"
     assert NodeRole.TOML_SYNTAX_PIECE.value == "TomlSyntaxPiece"
@@ -77,7 +77,7 @@ def test_node_role_vocabulary_is_frozen() -> None:
 
 def test_lossless_index_exact_coverage() -> None:
     """Exhaustive Token/Trivia/ErrorRegion coverage with the no-gap/
-    no-overlap/final-length invariant (lib.rs:458-483; RFC 0003 §7)."""
+    no-overlap/final-length invariant (lib.rs; RFC 0003 §7)."""
     authority = DocumentAuthority.fresh()
     pieces = [
         StructuralPiece(authority.span(0, 1), StructuralPieceKind.TOKEN),

@@ -2,7 +2,7 @@
 
 Authority:
 - RFC 0004 §15 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
-  edit-v1.md:358-371): every successful edit commit includes UntouchedByteProof
+  edit-v1.md): every successful edit commit includes UntouchedByteProof
   — an ordered cover of all old-source intervals outside replacements, mapped
   to target intervals; verification requires old regions exactly cover every
   non-replaced old byte once, new regions exactly cover every non-inserted
@@ -10,10 +10,10 @@ Authority:
   order is monotonic, and base and target digests match the proof. The proof
   says only that bytes outside planned replacements are identical.
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/untouched_proof.rs — arbitration:
-  UntouchedByteRegion untouched_proof.rs:8-59; UntouchedByteProof::create /
-  from_facts / verify untouched_proof.rs:71-132; canonical region computation
-  (maximal, adjacent regions merged) untouched_proof.rs:182-295; region
-  validation untouched_proof.rs:297-317.
+  UntouchedByteRegion untouched_proof.rs; UntouchedByteProof::create /
+  from_facts / verify untouched_proof.rs; canonical region computation
+  (maximal, adjacent regions merged) untouched_proof.rs; region
+  validation untouched_proof.rs.
 
 https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
@@ -31,7 +31,7 @@ from consema.document.source_patch import SourceReplacement
 @dataclass(frozen=True, slots=True)
 class UntouchedByteRegion:
     """One maximal unchanged raw-byte interval mapped across two source
-    snapshots (untouched_proof.rs:8-59)."""
+    snapshots (untouched_proof.rs)."""
 
     old_start: int
     old_end: int
@@ -46,7 +46,7 @@ class UntouchedByteRegion:
 
 
 class UntouchedByteProofErrorKind(enum.Enum):
-    """Proof construction or verification failure (untouched_proof.rs:135-172)."""
+    """Proof construction or verification failure (untouched_proof.rs)."""
 
     ENCODING_MISMATCH = "encoding-mismatch"
     INVALID_REPLACEMENT = "invalid-replacement"
@@ -61,7 +61,7 @@ class UntouchedByteProofErrorKind(enum.Enum):
 
 
 class UntouchedByteProofError(Exception):
-    """Proof construction or verification failure (untouched_proof.rs:135-172).
+    """Proof construction or verification failure (untouched_proof.rs).
 
     Carries no registered error code; the proof is an internal edit-commit
     artifact (RFC 0004 §15).
@@ -76,7 +76,7 @@ class UntouchedByteProofError(Exception):
 @dataclass(frozen=True, slots=True)
 class UntouchedByteProof:
     """Immutable evidence for every byte outside one exact replacement plan
-    (untouched_proof.rs:62-132; RFC 0004 §15)."""
+    (untouched_proof.rs; RFC 0004 §15)."""
 
     base_digest: ContentDigest
     target_digest: ContentDigest
@@ -90,7 +90,7 @@ class UntouchedByteProof:
         replacements: list[SourceReplacement],
     ) -> UntouchedByteProof:
         """Creates a proof only when the replacements exactly produce the
-        supplied target snapshot (untouched_proof.rs:71-82)."""
+        supplied target snapshot (untouched_proof.rs)."""
         regions = _expected_regions(base, target, replacements)
         return cls(
             base_digest=base.digest(),
@@ -106,7 +106,7 @@ class UntouchedByteProof:
         regions: list[UntouchedByteRegion],
     ) -> UntouchedByteProof:
         """Constructs transferable proof facts after validating their
-        canonical structure (untouched_proof.rs:85-96)."""
+        canonical structure (untouched_proof.rs)."""
         _validate_regions(regions)
         return cls(base_digest=base_digest, target_digest=target_digest, regions=tuple(regions))
 
@@ -117,7 +117,7 @@ class UntouchedByteProof:
         replacements: list[SourceReplacement],
     ) -> None:
         """Rechecks digests, replacement preconditions, exact target bytes,
-        and every region fact (untouched_proof.rs:99-113)."""
+        and every region fact (untouched_proof.rs)."""
         if base.digest() != self.base_digest or target.digest() != self.target_digest:
             raise UntouchedByteProofError(UntouchedByteProofErrorKind.DIGEST_MISMATCH)
         expected = _expected_regions(base, target, replacements)
@@ -135,7 +135,7 @@ def _expected_regions(
     target: SourceSnapshot,
     replacements: list[SourceReplacement],
 ) -> tuple[UntouchedByteRegion, ...]:
-    """Computes the canonical maximal unchanged regions (untouched_proof.rs:182-245)."""
+    """Computes the canonical maximal unchanged regions (untouched_proof.rs)."""
     if base.encoding_facts() != target.encoding_facts():
         raise UntouchedByteProofError(UntouchedByteProofErrorKind.ENCODING_MISMATCH)
     base_bytes = base.bytes()
@@ -182,7 +182,7 @@ def _validate_replacement(
     index: int,
 ) -> None:
     """Replacement structural and precondition validation
-    (untouched_proof.rs:247-281)."""
+    (untouched_proof.rs)."""
     if (
         replacement.old_start > replacement.old_end
         or replacement.old_end > len(base_bytes)
@@ -214,7 +214,7 @@ def _push_region(
     regions: list[UntouchedByteRegion], region: UntouchedByteRegion
 ) -> None:
     """Appends a region, merging with the previous one when adjacent
-    (untouched_proof.rs:283-295) so regions are maximal."""
+    (untouched_proof.rs) so regions are maximal."""
     if region.old_start == region.old_end:
         return
     if regions and regions[-1].old_end == region.old_start and regions[-1].new_end == region.new_start:
@@ -227,7 +227,7 @@ def _push_region(
 
 
 def _validate_regions(regions: list[UntouchedByteRegion]) -> None:
-    """Canonical region validation (untouched_proof.rs:297-317): every region
+    """Canonical region validation (untouched_proof.rs): every region
     non-empty, equal lengths, monotonic, and non-adjacent (maximal)."""
     previous: UntouchedByteRegion | None = None
     for index, region in enumerate(regions):

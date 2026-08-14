@@ -1,6 +1,6 @@
 """Typed PVCE/1 codec failures with frozen `core.pvce.*@1` codes.
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs:1062-1108 (the StableFailure
+Authority: https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs (the StableFailure
 diagnostic-code mapping); error registry arbitration: the same codes appear
 verbatim in the v1 registry of https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs.
 Go (https://github.com/consema/consema-go/blob/main/go/core/errors.go) is a cross-reference only; the code set below is the

@@ -15,7 +15,7 @@ the transport facts:
   under the Latin-1 profile.
 
 Facts (property counts, scalar-projectable) mirror https://github.com/consema/consema-rs/blob/main/consema-
-conformance/tests/line_format_fixtures.rs:115-179. When the shared tree
+conformance/tests/line_format_fixtures.rs. When the shared tree
 is not reachable the tests FAIL (G68 guard, same as tests/toml/conftest.py)
 — a partially provisioned checkout must not go green. Fixtures are read-only; tests never modify them.
 """
@@ -94,7 +94,7 @@ def test_properties_fixtures_reparse_is_byte_stable():
 def test_utf16_edge_fixture_keeps_exact_java_units():
     # The supplementary scalar decodes to U+1F680 and the unpaired units
     # stay unpaired (RFC 0010 §4): native content, never U+FFFD
-    # (line_format_fixtures.rs:341-352).
+    # (line_format_fixtures.rs).
     document, _raw = _form("utf16-edge.properties")
     by_key = {p.key.to_unicode(): p for p in document.properties}
     assert list(by_key) == ["rocket", "unpaired.high", "unpaired.low"]
@@ -105,7 +105,7 @@ def test_utf16_edge_fixture_keeps_exact_java_units():
 
 def test_latin1_resource_fixture_decodes_latin1():
     # The Latin-1 bytes decode through the profile, not as accidental
-    # UTF-8 (line_format_fixtures.rs:373-379).
+    # UTF-8 (line_format_fixtures.rs).
     document, raw = _form("latin1-resource.properties.hex")
     assert raw.count(b"\xe9") >= 1  # "caf\xe9"
     assert raw.count(b"\xa3") >= 1  # "£"

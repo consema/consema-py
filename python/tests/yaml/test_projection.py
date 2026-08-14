@@ -161,7 +161,7 @@ def test_resource_graph_provenance():
 
 
 def test_projection_custom_tag_fails_graph():
-    # native.rs:1360-1373: unknown/custom tags are preserved in the native
+    # native.rs: unknown/custom tags are preserved in the native
     # view but never admitted to PortableGraph.
     document = parse_source("!application/object payload\n", YamlProfile.YAML12_CORE_V1)
     root = document.document(0).root()
@@ -173,7 +173,7 @@ def test_projection_custom_tag_fails_graph():
 
 
 def test_projection_value_limits_fail_atomically():
-    # projection.rs:780-785: a value-node limit fails with the resource
+    # projection.rs: a value-node limit fails with the resource
     # code and never returns a partial value.
     document = parse_source("[one, two]\n", YamlProfile.YAML12_CORE_V1)
     result = project_value(
@@ -188,7 +188,7 @@ def test_projection_value_limits_fail_atomically():
 
 
 def test_projection_multidocument_cardinality():
-    # projection.rs:558-563: a multi-document stream never satisfies a
+    # projection.rs: a multi-document stream never satisfies a
     # single-value projection.
     document = parse_source("---\na\n---\nb\n", YamlProfile.YAML12_CORE_V1)
     result = project_value(document, ValueProjectionRequest.best_exact_v1())
@@ -197,7 +197,7 @@ def test_projection_multidocument_cardinality():
 
 
 def test_projection_exact_object_and_non_finite_bits():
-    # projection.rs:994-1003: the four frozen non-finite bit patterns;
+    # projection.rs: the four frozen non-finite bit patterns;
     # RFC 0007 s5: YAML has no negative-NaN spelling, so the fourth pattern
     # is unreachable from implicit resolution.
     document = parse_source(".inf\n", YamlProfile.YAML12_CORE_V1)

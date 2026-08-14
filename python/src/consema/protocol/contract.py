@@ -2,9 +2,9 @@
 
 The registry records are transcribed VERBATIM from
 https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs (CONTRACTS_V1..CONTRACTS_V7,
-contract.rs:71-273), the registry arbitration source; the v1-v7 counts are
-16/18/25/25/30/38/41 (contract.rs:696-702). Note that v4 shares the v3 set
-(contract.rs:381). Go (https://github.com/consema/consema-go/blob/main/go/protocol/contract.go) is a cross-reference only.
+contract.rs), the registry arbitration source; the v1-v7 counts are
+16/18/25/25/30/38/41 (contract.rs). Note that v4 shares the v3 set
+(contract.rs). Go (https://github.com/consema/consema-go/blob/main/go/protocol/contract.go) is a cross-reference only.
 
 RFC 0016 §3.2 defines the envelope shape (`core.protocol-message@1` with
 schema / contract_id / contract_version / payload); the envelope itself is
@@ -20,19 +20,19 @@ from consema.protocol.errors import ProtocolErrorKind, protocol_error
 
 
 class ContractStability(enum.Enum):
-    """Compatibility status of one frozen contract (contract.rs:52-58)."""
+    """Compatibility status of one frozen contract (contract.rs)."""
 
     STABLE = "Stable"
     TRANSPORT = "Transport"
 
 
 class ContractId:
-    """A stable versioned protocol contract identifier (contract.rs:12-49)."""
+    """A stable versioned protocol contract identifier (contract.rs)."""
 
     __slots__ = ("id", "version")
 
     def __init__(self, id: str, version: int):
-        # contract.rs:18-30 plus validate_identifier (contract.rs:559-578):
+        # contract.rs plus validate_identifier (contract.rs):
         # version non-zero; id at most 255 bytes, dotted, every segment
         # starts with a lowercase letter and continues with lowercase
         # letters, digits, or '-'.
@@ -66,7 +66,7 @@ class ContractId:
 
 
 def validate_identifier(identifier: str, path: str) -> None:
-    """Validates a dotted lowercase identifier (contract.rs:559-578)."""
+    """Validates a dotted lowercase identifier (contract.rs)."""
     if len(identifier.encode("utf-8")) > 255 or "." not in identifier:
         raise protocol_error(
             ProtocolErrorKind.INVALID_VALUE,
@@ -135,7 +135,7 @@ def _transport(id: str) -> tuple[str, int, ContractStability]:
     return (id, 1, ContractStability.TRANSPORT)
 
 
-# Verbatim transcription of CONTRACTS_V1 (contract.rs:71-88).
+# Verbatim transcription of CONTRACTS_V1 (contract.rs).
 _CONTRACTS_V1 = [
     _descriptor("core.cancellation-request"),
     _descriptor("core.capability-declaration"),
@@ -155,14 +155,14 @@ _CONTRACTS_V1 = [
     _descriptor("core.registry-manifest"),
 ]
 
-# Verbatim transcription of CONTRACTS_V2 (contract.rs:90-109).
+# Verbatim transcription of CONTRACTS_V2 (contract.rs).
 _CONTRACTS_V2 = _CONTRACTS_V1 + [
     _descriptor("core.source-patch"),
     _descriptor("core.source-snapshot"),
 ]
 
-# Verbatim transcription of CONTRACTS_V3 (contract.rs:111-140); V4 shares it
-# (contract.rs:381).
+# Verbatim transcription of CONTRACTS_V3 (contract.rs); V4 shares it
+# (contract.rs).
 _CONTRACTS_V3 = [
     _descriptor("core.cancellation-request"),
     _descriptor("core.capability-declaration"),
@@ -191,7 +191,7 @@ _CONTRACTS_V3 = [
     _descriptor("core.source-snapshot"),
 ]
 
-# Verbatim transcription of CONTRACTS_V5 (contract.rs:142-176).
+# Verbatim transcription of CONTRACTS_V5 (contract.rs).
 _CONTRACTS_V5 = [
     _descriptor("core.cancellation-request"),
     _descriptor("core.capability-declaration"),
@@ -225,7 +225,7 @@ _CONTRACTS_V5 = [
     _descriptor("core.yaml-query-result"),
 ]
 
-# Verbatim transcription of CONTRACTS_V6 (contract.rs:178-223).
+# Verbatim transcription of CONTRACTS_V6 (contract.rs).
 _CONTRACTS_V6 = [
     _descriptor("core.cancellation-request"),
     _descriptor("core.capability-declaration"),
@@ -267,7 +267,7 @@ _CONTRACTS_V6 = [
     _descriptor("core.yaml-query-result"),
 ]
 
-# Verbatim transcription of CONTRACTS_V7 (contract.rs:225-273).
+# Verbatim transcription of CONTRACTS_V7 (contract.rs).
 _CONTRACTS_V7 = [
     _descriptor("core.batch-plan"),
     _descriptor("core.batch-result"),
@@ -314,7 +314,7 @@ _CONTRACTS_V7 = [
 
 
 class ContractRegistry:
-    """A closed, explicitly versioned contract registry (contract.rs:295-415)."""
+    """A closed, explicitly versioned contract registry (contract.rs)."""
 
     def __init__(self, version: int):
         if not 1 <= version <= 7:
@@ -327,7 +327,7 @@ class ContractRegistry:
             1: _CONTRACTS_V1,
             2: _CONTRACTS_V2,
             3: _CONTRACTS_V3,
-            4: _CONTRACTS_V3,  # v4 shares the v3 set (contract.rs:381)
+            4: _CONTRACTS_V3,  # v4 shares the v3 set (contract.rs)
             5: _CONTRACTS_V5,
             6: _CONTRACTS_V6,
             7: _CONTRACTS_V7,
@@ -349,7 +349,7 @@ class ProtocolMessage:
     """One validated protocol payload in the common envelope.
 
     The envelope is `core.protocol-message@1` with fields schema /
-    contract_id / contract_version / payload (contract.rs:419-521).
+    contract_id / contract_version / payload (contract.rs).
     Transport envelopes cannot be nested as payload contracts; the payload
     must be an Object whose first field is the schema discriminator matching
     the contract; registered payloads are then validated by
@@ -442,7 +442,7 @@ class ProtocolMessage:
 
 def _validate_payload_schema(payload: PortableValue, contract: ContractId) -> None:
     """The payload must be an Object whose first field is ``schema`` carrying
-    the contract discriminator (contract.rs:523-557)."""
+    the contract discriminator (contract.rs)."""
     if payload.kind is not Kind.OBJECT:
         raise protocol_error(
             ProtocolErrorKind.WRONG_TYPE, "$.payload", "payload must be an Object"

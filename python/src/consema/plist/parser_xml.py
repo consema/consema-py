@@ -3,15 +3,15 @@
 
 Authority (Rust arbitration for exact byte semantics and recovery):
 
-- Source contract: https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_xml.rs:396-460 — the
+- Source contract: https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_xml.rs — the
   RFC 0013 §2.1 document-entity table (no-BOM defaults to UTF-8; only
   UTF-8 / UTF-16LE-with-BOM / UTF-16BE-with-BOM are admitted; an
   incompatible selection is a fatal ``plist.xml.encoding@1`` failure).
 - Tokenization and grammar: the state machine admits the prolog
   (declaration, comments, PIs), the optional exact Apple DOCTYPE
-  (parser_xml.rs:999-1105, RFC 0013 §4.1), the ``<plist version="1.0">``
-  root (parser_xml.rs:1107-1340, RFC 0013 §4.2), the closed element
-  vocabulary (parser_xml.rs:503-584 classify_element), value grammars
+  (parser_xml.rs, RFC 0013 §4.1), the ``<plist version="1.0">``
+  root (parser_xml.rs, RFC 0013 §4.2), the closed element
+  vocabulary (parser_xml.rs classify_element), value grammars
   (parse_integer 2453-2516, parse_real 2521-2578, parse_date 2580-2632,
   decode_base64 2684-2757), text/reference resolution
   (resolve_fragments 1925-2060, RFC 0013 §4.9), and the trailing-content
@@ -19,13 +19,13 @@ Authority (Rust arbitration for exact byte semantics and recovery):
 - Syntax pieces: the 47-kind classification of RFC 0013 §8.2 with the
   root open tag partition (PlistOpen on the name, Whitespace separator,
   PlistVersionName, PlistVersionValue, second PlistOpen on the closing
-  ``>``); piece kinds and gap assembly parser_xml.rs:173-302, 2224-2316.
+  ``>``); piece kinds and gap assembly parser_xml.rs.
 - Recovery: a tokenizer error becomes one deterministic error region plus
   ``plist.parse.well-formedness@1`` and the stream resumes at the next
-  markup (parser_xml.rs:688-719, 2118-2149); every grammar violation is a
+  markup (parser_xml.rs); every grammar violation is a
   Recovered diagnostic with the frozen code, and only independently proven
   constructs enter the native arena (RFC 0013 §3). Arena ordinals are
-  close-tag order (parser_xml.rs:1602-1779).
+  close-tag order (parser_xml.rs).
 - Limits: every configured limit is fatal (RFC 0013 §12, hard gate 4).
 
 The tokenizer indexes the decoded text by Unicode scalar offsets and maps
@@ -201,7 +201,7 @@ class _TokenizerError(Exception):
 
 class _Tokenizer:
     """Deterministic state machine over one decoded plist XML source
-    (the frozen token stream of parser_xml.rs:688-719; see the module
+    (the frozen token stream of parser_xml.rs; see the module
     docstring for authority)."""
 
     _DECLARATION = 0
@@ -782,7 +782,7 @@ class _ElementKind(enum.Enum):
 
 def _classify_element(local: str) -> _ElementKind | None:
     """Classifies an unqualified element name; None is unknown or prefixed
-    (parser_xml.rs:568-584)."""
+    (parser_xml.rs)."""
     try:
         return _ElementKind(local)
     except ValueError:
@@ -878,7 +878,7 @@ class _Parser:
     # -- entry ---------------------------------------------------------------
 
     def parse(self, decoded: str) -> PlistFormedXml:
-        """Parses one complete decoded source (parser_xml.rs:688-719)."""
+        """Parses one complete decoded source (parser_xml.rs)."""
         self._cover_bom()
         tokenizer = _Tokenizer(decoded)
         while True:
@@ -939,7 +939,7 @@ class _Parser:
         kind: PlistSyntaxKind,
         structural: StructuralPieceKind,
     ) -> None:
-        """One exhaustive source piece (parser_xml.rs:1084-1107 analog)."""
+        """One exhaustive source piece (parser_xml.rs analog)."""
         observed = len(self.pieces) + 1
         if observed > self.limits.max_syntax_pieces:
             raise PlistFormationFailure(
@@ -959,7 +959,7 @@ class _Parser:
         arguments: dict[str, str] | None = None,
     ) -> None:
         """Records one recovery diagnostic and marks the parse Recovered
-        (parser_xml.rs:2318-2335)."""
+        (parser_xml.rs)."""
         self.recovered = True
         diagnostic = PlistDiagnostic(
             code=code,
@@ -974,7 +974,7 @@ class _Parser:
 
     def _recover_error_region(self, start: int, end: int) -> None:
         """Tokenizer-error path: one error region plus well-formedness@1
-        (parser_xml.rs:2118-2149)."""
+        (parser_xml.rs)."""
         span = self.raw_span(start, end)
         if self.unknown_depth == 0:
             self.push_piece(span, PlistSyntaxKind.ERROR_REGION, StructuralPieceKind.ERROR_REGION)
@@ -985,7 +985,7 @@ class _Parser:
         )
 
     def _cover_bom(self) -> None:
-        """Covers a leading BOM as a trivia piece (parser_xml.rs:727-739)."""
+        """Covers a leading BOM as a trivia piece (parser_xml.rs)."""
         facts = self.source.encoding_facts()
         bom = facts.bom
         if bom is not None:
@@ -1148,7 +1148,7 @@ class _Parser:
 
     def _validate_doctype(self, token: _Token, raw: object) -> None:
         """Validates the exact Apple plist DOCTYPE identity (RFC 0013 §4.1;
-        parser_xml.rs:1053-1085)."""
+        parser_xml.rs)."""
         text = self.source.decoded_text()
         assert text is not None
         name = text[token.dtd_name[0] : token.dtd_name[1]]
@@ -1349,7 +1349,7 @@ class _Parser:
     def _normalize_attribute_value(self, token: _Token) -> str:
         """Normalized root version value: references resolve and literal
         whitespace collapses to one space (XML attribute normalization;
-        parser_xml.rs:1343-1350)."""
+        parser_xml.rs)."""
         return self._resolve_fragments(
             token.value[0], token.value[1], _Normalization.ATTRIBUTE, False
         )
@@ -1535,7 +1535,7 @@ class _Parser:
 
     def _build_value(self, frame: _Frame, close_span: object) -> PlistValueRef | None:
         """Parses one closing element's native value and adds it to the
-        arena (parser_xml.rs:1602-1779)."""
+        arena (parser_xml.rs)."""
         limits = self.limits
         kind = frame.kind
         if kind is _ElementKind.DICT:
@@ -1748,7 +1748,7 @@ class _Parser:
     ) -> str:
         """Splits one decoded span into Text/EntityReference/
         CharacterReference pieces and returns the resolved normalized
-        content (parser_xml.rs:1925-1995). Failing references resolve to
+        content (parser_xml.rs). Failing references resolve to
         nothing and publish a diagnostic."""
         text = self.source.decoded_text()
         assert text is not None
@@ -1806,7 +1806,7 @@ class _Parser:
 
     def _resolve_reference(self, body: str, raw: object) -> str | None:
         """Resolves one ``&...;`` reference body; None is a recovered
-        failure that contributes nothing (parser_xml.rs:1997-2060)."""
+        failure that contributes nothing (parser_xml.rs)."""
         if body.startswith("#"):
             digits = body[1:]
             is_hex = digits.startswith("x") or digits.startswith("X")
@@ -1845,7 +1845,7 @@ class _Parser:
     def _push_whitespace_pieces(self, start: int, end: int) -> None:
         """Splits one decoded whitespace run into Whitespace and LineBreak
         trivia pieces; defensive non-whitespace bytes become error regions
-        (parser_xml.rs:2062-2116)."""
+        (parser_xml.rs)."""
         text = self.source.decoded_text()
         assert text is not None
         content = text[start:end]
@@ -2024,7 +2024,7 @@ class _Parser:
 
 def parse_integer(content: str) -> int | None:
     """Signed 64-bit integer grammar (RFC 0013 §4.5): ``S*(-|+)?S*[0-9]+``
-    and ``S*(-|+)?S*0[xX][0-9a-fA-F]+`` (parser_xml.rs:2453-2516)."""
+    and ``S*(-|+)?S*0[xX][0-9a-fA-F]+`` (parser_xml.rs)."""
     bytes_ = content.strip(" \t\n\r").encode("utf-8")
     index = 0
     negative = False
@@ -2079,7 +2079,7 @@ def parse_real(content: str) -> float | None:
     """Real grammar (RFC 0013 §4.6): the special spellings ``nan``, ``inf``,
     ``±inf``, ``infinity``, ``±infinity`` (case-insensitive) and otherwise
     ``sign? digits ('.' digits)? ([eE] sign? digits)?``
-    (parser_xml.rs:2521-2578)."""
+    (parser_xml.rs)."""
     import math
 
     trimmed = content.strip(" \t\n\r")
@@ -2125,7 +2125,7 @@ def parse_real(content: str) -> float | None:
 
 def _days_from_civil(year: int, month: int, day: int) -> int:
     """Proleptic Gregorian calendar days since the Unix epoch (Howard
-    Hinnant's ``days_from_civil``; parser_xml.rs:2653-2660)."""
+    Hinnant's ``days_from_civil``; parser_xml.rs)."""
     year = year - 1 if month <= 2 else year
     era = (year if year >= 0 else year - 399) // 400
     year_of_era = year - era * 400
@@ -2151,7 +2151,7 @@ def _days_in_month(year: int, month: int) -> int:
 def parse_date(content: str) -> float | None:
     """XML date grammar (RFC 0013 §4.7): ``[-]YYYY-MM-DDTHH:MM:SSZ`` with
     calendar validation; returns exact double seconds since the plist epoch
-    (parser_xml.rs:2580-2632)."""
+    (parser_xml.rs)."""
     from consema.plist.native import PLIST_EPOCH_OFFSET_UNIX
 
     text = content
@@ -2211,7 +2211,7 @@ def parse_date(content: str) -> float | None:
 
 def _expect_two_digits(text: str, index: int, sep: str) -> tuple[int, int] | None:
     """Consumes ``sep`` then exactly two decimal digits
-    (parser_xml.rs:2634-2649)."""
+    (parser_xml.rs)."""
     if index >= len(text) or text[index] != sep:
         return None
     index += 1
@@ -2224,7 +2224,7 @@ def _expect_two_digits(text: str, index: int, sep: str) -> tuple[int, int] | Non
 def decode_base64(content: str) -> bytes | None:
     """Strict base64 decoding with the standard alphabet (RFC 0013 §4.8):
     ASCII whitespace between characters, padding exactly as required for the
-    final incomplete group, and nothing else (parser_xml.rs:2684-2757)."""
+    final incomplete group, and nothing else (parser_xml.rs)."""
     compact = bytearray()
     for byte in content.encode("utf-8"):
         if _is_ws_byte(byte):
@@ -2274,7 +2274,7 @@ def decode_base64(content: str) -> bytes | None:
 
 
 def _base64_value(byte: int) -> int | None:
-    """Standard alphabet value (parser_xml.rs:2758-2767)."""
+    """Standard alphabet value (parser_xml.rs)."""
     if 0x41 <= byte <= 0x5A:
         return byte - 0x41
     if 0x61 <= byte <= 0x7A:
@@ -2289,7 +2289,7 @@ def _base64_value(byte: int) -> int | None:
 
 
 # ---------------------------------------------------------------------------
-# Shared text helpers (parser_xml.rs:2396-2449)
+# Shared text helpers (parser_xml.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -2301,7 +2301,7 @@ def _skip_declaration_spaces(text: str, rel: int) -> int:
 
 def _append_normalized(target: str, text: str, mode: _Normalization) -> str:
     """Appends literal text with the requested normalization (RFC 0013 §4.9
-    and XML 1.0 attribute normalization; parser_xml.rs:2415-2439)."""
+    and XML 1.0 attribute normalization; parser_xml.rs)."""
     out = []
     index = 0
     while index < len(text):
@@ -2324,7 +2324,7 @@ def _append_normalized(target: str, text: str, mode: _Normalization) -> str:
 
 @dataclass(frozen=True, slots=True)
 class PlistFormedXml:
-    """One formed ``plist.xml@1`` document (parser_xml.rs:253-362).
+    """One formed ``plist.xml@1`` document (parser_xml.rs).
 
     ``Complete`` requires exhaustive byte coverage under the Profile's
     grammar and every configured limit. ``Recovered`` retains the immutable
@@ -2366,7 +2366,7 @@ def parse_xml(
     limits: PlistParseLimits,
 ) -> PlistFormedXml:
     """Forms one ``plist.xml@1`` document from raw bytes (RFC 0013 §3;
-    parser_xml.rs:372-393).
+    parser_xml.rs).
 
     The source contract follows RFC 0013 §2.1: no-BOM source defaults to
     UTF-8, a BOM or an explicit caller choice is evidence that never
@@ -2397,7 +2397,7 @@ def parse_xml(
 
 def _encoding_request(selection: PlistEncodingSelection) -> EncodingRequest:
     """Resolves the source encoding request under the RFC 0013 §2.1 table
-    (parser_xml.rs:395-421)."""
+    (parser_xml.rs)."""
     from consema.document.source import BomPolicy
 
     if selection.kind == "ProfileDefault":
@@ -2421,7 +2421,7 @@ def _encoding_request(selection: PlistEncodingSelection) -> EncodingRequest:
 def _validate_profile_encoding(
     source: SourceSnapshot, selection: PlistEncodingSelection
 ) -> None:
-    """Profile-specific encoding acceptance (parser_xml.rs:423-449)."""
+    """Profile-specific encoding acceptance (parser_xml.rs)."""
     from consema.document.source import SourceEncodingKind
 
     facts = source.encoding_facts()

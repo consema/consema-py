@@ -9,8 +9,8 @@ Golden cases transcribed from conformance/vectors/source-v1.json:
   two snapshots of the same raw bytes have equal digests and distinct
   snapshot identities.
 
-Contract: RFC 0003 §3 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
-45-62) — SHA-256 over the complete original byte sequence, algorithm exactly
+Contract: RFC 0003 §3 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md
+) — SHA-256 over the complete original byte sequence, algorithm exactly
 "sha256", hex exactly 64 lowercase characters; equal raw bytes always produce
 equal content digests; parsing the same bytes twice produces equal digests
 and distinct snapshot identities.

@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:350-372): the
+- RFC 0012 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md): the
   canonical style consumes one fully validated ``xml.element-tree@1`` value
   and creates a new ``xml.1.0-safe@1`` Document; it is not W3C Canonical
   XML and does not claim C14N equivalence; the style deterministically
@@ -16,14 +16,14 @@ Authority:
   promised input semantics; failure returns no target Document or partial
   output.
 - The writer, encoding, closure verification, and failure mapping transcribe
-  https://github.com/consema/consema-rs/blob/main/consema-xml/src/materialization.rs:34-1366 (request validation
-  90-107; parse limits 109-140; encode_text 143-172; Record validation
-  238-500; PrefixTable 502-526; Writer 565-900; verify_closure 912-1210) —
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/materialization.rs (request validation
+ ; parse limits ; encode_text ; Record validation
+ ; PrefixTable ; Writer ; verify_closure) —
   byte/registry arbitration only.
 - The completion algebra reuses consema.document.materialization
   (CompleteMaterialization/FailedMaterializationAttempt/fidelity/report/
   provenance), whose failure-to-code mapping is frozen there
-  (error_registry.rs:556-604).
+  (error_registry.rs).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
   ``xml.materialization.canonical-round-trip`` (lines 352-388),
   ``xml.materialization.escapes-content`` (390-417),
@@ -72,7 +72,7 @@ from consema.xml.paths import (
 
 def materialize(value: PortableValue, request: MaterializationRequest) -> MaterializationResult:
     """Materializes one ``xml.element-tree@1`` record into a new canonical
-    ``xml.1.0-safe@1`` document (materialization.rs:36-50)."""
+    ``xml.1.0-safe@1`` document (materialization.rs)."""
     try:
         complete = _materialize_complete(value, request)
         return complete
@@ -111,7 +111,7 @@ def _materialize_complete(
 
 
 def _validate_request(request: MaterializationRequest) -> None:
-    """materialization.rs:90-107."""
+    """materialization.rs."""
     if (request.target_profile.id, request.target_profile.version) != ("xml.1.0-safe", 1):
         raise MaterializationFailure(MaterializationFailureKind.UNSUPPORTED_PROFILE)
     if (request.style.id, request.style.version) != ("xml.safe-canonical-document", 1):
@@ -127,7 +127,7 @@ def _validate_request(request: MaterializationRequest) -> None:
 
 
 def _parse_limits(limits: MaterializationLimits) -> XmlParseLimits:
-    """materialization.rs:109-140: parse limits derived from the
+    """materialization.rs: parse limits derived from the
     materialization limits."""
     return XmlParseLimits(
         common=ParseLimits(
@@ -163,7 +163,7 @@ def _parse_limits(limits: MaterializationLimits) -> XmlParseLimits:
 
 def _encode_text(text: bytes, encoding: SourceEncoding, max_output_bytes: int) -> bytes:
     """Encodes canonical UTF-8 text into the requested output encoding
-    (materialization.rs:143-172)."""
+    (materialization.rs)."""
     if encoding.kind is SourceEncodingKind.UTF8:
         output = text
     elif encoding.kind in (SourceEncodingKind.UTF16LE, SourceEncodingKind.UTF16BE):
@@ -185,8 +185,8 @@ def _encode_text(text: bytes, encoding: SourceEncoding, max_output_bytes: int) -
 
 
 # ---------------------------------------------------------------------------
-# Validated input record mirroring xml.element-tree@1 (materialization.rs:
-# 174-500)
+# Validated input record mirroring xml.element-tree@1 (materialization.rs
+# (element-tree 记录区间)
 # ---------------------------------------------------------------------------
 
 
@@ -266,7 +266,7 @@ class _Record:
     @classmethod
     def validate(cls, value: PortableValue) -> _Record:
         """Validates one complete ``xml.element-tree@1`` value
-        (materialization.rs:238-304)."""
+        (materialization.rs)."""
         record = _expect_string_field(value, "record", ValuePath.root())
         if record != "xml.element-tree@1":
             raise MaterializationFailure(
@@ -310,7 +310,7 @@ class _Record:
 
 
 def _ElementRecord_validate(value: PortableValue, path: ValuePath) -> _ElementRecord:
-    """Recursive element-record validation (materialization.rs:306-500)."""
+    """Recursive element-record validation (materialization.rs)."""
     namespace, local = _expect_expanded_name(value, path)
     namespaces: list[tuple[str | None, str]] = []
     bindings_path = path.child(ValuePathSegment.object_value("namespaces"))
@@ -456,7 +456,7 @@ _ElementRecord.validate = staticmethod(_ElementRecord_validate)
 
 
 # ---------------------------------------------------------------------------
-# Field accessors (materialization.rs:1228-1366)
+# Field accessors (materialization.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -529,7 +529,7 @@ def _optional_sequence_field(value: PortableValue, name: str):
 
 
 def _expect_expanded_name(value: PortableValue, path: ValuePath) -> tuple[str | None, str]:
-    """Reads an expanded-name object (materialization.rs:1356-1366)."""
+    """Reads an expanded-name object (materialization.rs)."""
     name_path = path.child(ValuePathSegment.object_value("expanded-name"))
     name = _expect_object_field(value, "expanded-name", name_path)
     namespace = _optional_string_field(name, "namespace", name_path)
@@ -538,13 +538,13 @@ def _expect_expanded_name(value: PortableValue, path: ValuePath) -> tuple[str | 
 
 
 # ---------------------------------------------------------------------------
-# Canonical writer (materialization.rs:502-900)
+# Canonical writer (materialization.rs)
 # ---------------------------------------------------------------------------
 
 
 class _PrefixTable:
     """Deterministic generated-prefix assignment by first-encounter order
-    (materialization.rs:502-526)."""
+    (materialization.rs)."""
 
     __slots__ = ("entries", "next")
 
@@ -581,8 +581,8 @@ class _InputItemKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class _InputItem:
-    """One input location recorded during generation (materialization.rs:
-    528-563)."""
+    """One input location recorded during generation (materialization.rs
+)."""
 
     kind: _InputItemKind
     path: ValuePath
@@ -623,8 +623,8 @@ class _Writer:
             )
 
     def spelling_prefix(self, uri: str | None) -> str | None:
-        """Spelling prefix for one expanded namespace (materialization.rs:
-        601-621). ``None`` means the URI is not bound in scope and a
+        """Spelling prefix for one expanded namespace (materialization.rs
+). ``None`` means the URI is not bound in scope and a
         declaration must be generated."""
         if uri is None:
             return ""
@@ -639,7 +639,7 @@ class _Writer:
         return None
 
     def push_escaped_text(self, text: str) -> None:
-        """Materialization.rs:623-634: ``&`` and ``<`` are escaped."""
+        """Materialization.rs: ``&`` and ``<`` are escaped."""
         for character in text:
             if character == "&":
                 self.push(b"&amp;")
@@ -649,7 +649,7 @@ class _Writer:
                 self.push(character.encode("utf-8"))
 
     def push_escaped_attribute(self, text: str) -> None:
-        """Materialization.rs:636-648: ``&``, ``<``, and ``"`` are escaped."""
+        """Materialization.rs: ``&``, ``<``, and ``"`` are escaped."""
         for character in text:
             if character == "&":
                 self.push(b"&amp;")
@@ -661,7 +661,7 @@ class _Writer:
                 self.push(character.encode("utf-8"))
 
     def emit_document(self, input_record: _Record, request: MaterializationRequest) -> None:
-        """materialization.rs:650-715."""
+        """materialization.rs."""
         self.step()
         if input_record.declaration is not None:
             declaration = input_record.declaration
@@ -708,7 +708,7 @@ class _Writer:
         self.push(request.newline.bytes)
 
     def emit_element(self, element: _ElementRecord, depth: int) -> None:
-        """materialization.rs:717-899."""
+        """materialization.rs."""
         self.step()
         if depth > self.limits.max_depth:
             raise MaterializationFailure(
@@ -842,7 +842,7 @@ class _Writer:
 
 
 # ---------------------------------------------------------------------------
-# Closure verification and provenance (materialization.rs:902-1210)
+# Closure verification and provenance (materialization.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -861,7 +861,7 @@ def _verify_closure(
 ) -> MaterializationProvenanceMap:
     """Walks the input record and the reparsed document in lockstep and
     pairs every recorded input location with its exact output origin
-    (materialization.rs:912-1014)."""
+    (materialization.rs)."""
     outputs: list[_OutputItem] = []
     root = document.root()
     if root is None:
@@ -948,7 +948,7 @@ class _ClosureContext:
         self.outputs.append(_OutputItem(node=node, span=span, relation=relation))
 
     def element(self, input_element: _ElementRecord, element) -> None:
-        """One element closure walk (materialization.rs:1040-1209)."""
+        """One element closure walk (materialization.rs)."""
         self.push(element.node_ref(), element.span(), MaterializationRelation.DIRECT)
         expanded = element.expanded()
         if expanded is None:
@@ -1067,8 +1067,8 @@ class _ClosureContext:
 
 
 def _normalize_line_ends(text: str) -> str:
-    """XML 1.0 line-end normalization for one fragment (materialization.rs:
-    1212-1226)."""
+    """XML 1.0 line-end normalization for one fragment (materialization.rs
+)."""
     output: list[str] = []
     index = 0
     while index < len(text):

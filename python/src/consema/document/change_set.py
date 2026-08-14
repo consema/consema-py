@@ -1,12 +1,12 @@
 """One immutable document transition: ordered source edits and node mappings.
 
 Authority:
-- https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:800-900 — SourceEdit (old_span,
+- https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs — SourceEdit (old_span,
   new_span, replacement), NodeMappingStatus (closed six-value vocabulary),
   NodeMapping (old, new, status, reason), ChangeSet (old_snapshot,
   new_snapshot, source_edits, node_mappings, diagnostics).
 - RFC 0004 §13 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
-  edit-v1.md:308-336) — one immutable transaction binds one base
+  edit-v1.md) — one immutable transaction binds one base
   SnapshotIdentity; every operation is fully validated before any output is
   published; validation, source-edit preparation, output allocation, reparse,
   mapping, untouched proof, and SourcePatch derivation form one atomic
@@ -31,7 +31,7 @@ from consema.document.structural import NodeRef, SnapshotIdentity, Span
 
 @dataclass(frozen=True, slots=True)
 class SourceEdit:
-    """One ordered non-overlapping source replacement (lib.rs:800-809).
+    """One ordered non-overlapping source replacement (lib.rs).
 
     ``old_span`` is the replaced old range, ``new_span`` the range occupied
     by the replacement bytes in the new snapshot, ``replacement`` the exact
@@ -44,7 +44,7 @@ class SourceEdit:
 
 
 class NodeMappingStatus(enum.Enum):
-    """Explicit node mapping status across immutable snapshots (lib.rs:811-826)."""
+    """Explicit node mapping status across immutable snapshots (lib.rs)."""
 
     PRESERVED = "Preserved"
     REPLACED = "Replaced"
@@ -56,7 +56,7 @@ class NodeMappingStatus(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class NodeMapping:
-    """One explicit old-to-new node mapping fact (lib.rs:829-839)."""
+    """One explicit old-to-new node mapping fact (lib.rs)."""
 
     old: NodeRef
     new: NodeRef | None
@@ -67,7 +67,7 @@ class NodeMapping:
 @dataclass(frozen=True, slots=True)
 class ChangeSet:
     """Complete immutable description of one atomic document transition
-    (lib.rs:841-900)."""
+    (lib.rs)."""
 
     old_snapshot: SnapshotIdentity
     new_snapshot: SnapshotIdentity

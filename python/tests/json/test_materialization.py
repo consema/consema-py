@@ -8,7 +8,7 @@ Cases covered:
   json5.convert.finite-to-strict (156-160), json5.convert.nonfinite-to-
   strict-fails (162-166), json5.convert.strict-to-json5 (168-172).
 - Pretty layout and request failures follow the Rust arbitration tests
-  (https://github.com/consema/consema-rs/blob/main/consema-json/src/materialization.rs:855-927).
+  (https://github.com/consema/consema-rs/blob/main/consema-json/src/materialization.rs).
 
 Conversion is the audited Projection-to-Materialization composition with
 explicit source/target profile ids (RFC 0004 §9); the report always
@@ -156,7 +156,7 @@ def test_json5_convert_strict_to_json5():
 
 
 def test_pretty_layout_and_request_failures():
-    # Pretty layout and explicit request failures (materialization.rs:855-927).
+    # Pretty layout and explicit request failures (materialization.rs).
     values = PortableValue.sequence([PortableValue.boolean(True)])
     pretty = materialize(
         values, strict_request("json.canonical-pretty", NewlinePolicy.CRLF)
@@ -185,7 +185,7 @@ def test_pretty_layout_and_request_failures():
 
 def test_profile_and_style_resolution():
     # requested_profile / requested_style resolution
-    # (materialization.rs:113-142).
+    # (materialization.rs).
     request = strict_request()
     assert requested_profile(request) is JsonProfile.STRICT_V1
     assert requested_style(request, JsonProfile.STRICT_V1) is JsonStyle.COMPACT

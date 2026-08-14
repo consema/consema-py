@@ -1,7 +1,7 @@
 """The HCL format operation registry (RFC 0014 §10).
 
 The frozen surface is pinned by the Rust registry tests
-(https://github.com/consema/consema-rs/blob/main/consema-hcl/src/operation_registry.rs:100-157): `hcl.native@1`
+(https://github.com/consema/consema-rs/blob/main/consema-hcl/src/operation_registry.rs): `hcl.native@1`
 publishes exactly the six frozen operations in the frozen order;
 `hcl.tfvars@1` publishes the four attribute operations only.
 """
@@ -12,7 +12,7 @@ from consema.hcl import HclProfile, format_operation_registry
 
 
 def test_native_profile_publishes_the_frozen_six_operation_surface():
-    # operation_registry.rs:105-127.
+    # operation_registry.rs.
     registry = format_operation_registry(HclProfile.NATIVE_V1)
     assert registry.operation_ids() == (
         "hcl.edit.insert-attribute@1",
@@ -26,7 +26,7 @@ def test_native_profile_publishes_the_frozen_six_operation_surface():
 
 
 def test_tfvars_profile_publishes_attribute_operations_only():
-    # operation_registry.rs:129-156.
+    # operation_registry.rs.
     registry = format_operation_registry(HclProfile.TFVARS_V1)
     assert registry.operation_ids() == (
         "hcl.edit.insert-attribute@1",
@@ -38,7 +38,7 @@ def test_tfvars_profile_publishes_attribute_operations_only():
 
 
 def test_argument_schemas():
-    # operation_registry.rs:26-80: the exact argument schemas.
+    # operation_registry.rs: the exact argument schemas.
     registry = format_operation_registry(HclProfile.NATIVE_V1)
     insert_attribute = registry.find("hcl.edit.insert-attribute@1")
     assert [argument.name for argument in insert_attribute.arguments] == [

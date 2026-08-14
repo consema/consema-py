@@ -2,23 +2,23 @@
 
 Authority (Rust arbitration for exact byte semantics and recovery):
 
-- Parser flow: https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_binary.rs:496-730 — the
-  header check (RFC 0013 §5.1, parser_binary.rs:543-552), trailer facts
-  and mandatory integrity checks (parser_binary.rs:554-601, 778-917,
-  RFC 0013 §5.11), the offset table (parser_binary.rs:919-1010), the
-  object-table scan with prefix recovery (parser_binary.rs:1012-1252),
-  extended sizes (parser_binary.rs:1254-1324, RFC 0013 §5.4), dictionary
-  key verification (parser_binary.rs:1326-1354), native-document
+- Parser flow: https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_binary.rs — the
+  header check (RFC 0013 §5.1, parser_binary.rs), trailer facts
+  and mandatory integrity checks (parser_binary.rs
+  RFC 0013 §5.11), the offset table (parser_binary.rs), the
+  object-table scan with prefix recovery (parser_binary.rs),
+  extended sizes (parser_binary.rs, RFC 0013 §5.4), dictionary
+  key verification (parser_binary.rs), native-document
   eligibility (unproven top object / unproven references / cycles,
-  parser_binary.rs:614-671), and exhaustive region coverage
-  (parser_binary.rs:703-727).
+  parser_binary.rs), and exhaustive region coverage
+  (parser_binary.rs).
 - Facts: BinaryObjectFact / BinaryOffsetFact / BinaryObjectRefFact /
-  BinaryTrailerFacts / BinaryFacts (parser_binary.rs:53-251, RFC 0013
+  BinaryTrailerFacts / BinaryFacts (parser_binary.rs, RFC 0013
   §8.3).
 - Recovery is prefix-based: the first object that fails any structural or
   value check cuts the proven prefix; every proven object keeps its facts
   and native value, and all bytes from the end of the last proven object to
-  the offset table form one error region (parser_binary.rs:1-26). The
+  the offset table form one error region (parser_binary.rs). The
   native arena adds nodes in object-table order so arena indices equal
   object indices; shared references and forward references resolve through
   PlistValueRef, and cycle/container-depth validation happens in the arena
@@ -90,7 +90,7 @@ MAX_FIELD_WIDTH = 8
 
 @dataclass(frozen=True, slots=True)
 class BinaryObjectFact:
-    """One proven object-table entry fact (parser_binary.rs:53-89)."""
+    """One proven object-table entry fact (parser_binary.rs)."""
 
     index: int
     offset: int
@@ -100,7 +100,7 @@ class BinaryObjectFact:
 
 @dataclass(frozen=True, slots=True)
 class BinaryOffsetFact:
-    """One validated offset-table entry fact (parser_binary.rs:91-117)."""
+    """One validated offset-table entry fact (parser_binary.rs)."""
 
     index: int
     offset: int
@@ -110,7 +110,7 @@ class BinaryOffsetFact:
 @dataclass(frozen=True, slots=True)
 class BinaryObjectRefFact:
     """One decoded object reference of a proven container
-    (parser_binary.rs:119-156). For dictionaries, keys occupy positions
+    (parser_binary.rs). For dictionaries, keys occupy positions
     ``0..count`` and values ``count..2*count``."""
 
     owner: int
@@ -121,7 +121,7 @@ class BinaryObjectRefFact:
 
 @dataclass(frozen=True, slots=True)
 class BinaryTrailerFacts:
-    """Trailer field facts (parser_binary.rs:158-216)."""
+    """Trailer field facts (parser_binary.rs)."""
 
     sort_version: int
     offset_int_size: int
@@ -134,7 +134,7 @@ class BinaryTrailerFacts:
 
 @dataclass(frozen=True, slots=True)
 class BinaryFacts:
-    """Complete binary structure facts of one parse (parser_binary.rs:218-
+    """Complete binary structure facts of one parse (parser_binary.rs
     251)."""
 
     objects: tuple[BinaryObjectFact, ...]
@@ -498,7 +498,7 @@ class _Parser:
         self, raw: _RawTrailer, start: int, length: int
     ) -> bool:
         """Mandatory integrity checks before any object is decoded
-        (RFC 0013 §5.11; parser_binary.rs:778-917)."""
+        (RFC 0013 §5.11; parser_binary.rs)."""
         ok = True
         if raw.unused != b"\x00\x00\x00\x00\x00":
             self.recover(
@@ -617,7 +617,7 @@ class _Parser:
         offset_int_size: int,
     ) -> tuple[tuple[BinaryOffsetFact, ...], list[int], int]:
         """Reads and validates the offset table in entry order
-        (parser_binary.rs:919-1010). The first invalid entry cuts the
+        (parser_binary.rs). The first invalid entry cuts the
         proven prefix."""
         bytes_ = self.source.bytes()
         facts: list[BinaryOffsetFact] = []
@@ -668,7 +668,7 @@ class _Parser:
         num_objects: int,
     ) -> tuple[list[_Shape], int]:
         """Scans the object table in index order; the first fault cuts the
-        proven prefix (parser_binary.rs:1012-1252)."""
+        proven prefix (parser_binary.rs)."""
         shapes: list[_Shape] = []
         cut = entry_cut
         for index in range(entry_cut):
@@ -693,8 +693,8 @@ class _Parser:
         object_ref_size: int,
         num_objects: int,
     ) -> _Shape | None:
-        """Decodes one object shape at one proven offset (parser_binary.rs:
-        1012-1252). None is a fault that cuts the proven prefix."""
+        """Decodes one object shape at one proven offset (parser_binary.rs
+). None is a fault that cuts the proven prefix."""
         bytes_ = self.source.bytes()
         if offset >= len(bytes_):
             self.recover(
@@ -868,7 +868,7 @@ class _Parser:
         self, marker: int, object_offset: int, index: int
     ) -> tuple[int, int] | None:
         """Reads a sized construct's count, honoring the extended-size
-        integer rule (RFC 0013 §5.4; parser_binary.rs:1254-1267)."""
+        integer rule (RFC 0013 §5.4; parser_binary.rs)."""
         nibble = marker & 0x0F
         if nibble != 0x0F:
             return (nibble, 0)
@@ -878,7 +878,7 @@ class _Parser:
         self, object_offset: int, index: int
     ) -> tuple[int, int] | None:
         """Reads one extended-size integer and enforces its limits
-        (parser_binary.rs:1269-1324)."""
+        (parser_binary.rs)."""
         bytes_ = self.source.bytes()
         if object_offset + 1 >= len(bytes_):
             self.recover(
@@ -914,7 +914,7 @@ class _Parser:
 
     def verify_dict_keys(self, shapes: list[_Shape], cut: int) -> int:
         """Verifies that every dictionary key target is a string object
-        (RFC 0013 §5.9; parser_binary.rs:1326-1354). The first violating
+        (RFC 0013 §5.9; parser_binary.rs). The first violating
         dictionary cuts the proven prefix."""
         for index in range(cut):
             shape = shapes[index]
@@ -936,7 +936,7 @@ class _Parser:
         self, shapes: list[_Shape], cut: int
     ) -> list[PlistValue]:
         """Builds native values in object-table order so arena indices equal
-        object indices (parser_binary.rs:1356-1440)."""
+        object indices (parser_binary.rs)."""
         bytes_ = self.source.bytes()
         values: list[PlistValue] = []
         for index, shape in enumerate(shapes[:cut]):
@@ -1060,7 +1060,7 @@ def _f64_from_bits(bits: int) -> float:
 
 @dataclass(frozen=True, slots=True)
 class PlistFormedBinary:
-    """One formed ``plist.binary@1`` document (parser_binary.rs:253-362).
+    """One formed ``plist.binary@1`` document (parser_binary.rs).
 
     ``Complete`` requires exhaustive byte coverage under the Profile's
     grammar and every configured limit. ``Recovered`` retains the immutable
@@ -1109,7 +1109,7 @@ def parse_binary(
 
     The source is an opaque Binary snapshot; only ProfileDefault and
     Explicit(Binary) are consistent with the profile. Any other selection
-    is a fatal ``plist.binary.encoding@1`` failure (lib.rs:241-260)."""
+    is a fatal ``plist.binary.encoding@1`` failure (lib.rs)."""
     from consema.document.source import SourceEncodingKind
 
     if selection.kind == "Explicit":

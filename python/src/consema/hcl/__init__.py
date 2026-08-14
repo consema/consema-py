@@ -14,7 +14,7 @@ queries HCL syntax and structure but never evaluates it. Variables,
 function calls, template interpolation, template directives, and
 for-expressions are native content with exact source identity; no
 evaluator exists anywhere in parse, query, projection, materialization, or
-edit (RFC 0014 §1, hard gate 1; SECURITY.md:36). `hcl.expression@1`
+edit (RFC 0014 §1, hard gate 1; SECURITY.md). `hcl.expression@1`
 carries only syntax facts — the kind family spelling, the exact source
 text, and the structural fingerprint.
 

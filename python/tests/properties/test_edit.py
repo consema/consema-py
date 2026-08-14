@@ -10,7 +10,7 @@ Cases covered:
   replacement set and target digest (RFC 0004 section 20).
 - Conflict matrix: duplicate target, removed placement anchor, and shared
   insertion boundary fail before any document is published
-  (edit.rs:1347-1392).
+  (edit.rs).
 """
 
 from __future__ import annotations
@@ -85,7 +85,7 @@ def test_all_five_operations():
 
 def test_semantic_value_preserves_direct_style_and_falls_back_only_when_required():
     # Direct style preservation versus the canonical fallback diagnostic
-    # (edit.rs:1186-1213).
+    # (edit.rs).
     direct = reader(b"a=one\n")
     direct_commit = commit_one(direct, lambda builder: builder.semantic_value(
         direct.properties[0].node, JavaString.from_unicode("two words")
@@ -106,7 +106,7 @@ def test_semantic_value_preserves_direct_style_and_falls_back_only_when_required
 
 def test_semantic_value_preserves_exact_unpaired_java_units():
     # An exact unpaired surrogate enters through canonical uppercase
-    # escapes (edit.rs:1215-1224).
+    # escapes (edit.rs).
     document = reader(b"a=x\n")
     exact = JavaString.from_code_units([0xD800])
     commit_result = commit_one(document, lambda builder: builder.semantic_value(
@@ -118,7 +118,7 @@ def test_semantic_value_preserves_exact_unpaired_java_units():
 
 def test_literal_value_requires_one_exact_value_ownership_interval():
     # Literal replacement owns exactly one raw value interval
-    # (edit.rs:1226-1256); delimiters and newlines are never consumed.
+    # (edit.rs); delimiters and newlines are never consumed.
     document = reader(b"a=one\nb=two\n")
     for invalid in (b" leading", b"line\nbreak", b"tail\\"):
         builder = EditTransactionBuilder(document)
@@ -129,7 +129,7 @@ def test_literal_value_requires_one_exact_value_ownership_interval():
 
 
 def test_insertions_honor_property_relative_placements():
-    # Every placement around comments and duplicate keys (edit.rs:1258-1318).
+    # Every placement around comments and duplicate keys (edit.rs).
     source = b"# head\na=1\n# middle\nb=2"
     plain_cases = [
         (AssociationPlacement("Start"), "# head\nx=0\na=1\n# middle\nb=2"),
@@ -145,7 +145,7 @@ def test_insertions_honor_property_relative_placements():
         ))
         assert text(commit_result.document) == expected
     # Anchored placements resolve against the fresh snapshot
-    # (edit.rs:1266-1273).
+    # (edit.rs).
     document = reader(source)
     before_commit = commit_one(document, lambda builder: builder.insert_property(
         document.node_ref(),
@@ -177,7 +177,7 @@ def test_insertions_honor_property_relative_placements():
 
 def test_removal_owns_continuation_lines_but_not_adjacent_comments():
     # Removal owns the property's natural lines and unambiguous
-    # continuation markers, but not adjacent comments (edit.rs:1320-1329).
+    # continuation markers, but not adjacent comments (edit.rs).
     document = reader(b"# before\nkey=first\\\n  second\n# after\nnext=v\n")
     commit_result = commit_one(document, lambda builder: builder.remove_property(
         document.properties[0].node
@@ -189,7 +189,7 @@ def test_removal_owns_continuation_lines_but_not_adjacent_comments():
 
 def test_rename_replaces_complete_continued_key_ownership():
     # Rename preserves value and trivia while escaping the new key
-    # (edit.rs:1331-1345).
+    # (edit.rs).
     document = reader(b"old\\\n key=value\n")
     commit_result = commit_one(document, lambda builder: builder.rename_property(
         document.properties[0].node, JavaString.from_unicode("new key")
@@ -199,7 +199,7 @@ def test_rename_replaces_complete_continued_key_ownership():
 
 
 def test_transaction_conflicts_fail_before_any_document_is_published():
-    # Conflict matrix (edit.rs:1347-1392): the base document never
+    # Conflict matrix (edit.rs): the base document never
     # changes.
     document = reader(b"a=1\nb=2\n")
     first = document.properties[0].node
@@ -244,7 +244,7 @@ def test_transaction_conflicts_fail_before_any_document_is_published():
 
 def test_snapshot_role_recovery_and_resource_contracts_are_enforced():
     # WrongSnapshot, WrongRole, Recovered, and ResourceLimit gates
-    # (edit.rs:1394-1438).
+    # (edit.rs).
     document = reader(b"a=1\n")
     other = reader(b"a=1\n")
     wrong_snapshot = EditTransactionBuilder(document)
@@ -315,7 +315,7 @@ def test_dry_run_patch_proof_and_conflict_atomicity():
 
 def test_empty_transaction_is_a_verified_identity_transition():
     # An empty transaction is a verified identity transition
-    # (edit.rs:1531-1539).
+    # (edit.rs).
     document = reader(b"a=1\n")
     transaction = EditTransactionBuilder(document).build()
     commit_result = commit(document, transaction)

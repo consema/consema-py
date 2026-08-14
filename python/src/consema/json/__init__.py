@@ -13,7 +13,7 @@ arbitration):
 
 - conformance/vectors/json-family-v2.json (33 cases, suite
   "consema.json-family.conformance@2") and v1.json json cases (lines
-  41-183) — the machine-readable golden surface;
+) — the machine-readable golden surface;
 - RFC 0004 (materialization/conversion/structural edit,
   https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md), RFC 0005 (JSON family production and JSON5 v1,
   https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md), RFC 0016 §5-§6 (API shapes and error
@@ -134,8 +134,8 @@ from consema.json.query import (
     execute_json_syntax_query,
 )
 
-# Frozen profile and domain ids (RFC 0005 §1/§7; lib.rs:140-146;
-# query.rs:97-105).
+# Frozen profile and domain ids (RFC 0005 §1/§7; lib.rs;
+# query.rs).
 JSON_STRICT_PROFILE = "json.strict@1"
 JSONC_BOUNDED_PROFILE = "jsonc.bounded@1"
 JSON5_STANDARD_PROFILE = "json5.standard@1"
@@ -150,7 +150,7 @@ JSON_CANONICAL_PRETTY_STYLE = "json.canonical-pretty@1"
 JSON5_CANONICAL_COMPACT_STYLE = "json5.canonical-compact@1"
 JSON5_CANONICAL_PRETTY_STYLE = "json5.canonical-pretty@1"
 
-# Frozen projection targets (RFC 0005 §8; projection.rs:15-24).
+# Frozen projection targets (RFC 0005 §8; projection.rs).
 JSON_PROJECTION_PROJECT_AS_OBJECT = "json.projection.project-as-object@1"
 JSON_PROJECTION_PROJECT_AS_ENTRY_MAPPING = "json.projection.project-as-entry-mapping@1"
 JSON_PROJECTION_BEST_EXACT_CORE = "json.projection.best-exact-core@1"

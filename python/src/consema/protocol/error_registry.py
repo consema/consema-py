@@ -2,19 +2,19 @@
 
 All records are transcribed VERBATIM from
 https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs, the registry arbitration
-source: ERROR_CODES_V1 (error_registry.rs:31-362, 55 codes), the per-version
+source: ERROR_CODES_V1 (error_registry.rs codes), the per-version
 new-code lists (SOURCE_CODES_V2_BEFORE_UTF8/AFTER_UTF8 at 364-410, 7 codes;
 NEW_CODES_V3 at 446-615, 28; NEW_CODES_V4 at 647-660, 2; NEW_CODES_V5 at
-692-933, 40; NEW_CODES_V6 at 965-1170, 34; NEW_CODES_V7 at 1205-1337, 21).
+, 40; NEW_CODES_V6 at 34; NEW_CODES_V7 at 21).
 Versions v2..v7 are the sorted merges of the previous version plus the
 version's new codes, exactly as the Rust const-merge builders produce
-(error_registry.rs:412-1367); the counts are 55/62/90/92/132/166/187
-(error_registry.rs:1717-1723). Go (https://github.com/consema/consema-go/blob/main/go/protocol/error_registry.go) is a
+(error_registry.rs); the counts are 55/62/90/92/132/166/187
+(error_registry.rs). Go (https://github.com/consema/consema-go/blob/main/go/protocol/error_registry.go) is a
 cross-reference only.
 
 The manifest form (`core.error-code-registry@1`, fields code / category /
 introduced / stability / description) is also implemented here, including
-strict validation (error_registry.rs:1573-1645).
+strict validation (error_registry.rs).
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ from consema.protocol.schema import (
 
 
 class DiagnosticCategory(enum.Enum):
-    """The eleven frozen semantic categories (error_registry.rs:1657-1671)."""
+    """The eleven frozen semantic categories (error_registry.rs)."""
 
     LEXICAL = "Lexical"
     SYNTAX = "Syntax"
@@ -57,7 +57,7 @@ def parse_category(name: str, path: str) -> DiagnosticCategory:
 
 
 class ErrorCodeDescriptor:
-    """One stable public code registry record (error_registry.rs:8-18)."""
+    """One stable public code registry record (error_registry.rs)."""
 
     __slots__ = ("code", "category", "introduced", "description")
 
@@ -84,7 +84,7 @@ def _code(
 
 
 # ---------------------------------------------------------------------------
-# Verbatim transcription of ERROR_CODES_V1 (error_registry.rs:31-362).
+# Verbatim transcription of ERROR_CODES_V1 (error_registry.rs).
 # ---------------------------------------------------------------------------
 _ERROR_CODES_V1 = [
     _code("core.diagnostic.truncated@1", "Resource", "0.1.0", "Diagnostic limit truncated a sequence"),
@@ -144,7 +144,7 @@ _ERROR_CODES_V1 = [
     _code("toml.projection.unrepresentable-datetime@1", "Projection", "0.2.0", "TOML temporal value is not exactly representable"),
 ]
 
-# Verbatim transcription of the v2 additions (error_registry.rs:364-410).
+# Verbatim transcription of the v2 additions (error_registry.rs).
 _NEW_CODES_V2 = [
     _code("core.source.encoding-conflict@1", "Encoding", "0.4.0", "Source encoding facts conflict"),
     _code("core.source.invalid-sequence@1", "Lexical", "0.4.0", "Source bytes are invalid for the selected encoding"),
@@ -155,7 +155,7 @@ _NEW_CODES_V2 = [
     _code("core.source.unsupported-bom@1", "Encoding", "0.4.0", "Source begins with an unsupported byte-order mark"),
 ]
 
-# Verbatim transcription of NEW_CODES_V3 (error_registry.rs:446-615).
+# Verbatim transcription of NEW_CODES_V3 (error_registry.rs).
 _NEW_CODES_V3 = [
     _code("core.conversion.materialization-failed@1", "Conversion", "0.5.0", "Conversion target materialization failed"),
     _code("core.conversion.projection-failed@1", "Conversion", "0.5.0", "Conversion source projection failed"),
@@ -187,13 +187,13 @@ _NEW_CODES_V3 = [
     _code("json.projection.structure-reencoded@1", "Projection", "0.5.0", "JSON object structure was reversibly represented as an entry mapping"),
 ]
 
-# Verbatim transcription of NEW_CODES_V4 (error_registry.rs:647-660).
+# Verbatim transcription of NEW_CODES_V4 (error_registry.rs).
 _NEW_CODES_V4 = [
     _code("json5.string.unescaped-line-separator@1", "Conformance", "0.6.0", "JSON5 string contains an unescaped Unicode line separator"),
     _code("json5.syntax.invalid-identifier@1", "Syntax", "0.6.0", "JSON5 IdentifierName syntax is invalid"),
 ]
 
-# Verbatim transcription of NEW_CODES_V5 (error_registry.rs:692-933).
+# Verbatim transcription of NEW_CODES_V5 (error_registry.rs).
 _NEW_CODES_V5 = [
     _code("core.graph.invalid@1", "Semantic", "0.7.0", "PortableGraph construction invariants were violated"),
     _code("core.graph.resource-limit@1", "Resource", "0.7.0", "PortableGraph construction or traversal limit was reached"),
@@ -237,7 +237,7 @@ _NEW_CODES_V5 = [
     _code("yaml.tag.kind-mismatch@1", "Semantic", "0.7.0", "YAML tag is incompatible with the representation node kind"),
 ]
 
-# Verbatim transcription of NEW_CODES_V6 (error_registry.rs:965-1170).
+# Verbatim transcription of NEW_CODES_V6 (error_registry.rs).
 _NEW_CODES_V6 = [
     _code("core.source.code-page-required@1", "Encoding", "0.8.0", "The selected source profile requires an explicit Windows code page"),
     _code("core.source.unsupported-code-page@1", "Encoding", "0.8.0", "The requested Windows code page is not in the portable registry"),
@@ -275,7 +275,7 @@ _NEW_CODES_V6 = [
     _code("java-properties.source.profile-encoding@1", "Encoding", "0.8.0", "Properties source encoding conflicts with the selected profile"),
 ]
 
-# Verbatim transcription of NEW_CODES_V7 (error_registry.rs:1205-1337):
+# Verbatim transcription of NEW_CODES_V7 (error_registry.rs):
 # the RFC 0015 §13.1 CLI error family (20 codes) plus the 0.13.0
 # registration of json.projection.incomplete-document@1 (audit finding F3).
 _NEW_CODES_V7 = [
@@ -371,7 +371,7 @@ class ErrorCodeRegistry:
 
 
 def validate_versioned_code(code: str, path: str) -> None:
-    """Validates one ``id@version`` code spelling (error_registry.rs:1647-1655)."""
+    """Validates one ``id@version`` code spelling (error_registry.rs)."""
     id_part, separator, version_text = code.rpartition("@")
     if not separator or not version_text:
         raise protocol_error(
@@ -394,7 +394,7 @@ def error_code_manifest_value(version: int = 7) -> PortableValue:
     """Encodes the `core.error-code-registry@1` payload for one registry version.
 
     Every record is an Object with exactly code / category / introduced /
-    stability ("Stable") / description in that order (error_registry.rs:1573-1594).
+    stability ("Stable") / description in that order (error_registry.rs).
     """
     records = []
     for descriptor in ErrorCodeRegistry(version).codes():
@@ -421,7 +421,7 @@ def validate_error_code_manifest_value(value: PortableValue) -> None:
     """Strictly validates one transferable `core.error-code-registry@1` value.
 
     Identity, ordering, category, and stability are normative; the
-    descriptions are presentation metadata (error_registry.rs:1596-1645).
+    descriptions are presentation metadata (error_registry.rs).
     """
     fields = schema_fields(
         value,

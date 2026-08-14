@@ -6,9 +6,9 @@ Case covered here (conformance/vectors/ini-v1.json, suite
 the same order, with exactly six direct structural (Supported)
 operations.
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-ini/src/operation_registry.rs:16-80 (descriptors)
-and the registry test operation_registry.rs:105-137; RFC 0009 §12
-(https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:439-455).
+Authority: https://github.com/consema/consema-rs/blob/main/consema-ini/src/operation_registry.rs (descriptors)
+and the registry test operation_registry.rs; RFC 0009 §12
+(https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ def test_frozen_eight_operation_surface():
 
 
 def test_descriptor_target_roles_and_arguments():
-    # operation_registry.rs:18-79: exact target roles and argument schemas.
+    # operation_registry.rs: exact target roles and argument schemas.
     by_id = {descriptor.to_string(): descriptor for descriptor in descriptors()}
     assert by_id["ini.edit.insert-section@1"].target_role == "ini.document"
     assert [argument.name for argument in by_id["ini.edit.insert-section@1"].arguments] == [

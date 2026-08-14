@@ -2,34 +2,34 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-ini/src/query.rs:117-143
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-ini/src/query.rs
   (native domain ini.native-semantic-query@1) and 160-204 (syntax domain
   ini.lossless-syntax-query@1); the ten native operators and the two
   syntax operators are the exact RFC 0009 §9 surface (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-
-  family-profiles-v1.md:287-345).
-- Operators: query.rs:428-625 (native: ini.document-sections,
+  family-profiles-v1.md).
+- Operators: query.rs (native: ini.document-sections,
   ini.section-entries, ini.all-entries, ini.entry-section,
   ini.section-name-equals, ini.entry-key-equals, ini.entry-value-state-is,
   ini.duplicate-group, ini.physical-lines, ini.logical-lines, core.take,
-  core.distinct-by-identity) and query.rs:370-419 (syntax:
+  core.distinct-by-identity) and query.rs (syntax:
   ini.syntax-kind-is, ini.syntax-text-equals, core.take,
   core.distinct-by-identity).
-- Expression evaluation and StructureOrderMerge: query.rs:298-368; source
-  order for native matches query.rs:627-659; selection algebra
-  query.rs:693-710 (All/First/Last/ZeroOrOne/RequireOne with
+- Expression evaluation and StructureOrderMerge: query.rs; source
+  order for native matches query.rs; selection algebra
+  query.rs (All/First/Last/ZeroOrOne/RequireOne with
   CardinalityViolation).
-- Limits and cancellation: consema-core/src/query.rs:2967-2981 (QueryLimits
+- Limits and cancellation: consema-core/src/query.rs (QueryLimits
   defaults max_steps=100_000, max_results=100_000); the step accounting
-  query.rs:228-240; cursor cancellation query.rs:146-157.
+  query.rs; cursor cancellation query.rs.
 - Syntax text comparison uses the decoded Unicode scalar text of the exact
   piece span, not its raw encoding bytes (RFC 0009 §9,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:337-341; query.rs:661-676) — UTF-8, UTF-16LE, and
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md; query.rs) — UTF-8, UTF-16LE, and
   explicit Windows-code-page queries are semantically identical.
 - Name filters require OriginalExact | ProfileEquivalent explicitly; a
   query never silently uses case folding (RFC 0009 §9,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:301-304; query.rs:470-525).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md; query.rs).
 - Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
-  error_registry.rs:108-118) via consema.protocol.query.QueryFailure.
+  error_registry.rs) via consema.protocol.query.QueryFailure.
 
 The transferable query model (QueryDomain, QueryExpression, OperatorCall,
 QuerySelection, QueryDefinition, ValidatedQuery, ExecutableQuery,
@@ -61,7 +61,7 @@ SYNTAX_DOMAIN_ID = "ini.lossless-syntax-query"
 
 
 class IniMatchKind(enum.Enum):
-    """Match role of one native query result (query.rs:10-67)."""
+    """Match role of one native query result (query.rs)."""
 
     DOCUMENT = "Document"
     SECTION = "Section"
@@ -72,7 +72,7 @@ class IniMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class IniMatch:
-    """Owned snapshot-bound INI native semantic query match (query.rs:10-67)."""
+    """Owned snapshot-bound INI native semantic query match (query.rs)."""
 
     kind: IniMatchKind
     node: NodeRef
@@ -90,13 +90,13 @@ class IniMatch:
 
     @property
     def identity(self) -> NodeRef:
-        """Stable match identity (query.rs:69-79)."""
+        """Stable match identity (query.rs)."""
         return self.node
 
 
 @dataclass(frozen=True, slots=True)
 class IniSyntaxMatch:
-    """Owned snapshot-bound INI lossless syntax query match (query.rs:82-88)."""
+    """Owned snapshot-bound INI lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -106,13 +106,13 @@ class IniSyntaxMatch:
 
 @dataclass(frozen=True, slots=True)
 class IniQueryExecution:
-    """Complete ordered query result (query.rs:117-143, 160-204)."""
+    """Complete ordered query result (query.rs)."""
 
     matches: tuple[object, ...]
 
 
 class IniCancellationToken:
-    """Cooperative cancellation signal (query.rs:228-240; consema-core)."""
+    """Cooperative cancellation signal (query.rs; consema-core)."""
 
     def __init__(self) -> None:
         self._cancelled = False
@@ -125,7 +125,7 @@ class IniCancellationToken:
 
 
 class IniQueryLimits:
-    """Query resource limits (consema-core/src/query.rs:2967-2981)."""
+    """Query resource limits (consema-core/src/query.rs)."""
 
     def __init__(self, max_steps: int = 100_000, max_results: int = 100_000) -> None:
         self.max_steps = max_steps
@@ -145,7 +145,7 @@ class _Context:
         self.steps = 0
 
     def step(self, results: int) -> None:
-        """One step and result-budget accounting (query.rs:228-240)."""
+        """One step and result-budget accounting (query.rs)."""
         if self.cancellation.is_cancelled():
             raise QueryFailure(QueryFailureKind.CANCELLED)
         self.steps += 1
@@ -194,7 +194,7 @@ def execute_ini_query(
     limits: IniQueryLimits,
     cancellation: IniCancellationToken,
 ) -> IniQueryExecution:
-    """Executes a validated INI native semantic query (query.rs:117-143)."""
+    """Executes a validated INI native semantic query (query.rs)."""
     definition = executable.definition
     if definition.domain.id != NATIVE_DOMAIN_ID or definition.domain.version != 1:
         raise QueryFailure(QueryFailureKind.DOMAIN_MISMATCH, domain=definition.domain)
@@ -214,7 +214,7 @@ def execute_ini_syntax_query(
     limits: IniQueryLimits,
     cancellation: IniCancellationToken,
 ) -> IniQueryExecution:
-    """Executes a validated INI lossless syntax query (query.rs:160-204)."""
+    """Executes a validated INI lossless syntax query (query.rs)."""
     definition = executable.definition
     if definition.domain.id != SYNTAX_DOMAIN_ID or definition.domain.version != 1:
         raise QueryFailure(QueryFailureKind.DOMAIN_MISMATCH, domain=definition.domain)
@@ -253,7 +253,7 @@ def _execute_expression(
             context.step(len(output))
         return output
     # StructureOrderMerge: source order by (start byte, ordinal)
-    # (query.rs:321-331, 627-659).
+    # (query.rs).
     output = []
     for branch in expression.branches:
         output.extend(_execute_expression(branch, input_matches, context))
@@ -451,7 +451,7 @@ def _apply_selection(values: list[object], selection: QuerySelection) -> list[ob
 
 
 def _source_start(document: IniDocument, item: IniMatch) -> int:
-    """Native match source-order start byte (query.rs:627-659)."""
+    """Native match source-order start byte (query.rs)."""
     if item.kind is IniMatchKind.DOCUMENT:
         return 0
     if item.kind is IniMatchKind.SECTION:
@@ -473,7 +473,7 @@ def _source_ordinal(item: IniMatch) -> int:
 
 def _decoded_span_text(document: IniDocument, span: Span) -> str:
     """Decoded Unicode scalar text of one exact raw piece span
-    (query.rs:661-676; RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:337-341).
+    (query.rs; RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 
     The decoded coordinates are UTF-8 byte offsets into the decoded text
     (Rust &str byte slicing), so the slice happens on the UTF-8 encoding,
@@ -488,14 +488,14 @@ def _decoded_span_text(document: IniDocument, span: Span) -> str:
 
 
 def _section_comparison(profile: IniProfile, name: str) -> str:
-    """Profile-specific section comparison (query.rs:678-683)."""
+    """Profile-specific section comparison (query.rs)."""
     if profile is IniProfile.WINDOWS_V1:
         return name.lower()
     return name
 
 
 def _key_comparison(profile: IniProfile, key: str) -> str:
-    """Profile-specific key comparison (query.rs:685-691)."""
+    """Profile-specific key comparison (query.rs)."""
     if profile is IniProfile.WINDOWS_V1:
         return key.lower()
     if profile is IniProfile.PYTHON_CONFIGPARSER_V1:

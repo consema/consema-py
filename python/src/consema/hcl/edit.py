@@ -22,12 +22,12 @@ and none evaluates anything (hard gate 1).
 
 Authority (language-neutral first; Rust only for byte/registry
 arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/edit.rs �� the address model
-edit.rs:95-226, the value model edit.rs:228-325, the operations
-edit.rs:327-532, failure algebra edit.rs:547-612, the sequential commit
-edit.rs:614-682, byte-level layout edit.rs:886-1248, operation preparation
-edit.rs:1254-1416, value checks and rendering edit.rs:1418-1610,
-post-application verification edit.rs:1612-1777, commit assembly
-edit.rs:1779-1953.
+edit.rs, the value model edit.rs, the operations
+edit.rs, failure algebra edit.rs, the sequential commit
+edit.rs, byte-level layout edit.rs, operation preparation
+edit.rs, value checks and rendering edit.rs,
+post-application verification edit.rs, commit assembly
+edit.rs.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ from consema.hcl.native import HclAttribute, HclBlock, HclBody, HclBodyItem
 
 
 # ---------------------------------------------------------------------------
-# Address model (edit.rs:95-226)
+# Address model (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -83,7 +83,7 @@ from consema.hcl.native import HclAttribute, HclBlock, HclBody, HclBodyItem
 class BodyPathStep:
     """A step selects one block occurrence by exact type, exact label
     sequence, and 0-based source position among the blocks with the same
-    type and labels (edit.rs:95-138)."""
+    type and labels (edit.rs)."""
 
     block_type: str
     labels: tuple[str, ...] = ()
@@ -92,7 +92,7 @@ class BodyPathStep:
 
 @dataclass(frozen=True, slots=True)
 class BodyPath:
-    """A root-relative path to one body (RFC 0014 §10; edit.rs:140-174).
+    """A root-relative path to one body (RFC 0014 §10; edit.rs).
 
     The empty path denotes the root body. A step that meets an attribute
     instead of a block is a role failure; a step that does not exist in
@@ -115,7 +115,7 @@ class BodyPath:
 
 @dataclass(frozen=True, slots=True)
 class NodeRef:
-    """One exact body item address (RFC 0014 §10; edit.rs:176-212).
+    """One exact body item address (RFC 0014 §10; edit.rs).
 
     An attribute is addressed by owning body and name — unique per body in
     a Complete document. A block is addressed by owning body, type, exact
@@ -150,7 +150,7 @@ class NodeRef:
 
 class BodyPlacement:
     """Attribute insertion placement inside one body (RFC 0014 §10;
-    edit.rs:214-226)."""
+    edit.rs)."""
 
     __slots__ = ("kind", "anchor")
 
@@ -172,14 +172,14 @@ class BodyPlacement:
 
 
 # ---------------------------------------------------------------------------
-# Typed edit values (edit.rs:228-325)
+# Typed edit values (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True, slots=True)
 class EditKey:
-    """One object-constructor literal key (RFC 0014 §4.6, §8.1; edit.rs:
-    310-325).
+    """One object-constructor literal key (RFC 0014 §4.6, §8.1; edit.rs
+（区间定义处）)
 
     ``kind`` is "identifier" | "number" | "string". An identifier key
     spelled `for` is refused, because the for-expression interpretation
@@ -205,7 +205,7 @@ class EditKey:
 @dataclass(frozen=True, slots=True)
 class EditValue:
     """One typed literal-complete HCL value supplied to an edit (RFC 0014
-    §10; edit.rs:228-308).
+    §10; edit.rs).
 
     ``kind`` is "integer" | "real" | "string" | "boolean" | "null" |
     "tuple" | "object" | "expression". Values are typed native facts,
@@ -255,12 +255,12 @@ class EditValue:
 
 
 # ---------------------------------------------------------------------------
-# Operations and transactions (edit.rs:327-532)
+# Operations and transactions (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 class EditOperationKind(enum.Enum):
-    """Typed edit operation kinds (edit.rs:327-397)."""
+    """Typed edit operation kinds (edit.rs)."""
 
     SET_ATTRIBUTE_VALUE = "SetAttributeValue"
     INSERT_ATTRIBUTE = "InsertAttribute"
@@ -273,7 +273,7 @@ class EditOperationKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EditOperation:
     """One snapshot-bound HCL structural operation (RFC 0014 §10;
-    edit.rs:327-397).
+    edit.rs).
 
     Every body path, name, and occurrence refers to the document state as
     of the operation's own application: operations of one transaction
@@ -295,7 +295,7 @@ class EditOperation:
 
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
-    """Immutable snapshot-bound transaction (edit.rs:399-418)."""
+    """Immutable snapshot-bound transaction (edit.rs)."""
 
     base: object
     operations: tuple[EditOperation, ...] = ()
@@ -303,7 +303,7 @@ class EditTransaction:
 
 class EditTransactionBuilder:
     """Builds one transaction against one immutable snapshot
-    (edit.rs:420-532)."""
+    (edit.rs)."""
 
     def __init__(self, document: HclDocument) -> None:
         self._base = document.snapshot_identity()
@@ -403,7 +403,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """One complete committed edit (edit.rs:534-545)."""
+    """One complete committed edit (edit.rs)."""
 
     document: HclDocument
     change_set: ChangeSet
@@ -412,13 +412,13 @@ class EditCommit:
 
 
 # ---------------------------------------------------------------------------
-# Piece index and byte-level layout (edit.rs:886-1248)
+# Piece index and byte-level layout (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 class _PieceIndex:
     """Lossless piece facts of one formed document, indexed for boundary
-    walks (edit.rs:891-935)."""
+    walks (edit.rs)."""
 
     def __init__(self, document: HclDocument) -> None:
         pieces = document.lossless_structural_index().pieces
@@ -450,7 +450,7 @@ def _resolve_body(
     document: HclDocument, path: BodyPath
 ) -> tuple[HclBody, HclBlock | None]:
     """Resolves one body path against one native document; the empty path
-    is the root body (edit.rs:940-960)."""
+    is the root body (edit.rs)."""
     body = document.body
     parent = None
     for step in path.steps:
@@ -533,8 +533,8 @@ def _item_span_end(item: HclBodyItem) -> int:
 
 
 def _item_line_end(index: _PieceIndex, from_: int) -> int:
-    """End of the line that terminates the item ending at `from` (edit.rs:
-    1071-1098)."""
+    """End of the line that terminates the item ending at `from` (edit.rs
+)."""
     pos = from_
     while True:
         piece = index.piece_starting_at(pos)
@@ -554,7 +554,7 @@ def _item_line_end(index: _PieceIndex, from_: int) -> int:
 
 
 def _item_line_start(index: _PieceIndex, item_start: int) -> int:
-    """Start of the line that begins at `item_start` (edit.rs:1100-1112)."""
+    """Start of the line that begins at `item_start` (edit.rs)."""
     pos = item_start
     while True:
         piece = index.piece_ending_at(pos)
@@ -564,8 +564,8 @@ def _item_line_start(index: _PieceIndex, item_start: int) -> int:
 
 
 def _item_indent(index: _PieceIndex, document: HclDocument, item_start: int) -> str:
-    """Leading whitespace run of the line that starts an item (edit.rs:
-    1114-1138)."""
+    """Leading whitespace run of the line that starts an item (edit.rs
+)."""
     source = document.source.bytes()
     pos = item_start
     chunks: list[bytes] = []
@@ -580,7 +580,7 @@ def _item_indent(index: _PieceIndex, document: HclDocument, item_start: int) -> 
 
 
 def _block_brace_positions(index: _PieceIndex, block_span: tuple[int, int]) -> tuple[int, int]:
-    """Byte positions of one block's own braces (edit.rs:1140-1171)."""
+    """Byte positions of one block's own braces (edit.rs)."""
     open_end = None
     close_start = None
     for position, start in enumerate(index.starts):
@@ -604,7 +604,7 @@ def _empty_body_point(
     body_path: BodyPath,
     parent: HclBlock | None,
 ) -> tuple[int, str]:
-    """Insertion point facts of an empty target body (edit.rs:1173-1190)."""
+    """Insertion point facts of an empty target body (edit.rs)."""
     if parent is None:
         return len(document.source.bytes()), ""
     _, close_start = _block_brace_positions(
@@ -622,7 +622,7 @@ def _insertion_point(
     placement: BodyPlacement,
 ) -> tuple[int, str, bool]:
     """Computes the insertion point, markup indentation, and whether the
-    markup needs a separating leading newline (edit.rs:1192-1248)."""
+    markup needs a separating leading newline (edit.rs)."""
     items = body.items
     if placement.kind == "First":
         if items:
@@ -655,14 +655,14 @@ def _insertion_point(
 
 
 # ---------------------------------------------------------------------------
-# Value checks and rendering (edit.rs:1418-1610)
+# Value checks and rendering (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def _is_valid_identifier(name: str) -> bool:
     """Whether one spelling is a valid UAX #31 identifier without a leading
     underscore, matching the frozen lexer rule (RFC 0014 §4.1, §12 D-4;
-    edit.rs:1450-1460)."""
+    edit.rs)."""
     if not name:
         return False
     first = name[0]
@@ -676,7 +676,7 @@ def _is_valid_identifier(name: str) -> bool:
 
 def _check_value(value: EditValue) -> None:
     """Rejects one typed value that cannot be expressed as literal-complete
-    HCL (RFC 0014 §8.1, §10, §14; edit.rs:1418-1439)."""
+    HCL (RFC 0014 §8.1, §10, §14; edit.rs)."""
     if value.kind == "real" and not _is_finite(value.payload):
         raise HclEditFailure(HclEditFailureKind.UNREPRESENTABLE_VALUE, detail="real")
     if value.kind in ("integer", "boolean", "null", "string", "real"):
@@ -710,7 +710,7 @@ def _check_key(key: EditKey) -> None:
 
 def _quote_escape(text: str) -> str:
     """Minimal deterministic quoted-template spelling of one string (RFC
-    0014 §9; edit.rs:1462-1492)."""
+    0014 §9; edit.rs)."""
     out = ['"']
     index = 0
     while index < len(text):
@@ -743,7 +743,7 @@ def _quote_escape(text: str) -> str:
 def _canonical_real(value: float) -> str | None:
     """Canonical decimal spelling of one finite real, by pure decimal
     string arithmetic over its shortest-round-trip spelling (hard gate 1;
-    edit.rs:1494-1512)."""
+    edit.rs)."""
     if not _is_finite(value):
         return None
     text = repr(value)
@@ -757,7 +757,7 @@ def _canonical_real(value: float) -> str | None:
 
 def _render_value(value: EditValue, indent: str) -> str:
     """Canonical expression text of one typed literal value at one base
-    indentation (RFC 0014 §9; edit.rs:1514-1570)."""
+    indentation (RFC 0014 §9; edit.rs)."""
     if value.kind == "integer":
         return str(value.payload)
     if value.kind == "real":
@@ -808,7 +808,7 @@ def _render_value(value: EditValue, indent: str) -> str:
 
 def _render_key(key: EditKey) -> str:
     """Bare spelling of one object key; validity is pre-checked by
-    _check_key (edit.rs:1572-1580)."""
+    _check_key (edit.rs)."""
     if key.kind == "identifier":
         return key.payload
     if key.kind == "number":
@@ -824,8 +824,8 @@ def _block_markup(
 ) -> str:
     """Canonical block text at one base indentation: `type "label" {`
     header, two-space-indented nested attributes, closing brace, and a
-    trailing newline; labels always render quoted (RFC 0014 §9; edit.rs:
-    1582-1610)."""
+    trailing newline; labels always render quoted (RFC 0014 §9; edit.rs
+)."""
     out = [indent, block_type]
     for label in labels:
         out.append(" ")
@@ -844,14 +844,14 @@ def _block_markup(
 
 
 # ---------------------------------------------------------------------------
-# Operation preparation and verification (edit.rs:1254-1777)
+# Operation preparation and verification (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True, slots=True)
 class _AppliedEdit:
     """One applied raw-byte splice, recorded for base-coordinate
-    translation (edit.rs:694-707)."""
+    translation (edit.rs)."""
 
     pre_start: int
     pre_len: int
@@ -861,7 +861,7 @@ class _AppliedEdit:
 
 class _VerifyData:
     """Per-operation data the post-application verification needs
-    (edit.rs:686-691)."""
+    (edit.rs)."""
 
     __slots__ = ("rename_kind",)
 
@@ -871,7 +871,7 @@ class _VerifyData:
 
 def _unmap_in(edits: list[_AppliedEdit], pos: int) -> int:
     """Maps one position from the final state back to the base snapshot
-    through the applied edits in reverse application order (edit.rs:712-
+    through the applied edits in reverse application order (edit.rs
     729)."""
     for index in range(len(edits) - 1, -1, -1):
         edit = edits[index]
@@ -886,7 +886,7 @@ def _unmap_in(edits: list[_AppliedEdit], pos: int) -> int:
 
 def _map_in(edits: list[_AppliedEdit], pos: int) -> int:
     """Maps one position from one pre-state to the final state through the
-    applied edits in application order (edit.rs:731-744)."""
+    applied edits in application order (edit.rs)."""
     for edit in edits:
         if pos <= edit.pre_start:
             continue
@@ -904,7 +904,7 @@ def _record_edit(
 ) -> None:
     """Records one splice and rejects two insertions that map to the same
     base position; an operation whose span lies inside an earlier
-    replacement folds into that replacement (edit.rs:746-812)."""
+    replacement folds into that replacement (edit.rs)."""
     if pre_len == 0 and not replacement:
         return
     for index in range(len(edits) - 1, -1, -1):
@@ -959,7 +959,7 @@ def _apply_step(
 ) -> None:
     """Applies one step's splices: validates the target length against the
     source bound first, records every splice against the base coordinates,
-    then builds the new bytes in one pass (edit.rs:814-843)."""
+    then builds the new bytes in one pass (edit.rs)."""
     target_len = len(bytes_)
     for splice in splices:
         target_len = target_len - splice.pre_len + len(splice.replacement)
@@ -974,7 +974,7 @@ def _apply_step(
 
 def _apply_splices(bytes_: bytearray, splices: list[_AppliedEdit]) -> None:
     """Builds the new bytes by applying the splices sequentially against a
-    working buffer (edit.rs:845-861)."""
+    working buffer (edit.rs)."""
     for splice in splices:
         end = splice.pre_start + splice.pre_len
         if end > len(bytes_):
@@ -990,7 +990,7 @@ def _prepare_operation(
     current: HclDocument, operation: EditOperation
 ) -> tuple[list[_AppliedEdit], _VerifyData]:
     """Resolves one operation against the current state and computes its
-    splices in the current state's coordinates (edit.rs:1257-1416)."""
+    splices in the current state's coordinates (edit.rs)."""
     index = _PieceIndex(current)
     kind = operation.kind
     if kind is EditOperationKind.SET_ATTRIBUTE_VALUE:
@@ -1098,7 +1098,7 @@ def _verify_operation(
     formed: HclDocument, operation: EditOperation, data: _VerifyData
 ) -> None:
     """Verifies the promised HCL semantics of one operation against the
-    reparse of the state immediately after its application (edit.rs:1617-
+    reparse of the state immediately after its application (edit.rs
     1777)."""
     kind = operation.kind
     if kind in (EditOperationKind.SET_ATTRIBUTE_VALUE, EditOperationKind.INSERT_ATTRIBUTE):
@@ -1166,7 +1166,7 @@ def _block_body_matches(
 def _edit_value_matches_literal(value: EditValue, literal: HclLiteralValue) -> bool:
     """Whether one typed edit value equals one reparsed literal; numbers
     compare by canonical-decimal value equality across the integer/real
-    kind boundary (RFC 0014 §6; edit.rs:1731-1777)."""
+    kind boundary (RFC 0014 §6; edit.rs)."""
     if value.kind == "integer" and literal.kind == "integer":
         return str(value.payload) == literal.text
     if value.kind == "real" and literal.kind in ("integer", "real"):
@@ -1202,13 +1202,13 @@ def _edit_key_matches_literal(key: EditKey, literal) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Commit and dry-run (edit.rs:614-682, 1779-1953)
+# Commit and dry-run (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def commit(document: HclDocument, transaction: EditTransaction) -> EditCommit:
     """Atomically commits structural operations; on failure the base
-    document remains unchanged (edit.rs:614-682)."""
+    document remains unchanged (edit.rs)."""
     if transaction.base != document.snapshot_identity():
         raise HclEditFailure(HclEditFailureKind.WRONG_SNAPSHOT)
     if document.formation_status() is not FormationStatus.COMPLETE:
@@ -1254,7 +1254,7 @@ def dry_run(
     source_id: EditPlanSourceId,
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:623-637)."""
+    (edit.rs)."""
     commit_result = commit(document, transaction)
     try:
         return EditPlan.new(
@@ -1275,7 +1275,7 @@ def _build_commit(
     edits: list[_AppliedEdit],
 ) -> EditCommit:
     """Builds the commit facts: ChangeSet, replayable SourcePatch, and the
-    untouched-byte proof (edit.rs:1785-1882)."""
+    untouched-byte proof (edit.rs)."""
     limits = base.parse_limits
     if len(edits) > limits.max_report_events:
         raise HclEditFailure(HclEditFailureKind.RESOURCE_LIMIT, resource_name="report-events")
@@ -1350,7 +1350,7 @@ def _build_mappings(
     final_document: HclDocument,
 ) -> list[NodeMapping]:
     """One old-to-new mapping per operation whose target resolves in the
-    base snapshot; insertions carry no mapping (edit.rs:1884-1953)."""
+    base snapshot; insertions carry no mapping (edit.rs)."""
     mappings: list[NodeMapping] = []
     for operation in transaction.operations:
         kind = operation.kind
@@ -1443,7 +1443,7 @@ def _source_patch_limits(limits: HclParseLimits, operation_count: int) -> Source
 
 def operation_metadata(transaction: EditTransaction) -> dict[str, str]:
     """Operation metadata keys: operation.{index} = "id@version"
-    (edit.rs:2037-2042)."""
+    (edit.rs)."""
     metadata: dict[str, str] = {}
     for index, operation in enumerate(transaction.operations):
         metadata[f"operation.{index}"] = _operation_id(operation)

@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for registry arbitration):
 
-- RFC 0012 §12 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:422-434): the
+- RFC 0012 §12 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md): the
   ``xml.*`` diagnostic codes are registered by RFC 0012 itself and do NOT
   enter the consema-protocol core error registry, which covers only
   core/protocol and line-format contract codes (RFC 0011 §10). When XML
@@ -10,26 +10,26 @@ Authority (language-neutral first; Rust only for registry arbitration):
   through the registry's corresponding format section or per RFC 0011's
   error-code classification rules.
 - The exact xml.* code vocabulary transcribes https://github.com/consema/consema-rs/blob/main/consema-xml/src
-  (parser.rs:44,73,106,132-135,217,344,353,371,389,483,514,520,536,556,
+  (parser.rs,
   590,596,608,622,659,681,695,700,727,734,765,775,783,789,794,806,817,828,
   858,897,900,902,922,927,932,935,938,973,980,1009,1015,1022,1034,1038,
   1050,1148,1219,1228,1238,1256,1289,1300,1326,1350,1375,1385,1389,1410,
   1446,1478,1497,1509,1511,1527,1547,1592,1612,1638,1753,1754,1779,1796,
   1806,1815,1819,1893,1936,1940,1961,1991,2024,2051,2067,2216,2230,2283,
-  2293,2304,2317,2344,2408,2599,2641; projection.rs:461-466; edit.rs:1851;
-  materialization.rs:1507) — byte/registry arbitration only.
+  2293,2304,2317,2344,2408,2599,2641; projection.rs; edit.rs;
+  materialization.rs) — byte/registry arbitration only.
 - The core edit codes consumed by the family are registered at
-  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:466-550 (core.edit.*@1,
-  introduced by RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:387-423); the family edit
-  failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs:319-408.
+  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs (core.edit.*@1,
+  introduced by RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md); the family edit
+  failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs.
 - The core materialization codes consumed by the family are registered at
-  error_registry.rs:556-604 (core.materialization.*@1); the projection
-  failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs:421-469.
+  error_registry.rs (core.materialization.*@1); the projection
+  failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs.
 - Diagnostic categories follow the frozen semantic categories
-  (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1657-1671; Python
+  (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs; Python
   consema.protocol DiagnosticCategory); severity follows the three frozen
   presentation severities (protocol diagnostic.py).
-- RFC 0016 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:195-200): SDK operations
+- RFC 0016 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md): SDK operations
   return typed errors whose stable code is always the registered code;
   error text is human presentation only and never participates in
   conformance comparison.
@@ -111,8 +111,8 @@ class XmlFormationFailure(Exception):
 
 
 class XmlProjectionFailureKind(enum.Enum):
-    """Stable XML projection failure (https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs:
-    421-441, transcribed verbatim)."""
+    """Stable XML projection failure (https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs
+ transcribed verbatim)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     SUBTREE_NOT_ELEMENT = "SubtreeNotElement"
@@ -134,7 +134,7 @@ _CODE_BY_PROJECTION_KIND = {
 
 class XmlProjectionFailure(Exception):
     """Stable XML projection failure with a frozen code
-    (projection.rs:443-469)."""
+    (projection.rs)."""
 
     def __init__(
         self,
@@ -155,7 +155,7 @@ class XmlProjectionFailure(Exception):
         return _CODE_BY_PROJECTION_KIND[self.kind]
 
     def to_diagnostic(self) -> XmlDiagnostic:
-        """One snapshot-bound failure diagnostic (projection.rs:459-468)."""
+        """One snapshot-bound failure diagnostic (projection.rs)."""
         category = (
             DiagnosticCategory.PROJECTION
             if self.kind is not XmlProjectionFailureKind.RESOURCE_LIMIT
@@ -179,7 +179,7 @@ class XmlProjectionFailure(Exception):
 
 class XmlEditFailureKind(enum.Enum):
     """Stable XML edit validation or commit failure
-    (https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs:319-360, transcribed verbatim)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs, transcribed verbatim)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"
@@ -222,7 +222,7 @@ _CODE_BY_EDIT_KIND = {
 class XmlEditFailure(Exception):
     """Stable XML edit validation or commit failure with a frozen registered
     code (RFC 0004 §13; the code mapping is the Rust StableFailure impl,
-    edit.rs:388-407; registry lines in the module docstring). The failure
+    edit.rs; registry lines in the module docstring). The failure
     kind spellings are the exact Rust variant names (RFC 0016 §5.3/§8: one
     vocabulary per code)."""
 

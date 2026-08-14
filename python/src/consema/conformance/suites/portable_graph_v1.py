@@ -252,7 +252,7 @@ def _pgce_stream_limit(vector: runner.Case) -> str | None:
 
 
 class GraphMatch:
-    """One portable-graph query match (query.rs:13-39)."""
+    """One portable-graph query match (query.rs)."""
 
     __slots__ = ("kind", "node_id", "parent", "ordinal", "key", "value")
 
@@ -273,7 +273,7 @@ class GraphMatch:
         self.value = value
 
     def identity(self):
-        """Match identity for distinct-by-identity (query.rs:65-83)."""
+        """Match identity for distinct-by-identity (query.rs)."""
         if self.kind == "Node":
             return ("node", self.node_id)
         if self.kind == "SequenceElement":
@@ -478,7 +478,7 @@ def _apply_graph_operator(operator, inputs, graph: graph_module.PortableGraph):
 def _execute_graph_query(
     graph: graph_module.PortableGraph, executable: protocol_query.ExecutableQuery
 ) -> list[GraphMatch]:
-    """Executes a validated graph-domain query (query.rs:142-174)."""
+    """Executes a validated graph-domain query (query.rs)."""
     definition = executable.definition
     if definition.domain != _GRAPH_DOMAIN:
         raise protocol_query.QueryFailure(

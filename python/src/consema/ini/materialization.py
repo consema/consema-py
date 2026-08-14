@@ -2,37 +2,37 @@
 
 Authority (Rust arbitration for exact bytes):
 
-- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-ini/src/materialization.rs:
-  27-75 — profile/style resolution (materialization.rs:77-127: the exact
+- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-ini/src/materialization.rs
+ — profile/style resolution (materialization.rs: the exact
   style ids ini.portable-canonical@1 / ini.windows-canonical@1 /
   ini.python-configparser-canonical@1; Windows requires CRLF, Portable and
   Python require LF; Portable accepts UTF-8 only, Windows accepts UTF-16LE
   or one explicit registered Windows code page, Python accepts any non-
   Binary registered text encoding), parse-back and Complete gate
-  (materialization.rs:60-66), closure verification (materialization.rs:
-  489-535), provenance (materialization.rs:537-677).
-- Encoding: text_budget materialization.rs:724-738; encode_text with the
-  matching UTF-16 BOM materialization.rs:740-768; encode_fragment
-  materialization.rs:770-829 (UTF-8, UTF-16LE/BE, Latin-1, Windows code
+  (materialization.rs), closure verification (materialization.rs
+), provenance (materialization.rs).
+- Encoding: text_budget materialization.rs; encode_text with the
+  matching UTF-16 BOM materialization.rs; encode_fragment
+  materialization.rs (UTF-8, UTF-16LE/BE, Latin-1, Windows code
   pages; strict — an unrepresentable scalar fails the whole operation,
-  RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:401-406).
-- Writer: materialization.rs:191-461 — the canonical per-profile entry
+  RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
+- Writer: materialization.rs — the canonical per-profile entry
   representation: portable ``key=value`` ASCII (RFC 0009 §11, lines 415-
   417), Windows ``key=value`` with deterministic quoting only when needed
   to preserve leading/trailing value whitespace (lines 419-424;
-  windows_value_needs_quotes materialization.rs:874-888), Python
+  windows_value_needs_quotes materialization.rs), Python
   ``key = value`` with deterministic four-space continuation and literal
   interpolation markers (lines 426-430; write_python_entry
-  materialization.rs:423-453); section/key/value representability gates
-  materialization.rs:348-382.
+  materialization.rs); section/key/value representability gates
+  materialization.rs.
 - Failure names and codes: the common materialization algebra of
   consema.document (RFC 0004 §7/§17) plus the INI closure code
-  ini.materialization.round-trip-mismatch@1 (error_registry.rs:1021); a
+  ini.materialization.round-trip-mismatch@1 (error_registry.rs); a
   failed attempt contains no Document and no partial output bytes.
 
 Closure: canonical output reparses under the exact target profile as a
 Complete document and reprojects to the identical PortableValue before
-completion (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:432-435).
+completion (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 """
 
 from __future__ import annotations
@@ -110,7 +110,7 @@ def materialize(
     value: PortableValue, request: MaterializationRequest
 ) -> MaterializationResult:
     """Materializes one complete nested String mapping into a new immutable
-    INI document (materialization.rs:27-41)."""
+    INI document (materialization.rs)."""
     analyzed: list[ValuePath] = []
     try:
         complete = _materialize_complete(value, request, analyzed)
@@ -158,7 +158,7 @@ def _materialize_complete(
 
 
 def requested_profile(request: MaterializationRequest) -> IniProfile:
-    """Resolves the target profile (materialization.rs:77-89)."""
+    """Resolves the target profile (materialization.rs)."""
     profile_id = request.target_profile.id
     version = request.target_profile.version
     if profile_id == "ini.portable" and version == 1:
@@ -171,8 +171,8 @@ def requested_profile(request: MaterializationRequest) -> IniProfile:
 
 
 def validate_request(request: MaterializationRequest, profile: IniProfile) -> None:
-    """Style, newline, and encoding closure (materialization.rs:91-127;
-    RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:399-406)."""
+    """Style, newline, and encoding closure (materialization.rs;
+    RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)."""
     style_matches = (
         (profile is IniProfile.PORTABLE_V1 and request.style.id == "ini.portable-canonical" and request.style.version == 1)
         or (profile is IniProfile.WINDOWS_V1 and request.style.id == "ini.windows-canonical" and request.style.version == 1)
@@ -208,7 +208,7 @@ def validate_request(request: MaterializationRequest, profile: IniProfile) -> No
 def parse_encoding_selection(
     profile: IniProfile, encoding: SourceEncoding
 ) -> object:
-    """Reparse encoding selection (materialization.rs:129-135)."""
+    """Reparse encoding selection (materialization.rs)."""
     from consema.ini.kinds import IniEncodingSelection
 
     if (
@@ -221,7 +221,7 @@ def parse_encoding_selection(
 
 def parse_limits(limits) -> object:
     """Parse limits derived from the materialization limits
-    (materialization.rs:137-160)."""
+    (materialization.rs)."""
     from consema.document.limits import ParseLimits
     from consema.ini.kinds import IniParseLimits
 
@@ -255,7 +255,7 @@ def parse_limits(limits) -> object:
 
 
 class _MappingShape(enum.Enum):
-    """Input mapping shape (materialization.rs:162-166)."""
+    """Input mapping shape (materialization.rs)."""
 
     OBJECT = "Object"
     ENTRY_MAPPING = "EntryMapping"
@@ -302,7 +302,7 @@ class _Writer:
     def document(
         self, value: PortableValue, path: ValuePath, depth: int
     ) -> list[_InputSection]:
-        """One complete canonical document (materialization.rs:199-253)."""
+        """One complete canonical document (materialization.rs)."""
         shape, outer = self.mapping_items(value, path, depth)
         if shape is _MappingShape.OBJECT and self.profile is IniProfile.WINDOWS_V1:
             _reject_case_equivalent_object_names(outer)
@@ -351,7 +351,7 @@ class _Writer:
         self, value: PortableValue, path: ValuePath, depth: int
     ) -> tuple[str, list[_MappingItem]]:
         """One mapping level with its portable locations
-        (materialization.rs:255-331)."""
+        (materialization.rs)."""
         self.analyze(path, depth)
         if value.kind is Kind.OBJECT:
             entries = value.as_object()
@@ -413,7 +413,7 @@ class _Writer:
         return shape, items
 
     def analyze(self, path: ValuePath, depth: int) -> None:
-        """Input node and depth accounting (materialization.rs:333-346)."""
+        """Input node and depth accounting (materialization.rs)."""
         if depth > self.limits.max_depth:
             raise MaterializationFailure(
                 MaterializationFailureKind.RESOURCE_LIMIT, name="input-depth"
@@ -426,7 +426,7 @@ class _Writer:
         self.analyzed.append(path)
 
     def validate_section_name(self, value: str) -> None:
-        """Section-name representability (materialization.rs:348-363)."""
+        """Section-name representability (materialization.rs)."""
         valid = _section_name_valid(self.profile, value)
         if not valid:
             raise MaterializationFailure(
@@ -435,7 +435,7 @@ class _Writer:
             )
 
     def validate_key(self, value: str) -> None:
-        """Entry-key representability (materialization.rs:365-382)."""
+        """Entry-key representability (materialization.rs)."""
         valid = _entry_key_valid(self.profile, value)
         if not valid:
             raise MaterializationFailure(
@@ -444,7 +444,7 @@ class _Writer:
             )
 
     def write_entry(self, key: str, value: str) -> None:
-        """One canonical entry (materialization.rs:384-421)."""
+        """One canonical entry (materialization.rs)."""
         if self.profile is IniProfile.PORTABLE_V1:
             if not all(is_portable_value(byte) for byte in value.encode("utf-8")):
                 raise MaterializationFailure(
@@ -476,7 +476,7 @@ class _Writer:
 
     def write_python_entry(self, key: str, value: str) -> None:
         """Python canonical entry with four-space continuation
-        (materialization.rs:423-453)."""
+        (materialization.rs)."""
         if "\0" in value or "\r" in value:
             raise MaterializationFailure(
                 MaterializationFailureKind.INVALID_REQUEST,
@@ -504,7 +504,7 @@ class _Writer:
             self.newline()
 
     def newline(self) -> None:
-        """Profile-canonical newline (materialization.rs:455-461)."""
+        """Profile-canonical newline (materialization.rs)."""
         self.output.push_str("\r\n" if self.profile is IniProfile.WINDOWS_V1 else "\n")
 
 
@@ -534,7 +534,7 @@ def _trim_horizontal(value: str) -> str:
 
 def validate_python_value_line(line: str) -> None:
     """Edge-whitespace representability of one stored Python value line
-    (materialization.rs:463-471)."""
+    (materialization.rs)."""
     if _trim_horizontal(line) != line:
         raise MaterializationFailure(
             MaterializationFailureKind.INVALID_REQUEST,
@@ -544,7 +544,7 @@ def validate_python_value_line(line: str) -> None:
 
 def _reject_case_equivalent_object_names(items: list[_MappingItem]) -> None:
     """Object input cannot fabricate Windows case-equivalent collisions
-    (materialization.rs:473-487; RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:409-411)."""
+    (materialization.rs; RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)."""
     seen = set()
     for item in items:
         lowered = item.key.lower()
@@ -584,8 +584,8 @@ class _BoundedText:
 
 
 def text_budget(encoding: SourceEncoding, max_output_bytes: int) -> int:
-    """Decoded-text byte budget per target encoding (materialization.rs:
-    724-738)."""
+    """Decoded-text byte budget per target encoding (materialization.rs
+)."""
     if encoding.kind in (SourceEncodingKind.UTF16LE, SourceEncodingKind.UTF16BE, SourceEncodingKind.LATIN1):
         return max_output_bytes * 2
     if (
@@ -601,7 +601,7 @@ def text_budget(encoding: SourceEncoding, max_output_bytes: int) -> int:
 
 def encode_text(text: str, encoding: SourceEncoding, max_output_bytes: int) -> bytes:
     """Exact output bytes including the matching UTF-16 BOM
-    (materialization.rs:740-768)."""
+    (materialization.rs)."""
     bom_bytes = 2 if encoding.kind in (SourceEncodingKind.UTF16LE, SourceEncodingKind.UTF16BE) else 0
     fragment_limit = max_output_bytes - bom_bytes
     if fragment_limit < 0:
@@ -614,10 +614,10 @@ def encode_text(text: str, encoding: SourceEncoding, max_output_bytes: int) -> b
 
 
 def encode_fragment(text: str, encoding: SourceEncoding, max_output_bytes: int) -> bytes:
-    """Strict encoding of one decoded fragment (materialization.rs:770-829).
+    """Strict encoding of one decoded fragment (materialization.rs).
 
     Encoding is strict: an unrepresentable scalar fails the whole operation
-    (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:404-406).
+    (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
     """
     kind = encoding.kind
     if kind is SourceEncodingKind.UTF8:
@@ -662,7 +662,7 @@ def verify_closure(
     request: MaterializationRequest,
     document: IniDocument,
 ) -> None:
-    """Reparse-and-reproject closure (materialization.rs:489-535)."""
+    """Reparse-and-reproject closure (materialization.rs)."""
     projection_limits = _ProjectionLimitsLike(
         max_source_associations=request.limits.max_input_nodes,
         max_value_nodes=request.limits.max_input_nodes,
@@ -725,7 +725,7 @@ def build_provenance(
     document: IniDocument,
     limits,
 ) -> MaterializationProvenanceMap:
-    """Complete input-to-output provenance (materialization.rs:537-677)."""
+    """Complete input-to-output provenance (materialization.rs)."""
     entries: list[MaterializationProvenanceEntry] = []
     root_span = document.authority.span(0, document.source.len())
     entries.append(
@@ -821,7 +821,7 @@ def build_provenance(
 
 def _continuation_outputs(document: IniDocument, entry) -> list[MaterializedOrigin]:
     """Every EntryValue piece of the continuation physical lines
-    (materialization.rs:629-659)."""
+    (materialization.rs)."""
     outputs: list[MaterializedOrigin] = []
     logical = document.resolve_logical_line(entry.logical_line)
     pieces = document.structural_index.pieces

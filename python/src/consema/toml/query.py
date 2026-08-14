@@ -2,19 +2,19 @@
 
 Authority:
 
-- RFC 0001 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:64-76): the frozen
+- RFC 0001 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md): the frozen
   domains ``toml.native-semantic-query@1`` and
   ``toml.lossless-syntax-query@1`` with the standard operator registry
   (toml.try-table-entries, toml.entry-name-equals, toml.entry-item,
   toml.try-array-elements, toml.array-element-item; toml.syntax-kind-is,
   toml.syntax-text-equals) plus the generic core.take and
   core.distinct-by-identity; validation happens before execution.
-- The match shapes transcribe https://github.com/consema/consema-rs/blob/main/consema-toml/src/query.rs:9-86
+- The match shapes transcribe https://github.com/consema/consema-rs/blob/main/consema-toml/src/query.rs
   (TomlMatch Item/Entry/ArrayElement; TomlSyntaxMatch node/span/kind/
   ordinal).
-- The execution semantics transcribe query.rs:88-488: domain check, step
+- The execution semantics transcribe query.rs: domain check, step
   counting against QueryLimits (max_steps/max_results default 100_000,
-  https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs:2967-2978), expression evaluation
+  https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs), expression evaluation
   (Input/Apply/Concat/StructureOrderMerge sorted by source span),
   operator application, and selection (All/First/Last/ZeroOrOne/
   RequireOne with cardinality enforcement).
@@ -46,7 +46,7 @@ from consema.toml.syntax import TomlSyntaxKind
 
 
 class QueryLimits:
-    """Execution resource limits (https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs:2967-2978)."""
+    """Execution resource limits (https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs)."""
 
     __slots__ = ("max_steps", "max_results")
 
@@ -82,7 +82,7 @@ class TomlMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class TomlMatch:
-    """One snapshot-bound TOML native semantic query match (query.rs:9-41)."""
+    """One snapshot-bound TOML native semantic query match (query.rs)."""
 
     kind: TomlMatchKind
     node: NodeRef | None = None
@@ -127,7 +127,7 @@ class TomlMatch:
 
     def identity(self) -> NodeRef:
         """The identity used by core.distinct-by-identity and
-        structure-order-merge (query.rs:43-51)."""
+        structure-order-merge (query.rs)."""
         if self.kind is TomlMatchKind.ITEM:
             assert self.node is not None
             return self.node
@@ -140,7 +140,7 @@ class TomlMatch:
 
 @dataclass(frozen=True, slots=True)
 class TomlSyntaxMatch:
-    """One snapshot-bound TOML lossless syntax query match (query.rs:53-86).
+    """One snapshot-bound TOML lossless syntax query match (query.rs).
 
     The Rust accessors (node_ref/span/kind/ordinal) map to the dataclass
     fields of the same names.
@@ -192,7 +192,7 @@ def execute_toml_query(
     cancellation: CancellationToken | None = None,
 ) -> list[TomlMatch]:
     """Executes a validated TOML native semantic query against one
-    immutable snapshot (query.rs:88-113). Raises QueryFailure."""
+    immutable snapshot (query.rs). Raises QueryFailure."""
     _require_domain(executable, "toml.native-semantic-query")
     limits = limits or QueryLimits.default()
     cancellation = cancellation or CancellationToken()
@@ -210,7 +210,7 @@ def execute_toml_syntax_query(
     cancellation: CancellationToken | None = None,
 ) -> list[TomlSyntaxMatch]:
     """Executes a validated TOML lossless syntax query against every
-    source piece in raw order (query.rs:129-169). Raises QueryFailure."""
+    source piece in raw order (query.rs). Raises QueryFailure."""
     _require_domain(executable, "toml.lossless-syntax-query")
     limits = limits or QueryLimits.default()
     cancellation = cancellation or CancellationToken()

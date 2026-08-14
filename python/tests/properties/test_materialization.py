@@ -129,7 +129,7 @@ def test_reader_strict_cp1252_encoding():
 
 def test_duplicate_entry_mapping_and_unique_object_close_exactly():
     # Duplicate-preserving EntryMapping materialization and Object closure
-    # (materialization.rs:760-796).
+    # (materialization.rs).
     duplicate = mapping([("a", "first"), ("a", "last")])
     result = materialize(duplicate, reader_request())
     assert isinstance(result, CompleteMaterialization)

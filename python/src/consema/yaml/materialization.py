@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for byte arbitration):
 
-- RFC 0007 s11 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:303-353):
+- RFC 0007 s11 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md):
   yaml.canonical-block@1 and yaml.canonical-flow@1; canonical graph
   numbering; deterministic anchors ``&g0``, ``&g1``, ... for nodes whose
   topology requires an alias; the first serialization occurrence defines the
@@ -10,14 +10,14 @@ Authority (language-neutral first; Rust only for byte arbitration):
   every retained standard repository tag explicitly; newline and
   UTF-8/UTF-16 target encoding policies; output is reparsed under the target
   profile before a Complete result.
-- The writer grammar is https://github.com/consema/consema-rs/blob/main/consema-yaml/src/materialization.rs:207-238
+- The writer grammar is https://github.com/consema/consema-rs/blob/main/consema-yaml/src/materialization.rs
   (analyze/write/reparse/provenance), 292-401 (GraphLayout: anchor names for
   nodes with more than one occurrence), 430-717 (GraphWriter block/flow
   rendering), 719-728 (scalar presentation: float canonical ``e0``), and
-  775-819 (encode_output: UTF-16 output always carries the matching BOM).
-- Value materialization: materialization.rs:1058-1144 (prepare_value,
+ (encode_output: UTF-16 output always carries the matching BOM).
+- Value materialization: materialization.rs (prepare_value,
   UniqueStringEntriesToObject event, value_graph, exact reprojection),
-  1146-1335 (prepare/prepare_mapping), 1337-1454 (value_graph with the
+ (prepare/prepare_mapping), (value_graph with the
   standard tags).
 - Vector surface: conformance/vectors/yaml-v1.json cases
   materialization.graph-cycle-flow (``--- &g0 !!seq [!!str "one", *g0]\\n``)
@@ -105,14 +105,14 @@ BITS_NAN = 0x7FF8000000000000
 
 
 class YamlStyle(enum.Enum):
-    """Canonical presentation style (materialization.rs:240-244)."""
+    """Canonical presentation style (materialization.rs)."""
 
     BLOCK = "block"
     FLOW = "flow"
 
 
 def requested_profile(request: MaterializationRequest) -> YamlProfile:
-    """Resolves the target profile (materialization.rs:246-257)."""
+    """Resolves the target profile (materialization.rs)."""
     profile = request.target_profile
     if profile.id == "yaml.1.2-core" and profile.version == 1:
         return YamlProfile.YAML12_CORE_V1
@@ -122,7 +122,7 @@ def requested_profile(request: MaterializationRequest) -> YamlProfile:
 
 
 def requested_style(request: MaterializationRequest) -> YamlStyle:
-    """Resolves the target style (materialization.rs:259-265)."""
+    """Resolves the target style (materialization.rs)."""
     style = request.style
     if style.id == "yaml.canonical-block" and style.version == 1:
         return YamlStyle.BLOCK
@@ -132,7 +132,7 @@ def requested_style(request: MaterializationRequest) -> YamlStyle:
 
 
 def _requested_output_contract(request: MaterializationRequest) -> None:
-    """Encoding/newline validation (materialization.rs:267-280)."""
+    """Encoding/newline validation (materialization.rs)."""
     encoding = request.encoding
     if encoding.kind not in (
         SourceEncodingKind.UTF8,
@@ -156,7 +156,7 @@ def _parse_limits(limits: MaterializationLimits) -> ParseLimits:
 
 class _GraphLayout:
     """Anchor names for nodes whose topology requires an alias
-    (materialization.rs:292-401)."""
+    (materialization.rs)."""
 
     def __init__(self, anchor_names: dict[GraphNodeId, int]) -> None:
         self.anchor_names = anchor_names
@@ -233,7 +233,7 @@ def _analyze_layout(graph, limits: MaterializationLimits) -> _GraphLayout:
 
 
 def _validate_tag_kind(node_id, tag: str, kind: GraphNodeKind) -> None:
-    """Standard tag/kind compatibility (materialization.rs:403-428)."""
+    """Standard tag/kind compatibility (materialization.rs)."""
     scalar_tags = (TAG_NULL, TAG_BOOL, TAG_INT, TAG_FLOAT, TAG_STR, TAG_TIMESTAMP, TAG_BINARY,
                    TAG_MERGE, TAG_VALUE, TAG_YAML)
     sequence_tags = (TAG_SEQ, TAG_OMAP, TAG_PAIRS)
@@ -255,7 +255,7 @@ def _validate_tag_kind(node_id, tag: str, kind: GraphNodeKind) -> None:
 
 
 class _BoundedText:
-    """Output buffer with the configured byte limit (materialization.rs:730-773)."""
+    """Output buffer with the configured byte limit (materialization.rs)."""
 
     def __init__(self, max_bytes: int) -> None:
         self.text: list[str] = []
@@ -276,7 +276,7 @@ class _BoundedText:
 
 
 def _scalar_presentation(tag: str, canonical: str) -> str:
-    """The frozen scalar presentation (materialization.rs:719-728): a float
+    """The frozen scalar presentation (materialization.rs): a float
     canonical without ``.``/``e``/``E`` gains ``e0``."""
     if (
         tag == TAG_FLOAT
@@ -288,7 +288,7 @@ def _scalar_presentation(tag: str, canonical: str) -> str:
 
 
 class _GraphWriter:
-    """Deterministic canonical writer (materialization.rs:430-717)."""
+    """Deterministic canonical writer (materialization.rs)."""
 
     def __init__(
         self,
@@ -457,7 +457,7 @@ class _GraphWriter:
 
 def _encode_output(text: str, encoding: SourceEncoding, max_bytes: int) -> bytes:
     """Encodes the canonical text; UTF-16 always carries the matching BOM
-    (materialization.rs:775-819)."""
+    (materialization.rs)."""
     if encoding.kind is SourceEncodingKind.UTF8:
         if len(text) > max_bytes:
             raise MaterializationFailure(
@@ -477,7 +477,7 @@ def _encode_output(text: str, encoding: SourceEncoding, max_bytes: int) -> bytes
 
 def materialize_graph(graph, request: MaterializationRequest):
     """Materializes one complete PortableGraph as a canonical YAML stream
-    (materialization.rs:191-238)."""
+    (materialization.rs)."""
     analyzed: list[GraphNodeId] = []
     try:
         complete = _materialize_graph_complete(graph, request, analyzed)
@@ -497,7 +497,7 @@ def materialize_graph(graph, request: MaterializationRequest):
 @dataclass(frozen=True, slots=True)
 class CompleteGraphMaterialization:
     """Complete exact PortableGraph-to-YAML materialization
-    (materialization.rs:169-180)."""
+    (materialization.rs)."""
 
     document: object
     fidelity: MaterializationFidelity
@@ -508,7 +508,7 @@ class CompleteGraphMaterialization:
 @dataclass(frozen=True, slots=True)
 class FailedGraphMaterializationAttempt:
     """Failed graph attempt without a Document or partial output bytes
-    (materialization.rs:160-167)."""
+    (materialization.rs)."""
 
     failure: YamlGraphMaterializationFailure
     analyzed_input_nodes: tuple = ()
@@ -525,7 +525,7 @@ def _materialize_graph_complete(graph, request: MaterializationRequest, analyzed
     try:
         document = parse(raw, profile, _parse_limits(request.limits))
     except YamlFormationFailure:
-        # materialization.rs:223-224: a reparse formation failure is a
+        # materialization.rs: a reparse formation failure is a
         # MaterializationFailure (the typed failure carries the frozen code);
         # any other exception (RecursionError, a real bug) propagates instead
         # of being disguised as a normal failure (audit P1).
@@ -533,7 +533,7 @@ def _materialize_graph_complete(graph, request: MaterializationRequest, analyzed
     try:
         reparsed = project_graph(document)
     except YamlGraphProjectionError:
-        # materialization.rs:225-227: an exact graph projection failure maps
+        # materialization.rs: an exact graph projection failure maps
         # to ROUND_TRIP_MISMATCH; any other exception propagates.
         raise YamlGraphMaterializationFailure(
             YamlGraphMaterializationFailureKind.ROUND_TRIP_MISMATCH
@@ -553,7 +553,7 @@ def _materialize_graph_complete(graph, request: MaterializationRequest, analyzed
 
 def _collect_graph_provenance(graph, document, limits: MaterializationLimits):
     """Graph input locations mapped to generated YAML origins
-    (materialization.rs:821-1056)."""
+    (materialization.rs)."""
     entries: list[list] = []  # [input_location, [origins...]]
     units = 0
     seen: set[GraphNodeId] = set()
@@ -666,7 +666,7 @@ def _collect_graph_node(graph, input, output, seen, push, add, origin) -> None:
 
 def materialize_value(value: PortableValue, request: MaterializationRequest):
     """Materializes one complete PortableValue into a canonical YAML document
-    (materialization.rs:1058-1144)."""
+    (materialization.rs)."""
     try:
         return _materialize_value_complete(value, request)
     except MaterializationFailure as failure:

@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:193-225):
+- RFC 0012 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md):
   prefix spelling is source representation; expanded-name equality compares
   the namespace URI and the local name, never the prefix; the default
   namespace applies to element names, not unprefixed attributes; prefixed
@@ -10,13 +10,13 @@ Authority:
   standard URI; ``xmlns`` is reserved and cannot be rebound; namespace-name
   comparison is exact string comparison with no URI fetch or normalization;
   namespace scope is immutable ancestry-derived data.
-- The resolution rules transcribe https://github.com/consema/consema-rs/blob/main/consema-xml/src/namespace.rs:9-219
+- The resolution rules transcribe https://github.com/consema/consema-rs/blob/main/consema-xml/src/namespace.rs
   (XML_NAMESPACE_URI:10, XMLNS_NAMESPACE_URI:12, QName:16-39,
   ExpandedName:41-57, Binding:59-66, NamespaceError:68-89,
   NamespaceScope:91-218) — byte/registry arbitration only; this module is a
   Python-idiomatic reimplementation.
 - The four namespace error codes are frozen by the parser
-  (https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs:130-137): unbound-prefix@1,
+  (https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs): unbound-prefix@1,
   reserved-prefix@1, xml-rebinding@1, default-xmlns@1.
 
 https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
@@ -27,15 +27,15 @@ from __future__ import annotations
 import enum
 from dataclasses import dataclass, field
 
-# Standard URI permanently bound to the `xml` prefix (namespace.rs:10).
+# Standard URI permanently bound to the `xml` prefix (namespace.rs).
 XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace"
-# URI of the reserved `xmlns` prefix (namespace.rs:12).
+# URI of the reserved `xmlns` prefix (namespace.rs).
 XMLNS_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/"
 
 
 @dataclass(frozen=True, slots=True)
 class QName:
-    """One lexical QName with its source-derived parts (namespace.rs:16-39)."""
+    """One lexical QName with its source-derived parts (namespace.rs)."""
 
     prefix: str | None
     local: str
@@ -47,7 +47,7 @@ class QName:
     @property
     def as_str(self) -> str:
         """Full lexical spelling ``prefix:local`` or ``local``
-        (namespace.rs:31-38)."""
+        (namespace.rs)."""
         if self.prefix is not None:
             return f"{self.prefix}:{self.local}"
         return self.local
@@ -56,7 +56,7 @@ class QName:
 @dataclass(frozen=True, slots=True)
 class ExpandedName:
     """Resolved expanded name = ``{ namespace URI or none, local name }``
-    (namespace.rs:41-57)."""
+    (namespace.rs)."""
 
     namespace: str | None
     local: str
@@ -68,7 +68,7 @@ class ExpandedName:
 
 @dataclass(frozen=True, slots=True)
 class Binding:
-    """One in-scope namespace binding (namespace.rs:59-66); a ``None``
+    """One in-scope namespace binding (namespace.rs); a ``None``
     prefix is the default namespace."""
 
     prefix: str | None
@@ -76,7 +76,7 @@ class Binding:
 
 
 class NamespaceErrorKind(enum.Enum):
-    """Namespace resolution failure category (namespace.rs:68-89,
+    """Namespace resolution failure category (namespace.rs,
     transcribed verbatim)."""
 
     UNBOUND_PREFIX = "UnboundPrefix"
@@ -87,7 +87,7 @@ class NamespaceErrorKind(enum.Enum):
 
 class NamespaceError(Exception):
     """One namespace resolution failure carrying the failing prefix/URI
-    spellings (namespace.rs:68-89)."""
+    spellings (namespace.rs)."""
 
     def __init__(self, kind: NamespaceErrorKind, *, prefix: str | None = None, uri: str | None = None):
         super().__init__(kind.value)
@@ -98,7 +98,7 @@ class NamespaceError(Exception):
     @property
     def code(self) -> str:
         """The frozen diagnostic code of one namespace failure
-        (parser.rs:130-137)."""
+        (parser.rs)."""
         return {
             NamespaceErrorKind.UNBOUND_PREFIX: "xml.namespace.unbound-prefix@1",
             NamespaceErrorKind.RESERVED_PREFIX: "xml.namespace.reserved-prefix@1",
@@ -108,7 +108,7 @@ class NamespaceError(Exception):
 
 
 class NamespaceScope:
-    """Immutable, ancestry-derived namespace scope (namespace.rs:91-218).
+    """Immutable, ancestry-derived namespace scope (namespace.rs).
 
     A scope is never mutated in place. Declaring a binding appends to a new
     child scope, so the immutable ancestry chain of a tree is preserved.
@@ -127,12 +127,12 @@ class NamespaceScope:
 
     @property
     def bindings(self) -> tuple[Binding, ...]:
-        """All in-scope bindings in declaration order (namespace.rs:110-115)."""
+        """All in-scope bindings in declaration order (namespace.rs)."""
         return self._bindings
 
     def declare(self, prefix: str | None, uri: str) -> NamespaceScope:
         """Appends one namespace declaration and returns the child scope
-        (namespace.rs:122-144). Raises NamespaceError for the reserved
+        (namespace.rs). Raises NamespaceError for the reserved
         ``xmlns`` prefix, the ``xml`` rebinding rule, and the ``xmlns`` URI
         as default namespace."""
         if uri == XMLNS_NAMESPACE_URI and prefix is None:
@@ -148,14 +148,14 @@ class NamespaceScope:
 
     def resolve_element(self, qname: QName) -> ExpandedName:
         """Resolves an element name: the default namespace applies
-        (namespace.rs:147-155)."""
+        (namespace.rs)."""
         if qname.prefix is None:
             return ExpandedName(namespace=self._lookup_default(), local=qname.local)
         return self._resolve_prefixed(qname, qname.prefix)
 
     def resolve_attribute(self, qname: QName) -> ExpandedName:
         """Resolves an attribute name: the default namespace never applies
-        (namespace.rs:158-166)."""
+        (namespace.rs)."""
         if qname.prefix is None:
             return ExpandedName(namespace=None, local=qname.local)
         return self._resolve_prefixed(qname, qname.prefix)
@@ -165,7 +165,7 @@ class NamespaceScope:
         """Expanded name of a namespace declaration attribute itself:
         ``xmlns`` is ``{ xmlns-URI, "xmlns" }`` and ``xmlns:p`` is
         ``{ xmlns-URI, "p" }``, used for attribute-uniqueness checks
-        (namespace.rs:172-179)."""
+        (namespace.rs)."""
         return ExpandedName(namespace=XMLNS_NAMESPACE_URI, local=prefix or "xmlns")
 
     def _lookup_default(self) -> str | None:

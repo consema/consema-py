@@ -1,7 +1,7 @@
 """Intent documents for query definition validation/binding.
 
 The domain/operator table is the complete language-neutral table of
-https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs:899-1897. The role-mismatch rejection is
+https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs. The role-mismatch rejection is
 pinned by conformance/vectors/v1.json `query.reject-role-mismatch`.
 """
 

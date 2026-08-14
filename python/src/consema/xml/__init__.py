@@ -29,9 +29,9 @@ arbitration; https://github.com/consema/consema-go/blob/main/go/xml as a cross-r
   (materialization/structural edit/provenance); RFC 0016 §5-§6 (API
   shapes, error classification, frozen spellings);
 - https://github.com/consema/consema-rs/blob/main/consema-xml/src/*.rs — byte/registry arbitration
-  (operation_registry.rs:16-89; parser.rs; document.rs; query.rs;
-  projection.rs; materialization.rs; edit.rs:1372-1383) and
-  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:466-550/556-604 for the
+  (operation_registry.rs; parser.rs; document.rs; query.rs;
+  projection.rs; materialization.rs; edit.rs) and
+  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs for the
   core.edit.*@1 and core.materialization.*@1 codes consumed by this
   family. The xml.* diagnostic codes are registered by RFC 0012 §12
   (lines 428-434) and do not enter the consema-protocol core registry.

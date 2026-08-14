@@ -2,26 +2,26 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (all registry spellings are
-transcribed from https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1098-1169;
+transcribed from https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs;
 the failure enums and their code mappings follow the Rust family's
 StableFailure impls):
 
 - Properties diagnostics: java-properties.parse.malformed-unicode-escape@1
-  (error_registry.rs:1129), java-properties.edit.canonical-fallback@1
+  (error_registry.rs), java-properties.edit.canonical-fallback@1
   (:1099, a Warning), java-properties.profile.mismatch@1 (:1135, query
   role validation), java-properties.source.profile-encoding@1 (:1165,
-  fatal profile/source contract mismatch, parser.rs:83-91).
+  fatal profile/source contract mismatch, parser.rs).
 - Fatal formation resource limits: core.parse.resource-limit@1
-  (error_registry.rs:39) for every PropertiesParseLimits bound
-  (lib.rs:61-122); source snapshot failures surface the typed
+  (error_registry.rs) for every PropertiesParseLimits bound
+  (lib.rs); source snapshot failures surface the typed
   SourceError codes (core.source.*@1) unchanged.
 - Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
-  projection.rs:741-752 — RecoveredDocument ->
+  projection.rs — RecoveredDocument ->
   java-properties.projection.incomplete-document@1, UnpairedSurrogate ->
   java-properties.projection.unpaired-surrogate@1 (:745), DuplicateKey /
   CoreInvariant -> core.projection.target-not-applicable@1 (:748),
   ResourceLimit -> core.projection.resource-limit@1 (:750).
-- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs:237-252
+- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs
   — RecoveredDocument -> core.edit.incomplete-target@1, WrongSnapshot ->
   core.edit.wrong-snapshot@1, WrongRole -> core.edit.wrong-role@1,
   DuplicateTarget/OverlappingOwnership/PlacementAnchorRemoved ->
@@ -32,10 +32,10 @@ StableFailure impls):
   core.edit.invalid-literal@1, ResourceLimit -> core.edit.resource-limit@1,
   NewDocumentFormationFailed -> core.edit.formation-failed@1.
 - Query failures reuse the common core.query.*@1 codes
-  (error_registry.rs:108-118) through consema.protocol.query.QueryFailure
+  (error_registry.rs) through consema.protocol.query.QueryFailure
   — no new type is needed.
 - Diagnostic ordering: Diagnostic::sort_deterministically,
-  https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs:107-123 (primary start, category,
+  https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs (primary start, category,
   code, occurrence; missing primary sorts last).
 
 Design: the Properties family raises typed exceptions whose stable
@@ -97,7 +97,7 @@ class PropertiesDiagnostic:
     notes: tuple[str, ...] = field(default_factory=tuple, repr=False)
 
     def sort_key(self) -> tuple:
-        """Deterministic order key (diagnostic.rs:107-123); missing primary
+        """Deterministic order key (diagnostic.rs); missing primary
         sorts last."""
         start = self.primary.start_byte if self.primary is not None else 2**64 - 1
         return (start, self.category.value, self.code, self.occurrence)
@@ -105,7 +105,7 @@ class PropertiesDiagnostic:
 
 def sort_diagnostics(diagnostics: list[PropertiesDiagnostic]) -> None:
     """Sorts in place by (primary start, category, code, occurrence)
-    (diagnostic.rs:107-123)."""
+    (diagnostic.rs)."""
     diagnostics.sort(key=lambda diagnostic: diagnostic.sort_key())
 
 
@@ -117,11 +117,11 @@ def sort_diagnostics(diagnostics: list[PropertiesDiagnostic]) -> None:
 class PropertiesFormationFailureKind(enum.Enum):
     """Fatal formation failure categories.
 
-    Every limit bound of PropertiesParseLimits (lib.rs:61-122) is fatal
+    Every limit bound of PropertiesParseLimits (lib.rs) is fatal
     with no truncation-then-success (RFC 0016 §6); the resource names are
     the exact Rust spellings used by parser.rs check_limit calls. The
     profile/source mismatch is the one fatal formation failure carrying a
-    format-owned code (parser.rs:83-91).
+    format-owned code (parser.rs).
     """
 
     SOURCE_BYTES = "source-bytes"
@@ -148,11 +148,11 @@ class PropertiesFormationFailureKind(enum.Enum):
 
 
 class PropertiesFormationFailure(Exception):
-    """Fatal formation failure; no Document exists (parser.rs:17-36).
+    """Fatal formation failure; no Document exists (parser.rs).
 
     Exceeding a configured limit is fatal (RFC 0016 §6); the profile/
     source-encoding mismatch is likewise fatal and carries
-    java-properties.source.profile-encoding@1 (parser.rs:83-91). Source
+    java-properties.source.profile-encoding@1 (parser.rs). Source
     snapshot construction failures (invalid sequences, unsupported BOM,
     source resource limits) surface the typed SourceError unchanged with
     its own core.source.*@1 code.
@@ -184,7 +184,7 @@ class PropertiesFormationFailure(Exception):
 
 
 class PropertiesProjectionFailureKind(enum.Enum):
-    """Stable projection failure categories (projection.rs:249-262)."""
+    """Stable projection failure categories (projection.rs)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     UNPAIRED_SURROGATE = "UnpairedSurrogate"
@@ -196,7 +196,7 @@ class PropertiesProjectionFailureKind(enum.Enum):
 class PropertiesProjectionFailure(Exception):
     """Stable projection failure with a frozen registered code.
 
-    Code mapping authority: projection.rs:741-752. ``name`` is the exact
+    Code mapping authority: projection.rs. ``name`` is the exact
     Rust variant spelling referenced by the conformance vectors.
     """
 
@@ -246,7 +246,7 @@ _PROJECTION_CODES = {
 
 
 class PropertiesEditFailureKind(enum.Enum):
-    """Stable edit failure categories (edit.rs:178-205)."""
+    """Stable edit failure categories (edit.rs)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     WRONG_SNAPSHOT = "WrongSnapshot"
@@ -265,7 +265,7 @@ class PropertiesEditFailureKind(enum.Enum):
 class PropertiesEditFailure(Exception):
     """Stable edit failure with a frozen registered code.
 
-    Code mapping authority: edit.rs:237-252. ``name`` is the exact Rust
+    Code mapping authority: edit.rs. ``name`` is the exact Rust
     variant spelling referenced by the conformance vectors.
     """
 

@@ -3,7 +3,7 @@
 Case covered: registry.frozen-five-operation-surface
 (java-properties-v1.json:147-149) — both profiles publish the same frozen
 five Supported structural operations; the operation ids are exact
-(operation_registry.rs:16-48).
+(operation_registry.rs).
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ def test_both_profiles_publish_the_same_frozen_five_operation_surface():
 
 
 def test_descriptor_argument_schemas():
-    # Exact argument schemas (operation_registry.rs:17-47).
+    # Exact argument schemas (operation_registry.rs).
     registry = format_operation_registry(PropertiesProfile.READER_V1)
     by_id = {operation.to_string(): operation for operation in registry.operations}
     assert by_id["java-properties.edit.insert-property@1"].target_role == "java-properties.document"

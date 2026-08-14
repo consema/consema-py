@@ -2,38 +2,37 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and policy model: https://github.com/consema/consema-rs/blob/main/consema-ini/src/edit.rs:15-56
+- Operation and policy model: https://github.com/consema/consema-rs/blob/main/consema-ini/src/edit.rs
   (RepresentationPolicy, ValueReplacement), 57-107 (EditOperation), 108-243
   (EditTransaction/Builder).
-- Failure algebra and codes: edit.rs:260-303 (EditFailure), 1722-1780
+- Failure algebra and codes: edit.rs (EditFailure), 1722-1780
   (StableFailure; code mapping 1754-1779).
-- Atomic commit: edit.rs:305-553 — Recovered/WrongSnapshot gates
-  (edit.rs:308-316), dependency validation (edit.rs:317, 863-920),
-  duplicate destructive targets (edit.rs:328-332), prepared-edit
-  overlap/ownership conflicts (edit.rs:339-348), adjacent-deletion
-  coalescing (edit.rs:1196-1226), bounded target length (edit.rs:357-367),
-  rendering and reparse (edit.rs:368-403), ChangeSet source edits and node
-  mappings (edit.rs:405-531), SourcePatch derivation (edit.rs:532-540),
-  UntouchedByteProof (edit.rs:541-546). Dry-run produces the identical
-  patch and target digest (edit.rs:556-570; RFC 0004 §14).
-- Preparation: edit.rs:572-861 (value ownership edit.rs:1445-1475,
-  section/entry insertion placement edit.rs:652-705/762-827,
-  canonical entry text edit.rs:1101-1167, removals edit.rs:707-739/
-  829-840, renames edit.rs:741-760/842-861).
-- Value representation: edit.rs:1228-1303 (semantic/preserved/canonical
+- Atomic commit: edit.rs — Recovered/WrongSnapshot gates
+  (edit.rs), dependency validation (edit.rs),
+  duplicate destructive targets (edit.rs), prepared-edit
+  overlap/ownership conflicts (edit.rs), adjacent-deletion
+  coalescing (edit.rs), bounded target length (edit.rs),
+  rendering and reparse (edit.rs), ChangeSet source edits and node
+  mappings (edit.rs), SourcePatch derivation (edit.rs),
+  UntouchedByteProof (edit.rs). Dry-run produces the identical
+  patch and target digest (edit.rs; RFC 0004 §14).
+- Preparation: edit.rs (value ownership edit.rs,
+  section/entry insertion placement edit.rs,
+  canonical entry text edit.rs、removals 与 renames edit.rs).
+- Value representation: edit.rs (semantic/preserved/canonical
   values; the canonical-fallback diagnostic ini.edit.canonical-fallback@1
-  edit.rs:1244-1251), 1305-1430 (Python multiline preserve/canonical
+  edit.rs), 1305-1430 (Python multiline preserve/canonical
   forms), 1432-1443 (encode_value), 1518-1535 (validate_semantic_value).
-- Name validation and collisions: edit.rs:950-1069 (InvalidName /
+- Name validation and collisions: edit.rs (InvalidName /
   NameCollision / InvalidKey / DuplicateKey / KeyCollision; Windows
-  permits ordered case-equivalent occurrences, edit.rs:1048-1050).
-- Operation metadata: edit.rs:1604-1627 (operation.{index} =
-  "ini.edit.*@1" forms) and safe summaries edit.rs:1629-1702.
+  permits ordered case-equivalent occurrences, edit.rs).
+- Operation metadata: edit.rs (operation.{index} =
+  "ini.edit.*@1" forms) and safe summaries edit.rs.
 - The v1 vector goldens this module must reproduce byte-for-byte:
   conformance/vectors/ini-v1.json:89-106 (edit.all-eight-operations,
   edit.dry-run-patch-proof-and-atomic-failure).
 
-Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-ini/src/operation_registry.rs:18-79):
+Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-ini/src/operation_registry.rs):
 ini.edit.insert-section@1, remove-section@1, rename-section@1,
 insert-entry@1, remove-entry@1, rename-entry@1,
 replace-semantic-value@1, replace-literal-value@1.
@@ -90,7 +89,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 
 class RepresentationPolicy(enum.Enum):
-    """Explicit semantic value representation policy (edit.rs:16-26)."""
+    """Explicit semantic value representation policy (edit.rs)."""
 
     EXACT_LITERAL = "ExactLiteral"
     PRESERVE_COMPATIBLE = "PreserveCompatible"
@@ -99,7 +98,7 @@ class RepresentationPolicy(enum.Enum):
 
 
 class ValueReplacementKind(enum.Enum):
-    """Value operation kind (edit.rs:29-47)."""
+    """Value operation kind (edit.rs)."""
 
     SEMANTIC = "Semantic"
     LITERAL = "Literal"
@@ -108,7 +107,7 @@ class ValueReplacementKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class ValueReplacement:
     """One value replacement bound to the transaction base snapshot
-    (edit.rs:29-47)."""
+    (edit.rs)."""
 
     target: NodeRef
     value: str | None = None
@@ -123,7 +122,7 @@ class ValueReplacement:
 
 
 class EditOperationKind(enum.Enum):
-    """Typed edit operation kinds (edit.rs:57-107)."""
+    """Typed edit operation kinds (edit.rs)."""
 
     REPLACE_VALUE = "ReplaceValue"
     INSERT_SECTION = "InsertSection"
@@ -137,7 +136,7 @@ class EditOperationKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EditOperation:
     """One typed INI edit operation bound to one immutable base snapshot
-    (edit.rs:57-107)."""
+    (edit.rs)."""
 
     kind: EditOperationKind
     replacement: ValueReplacement | None = None
@@ -153,14 +152,14 @@ class EditOperation:
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
     """Immutable transaction; every operation resolves against one base
-    snapshot (edit.rs:108-127)."""
+    snapshot (edit.rs)."""
 
     base: object
     operations: tuple[EditOperation, ...] = ()
 
 
 class EditTransactionBuilder:
-    """Builder that is not a committed edit (edit.rs:129-243)."""
+    """Builder that is not a committed edit (edit.rs)."""
 
     def __init__(self, document: IniDocument) -> None:
         self._base = document.snapshot_identity()
@@ -253,7 +252,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """Atomic edit success (edit.rs:245-256)."""
+    """Atomic edit success (edit.rs)."""
 
     document: IniDocument
     change_set: ChangeSet
@@ -292,7 +291,7 @@ class _MappingPlan:
 
 class _EditPlanner:
     """One planner bound to the base document (mirror of the Rust
-    Document::prepare_* methods, edit.rs:572-1516)."""
+    Document::prepare_* methods, edit.rs)."""
 
     def __init__(self, document: IniDocument) -> None:
         self.document = document
@@ -560,13 +559,13 @@ class _EditPlanner:
     # -- validation ---------------------------------------------------------
 
     def validate_section_name(self, name: str) -> None:
-        """Section-name validity (edit.rs:950-970)."""
+        """Section-name validity (edit.rs)."""
         valid = _section_name_valid(self.document.profile, name)
         if not valid:
             raise IniEditFailure(IniEditFailureKind.INVALID_NAME)
 
     def validate_section_collision(self, name: str, except_target: NodeRef | None) -> None:
-        """Strict-profile section collision (edit.rs:972-987)."""
+        """Strict-profile section collision (edit.rs)."""
         if self.document.profile is IniProfile.WINDOWS_V1:
             return
         for section in self.document.sections:
@@ -574,7 +573,7 @@ class _EditPlanner:
                 raise IniEditFailure(IniEditFailureKind.NAME_COLLISION)
 
     def validate_entry_key(self, key: str) -> None:
-        """Entry-key validity (edit.rs:1016-1040)."""
+        """Entry-key validity (edit.rs)."""
         valid = _entry_key_valid(self.document.profile, key)
         if not valid:
             raise IniEditFailure(IniEditFailureKind.INVALID_KEY)
@@ -582,9 +581,9 @@ class _EditPlanner:
     def validate_entry_collision(
         self, section: NodeRef, key: str, except_target: NodeRef | None
     ) -> None:
-        """Strict-profile entry collision (edit.rs:1042-1069; Windows keeps
+        """Strict-profile entry collision (edit.rs; Windows keeps
         ordered case-equivalent occurrences, RFC 0009 §6,
-        https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:207-213)."""
+        https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)."""
         if self.document.profile is IniProfile.WINDOWS_V1:
             return
         comparison = (
@@ -636,7 +635,7 @@ class _EditPlanner:
         return self.document.resolve_physical_line(logical.physical_nodes[-1]).span
 
     def logical_physical_spans(self, logical_node: NodeRef) -> list[Span]:
-        """Every physical span of one logical record (edit.rs:1178-1194)."""
+        """Every physical span of one logical record (edit.rs)."""
         logical = self.document.resolve_logical_line(logical_node)
         spans = []
         for physical_node in logical.physical_nodes:
@@ -647,7 +646,7 @@ class _EditPlanner:
 
     def canonical_entry_text(self, key: str, value: str) -> str:
         """Profile-canonical entry text including its newline
-        (edit.rs:1101-1167)."""
+        (edit.rs)."""
         continuation_overhead = (
             value.count("\n") * 4
             if self.document.profile is IniProfile.PYTHON_CONFIGPARSER_V1
@@ -700,7 +699,7 @@ class _EditPlanner:
         diagnostics: list[IniDiagnostic],
     ) -> bytes:
         """Renders the semantic replacement under the explicit policy
-        (edit.rs:1228-1259)."""
+        (edit.rs)."""
         if policy is RepresentationPolicy.EXACT_LITERAL:
             raise IniEditFailure(IniEditFailureKind.EXACT_LITERAL_REQUIRES_LITERAL_OPERATION)
         validate_semantic_value(self.document.profile, value)
@@ -726,7 +725,7 @@ class _EditPlanner:
         return self.canonical_value(entry, value)
 
     def preserved_value(self, entry: IniEntry, value: str) -> bytes:
-        """Compatible representation retention (edit.rs:1261-1284)."""
+        """Compatible representation retention (edit.rs)."""
         if self.document.profile is IniProfile.PORTABLE_V1:
             return self.encode_value(value)
         if self.document.profile is IniProfile.WINDOWS_V1:
@@ -740,7 +739,7 @@ class _EditPlanner:
         return self.preserved_python_value(entry, value)
 
     def canonical_value(self, entry: IniEntry, value: str) -> bytes:
-        """Profile-canonical value representation (edit.rs:1286-1303)."""
+        """Profile-canonical value representation (edit.rs)."""
         if self.document.profile is IniProfile.PORTABLE_V1:
             return self.encode_value(value)
         if self.document.profile is IniProfile.WINDOWS_V1:
@@ -751,7 +750,7 @@ class _EditPlanner:
         return self.canonical_python_value(entry, value)
 
     def preserved_python_value(self, entry: IniEntry, value: str) -> bytes:
-        """Line-for-line multiline preservation (edit.rs:1305-1385)."""
+        """Line-for-line multiline preservation (edit.rs)."""
         logical = self.document.resolve_logical_line(entry.logical_line)
         physical = logical.physical_nodes
         new_lines = value.split("\n")
@@ -789,7 +788,7 @@ class _EditPlanner:
         return bytes(output)
 
     def canonical_python_value(self, entry: IniEntry, value: str) -> bytes:
-        """Canonical Python multiline value (edit.rs:1387-1430)."""
+        """Canonical Python multiline value (edit.rs)."""
         first = self.document.resolve_physical_line(
             self.document.resolve_logical_line(entry.logical_line).physical_nodes[0]
         )
@@ -805,7 +804,7 @@ class _EditPlanner:
         return bytes(output)
 
     def encode_value(self, value: str) -> bytes:
-        """Exact encoding under the source encoding (edit.rs:1432-1443)."""
+        """Exact encoding under the source encoding (edit.rs)."""
         try:
             return encode_fragment(
                 value,
@@ -823,7 +822,7 @@ class _EditPlanner:
 
     def syntax_span(self, kind: IniSyntaxKind, within: Span) -> Span | None:
         """First syntax piece of one kind within a raw range
-        (edit.rs:1496-1508)."""
+        (edit.rs)."""
         for piece, candidate in zip(
             self.document.structural_index.pieces, self.document.syntax_kinds
         ):
@@ -837,7 +836,7 @@ class _EditPlanner:
         return None
 
     def raw(self, start: int, end: int) -> bytes:
-        """Exact raw byte slice (edit.rs:1510-1515)."""
+        """Exact raw byte slice (edit.rs)."""
         raw_bytes = self.document.source.bytes()
         if start < 0 or end > len(raw_bytes) or start > end:
             raise IniEditFailure(IniEditFailureKind.NEW_DOCUMENT_FORMATION_FAILED)
@@ -845,13 +844,13 @@ class _EditPlanner:
 
 
 # ---------------------------------------------------------------------------
-# Dependency validation (edit.rs:863-920)
+# Dependency validation (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def validate_dependencies(document: IniDocument, transaction: EditTransaction) -> None:
-    """Cross-operation conflicts before any patch exists (edit.rs:863-920;
-    RFC 0009 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:468-472)."""
+    """Cross-operation conflicts before any patch exists (edit.rs;
+    RFC 0009 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)."""
     removed_sections = {
         operation.target
         for operation in transaction.operations
@@ -895,13 +894,13 @@ def _find_entry(document: IniDocument, target: NodeRef) -> IniEntry | None:
 
 
 # ---------------------------------------------------------------------------
-# Commit and dry-run (edit.rs:305-570)
+# Commit and dry-run (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def commit(document: IniDocument, transaction: EditTransaction) -> EditCommit:
     """Atomically commits value and structural operations; on failure the
-    base document remains unchanged (edit.rs:305-553)."""
+    base document remains unchanged (edit.rs)."""
     if document.formation_status() is not FormationStatus.COMPLETE:
         raise IniEditFailure(IniEditFailureKind.RECOVERED_DOCUMENT)
     if transaction.base != document.snapshot_identity():
@@ -1110,7 +1109,7 @@ def dry_run(
     source_id: EditPlanSourceId,
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:556-570)."""
+    (edit.rs)."""
     commit_result = commit(document, transaction)
     try:
         return EditPlan.new(
@@ -1138,7 +1137,7 @@ def _source_patch_limits(parse_limits, operation_count: int) -> SourcePatchLimit
 
 def operation_metadata(transaction: EditTransaction) -> dict[str, str]:
     """Operation metadata keys: operation.{index} = "id@version"
-    (edit.rs:1604-1627)."""
+    (edit.rs)."""
     metadata: dict[str, str] = {}
     for index, operation in enumerate(transaction.operations):
         metadata[f"operation.{index}"] = _operation_id(operation)
@@ -1162,7 +1161,7 @@ def _operation_id(operation: EditOperation) -> str:
 
 
 def operation_summaries(transaction: EditTransaction) -> list[EditOperationSummary]:
-    """Safe, content-free operation summaries (edit.rs:1629-1702)."""
+    """Safe, content-free operation summaries (edit.rs)."""
     summaries = []
     for operation in transaction.operations:
         id_string, arguments = _summary_facts(operation)
@@ -1243,12 +1242,12 @@ def _placement_name(placement: AssociationPlacement) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Shared helpers (edit.rs:1518-1602)
+# Shared helpers (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def validate_semantic_value(profile: IniProfile, value: str) -> None:
-    """Stored-value representability (edit.rs:1518-1535)."""
+    """Stored-value representability (edit.rs)."""
     if profile is IniProfile.PORTABLE_V1:
         valid = all(is_portable_value(byte) for byte in value.encode("utf-8"))
     elif profile is IniProfile.WINDOWS_V1:
@@ -1269,7 +1268,7 @@ def validate_semantic_value(profile: IniProfile, value: str) -> None:
 
 
 def _destructive_target(operation: EditOperation) -> NodeRef | None:
-    """One exact destructive target per operation (edit.rs:1537-1546)."""
+    """One exact destructive target per operation (edit.rs)."""
     if operation.kind is EditOperationKind.REPLACE_VALUE:
         assert operation.replacement is not None
         return operation.replacement.target
@@ -1284,7 +1283,7 @@ def _destructive_target(operation: EditOperation) -> NodeRef | None:
 
 
 def _deletion_edit(span: Span, target: NodeRef | None) -> _PreparedEdit:
-    """One record deletion span (edit.rs:1548-1561)."""
+    """One record deletion span (edit.rs)."""
     return _PreparedEdit(
         old_span=span,
         replacement=b"",
@@ -1298,7 +1297,7 @@ def _deletion_edit(span: Span, target: NodeRef | None) -> _PreparedEdit:
 
 
 def _profile_newline(profile: IniProfile) -> str:
-    """Profile-canonical newline (edit.rs:1563-1568)."""
+    """Profile-canonical newline (edit.rs)."""
     if profile is IniProfile.WINDOWS_V1:
         return "\r\n"
     return "\n"
@@ -1306,13 +1305,13 @@ def _profile_newline(profile: IniProfile) -> str:
 
 def _ends_with_newline(document: IniDocument) -> bool:
     """Whether the decoded source already ends with a line ending
-    (edit.rs:681-688, 803-810)."""
+    (edit.rs)."""
     text = document.source.decoded_text()
     return text is not None and text.endswith(("\n", "\r"))
 
 
 def _original_encoding_selection(document: IniDocument) -> object:
-    """Reparse with the original encoding contract (edit.rs:1570-1575)."""
+    """Reparse with the original encoding contract (edit.rs)."""
     from consema.ini.kinds import IniEncodingSelection
 
     facts = document.source.encoding_facts()
@@ -1324,7 +1323,7 @@ def _original_encoding_selection(document: IniDocument) -> object:
 def _coalesce_adjacent_deletions(
     document: IniDocument, edits: list[_PreparedEdit]
 ) -> list[_PreparedEdit]:
-    """Merges adjacent deletion spans (edit.rs:1196-1226)."""
+    """Merges adjacent deletion spans (edit.rs)."""
     merged: list[_PreparedEdit] = []
     for edit in edits:
         merge = bool(merged) and (
@@ -1348,7 +1347,7 @@ def _coalesce_adjacent_deletions(
 
 
 def _value_ownership(document: IniDocument, entry: IniEntry) -> Span:
-    """Exact raw range owned by one value replacement (edit.rs:1445-1475)."""
+    """Exact raw range owned by one value replacement (edit.rs)."""
     if document.profile is IniProfile.PORTABLE_V1:
         start = entry.value_span.start_byte
         end = entry.value_span.end_byte
@@ -1369,7 +1368,7 @@ def _value_ownership(document: IniDocument, entry: IniEntry) -> Span:
 
 
 def _entry_record_span(document: IniDocument, entry: IniEntry) -> Span:
-    """First-to-last physical span of one entry record (edit.rs:1477-1494)."""
+    """First-to-last physical span of one entry record (edit.rs)."""
     logical = document.resolve_logical_line(entry.logical_line)
     if not logical.physical_nodes:
         raise IniEditFailure(IniEditFailureKind.NEW_DOCUMENT_FORMATION_FAILED)
@@ -1379,7 +1378,7 @@ def _entry_record_span(document: IniDocument, entry: IniEntry) -> Span:
 
 
 def _syntax_span(document: IniDocument, kind: IniSyntaxKind, within: Span) -> Span | None:
-    """First syntax piece of one kind within a raw range (edit.rs:1496-1508)."""
+    """First syntax piece of one kind within a raw range (edit.rs)."""
     for piece, candidate in zip(document.structural_index.pieces, document.syntax_kinds):
         span = piece.span
         if (

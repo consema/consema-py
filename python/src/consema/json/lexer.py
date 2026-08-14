@@ -3,26 +3,26 @@ coverage with bounded recovery.
 
 Authority (Rust arbitration for exact lexical boundaries):
 
-- Strict/JSONC lexing: https://github.com/consema/consema-rs/blob/main/consema-json/src/parser.rs:174-402 — BOM piece
-  plus json.strict.leading-bom@1 under the strict profile (parser.rs:193-214),
-  whitespace (parser.rs:218-225), line/block comments with strict rejection
-  (parser.rs:226-278), strings (parser.rs:285-314), numbers scanned over
-  ``[0-9+-.eE]`` and validated by valid_json_number (parser.rs:315-338,
-  776-815), words (parser.rs:339-362), unexpected-character fallback with
-  UTF-8 width (parser.rs:363-375), the token-count fatal limit
-  (parser.rs:389-395).
-- JSON5 lexing: parser.rs:404-581 — U+FEFF BOM piece (parser.rs:414-421),
-  whitespace/line/block comments (parser.rs:425-460), strings with either
-  quote and CRLF continuations (parser.rs:469-502), numbers via
-  scan_json5_number_candidate + valid_json5_number (parser.rs:503-524,
-  689-760), identifiers via scan_json5_identifier +
-  decode_identifier_escape (parser.rs:525-541, 625-687), and the
-  json5.syntax.invalid-identifier@1 recovery (parser.rs:531-539).
-- Character classes: parser.rs:590-623 (also re-exported from kinds.py).
-- Fatal token-count limit: parser.rs:389-395 (strict) and 568-574 (JSON5);
+- Strict/JSONC lexing: https://github.com/consema/consema-rs/blob/main/consema-json/src/parser.rs — BOM piece
+  plus json.strict.leading-bom@1 under the strict profile (parser.rs),
+  whitespace (parser.rs), line/block comments with strict rejection
+  (parser.rs), strings (parser.rs), numbers scanned over
+  ``[0-9+-.eE]`` and validated by valid_json_number (parser.rs,
+), words (parser.rs), unexpected-character fallback with
+  UTF-8 width (parser.rs), the token-count fatal limit
+  (parser.rs).
+- JSON5 lexing: parser.rs — U+FEFF BOM piece (parser.rs),
+  whitespace/line/block comments (parser.rs), strings with either
+  quote and CRLF continuations (parser.rs), numbers via
+  scan_json5_number_candidate + valid_json5_number (parser.rs,
+), identifiers via scan_json5_identifier +
+  decode_identifier_escape (parser.rs), and the
+  json5.syntax.invalid-identifier@1 recovery (parser.rs).
+- Character classes: parser.rs (also re-exported from kinds.py).
+- Fatal token-count limit: parser.rs (strict) and 568-574 (JSON5);
   the limit binds lexemes (tokens plus trivia plus error regions).
-- Diagnostics: source_diagnostic/source_warning shapes parser.rs:1458-1498;
-  the strict BOM warning severity parser.rs:200-212.
+- Diagnostics: source_diagnostic/source_warning shapes parser.rs;
+  the strict BOM warning severity parser.rs.
 
 Every source byte is partitioned into exactly one lexeme (no gap, no
 overlap); the parser layer validates the resulting structural index.
@@ -53,7 +53,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 
 class TokenKind(enum.Enum):
-    """Token kinds consumed by the parser (parser.rs:15-29)."""
+    """Token kinds consumed by the parser (parser.rs)."""
 
     LEFT_BRACE = "LeftBrace"
     RIGHT_BRACE = "RightBrace"
@@ -87,7 +87,7 @@ _TOKEN_SYNTAX_KIND = {
 
 @dataclass(frozen=True, slots=True)
 class Token:
-    """One token over original raw bytes (parser.rs:31-36)."""
+    """One token over original raw bytes (parser.rs)."""
 
     kind: TokenKind
     start: int
@@ -95,7 +95,7 @@ class Token:
 
 
 class LexemeClass(enum.Enum):
-    """Lexeme classification (parser.rs:45-50)."""
+    """Lexeme classification (parser.rs)."""
 
     TOKEN = "Token"
     TRIVIA = "Trivia"
@@ -104,7 +104,7 @@ class LexemeClass(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class Lexeme:
-    """One exhaustive source byte interval (parser.rs:38-43)."""
+    """One exhaustive source byte interval (parser.rs)."""
 
     start: int
     end: int
@@ -113,7 +113,7 @@ class Lexeme:
     syntax_kind: JsonSyntaxKind | None = None
 
     def syntax_kind_of(self) -> JsonSyntaxKind:
-        """Stable syntax classification of this lexeme (parser.rs:52-70)."""
+        """Stable syntax classification of this lexeme (parser.rs)."""
         if self.class_ is LexemeClass.TOKEN:
             return _TOKEN_SYNTAX_KIND[self.token_kind]
         if self.class_ is LexemeClass.TRIVIA:
@@ -124,7 +124,7 @@ class Lexeme:
 @dataclass(frozen=True, slots=True)
 class Lexed:
     """Lexing outcome: ordered lexemes, parser tokens, recovery flag
-    (parser.rs:168-172)."""
+    (parser.rs)."""
 
     lexemes: tuple[Lexeme, ...]
     tokens: tuple[Token, ...]
@@ -133,7 +133,7 @@ class Lexed:
 
 class DiagnosticSink:
     """Bounded diagnostic accumulation with stable occurrence ordinals
-    (parser.rs:1500-1537)."""
+    (parser.rs)."""
 
     def __init__(self, max_diagnostics: int) -> None:
         self._max = max_diagnostics
@@ -178,7 +178,7 @@ def lex(
     limits: ParseLimits,
     sink: DiagnosticSink,
 ) -> Lexed:
-    """Lexes one complete UTF-8 source into exhaustive coverage (parser.rs:174-187)."""
+    """Lexes one complete UTF-8 source into exhaustive coverage (parser.rs)."""
     if profile.is_json5():
         return lex_json5(
             bytes_.decode("utf-8"),
@@ -196,7 +196,7 @@ def lex_strict(
     limits: ParseLimits,
     sink: DiagnosticSink,
 ) -> Lexed:
-    """Strict/JSONC lexer (parser.rs:189-401)."""
+    """Strict/JSONC lexer (parser.rs)."""
     lexemes: list[Lexeme] = []
     tokens: list[Token] = []
     offset = 0
@@ -408,7 +408,7 @@ def lex_json5(
     limits: ParseLimits,
     sink: DiagnosticSink,
 ) -> Lexed:
-    """JSON5 lexer over decoded text (parser.rs:404-581).
+    """JSON5 lexer over decoded text (parser.rs).
 
     The lexer walks scalar indices (Python str indices); every emitted
     lexeme/token span is converted to raw BYTE offsets via a cumulative
@@ -595,12 +595,12 @@ def single_token_lexeme(start: int, end: int, kind: TokenKind) -> Lexeme:
 
 
 def char_at(source: str, offset: int) -> str:
-    """One scalar at a validated offset (parser.rs:583-588)."""
+    """One scalar at a validated offset (parser.rs)."""
     return source[offset : offset + 1]
 
 
 def utf8_width(leading: int) -> int:
-    """UTF-8 leading-byte width (parser.rs:767-774)."""
+    """UTF-8 leading-byte width (parser.rs)."""
     if leading <= 0x7F:
         return 1
     if 0xC0 <= leading <= 0xDF:
@@ -611,7 +611,7 @@ def utf8_width(leading: int) -> int:
 
 
 def valid_json_number(bytes_: bytes) -> bool:
-    """Strict JSON number grammar (parser.rs:776-815)."""
+    """Strict JSON number grammar (parser.rs)."""
     index = 0
     if index < len(bytes_) and bytes_[index] == 0x2D:
         index += 1
@@ -647,7 +647,7 @@ def valid_json_number(bytes_: bytes) -> bool:
 
 def scan_json5_number_candidate(source: str, start: int) -> int:
     """Scans the bounded JSON5 number-candidate character class
-    (parser.rs:689-699)."""
+    (parser.rs)."""
     offset = start
     while offset < len(source):
         character = char_at(source, offset)
@@ -660,7 +660,7 @@ def scan_json5_number_candidate(source: str, start: int) -> int:
 
 
 def valid_json5_number(text: str) -> bool:
-    """JSON5 number grammar (parser.rs:701-760; RFC 0005 §6)."""
+    """JSON5 number grammar (parser.rs; RFC 0005 §6)."""
     unsigned = text[1:] if text[:1] in ("+", "-") else text
     if unsigned in ("Infinity", "NaN"):
         return True
@@ -706,7 +706,7 @@ def valid_json5_number(text: str) -> bool:
 
 def scan_json5_identifier(source: str, start: int) -> tuple[int, bool]:
     """Scans one IdentifierName token with bounded ``\\u`` escapes
-    (parser.rs:625-658)."""
+    (parser.rs)."""
     offset = start
     first = True
     valid = True
@@ -738,7 +738,7 @@ def scan_json5_identifier(source: str, start: int) -> tuple[int, bool]:
 
 
 def scan_json5_invalid_word(source: str, start: int) -> int:
-    """Bounded recovery scan to the next delimiter (parser.rs:660-675)."""
+    """Bounded recovery scan to the next delimiter (parser.rs)."""
     offset = start
     while offset < len(source):
         character = char_at(source, offset)
@@ -749,7 +749,7 @@ def scan_json5_invalid_word(source: str, start: int) -> int:
 
 
 def decode_identifier_escape(source: str) -> str | None:
-    """Decodes one exact ``\\uXXXX`` escape (parser.rs:677-687)."""
+    """Decodes one exact ``\\uXXXX`` escape (parser.rs)."""
     if not source.startswith("\\u") or len(source) < 6:
         return None
     try:
@@ -770,7 +770,7 @@ def source_diagnostic(
     end: int,
     severity: JsonSeverity = JsonSeverity.ERROR,
 ) -> JsonDiagnostic:
-    """One primary diagnostic over an exact raw span (parser.rs:1458-1498)."""
+    """One primary diagnostic over an exact raw span (parser.rs)."""
     return JsonDiagnostic(
         code=code,
         category=category,
@@ -786,7 +786,7 @@ def source_warning(
     start: int,
     end: int,
 ) -> JsonDiagnostic:
-    """One primary warning over an exact raw span (parser.rs:1479-1498)."""
+    """One primary warning over an exact raw span (parser.rs)."""
     return JsonDiagnostic(
         code=code,
         category=category,

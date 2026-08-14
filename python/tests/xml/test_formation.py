@@ -3,7 +3,7 @@ default, namespaces, and byte-exact spans (RFC 0012 §2-§7).
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
 test); https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs (byte/registry arbitration);
-RFC 0012 §2-§7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:46-283).
+RFC 0012 §2-§7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md).
 
 These tests are delivered: the full suite runs in CI (ci-python.yml
 python-gates job) against the provisioned conformance data.
@@ -190,7 +190,7 @@ def test_entity_deny_by_default():
 
 def test_predefined_entities_always_available():
     """The five predefined entities resolve without any declaration
-    (RFC 0012 §3, lines 115-119; https://github.com/consema/consema-rs/blob/main/consema-xml/src/entity.rs:19-40)."""
+    (RFC 0012 §3, lines 115-119; https://github.com/consema/consema-rs/blob/main/consema-xml/src/entity.rs)."""
     doc = parse(
         b"<root>&lt; &gt; &amp; &apos; &quot;</root>",
         XmlProfile.SAFE_V1,
@@ -234,7 +234,7 @@ def test_mixed_content_limit(xml_vectors):
 def test_namespace_scope_is_ancestry_derived():
     """Namespace scope is immutable ancestry-derived data: rebinding in a
     child does not mutate the parent scope
-    (https://github.com/consema/consema-rs/blob/main/consema-xml/src/namespace.rs:91-218)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-xml/src/namespace.rs)."""
     doc = parse(
         b'<a xmlns:p="urn:one"><b xmlns:p="urn:two"><c/></b></a>',
         XmlProfile.SAFE_V1,
@@ -301,7 +301,7 @@ def test_spans_are_raw_byte_ranges():
     assert doc.render() == source
     root = doc.root()
     # The element span covers its full start tag, not the end tag
-    # (document.rs:274-296).
+    # (document.rs).
     assert root.span().start_byte == 0
     pieces = doc.lossless_structural_index().pieces
     next_byte = 0

@@ -2,22 +2,22 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/lib.rs:322-461 —
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/lib.rs —
   snapshot identity, exact source, render() (byte-for-byte identical to the
-  input, lib.rs:363-367), format family (lib.rs:369-373), profile
-  (lib.rs:375-379), formation status (lib.rs:381-385: Complete streams
+  input, lib.rs), format family (lib.rs), profile
+  (lib.rs), formation status (lib.rs: Complete streams
   publish no recovery diagnostics), lossless structural index
-  (lib.rs:393-397), lossless syntax kinds (lib.rs:399-403), document
-  (lib.rs:405-415), alias_count/alias (lib.rs:418-431), project_graph
-  (lib.rs:433-448), document_count (lib.rs:450-454).
-- Native view classes: lib.rs:463-787 — YamlDocument (ordinal, node_ref,
+  (lib.rs), lossless syntax kinds (lib.rs), document
+  (lib.rs), alias_count/alias (lib.rs), project_graph
+  (lib.rs), document_count (lib.rs).
+- Native view classes: lib.rs — YamlDocument (ordinal, node_ref,
   span, root), YamlNode (node_ref, span, tag, anchor, anchor_node_ref,
   anchor_span, kind, scalar, sequence_len, sequence_item, mapping_len,
   mapping_entry), YamlScalar (decoded, canonical, kind, style),
   YamlSequenceItem (node_ref, span, node, alias), YamlMappingEntry
   (node_ref, span, key, value, key_alias, value_alias), YamlAlias
   (node_ref, span, name, target).
-- Node roles: consema-document lib.rs:113-251 (YamlStream, YamlDocument,
+- Node roles: consema-document lib.rs (YamlStream, YamlDocument,
   YamlNode, YamlSequenceElement, YamlMappingEntry, YamlAlias,
   YamlAnchorDefinition, YamlSyntaxPiece) — the same closed vocabulary the
   protocol query layer binds.
@@ -62,7 +62,7 @@ from consema.yaml.parser import (
 
 @dataclass(frozen=True, slots=True)
 class Document:
-    """Complete immutable YAML stream snapshot (lib.rs:322-333)."""
+    """Complete immutable YAML stream snapshot (lib.rs)."""
 
     authority: DocumentAuthority
     source: SourceSnapshot
@@ -77,83 +77,83 @@ class Document:
 
     def snapshot_identity(self) -> object:
         """Snapshot identity to which every NodeRef and Span belongs
-        (lib.rs:351-355)."""
+        (lib.rs)."""
         return self.authority.identity
 
     def stream_node_ref(self) -> NodeRef:
         """Snapshot-bound identity of the complete serialization stream
-        (lib.rs:337-341)."""
+        (lib.rs)."""
         return self.authority.node_ref(0, NodeRole.YAML_STREAM)
 
     def stream_span(self) -> Span:
         """Exact raw span of the complete serialization stream
-        (lib.rs:343-349)."""
+        (lib.rs)."""
         return self.authority.span(0, self.source.len())
 
     def render(self) -> bytes:
         """Default rendering is byte-for-byte identical to the input
-        (lib.rs:363-367)."""
+        (lib.rs)."""
         return self.source.bytes()
 
     def format_family(self) -> FormatFamilyId:
-        """YAML format-family contract (lib.rs:369-373)."""
+        """YAML format-family contract (lib.rs)."""
         return FormatFamilyId.new("yaml", 1)
 
     def profile_id(self) -> ProfileId:
-        """Exact selected YAML profile (lib.rs:375-379)."""
+        """Exact selected YAML profile (lib.rs)."""
         name, version = self.profile.id()
         return ProfileId.new(name, version)
 
     def formation_status(self) -> FormationStatus:
         """Complete valid streams require no recovered semantic claims
-        (lib.rs:381-385)."""
+        (lib.rs)."""
         return FormationStatus.COMPLETE
 
     def diagnostics(self) -> tuple:
         """Complete YAML formation publishes no recovery diagnostics
-        (lib.rs:387-391)."""
+        (lib.rs)."""
         return ()
 
     def lossless_structural_index(self) -> LosslessStructuralIndex:
-        """Exhaustive token/trivia byte coverage (lib.rs:393-397)."""
+        """Exhaustive token/trivia byte coverage (lib.rs)."""
         return self.structural_index
 
     def lossless_syntax_kinds(self) -> tuple[YamlSyntaxKind, ...]:
         """Format-specific kind for every structural piece in source order
-        (lib.rs:399-403)."""
+        (lib.rs)."""
         return self.syntax_kinds
 
     def document(self, ordinal: int) -> YamlDocument | None:
         """Returns one independent YAML document by stream ordinal
-        (lib.rs:405-415)."""
+        (lib.rs)."""
         if 0 <= ordinal < len(self.native.documents):
             return YamlDocument(self, ordinal, self.native.documents[ordinal])
         return None
 
     def alias_count(self) -> int:
         """Number of alias serialization occurrences; aliases are never
-        expanded (lib.rs:418-421)."""
+        expanded (lib.rs)."""
         return len(self.native.aliases)
 
     def alias(self, ordinal: int) -> YamlAlias | None:
         """Returns one alias occurrence in serialization order
-        (lib.rs:423-431)."""
+        (lib.rs)."""
         if 0 <= ordinal < len(self.native.aliases):
             return YamlAlias(self, ordinal, self.native.aliases[ordinal])
         return None
 
     def document_count(self) -> int:
         """Number of independent YAML documents in this stream
-        (lib.rs:450-454)."""
+        (lib.rs)."""
         return self.stream_documents
 
     def parse_limits(self) -> ParseLimits:
-        """Resource contract used to form this stream (lib.rs:456-460)."""
+        """Resource contract used to form this stream (lib.rs)."""
         return self.parse_limits
 
 
 class YamlDocument:
-    """One independent document in a YAML stream (lib.rs:463-501)."""
+    """One independent document in a YAML stream (lib.rs)."""
 
     __slots__ = ("owner", "ordinal", "record")
 
@@ -163,22 +163,22 @@ class YamlDocument:
         self.record = record
 
     def node_ref(self) -> NodeRef:
-        """Snapshot-bound document identity (lib.rs:478-485)."""
+        """Snapshot-bound document identity (lib.rs)."""
         return self.owner.authority.node_ref(self.ordinal, NodeRole.YAML_DOCUMENT)
 
     def span(self) -> Span:
         """Backend-validated raw document presentation span
-        (lib.rs:487-491)."""
+        (lib.rs)."""
         return self.record.span
 
     def root(self) -> YamlNode:
         """Representation root; alias occurrences already share target
-        identity (lib.rs:493-499)."""
+        identity (lib.rs)."""
         return YamlNode(self.owner, self.record.root)
 
 
 class YamlNode:
-    """Snapshot-bound YAML representation node (lib.rs:503-615)."""
+    """Snapshot-bound YAML representation node (lib.rs)."""
 
     __slots__ = ("owner", "index")
 
@@ -191,36 +191,36 @@ class YamlNode:
 
     def node_ref(self) -> NodeRef:
         """Process-local stable identity within this snapshot
-        (lib.rs:510-514)."""
+        (lib.rs)."""
         return _node_ref(self.owner.authority, self.index)
 
     def span(self) -> Span:
-        """Exact raw representation occurrence span (lib.rs:516-521)."""
+        """Exact raw representation occurrence span (lib.rs)."""
         return self.record().span
 
     def tag(self) -> str:
-        """Resolved tag identifier (lib.rs:523-527)."""
+        """Resolved tag identifier (lib.rs)."""
         return self.record().tag
 
     def anchor(self) -> str | None:
         """Exact anchor name on the defining occurrence, if present
-        (lib.rs:529-533)."""
+        (lib.rs)."""
         return self.record().anchor
 
     def anchor_node_ref(self) -> NodeRef | None:
         """Snapshot-bound anchor-definition identity, when this node
-        defines one (lib.rs:535-547)."""
+        defines one (lib.rs)."""
         if self.record().anchor is not None:
             return self.owner.authority.node_ref(self.index, NodeRole.YAML_ANCHOR_DEFINITION)
         return None
 
     def anchor_span(self) -> Span | None:
         """Exact raw ``&name`` span, when this node defines an anchor
-        (lib.rs:549-553)."""
+        (lib.rs)."""
         return self.record().anchor_span
 
     def kind(self) -> YamlNodeKind:
-        """Native node kind (lib.rs:555-563)."""
+        """Native node kind (lib.rs)."""
         content = self.record().content
         if isinstance(content, NativeScalar):
             return YamlNodeKind.SCALAR
@@ -229,21 +229,21 @@ class YamlNode:
         return YamlNodeKind.MAPPING
 
     def scalar(self) -> YamlScalar | None:
-        """Scalar facts, when this is a scalar node (lib.rs:565-573)."""
+        """Scalar facts, when this is a scalar node (lib.rs)."""
         content = self.record().content
         if isinstance(content, NativeScalar):
             return YamlScalar(content)
         return None
 
     def sequence_len(self) -> int | None:
-        """Ordered sequence association count (lib.rs:575-583)."""
+        """Ordered sequence association count (lib.rs)."""
         content = self.record().content
         if isinstance(content, tuple) and content and isinstance(content[0], NativeSequenceItem):
             return len(content)
         return None
 
     def sequence_item(self, ordinal: int) -> YamlSequenceItem | None:
-        """One exact sequence association (lib.rs:585-593)."""
+        """One exact sequence association (lib.rs)."""
         content = self.record().content
         if isinstance(content, tuple) and content and isinstance(content[0], NativeSequenceItem):
             if 0 <= ordinal < len(content):
@@ -251,14 +251,14 @@ class YamlNode:
         return None
 
     def mapping_len(self) -> int | None:
-        """Ordered mapping association count (lib.rs:595-603)."""
+        """Ordered mapping association count (lib.rs)."""
         content = self.record().content
         if isinstance(content, tuple) and content and isinstance(content[0], NativeMappingEntry):
             return len(content)
         return None
 
     def mapping_entry(self, ordinal: int) -> YamlMappingEntry | None:
-        """One exact arbitrary key/value association (lib.rs:605-615)."""
+        """One exact arbitrary key/value association (lib.rs)."""
         content = self.record().content
         if isinstance(content, tuple) and content and isinstance(content[0], NativeMappingEntry):
             if 0 <= ordinal < len(content):
@@ -268,7 +268,7 @@ class YamlNode:
 
 class YamlScalar:
     """Native scalar facts with exact decoded and canonical content
-    (lib.rs:617-647)."""
+    (lib.rs)."""
 
     __slots__ = ("scalar",)
 
@@ -293,7 +293,7 @@ class YamlScalar:
 
 
 class YamlSequenceItem:
-    """One ordered sequence association (lib.rs:649-689)."""
+    """One ordered sequence association (lib.rs)."""
 
     __slots__ = ("owner", "item")
 
@@ -302,21 +302,21 @@ class YamlSequenceItem:
         self.item = item
 
     def node_ref(self) -> NodeRef:
-        """Snapshot-bound association identity (lib.rs:657-664)."""
+        """Snapshot-bound association identity (lib.rs)."""
         return self.owner.authority.node_ref(self.item.identity, NodeRole.YAML_SEQUENCE_ELEMENT)
 
     def span(self) -> Span:
         """Exact raw element occurrence span, including an alias spelling
-        when used (lib.rs:666-670)."""
+        when used (lib.rs)."""
         return self.item.span
 
     def node(self) -> YamlNode:
-        """Referenced representation node (lib.rs:672-678)."""
+        """Referenced representation node (lib.rs)."""
         return YamlNode(self.owner, self.item.node)
 
     def alias(self) -> YamlAlias | None:
         """Alias occurrence that supplied this element edge, when present
-        (lib.rs:680-688)."""
+        (lib.rs)."""
         if self.item.alias is not None:
             return YamlAlias(self.owner, self.item.alias, self.owner.native.aliases[self.item.alias])
         return None
@@ -324,7 +324,7 @@ class YamlSequenceItem:
 
 class YamlMappingEntry:
     """One ordered YAML mapping association with an arbitrary key node
-    (lib.rs:691-749)."""
+    (lib.rs)."""
 
     __slots__ = ("owner", "entry")
 
@@ -333,25 +333,25 @@ class YamlMappingEntry:
         self.entry = entry
 
     def node_ref(self) -> NodeRef:
-        """Snapshot-bound association identity (lib.rs:699-706)."""
+        """Snapshot-bound association identity (lib.rs)."""
         return self.owner.authority.node_ref(self.entry.identity, NodeRole.YAML_MAPPING_ENTRY)
 
     def span(self) -> Span:
         """Raw span from the key occurrence through the value occurrence
-        (lib.rs:708-712)."""
+        (lib.rs)."""
         return self.entry.span
 
     def key(self) -> YamlNode:
-        """Arbitrary key node (lib.rs:714-720)."""
+        """Arbitrary key node (lib.rs)."""
         return YamlNode(self.owner, self.entry.key)
 
     def value(self) -> YamlNode:
-        """Value node (lib.rs:722-728)."""
+        """Value node (lib.rs)."""
         return YamlNode(self.owner, self.entry.value)
 
     def key_alias(self) -> YamlAlias | None:
         """Alias occurrence that supplied the key edge, when present
-        (lib.rs:730-738)."""
+        (lib.rs)."""
         if self.entry.key_alias is not None:
             return YamlAlias(
                 self.owner, self.entry.key_alias, self.owner.native.aliases[self.entry.key_alias]
@@ -360,7 +360,7 @@ class YamlMappingEntry:
 
     def value_alias(self) -> YamlAlias | None:
         """Alias occurrence that supplied the value edge, when present
-        (lib.rs:740-748)."""
+        (lib.rs)."""
         if self.entry.value_alias is not None:
             return YamlAlias(
                 self.owner, self.entry.value_alias, self.owner.native.aliases[self.entry.value_alias]
@@ -370,7 +370,7 @@ class YamlMappingEntry:
 
 class YamlAlias:
     """One alias serialization occurrence pointing at an existing
-    representation node (lib.rs:751-787)."""
+    representation node (lib.rs)."""
 
     __slots__ = ("owner", "ordinal", "alias")
 
@@ -380,18 +380,18 @@ class YamlAlias:
         self.alias = alias
 
     def node_ref(self) -> NodeRef:
-        """Snapshot-bound occurrence identity (lib.rs:759-766)."""
+        """Snapshot-bound occurrence identity (lib.rs)."""
         return self.owner.authority.node_ref(self.alias.identity, NodeRole.YAML_ALIAS)
 
     def span(self) -> Span:
-        """Exact raw ``*name`` occurrence span (lib.rs:768-772)."""
+        """Exact raw ``*name`` occurrence span (lib.rs)."""
         return self.alias.span
 
     def name(self) -> str:
-        """Exact alias name without ``*`` (lib.rs:774-778)."""
+        """Exact alias name without ``*`` (lib.rs)."""
         return self.alias.name
 
     def target(self) -> YamlNode:
         """Shared target representation node; no expansion occurs
-        (lib.rs:780-786)."""
+        (lib.rs)."""
         return YamlNode(self.owner, self.alias.target)

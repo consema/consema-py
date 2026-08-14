@@ -3,25 +3,25 @@
 Wire format frozen by the Rust reference codec
 (https://github.com/consema/consema-rs/blob/main/consema-graph/src/pgce.rs), the byte arbitration source:
 
-- stream magic is the ASCII octets ``PGCE`` (pgce.rs:12);
-- wire version is minimal unsigned LEB128 ``1`` (pgce.rs:14);
+- stream magic is the ASCII octets ``PGCE`` (pgce.rs);
+- wire version is minimal unsigned LEB128 ``1`` (pgce.rs);
 - header: root count varint, node count varint, then the root references as
-  canonical (first-discovery) id varints (pgce.rs:233-239);
+  canonical (first-discovery) id varints (pgce.rs);
 - then one node record per canonical first-discovery position: a node-kind
-  octet (0x20 scalar, 0x40 sequence, 0x41 mapping — pgce.rs:16-18), the tag
+  octet (0x20 scalar, 0x40 sequence, 0x41 mapping — pgce.rs), the tag
   as a length-prefixed UTF-8 blob, then per kind: scalar content blob;
   sequence item-count varint + item id varints; mapping entry-count varint +
-  (key id, value id) varint pairs (pgce.rs:240-272);
-- all varints are minimal unsigned LEB128 (pgce.rs:398-410).
+  (key id, value id) varint pairs (pgce.rs);
+- all varints are minimal unsigned LEB128 (pgce.rs).
 
 Golden byte vectors are frozen by the Rust tests: a scalar graph with tag
 `tag:yaml.org,2002:str` and content "x" encodes to
 ``504743450101010020157461673a79616d6c2e6f72672c323030323a7374720178``
-(pgce.rs:664-678) and the empty graph to ``50474345010000`` (pgce.rs:681-686).
+(pgce.rs) and the empty graph to ``50474345010000`` (pgce.rs).
 The decoder is strict: it validates canonical node numbering (ids assigned
 in first-discovery order), rejects non-minimal varints, out-of-range
 references, trailing bytes, and finally re-encodes the decoded graph and
-requires byte equality (NonCanonicalEncoding; pgce.rs:494-506).
+requires byte equality (NonCanonicalEncoding; pgce.rs).
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ NODE_MAPPING = 0x41
 
 @dataclass(frozen=True)
 class PgceLimits:
-    """Bounded PGCE encode/decode limits (pgce.rs:22-54)."""
+    """Bounded PGCE encode/decode limits (pgce.rs)."""
 
     max_stream_bytes: int = 64 * 1024 * 1024
     max_roots: int = 1_000_000
@@ -100,7 +100,7 @@ def _append_varint(output: bytearray, value: int) -> None:
 # --------------------------------------------------------------------------
 
 def encode_pgce(graph: PortableGraph) -> bytes:
-    """Encodes one graph with the default bounded policy (pgce.rs:219-221)."""
+    """Encodes one graph with the default bounded policy (pgce.rs)."""
     return encode_pgce_bounded(graph, PgceLimits())
 
 
@@ -108,7 +108,7 @@ def encode_pgce_bounded(graph: PortableGraph, limits: PgceLimits) -> bytes:
     """Encodes one complete canonical PGCE/1 stream after exact measurement.
 
     Exceeding any limit raises :class:`PgceEncodeError`; no partial output
-    is ever returned (pgce.rs:224-275).
+    is ever returned (pgce.rs).
     """
     _validate_graph_limits(graph, limits)
     order, canonical_ids = graph._canonical_layout()
@@ -213,7 +213,7 @@ def _check_encode_limit(name: str, observed: int, limit: int) -> None:
 # --------------------------------------------------------------------------
 
 def decode_pgce(stream: bytes, limits: PgceLimits | None = None) -> PortableGraph:
-    """Strictly decodes one canonical PGCE/1 stream (pgce.rs:422-507)."""
+    """Strictly decodes one canonical PGCE/1 stream (pgce.rs)."""
     limits = limits or PgceLimits()
     if len(stream) > limits.max_stream_bytes:
         raise PgceDecodeError(

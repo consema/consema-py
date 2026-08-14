@@ -2,39 +2,39 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and policy model: https://github.com/consema/consema-rs/blob/main/consema-json/src/edit.rs:17-58
+- Operation and policy model: https://github.com/consema/consema-rs/blob/main/consema-json/src/edit.rs
   (RepresentationPolicy, ScalarReplacement), 59-108 (EditOperation),
-  110-243 (EditTransaction/Builder).
-- Failure algebra and codes: edit.rs:260-299 (EditFailure), 1269-1324
+ (EditTransaction/Builder).
+- Failure algebra and codes: edit.rs (EditFailure), 1269-1324
   (StableFailure; code mapping 1299-1323).
-- Atomic commit: edit.rs:301-451 — Recovered/WrongSnapshot gates
-  (edit.rs:304-309), dependency validation (edit.rs:310, 1025-1078),
-  prepared-edit overlap/ownership conflicts (edit.rs:319-334), bounded
-  target length (edit.rs:336-346), rendering and reparse
-  (edit.rs:347-359), ChangeSet source edits and node mappings
-  (edit.rs:361-422), SourcePatch derivation (edit.rs:430-438),
-  UntouchedByteProof (edit.rs:439-444). Dry-run produces the identical
-  patch and target digest (edit.rs:453-468; RFC 0004 §14).
-- Scalar preparation: edit.rs:505-556 (targets Value or ObjectKey; literal
-  validation edit.rs:1831-1862; semantic_literal edit.rs:1346-1386 with
+- Atomic commit: edit.rs — Recovered/WrongSnapshot gates
+  (edit.rs), dependency validation (edit.rs),
+  prepared-edit overlap/ownership conflicts (edit.rs), bounded
+  target length (edit.rs), rendering and reparse
+  (edit.rs), ChangeSet source edits and node mappings
+  (edit.rs), SourcePatch derivation (edit.rs),
+  UntouchedByteProof (edit.rs). Dry-run produces the identical
+  patch and target digest (edit.rs; RFC 0004 §14).
+- Scalar preparation: edit.rs (targets Value or ObjectKey; literal
+  validation edit.rs; semantic_literal edit.rs with
   the fallback diagnostic json.edit.representation-fallback@1).
-- Structural preparation: edit.rs:558-623 (insert member/array element
+- Structural preparation: edit.rs (insert member/array element
   fragments), 625-696 (insertion placement and comma ownership),
-  697-849 (removal and removal_comma), 851-872 (rename), 874-900
+ (removal and removal_comma), (rename), 
   (resolve target/anchor), 925-1022 (parent lookup and comma/delimiter
   discovery), 1326-1344 (PreparedEdit/InsertionSyntax/MappingPlan).
-- PreserveCompatible lexical styles: edit.rs:1388-1504 (style analysis),
-  1506-1579 (string escape style), 1581-1753 (preserving renderers,
-  including MAX_PRESERVED_FRACTION_DIGITS = 1_000_000 at edit.rs:1389 and
-  the decimal fixed-fraction text edit.rs:1727-1739), 1755-1829
-  (canonical literals with UPPERCASE \\uXXXX escapes, edit.rs:1797-1829).
-- Operation metadata: edit.rs:1110-1133 (operation.{index} =
-  "json.edit.*@1" forms) and operation summaries edit.rs:1135-1230.
+- PreserveCompatible lexical styles: edit.rs (style analysis),
+ (string escape style), (preserving renderers,
+  including MAX_PRESERVED_FRACTION_DIGITS = 1_000_000 at edit.rs and
+  the decimal fixed-fraction text edit.rs), 1755-1829
+  (canonical literals with UPPERCASE \\uXXXX escapes, edit.rs).
+- Operation metadata: edit.rs (operation.{index} =
+  "json.edit.*@1" forms) and operation summaries edit.rs.
 - The v1/v2 vector goldens this module must reproduce byte-for-byte:
   conformance/vectors/v1.json:107-141 (scalar edits) and
   json-family-v2.json:174-190 (move-member and preserve-scalars).
 
-Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-json/src/operation_registry.rs:16-79):
+Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-json/src/operation_registry.rs):
 json.edit.insert-member@1, remove-member@1, move-member@1, rename-member@1,
 insert-array-element@1, remove-array-element@1, replace-scalar-semantic@1,
 replace-scalar-literal@1.
@@ -89,12 +89,12 @@ from consema.json.parser import (
 from consema.protocol.error_registry import DiagnosticCategory
 
 # Maximum digits a preserved fixed-fraction rendering may produce
-# (edit.rs:1389).
+# (edit.rs).
 MAX_PRESERVED_FRACTION_DIGITS = 1_000_000
 
 
 class RepresentationPolicy(enum.Enum):
-    """Explicit semantic scalar representation policy (edit.rs:19-28)."""
+    """Explicit semantic scalar representation policy (edit.rs)."""
 
     EXACT_LITERAL = "ExactLiteral"
     PRESERVE_COMPATIBLE = "PreserveCompatible"
@@ -103,7 +103,7 @@ class RepresentationPolicy(enum.Enum):
 
 
 class ScalarReplacementKind(enum.Enum):
-    """Scalar operation kind (edit.rs:30-49)."""
+    """Scalar operation kind (edit.rs)."""
 
     SEMANTIC = "Semantic"
     LITERAL = "Literal"
@@ -112,7 +112,7 @@ class ScalarReplacementKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class ScalarReplacement:
     """One scalar operation bound to the transaction base snapshot
-    (edit.rs:30-49)."""
+    (edit.rs)."""
 
     target: NodeRef
     value: PortableValue | None = None
@@ -127,7 +127,7 @@ class ScalarReplacement:
 
 
 class EditOperationKind(enum.Enum):
-    """Typed edit operation kinds (edit.rs:59-108)."""
+    """Typed edit operation kinds (edit.rs)."""
 
     REPLACE_SCALAR = "ReplaceScalar"
     INSERT_MEMBER = "InsertMember"
@@ -141,7 +141,7 @@ class EditOperationKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EditOperation:
     """One typed JSON edit operation bound to one immutable base snapshot
-    (edit.rs:59-108)."""
+    (edit.rs)."""
 
     kind: EditOperationKind
     scalar: ScalarReplacement | None = None
@@ -156,14 +156,14 @@ class EditOperation:
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
     """Immutable transaction; every operation resolves against one base
-    snapshot (edit.rs:110-129)."""
+    snapshot (edit.rs)."""
 
     base: object
     operations: tuple[EditOperation, ...] = ()
 
 
 class EditTransactionBuilder:
-    """Builder that is not a committed edit (edit.rs:131-243)."""
+    """Builder that is not a committed edit (edit.rs)."""
 
     def __init__(self, document: JsonDocument) -> None:
         self._base = document.snapshot_identity()
@@ -258,7 +258,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """Atomic edit success (edit.rs:245-258)."""
+    """Atomic edit success (edit.rs)."""
 
     document: JsonDocument
     change_set: ChangeSet
@@ -298,7 +298,7 @@ class _InsertionSyntax:
 
 class _EditPlanner:
     """One planner bound to the base document (mirror of the Rust
-    Document::prepare_* methods, edit.rs:471-1022)."""
+    Document::prepare_* methods, edit.rs)."""
 
     def __init__(self, document: JsonDocument) -> None:
         self.document = document
@@ -763,7 +763,7 @@ def _fragment_failure(failure: Exception) -> JsonEditFailure:
 
 
 # ---------------------------------------------------------------------------
-# Dependency validation (edit.rs:1025-1078)
+# Dependency validation (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -815,13 +815,13 @@ def validate_dependencies(transaction: EditTransaction) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Commit and dry-run (edit.rs:301-468)
+# Commit and dry-run (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def commit(document: JsonDocument, transaction: EditTransaction) -> EditCommit:
     """Atomically commits scalar and structural operations; on failure the
-    base document remains unchanged (edit.rs:301-451)."""
+    base document remains unchanged (edit.rs)."""
     if document.formation_status() is not FormationStatus.COMPLETE:
         raise JsonEditFailure(JsonEditFailureKind.RECOVERED_DOCUMENT)
     if transaction.base != document.snapshot_identity():
@@ -948,7 +948,7 @@ def dry_run(
     source_id: EditPlanSourceId,
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:453-468)."""
+    (edit.rs)."""
     commit_result = commit(document, transaction)
     try:
         return EditPlan.new(
@@ -978,7 +978,7 @@ def _source_patch_limits(
 
 def operation_metadata(transaction: EditTransaction) -> dict[str, str]:
     """Operation metadata keys: operation.{index} = "id@version"
-    (edit.rs:1110-1133)."""
+    (edit.rs)."""
     metadata: dict[str, str] = {}
     for index, operation in enumerate(transaction.operations):
         metadata[f"operation.{index}"] = _operation_id(operation)
@@ -1004,7 +1004,7 @@ def _operation_id(operation: EditOperation) -> str:
 
 
 def operation_summaries(transaction: EditTransaction) -> list[EditOperationSummary]:
-    """Safe, content-free operation summaries (edit.rs:1135-1230)."""
+    """Safe, content-free operation summaries (edit.rs)."""
     summaries = []
     for index, operation in enumerate(transaction.operations):
         summary = EditOperationSummary.new(
@@ -1016,7 +1016,7 @@ def operation_summaries(transaction: EditTransaction) -> list[EditOperationSumma
 
 
 # ---------------------------------------------------------------------------
-# Scalar literal machinery (edit.rs:1346-1862)
+# Scalar literal machinery (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1033,7 +1033,7 @@ def semantic_literal(
     diagnostics: list[JsonDiagnostic],
 ) -> bytes:
     """Renders the replacement literal under the explicit policy
-    (edit.rs:1346-1386)."""
+    (edit.rs)."""
     if policy is RepresentationPolicy.EXACT_LITERAL:
         raise JsonEditFailure(JsonEditFailureKind.EXACT_LITERAL_REQUIRES_LITERAL_OPERATION)
     if portable_json_kind(value, profile) is None:
@@ -1119,7 +1119,7 @@ def analyze_lexical_style(
     literal: bytes, old: InternalValue
 ) -> _JsonScalarLexicalStyle | None:
     """Bounded lexical style retained by PreserveCompatible edits
-    (edit.rs:1442-1504)."""
+    (edit.rs)."""
     if old.kind is InternalKind.NULL:
         return _JsonScalarLexicalStyle(_ScalarStyleKind.NULL)
     if old.kind is InternalKind.BOOLEAN:
@@ -1199,7 +1199,7 @@ def analyze_lexical_style(
 
 
 def analyze_string_style(literal: bytes) -> _StringLexicalStyle | None:
-    """Per-character string escape choices (edit.rs:1506-1579)."""
+    """Per-character string escape choices (edit.rs)."""
     try:
         text = literal.decode("utf-8")
     except UnicodeDecodeError:
@@ -1297,7 +1297,7 @@ def analyze_string_style(literal: bytes) -> _StringLexicalStyle | None:
 def render_preserving_style(
     value: PortableValue, style: _JsonScalarLexicalStyle
 ) -> bytes | None:
-    """Renders the new value in the preserved style (edit.rs:1581-1613)."""
+    """Renders the new value in the preserved style (edit.rs)."""
     if style.kind is _ScalarStyleKind.NULL and value.kind is Kind.NULL:
         return b"null"
     if style.kind is _ScalarStyleKind.BOOLEAN and value.kind is Kind.BOOLEAN:
@@ -1320,7 +1320,7 @@ def render_preserving_style(
 
 
 def render_integer_style(value: int, style: _IntegerLexicalStyle) -> bytes | None:
-    """Preserving integer rendering (edit.rs:1615-1651)."""
+    """Preserving integer rendering (edit.rs)."""
     output = ""
     if value < 0:
         output += "-"
@@ -1346,7 +1346,7 @@ def render_integer_style(value: int, style: _IntegerLexicalStyle) -> bytes | Non
 def render_decimal_style(
     value: PortableValue, style: _DecimalLexicalStyle
 ) -> bytes | None:
-    """Preserving decimal rendering (edit.rs:1653-1702)."""
+    """Preserving decimal rendering (edit.rs)."""
     if value.kind is Kind.DECIMAL:
         coefficient = value.as_decimal().coefficient
         exponent = value.as_decimal().exponent
@@ -1395,7 +1395,7 @@ def render_decimal_style(
 
 
 def remove_leading_zero(text: str) -> str:
-    """Drops the leading zero of a fixed fraction (edit.rs:1704-1709)."""
+    """Drops the leading zero of a fixed fraction (edit.rs)."""
     zero = 1 if text.startswith("-0.") else 0
     if text[zero : zero + 2] != "0.":
         raise ValueError("no leading zero")
@@ -1405,7 +1405,7 @@ def remove_leading_zero(text: str) -> str:
 def render_non_finite_style(
     bits: int, style: _NonFiniteLexicalStyle
 ) -> bytes | None:
-    """Preserving non-finite rendering (edit.rs:1711-1725)."""
+    """Preserving non-finite rendering (edit.rs)."""
     if bits == 0x7FF0000000000000:
         text = "+Infinity" if style.explicit_plus else "Infinity"
     elif bits == 0xFFF0000000000000:
@@ -1420,7 +1420,7 @@ def render_non_finite_style(
 
 
 def decimal_fixed_text(mantissa: int, scale: int) -> str:
-    """Fixed-fraction rendering (edit.rs:1727-1739)."""
+    """Fixed-fraction rendering (edit.rs)."""
     text = str(mantissa)
     if text.startswith("-"):
         sign, digits = "-", text[1:]
@@ -1433,7 +1433,7 @@ def decimal_fixed_text(mantissa: int, scale: int) -> str:
 
 
 def render_string_style(value: str, style: _StringLexicalStyle) -> str:
-    """Preserving string rendering (edit.rs:1741-1753)."""
+    """Preserving string rendering (edit.rs)."""
     output = style.quote
     for character in value:
         if character in style.escapes:
@@ -1444,7 +1444,7 @@ def render_string_style(value: str, style: _StringLexicalStyle) -> str:
 
 
 def portable_json_kind(value: PortableValue, profile: JsonProfile) -> str | None:
-    """Core kind admitted as a JSON scalar (edit.rs:1755-1767)."""
+    """Core kind admitted as a JSON scalar (edit.rs)."""
     if value.kind is Kind.NULL:
         return "Null"
     if value.kind is Kind.BOOLEAN:
@@ -1461,7 +1461,7 @@ def portable_json_kind(value: PortableValue, profile: JsonProfile) -> str | None
 
 
 def canonical_literal(value: PortableValue, profile: JsonProfile) -> bytes:
-    """Deterministic profile-canonical JSON literal (edit.rs:1769-1795)."""
+    """Deterministic profile-canonical JSON literal (edit.rs)."""
     if value.kind is Kind.NULL:
         text = "null"
     elif value.kind is Kind.BOOLEAN:
@@ -1491,7 +1491,7 @@ def canonical_literal(value: PortableValue, profile: JsonProfile) -> bytes:
 
 def encode_json_string(value: str, json5: bool) -> str:
     """Canonical double-quoted string with UPPERCASE \\uXXXX escapes
-    (edit.rs:1797-1805)."""
+    (edit.rs)."""
     output = '"'
     for character in value:
         output += push_json_string_char(character, '"', json5)
@@ -1501,7 +1501,7 @@ def encode_json_string(value: str, json5: bool) -> str:
 def push_json_string_char(
     character: str, quote: str, canonical_json5: bool
 ) -> str:
-    """One escaped string character (edit.rs:1807-1829)."""
+    """One escaped string character (edit.rs)."""
     if character == quote:
         return "\\" + character
     if character == "\\":
@@ -1525,7 +1525,7 @@ def push_json_string_char(
 
 def validate_literal(literal: bytes, profile: JsonProfile, limits: ParseLimits) -> str:
     """Requires one complete legal scalar literal for the profile
-    (edit.rs:1831-1862)."""
+    (edit.rs)."""
     if not literal:
         raise JsonEditFailure(JsonEditFailureKind.INVALID_LITERAL)
     try:
@@ -1551,7 +1551,7 @@ def validate_literal(literal: bytes, profile: JsonProfile, limits: ParseLimits) 
 def find_value_by_literal_span(
     document: JsonDocument, start: int, end: int
 ) -> int | None:
-    """Locates the uniquely reparsed literal (edit.rs:1864-1882)."""
+    """Locates the uniquely reparsed literal (edit.rs)."""
     matches = []
     for index, entity in enumerate(document.entities):
         if (

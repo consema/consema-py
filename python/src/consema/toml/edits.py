@@ -3,7 +3,7 @@
 Authority:
 
 - RFC 0004 §12/§13 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
-  structural-edit-v1.md:291-336): the frozen TOML structural surface
+  structural-edit-v1.md): the frozen TOML structural surface
   (insert-entry into root/standard/inline tables with one direct key
   segment and a supported placement; remove-entry and rename-entry on one
   exact TomlEntry identity; insert-array-element and remove-array-element
@@ -14,7 +14,7 @@ Authority:
   AncestorDescendantConflict, PlacementAnchorRemoved, DuplicateKey,
   UnsupportedOperation, UnrepresentableValue, ResourceLimit,
   NewDocumentFormationFailed).
-- The transaction algebra transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs:
+- The transaction algebra transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs
   RepresentationPolicy 16-26; ScalarReplacement/EditOperation 28-99;
   the atomic commit pipeline 281-430; dry-run 432-447; every prepare_*
   function 449-1062 (including delimiter-adjacent comma ownership,
@@ -23,10 +23,10 @@ Authority:
   preflight 1064-1100; canonical literal writers 1472-1636; exact-literal
   validation 1379-1413 (the candidate must parse as exactly one scalar
   value whose span is the whole candidate); operation metadata and
-  summaries 1132-1240; failure codes edit.rs:1280-1332.
+  summaries 1132-1240; failure codes edit.rs.
 - The representation policies freeze the four values of RFC 0001 §6
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:111-117); the fallback diagnostic
-  is ``toml.edit.representation-fallback@1`` (error_registry.rs:339).
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md); the fallback diagnostic
+  is ``toml.edit.representation-fallback@1`` (error_registry.rs).
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ from consema.toml.parser import parse
 
 
 class RepresentationPolicy(enum.Enum):
-    """Explicit semantic scalar representation policy (edit.rs:16-26;
+    """Explicit semantic scalar representation policy (edit.rs;
     RFC 0001 §6)."""
 
     EXACT_LITERAL = "exact-literal"
@@ -87,7 +87,7 @@ class RepresentationPolicy(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class ScalarReplacement:
     """One scalar operation bound to a transaction base snapshot
-    (edit.rs:29-55)."""
+    (edit.rs)."""
 
     target: NodeRef
     value: PortableValue | None = None
@@ -117,7 +117,7 @@ class EditOperationKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EditOperation:
     """One typed TOML edit operation bound to an immutable base snapshot
-    (edit.rs:57-99)."""
+    (edit.rs)."""
 
     kind: EditOperationKind
     replacement: ScalarReplacement | None = None
@@ -178,7 +178,7 @@ class EditOperation:
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
     """Immutable transaction; every operation resolves against one base
-    snapshot (edit.rs:101-120)."""
+    snapshot (edit.rs)."""
 
     base: object  # SnapshotIdentity
     operations: tuple[EditOperation, ...] = field(default_factory=tuple)
@@ -191,7 +191,7 @@ class EditTransaction:
 
 
 class EditTransactionBuilder:
-    """Builder that is not a committed edit (edit.rs:122-227)."""
+    """Builder that is not a committed edit (edit.rs)."""
 
     def __init__(self, document: Document) -> None:
         self._base = document.snapshot_identity()
@@ -247,7 +247,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """Atomic edit success (edit.rs:229-240)."""
+    """Atomic edit success (edit.rs)."""
 
     document: Document
     change_set: ChangeSet
@@ -279,7 +279,7 @@ class _DelimitedSyntax:
 
 def commit_document(document: Document, transaction: EditTransaction) -> EditCommit:
     """Atomically commits scalar and structural operations; a failure
-    never changes this snapshot (edit.rs:281-430)."""
+    never changes this snapshot (edit.rs)."""
     if transaction.base != document.snapshot_identity():
         raise TomlEditFailure(TomlEditFailureKind.WRONG_SNAPSHOT)
     _validate_dependencies(transaction)
@@ -415,7 +415,7 @@ def dry_run_document(
     document: Document, transaction: EditTransaction, source_id: EditPlanSourceId
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:432-447)."""
+    (edit.rs)."""
     commit = commit_document(document, transaction)
     try:
         return EditPlan.new(
@@ -430,7 +430,7 @@ def dry_run_document(
 
 
 def _validate_dependencies(transaction: EditTransaction) -> None:
-    """edit.rs:1064-1100."""
+    """edit.rs."""
     destructive: set[NodeRef] = set()
     removed: set[NodeRef] = set()
     anchors: list[NodeRef] = []
@@ -872,7 +872,7 @@ def _line_fragment(document: Document, position: int, fragment: bytes) -> bytes:
 
 def _newline_bytes(document: Document) -> bytes:
     """The first Newline piece's exact bytes, or LF when the source has no
-    newline (edit.rs:985-994)."""
+    newline (edit.rs)."""
     raw = document.render()
     for piece, kind in zip(
         document.lossless_structural_index().pieces, document.lossless_syntax_kinds()
@@ -888,7 +888,7 @@ def _removal_comma(
     ordinal: int,
     container_end: int,
 ) -> Span | None:
-    """edit.rs:996-1026: prefer the comma after the removed association,
+    """edit.rs: prefer the comma after the removed association,
     else the comma before it (only when not first)."""
     current = document._entity(associations[ordinal]).span
     following_end = (
@@ -935,7 +935,7 @@ def _syntax_between(
 
 
 def _fragment(document: Document, value: PortableValue) -> bytes:
-    """Canonical TOML value fragment (edit.rs:858-878)."""
+    """Canonical TOML value fragment (edit.rs)."""
     limits = MaterializationLimits(
         max_input_nodes=document.parse_limits().max_node_count,
         max_output_bytes=document.parse_limits().max_source_bytes,
@@ -960,7 +960,7 @@ def _fragment(document: Document, value: PortableValue) -> bytes:
 
 
 def _source_patch_limits(parse_limits: ParseLimits, operation_count: int) -> SourcePatchLimits:
-    """edit.rs:1117-1130."""
+    """edit.rs."""
     return SourcePatchLimits(
         source=SourceLimits(
             max_raw_bytes=parse_limits.max_source_bytes,
@@ -973,7 +973,7 @@ def _source_patch_limits(parse_limits: ParseLimits, operation_count: int) -> Sou
 
 
 def _operation_metadata(transaction: EditTransaction) -> dict[str, str]:
-    """edit.rs:1132-1154."""
+    """edit.rs."""
     metadata: dict[str, str] = {}
     for index, operation in enumerate(transaction.operations):
         metadata[f"operation.{index}"] = _operation_id(operation)
@@ -997,7 +997,7 @@ def _operation_id(operation: EditOperation) -> str:
 
 
 def _operation_summaries(transaction: EditTransaction) -> list[EditOperationSummary]:
-    """edit.rs:1156-1240."""
+    """edit.rs."""
     summaries: list[EditOperationSummary] = []
     for operation in transaction.operations:
         arguments: dict[str, str] = {}
@@ -1039,7 +1039,7 @@ def _operation_summaries(transaction: EditTransaction) -> list[EditOperationSumm
 
 
 def _value_kind_name(kind_value: str) -> str:
-    """edit.rs:1260-1278 (kebab-case value-kind names)."""
+    """edit.rs (kebab-case value-kind names)."""
     return {
         "Null": "null",
         "Boolean": "boolean",
@@ -1060,7 +1060,7 @@ def _value_kind_name(kind_value: str) -> str:
 
 
 def _is_scalar_kind(kind: TomlItemKind) -> bool:
-    """edit.rs:1354-1366."""
+    """edit.rs."""
     return kind in (
         TomlItemKind.STRING,
         TomlItemKind.INTEGER,
@@ -1074,7 +1074,7 @@ def _is_scalar_kind(kind: TomlItemKind) -> bool:
 
 
 def _is_table_kind(kind: TomlItemKind) -> bool:
-    """edit.rs:1368-1377."""
+    """edit.rs."""
     return kind in (
         TomlItemKind.ROOT_TABLE,
         TomlItemKind.STANDARD_TABLE,
@@ -1085,7 +1085,7 @@ def _is_table_kind(kind: TomlItemKind) -> bool:
 
 
 def _validate_exact_scalar(literal: bytes) -> None:
-    """edit.rs:1379-1413: the candidate must parse as exactly one complete
+    """edit.rs: the candidate must parse as exactly one complete
     TOML 1.0 scalar whose value span is the entire candidate."""
     try:
         text = literal.decode("utf-8")
@@ -1118,7 +1118,7 @@ def _semantic_literal(
     target_span: Span,
     diagnostics: list[TomlDiagnostic],
 ) -> bytes:
-    """edit.rs:1415-1456."""
+    """edit.rs."""
     if policy is RepresentationPolicy.EXACT_LITERAL:
         raise TomlEditFailure(TomlEditFailureKind.EXACT_LITERAL_REQUIRES_LITERAL)
     new_kind = _portable_toml_kind(value)
@@ -1151,7 +1151,7 @@ def _semantic_literal(
 
 def _validate_exact_scalar_kind(literal: bytes) -> TomlItemKind | None:
     """Revalidates a canonical literal and returns its scalar category
-    (edit.rs:1451-1454)."""
+    (edit.rs)."""
     try:
         text = literal.decode("utf-8")
     except UnicodeDecodeError:
@@ -1177,7 +1177,7 @@ def _validate_exact_scalar_kind(literal: bytes) -> TomlItemKind | None:
 
 
 def _portable_toml_kind(value: PortableValue) -> TomlItemKind | None:
-    """edit.rs:1458-1470."""
+    """edit.rs."""
     kind_value = value.kind.value
     return {
         "String": TomlItemKind.STRING,
@@ -1192,7 +1192,7 @@ def _portable_toml_kind(value: PortableValue) -> TomlItemKind | None:
 
 
 def _canonical_literal(value: PortableValue) -> bytes:
-    """edit.rs:1472-1514."""
+    """edit.rs."""
     kind_value = value.kind.value
     if kind_value == "String":
         return _canonical_string(value.as_string()).encode("utf-8")
@@ -1252,7 +1252,7 @@ def _canonical_literal(value: PortableValue) -> bytes:
 
 
 def _canonical_string(value: str) -> str:
-    """edit.rs:1516-1537."""
+    """edit.rs."""
     output = ['"']
     for character in value:
         code = ord(character)
@@ -1279,7 +1279,7 @@ def _canonical_string(value: str) -> str:
 
 
 def _canonical_float(bits: int) -> str | None:
-    """edit.rs:1539-1560."""
+    """edit.rs."""
     if bits == 0x7FF8000000000000:
         return "nan"
     if bits == 0xFFF8000000000000:
@@ -1300,7 +1300,7 @@ def _canonical_float(bits: int) -> str | None:
 
 
 def _canonical_date(date: tuple[int, int, int]) -> str | None:
-    """edit.rs:1562-1568."""
+    """edit.rs."""
     year, month, day = date
     if not 0 <= year <= 9999:
         return None
@@ -1308,7 +1308,7 @@ def _canonical_date(date: tuple[int, int, int]) -> str | None:
 
 
 def _canonical_time(time: tuple[int, int, int, Decimal]) -> str | None:
-    """edit.rs:1570-1587."""
+    """edit.rs."""
     hour, minute, second, fraction = time
     nanoseconds = _exact_nanoseconds(fraction)
     if nanoseconds is None:
@@ -1323,7 +1323,7 @@ def _canonical_time(time: tuple[int, int, int, Decimal]) -> str | None:
 
 
 def _canonical_offset(offset_seconds: int) -> str | None:
-    """edit.rs:1597-1616."""
+    """edit.rs."""
     if offset_seconds == 0:
         return "Z"
     if offset_seconds % 60 != 0:
@@ -1353,7 +1353,7 @@ def _exact_nanoseconds(fraction: Decimal) -> int | None:
 
 
 def _find_item_by_span(document: Document, start: int, end: int) -> NodeRef | None:
-    """edit.rs:1638-1651."""
+    """edit.rs."""
     matches = [
         index
         for index, entity in enumerate(document._entities)

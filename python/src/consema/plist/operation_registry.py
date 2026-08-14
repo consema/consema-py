@@ -1,14 +1,14 @@
 """The plist-family format operation registry (6 frozen records per profile).
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs:20-83 — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs — the exact
 operation ids, target roles, argument schemas, and support classifications;
-the surface is frozen by the registry test (operation_registry.rs:104-132:
+the surface is frozen by the registry test (operation_registry.rs
 exactly six Supported structural operations per profile) and by RFC 0013
-§11 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:685-695: both profiles
+§11 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md: both profiles
 publish the same six snapshot-bound operations, independently typed per
 profile).
 
-Frozen records (operation_registry.rs:21-82):
+Frozen records (operation_registry.rs):
 
 1. plist.edit.set-value@1            plist.value      path(NodeRef), value(PortableValue)     Supported
 2. plist.edit.insert-dict-entry@1   plist.value      path(NodeRef), key(String), value(PortableValue), placement(Placement)  Supported
@@ -25,7 +25,7 @@ trailer when sizes change).
 
 Operation ids/versions and the ``id@version`` display form are frozen by
 consema-document (FormatOperationId); the EditPlan operation-metadata
-matching rule requires that form (edit_plan.rs:84-121).
+matching rule requires that form (edit_plan.rs).
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ from consema.plist.kinds import PlistProfile
 
 
 class OperationSupport(enum.Enum):
-    """Support classification (operation_registry.rs:25-33, 71-78)."""
+    """Support classification (operation_registry.rs)."""
 
     SUPPORTED = "Supported"
 
@@ -54,7 +54,7 @@ class OperationArgumentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class OperationArgumentDescriptor:
-    """One operation argument schema (operation_registry.rs:96-98)."""
+    """One operation argument schema (operation_registry.rs)."""
 
     name: str
     kind: OperationArgumentKind
@@ -63,7 +63,7 @@ class OperationArgumentDescriptor:
 
 @dataclass(frozen=True, slots=True)
 class FormatOperationDescriptor:
-    """One validated immutable operation record (operation_registry.rs:82-94)."""
+    """One validated immutable operation record (operation_registry.rs)."""
 
     id: FormatOperationId
     target_role: str
@@ -78,7 +78,7 @@ class FormatOperationDescriptor:
 @dataclass(frozen=True, slots=True)
 class PlistFormatOperationRegistry:
     """Validated operation registry for one exact plist profile
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
 
     profile: ProfileId
     operations: tuple[FormatOperationDescriptor, ...]
@@ -115,7 +115,7 @@ def _argument(name: str, kind: OperationArgumentKind) -> tuple[str, OperationArg
 
 
 def descriptors() -> tuple[FormatOperationDescriptor, ...]:
-    """The frozen six-record descriptor set (operation_registry.rs:20-83)."""
+    """The frozen six-record descriptor set (operation_registry.rs)."""
     return (
         _descriptor(
             "plist.edit.set-value@1",
@@ -182,8 +182,8 @@ def descriptors() -> tuple[FormatOperationDescriptor, ...]:
 
 def format_operation_registry(profile: PlistProfile) -> PlistFormatOperationRegistry:
     """Returns the validated operation registry for one exact plist profile
-    (operation_registry.rs:9-14). The operations are ordered by canonical id
-    (the frozen surface test, operation_registry.rs:104-132)."""
+    (operation_registry.rs). The operations are ordered by canonical id
+    (the frozen surface test, operation_registry.rs)."""
     return PlistFormatOperationRegistry(
         profile=profile.id(),
         operations=tuple(sorted(descriptors(), key=lambda d: d.to_string())),

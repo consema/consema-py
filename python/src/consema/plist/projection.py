@@ -3,33 +3,33 @@ unique-key Object (RFC 0013 §9).
 
 Authority (Rust arbitration for exact semantics):
 
-- Targets, policies, and limits: https://github.com/consema/consema-rs/blob/main/consema-plist/src/projection.rs:49-
-  184 — ProjectionTarget::ValueTreeV1 / RequireObjectV1 (projection.rs:53-
-  61), UidPolicy Exclude / Include (projection.rs:63-71), CollisionPolicy
-  Reject / First / Last (projection.rs:73-82), the request builders
-  (projection.rs:93-157), and ProjectionLimits (projection.rs:159-184:
+- Targets, policies, and limits: https://github.com/consema/consema-rs/blob/main/consema-plist/src/projection.rs
+  184 — ProjectionTarget::ValueTreeV1 / RequireObjectV1 (projection.rs
+  61), UidPolicy Exclude / Include (projection.rs), CollisionPolicy
+  Reject / First / Last (projection.rs), the request builders
+  (projection.rs), and ProjectionLimits (projection.rs
   max_source_nodes 2_000_000, max_value_nodes 2_000_000,
   max_report_entries 100_000, max_provenance_units 4_000_000).
-- Completion algebra and failures: projection.rs:322-403 — CompleteProjection
+- Completion algebra and failures: projection.rs — CompleteProjection
   (value, fidelity, report, provenance), FailedProjectionAttempt (stable
   ordered diagnostics, empty report), and the StableFailure code mapping
-  (projection.rs:393-402: plist.projection.incomplete-document@1,
+  (projection.rs: plist.projection.incomplete-document@1,
   unpaired-surrogate@1, collision@1, unrepresentable@1, resource-limit@1,
   core-invariant@1).
-- Value-tree emission: projection.rs:412-1155 — the versioned
+- Value-tree emission: projection.rs — the versioned
   ``plist.value-tree@1`` record (one root value, ordered dictionary
   associations, ordered array elements, typed leaves; RFC 0013 §9, lines
-  598-613); UIDs project only under IncludeUid into a typed UID member and
+); UIDs project only under IncludeUid into a typed UID member and
   are never disguised as integers; unpaired-surrogate strings fail
   ordinary projection atomically.
-- Require-object collapse: projection.rs:1157-1810 — only when every key
+- Require-object collapse: projection.rs — only when every key
   is a string, every value is a string/integer/real/boolean, and the
   chosen collision policy has no collision or supplies a versioned
   Reject | First | Last loss policy; date, data, and UID leaves fail with a
   diagnostic rather than being rendered as strings (hard gate 3); every
-  discarded association emits one AssociationDiscarded event (projection.rs:
-  272-320) and lifts fidelity to Transformed.
-- Provenance: projection.rs:197-270 — ProjectedLocation (Value /
+  discarded association emits one AssociationDiscarded event (projection.rs
+) and lifts fidelity to Transformed.
+- Provenance: projection.rs — ProjectedLocation (Value /
   Association), ProvenanceRelation (Direct / Derived / Collapsed /
   ReferenceDerived), SourceOrigin (snapshot, node, span, relation), and
   the ordered ProvenanceMap. No projection sorts keys, formats dates, or
@@ -68,14 +68,14 @@ _PLIST_EPOCH_SPELLING = "2001-01-01T00:00:00Z"
 
 
 class ProjectionTarget(enum.Enum):
-    """Versioned plist projection target (projection.rs:53-61)."""
+    """Versioned plist projection target (projection.rs)."""
 
     VALUE_TREE_V1 = "plist.projection.value-tree@1"
     REQUIRE_OBJECT_V1 = "plist.projection.require-object@1"
 
 
 class UidPolicy(enum.Enum):
-    """UID handling for the value-tree target (projection.rs:63-71)."""
+    """UID handling for the value-tree target (projection.rs)."""
 
     EXCLUDE = "Exclude"
     INCLUDE = "Include"
@@ -83,7 +83,7 @@ class UidPolicy(enum.Enum):
 
 class CollisionPolicy(enum.Enum):
     """Duplicate-key handling for the require-object target
-    (projection.rs:73-82)."""
+    (projection.rs)."""
 
     REJECT = "Reject"
     FIRST = "First"
@@ -92,7 +92,7 @@ class CollisionPolicy(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectionLimits:
-    """Plist projection resource limits (projection.rs:159-184)."""
+    """Plist projection resource limits (projection.rs)."""
 
     max_source_nodes: int = 2_000_000
     max_value_nodes: int = 2_000_000
@@ -103,7 +103,7 @@ class ProjectionLimits:
 @dataclass(frozen=True, slots=True)
 class ProjectionRequest:
     """Explicit plist projection request; every policy is mandatory
-    (projection.rs:84-92)."""
+    (projection.rs)."""
 
     target: ProjectionTarget
     uid_policy: UidPolicy
@@ -113,7 +113,7 @@ class ProjectionRequest:
     @classmethod
     def value_tree(cls) -> ProjectionRequest:
         """Exact ``plist.value-tree@1`` record request for the complete
-        document (projection.rs:94-103)."""
+        document (projection.rs)."""
         return cls(
             target=ProjectionTarget.VALUE_TREE_V1,
             uid_policy=UidPolicy.EXCLUDE,
@@ -123,7 +123,7 @@ class ProjectionRequest:
     @classmethod
     def value_tree_with_uid(cls, policy: UidPolicy) -> ProjectionRequest:
         """Exact value-tree request with an explicit UID policy
-        (projection.rs:105-114)."""
+        (projection.rs)."""
         return cls(
             target=ProjectionTarget.VALUE_TREE_V1,
             uid_policy=policy,
@@ -133,7 +133,7 @@ class ProjectionRequest:
     @classmethod
     def require_object(cls, collision: CollisionPolicy) -> ProjectionRequest:
         """Explicit require-object request with one duplicate-key loss
-        policy (projection.rs:117-126)."""
+        policy (projection.rs)."""
         return cls(
             target=ProjectionTarget.REQUIRE_OBJECT_V1,
             uid_policy=UidPolicy.EXCLUDE,
@@ -142,7 +142,7 @@ class ProjectionRequest:
 
     def with_limits(self, limits: ProjectionLimits) -> ProjectionRequest:
         """Applies explicit resource limits to this request
-        (projection.rs:128-132)."""
+        (projection.rs)."""
         return ProjectionRequest(
             target=self.target,
             uid_policy=self.uid_policy,
@@ -152,7 +152,7 @@ class ProjectionRequest:
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:186-195)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -219,7 +219,7 @@ class AssociationLocation:
 
 
 class ProjectedLocationKind(enum.Enum):
-    """Projected location kind (projection.rs:197-204)."""
+    """Projected location kind (projection.rs)."""
 
     VALUE = "Value"
     ASSOCIATION = "Association"
@@ -227,7 +227,7 @@ class ProjectedLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """One portable projected location (projection.rs:197-204)."""
+    """One portable projected location (projection.rs)."""
 
     kind: ProjectedLocationKind
     path: ValuePath | None = None
@@ -243,7 +243,7 @@ class ProjectedLocation:
 
 
 class ProvenanceRelation(enum.Enum):
-    """Source-to-projection relation (projection.rs:206-217)."""
+    """Source-to-projection relation (projection.rs)."""
 
     DIRECT = "Direct"
     DERIVED = "Derived"
@@ -253,7 +253,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One exact source origin (projection.rs:219-230)."""
+    """One exact source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -263,7 +263,7 @@ class SourceOrigin:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
-    """One many-valued provenance entry (projection.rs:232-239)."""
+    """One many-valued provenance entry (projection.rs)."""
 
     projected: ProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -271,20 +271,20 @@ class ProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
-    """Immutable many-valued provenance mapping (projection.rs:241-270)."""
+    """Immutable many-valued provenance mapping (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = ()
 
 
 class ProjectionEventKind(enum.Enum):
-    """Projection report category (projection.rs:272-278)."""
+    """Projection report category (projection.rs)."""
 
     ASSOCIATION_DISCARDED = "AssociationDiscarded"
 
 
 @dataclass(frozen=True, slots=True)
 class ProjectionEvent:
-    """One explicit transformation event (projection.rs:280-289)."""
+    """One explicit transformation event (projection.rs)."""
 
     kind: ProjectionEventKind
     discarded: NodeRef
@@ -293,14 +293,14 @@ class ProjectionEvent:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
-    """Complete ordered projection report (projection.rs:291-320)."""
+    """Complete ordered projection report (projection.rs)."""
 
     events: tuple[ProjectionEvent, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class CompleteProjection:
-    """Complete successful projection (projection.rs:322-333)."""
+    """Complete successful projection (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -310,7 +310,7 @@ class CompleteProjection:
 
 @dataclass(frozen=True, slots=True)
 class FailedProjectionAttempt:
-    """Failed projection attempt without a partial value (projection.rs:335-
+    """Failed projection attempt without a partial value (projection.rs
     342)."""
 
     diagnostics: tuple[PlistDiagnostic, ...]
@@ -318,7 +318,7 @@ class FailedProjectionAttempt:
 
 
 class ProjectionResult:
-    """Projection completion algebra (projection.rs:344-351)."""
+    """Projection completion algebra (projection.rs)."""
 
     def __init__(self, complete: CompleteProjection | None = None, failed: FailedProjectionAttempt | None = None):
         self.complete = complete
@@ -421,7 +421,7 @@ class _Projector:
     # -- value-tree emission --------------------------------------------------
 
     def project_value(self, value_ref: PlistValueRef, path: ValuePath, depth: int) -> PortableValue:
-        """Projects one native value node (projection.rs:588-1155)."""
+        """Projects one native value node (projection.rs)."""
         self.check_source_nodes()
         value = self.native.get(value_ref)
         if value is None:
@@ -600,7 +600,7 @@ class _Projector:
 
     def project_require_object(self, value_ref: PlistValueRef, path: ValuePath, depth: int) -> PortableValue:
         """Require-object projection with the explicit collision policy
-        (projection.rs:1157-1810)."""
+        (projection.rs)."""
         self.check_source_nodes()
         value = self.native.get(value_ref)
         if value is None:
@@ -610,7 +610,7 @@ class _Projector:
             dict_value = value.payload
             entries = dict_value.entries
             # Collision resolution over the ordered associations
-            # (projection.rs:1157-1810): Reject fails, First keeps the first
+            # (projection.rs): Reject fails, First keeps the first
             # occurrence, Last keeps the last; every discarded association
             # emits one AssociationDiscarded event and lifts fidelity to
             # Transformed.
@@ -694,7 +694,7 @@ class _Projector:
         )
 
     def _discard_event(self, position: int, dict_ref: PlistValueRef) -> None:
-        """One discarded association event (projection.rs:272-320)."""
+        """One discarded association event (projection.rs)."""
         self.events.append(
             ProjectionEvent(
                 ProjectionEventKind.ASSOCIATION_DISCARDED,
@@ -756,7 +756,7 @@ def _source_spans(document: PlistDocument, native) -> dict[int, Span]:
 
 def project(document: PlistDocument, request: ProjectionRequest) -> ProjectionResult:
     """Projects one complete plist document under one explicit target and
-    policy contract (RFC 0013 §9; projection.rs:405-412).
+    policy contract (RFC 0013 §9; projection.rs).
 
     The projection is atomic: a recovered source, an unpaired-surrogate
     string, an unrepresentable leaf, or a resource limit returns no partial
@@ -799,9 +799,9 @@ def project(document: PlistDocument, request: ProjectionRequest) -> ProjectionRe
             )
         else:
             # The require-object target carries the unique-key Object itself
-            # (projection.rs:1157-1810; the Go runner reads the projection
+            # (projection.rs; the Go runner reads the projection
             # value as a plain *core.Object — https://github.com/consema/consema-go/blob/main/go/conformance/plist_v1.go:
-            # 2636-2641), not a value-tree record wrapper.
+            # (记录定义), not a value-tree record wrapper.
             record = projector.project_require_object(native.root(), ValuePath.root(), 0)
     except PlistProjectionFailure as failure:
         return ProjectionResult.failed(

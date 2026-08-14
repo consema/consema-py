@@ -75,7 +75,7 @@ __all__ = [
 
 
 class ConversionFidelity(enum.Enum):
-    """Whole-conversion semantic fidelity (conversion.rs:42-51). The
+    """Whole-conversion semantic fidelity (conversion.rs). The
     ordering Exact < Transformed < Lossy is frozen: the overall fidelity is
     the worst fidelity across both stages."""
 
@@ -99,7 +99,7 @@ class MaterializationFidelity(enum.Enum):
 
 class ConversionProjectionReport:
     """Retains the complete format-owned projection report without
-    flattening its facts (conversion.rs:53-72). Exactly one family report is
+    flattening its facts (conversion.rs). Exactly one family report is
     set, matching the source family."""
 
     __slots__ = ("json", "toml", "yaml", "ini", "properties", "xml", "plist", "hcl")
@@ -140,7 +140,7 @@ class ConversionProjectionReport:
 
 class ConversionProjectionProvenance:
     """Retains the complete format-owned source provenance of the
-    projection stage (conversion.rs:74-93). Exactly one family provenance
+    projection stage (conversion.rs). Exactly one family provenance
     is set, matching the source family."""
 
     __slots__ = ("json", "toml", "yaml", "ini", "properties", "xml", "plist", "hcl")
@@ -209,7 +209,7 @@ class ConversionMaterializationProvenance:
 
 class ConversionReport:
     """The complete ordered report for both conversion stages
-    (conversion.rs:95-149)."""
+    (conversion.rs)."""
 
     __slots__ = (
         "projection_fidelity",
@@ -242,7 +242,7 @@ class ConversionReport:
 
 class CompleteConversion:
     """The complete conversion result with both provenance directions kept
-    distinct (conversion.rs:151-164)."""
+    distinct (conversion.rs)."""
 
     __slots__ = (
         "document",
@@ -273,7 +273,7 @@ class CompleteConversion:
 
 
 class ConversionFailureKind(enum.Enum):
-    """Classifies a conversion failure (conversion.rs:280-308). No failure
+    """Classifies a conversion failure (conversion.rs). No failure
     carries a partial target document."""
 
     PROJECTION_FAILED = "ProjectionFailed"
@@ -283,7 +283,7 @@ class ConversionFailureKind(enum.Enum):
 
 class ConversionFailure(Exception):
     """The typed conversion failure; implements the RFC 0016 §6 code
-    contract with the frozen registered codes (conversion.rs:310-333).
+    contract with the frozen registered codes (conversion.rs).
     Exactly one payload group is set per kind."""
 
     def __init__(

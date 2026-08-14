@@ -103,7 +103,7 @@ def test_materialization_utf16_output_carries_bom():
 
 
 def test_materialization_cross_document_sharing_fails():
-    # materialization.rs:353-369: YAML anchors are document-scoped, so a
+    # materialization.rs: YAML anchors are document-scoped, so a
     # graph node reachable from more than one root fails with
     # yaml.materialization.cross-document-sharing@1.
     from consema.graph import GraphBuilder, GraphMappingEntry, GraphLimits
@@ -176,7 +176,7 @@ def test_materialization_internal_errors_propagate_not_swallowed(monkeypatch):
     monkeypatch.undo()
 
     # The typed failures still map to their frozen attempts
-    # (materialization.rs:223-227).
+    # (materialization.rs).
     from consema.yaml.errors import (
         YamlFormationFailure,
         YamlFormationFailureKind,
@@ -205,7 +205,7 @@ def test_materialization_internal_errors_propagate_not_swallowed(monkeypatch):
 
 
 def test_materialization_float_canonical_e0():
-    # materialization.rs:719-728: a float canonical without "."/"e"/"E"
+    # materialization.rs: a float canonical without "."/"e"/"E"
     # gains "e0" so the tag and content reparse exactly.
     document = parse_source("1e3\n", YamlProfile.YAML12_CORE_V1)
     projected = project_value(document, ValueProjectionRequest.best_exact_v1())

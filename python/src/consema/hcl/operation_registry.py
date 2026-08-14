@@ -5,9 +5,9 @@ operation ids, target roles, argument schemas, and support classifications.
 `hcl.native@1` publishes all six structural operations; `hcl.tfvars@1`
 publishes the four attribute operations only, because the tfvars
 restriction admits no block (RFC 0014 §5, §10). The frozen surface is
-pinned by the registry tests (operation_registry.rs:100-157).
+pinned by the registry tests (operation_registry.rs).
 
-Frozen records (operation_registry.rs:26-80):
+Frozen records (operation_registry.rs):
 
 1. hcl.edit.insert-attribute@1     hcl.body      name(String), value(PortableValue), placement(Placement)   Supported
 2. hcl.edit.remove-attribute@1     hcl.attribute (no arguments)                                              Supported
@@ -31,7 +31,7 @@ from consema.hcl.kinds import HclProfile
 
 
 class OperationSupport(enum.Enum):
-    """Support classification (operation_registry.rs:26-28)."""
+    """Support classification (operation_registry.rs)."""
 
     SUPPORTED = "Supported"
 
@@ -46,7 +46,7 @@ class OperationArgumentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class OperationArgumentDescriptor:
-    """One operation argument schema (operation_registry.rs:96-98)."""
+    """One operation argument schema (operation_registry.rs)."""
 
     name: str
     kind: OperationArgumentKind
@@ -55,7 +55,7 @@ class OperationArgumentDescriptor:
 
 @dataclass(frozen=True, slots=True)
 class FormatOperationDescriptor:
-    """One validated immutable operation record (operation_registry.rs:82-94)."""
+    """One validated immutable operation record (operation_registry.rs)."""
 
     id: FormatOperationId
     target_role: str
@@ -70,7 +70,7 @@ class FormatOperationDescriptor:
 @dataclass(frozen=True, slots=True)
 class HclFormatOperationRegistry:
     """Validated operation registry for one exact HCL profile
-    (operation_registry.rs:16-23)."""
+    (operation_registry.rs)."""
 
     profile: ProfileId
     operations: tuple[FormatOperationDescriptor, ...]
@@ -107,7 +107,7 @@ def _argument(name: str, kind: OperationArgumentKind) -> tuple[str, OperationArg
 
 def _attribute_descriptors() -> tuple[FormatOperationDescriptor, ...]:
     """The attribute-only surface of `hcl.tfvars@1`
-    (operation_registry.rs:49-80)."""
+    (operation_registry.rs)."""
     return (
         _descriptor(
             "hcl.edit.insert-attribute@1",
@@ -134,7 +134,7 @@ def _attribute_descriptors() -> tuple[FormatOperationDescriptor, ...]:
 
 def _native_descriptors() -> tuple[FormatOperationDescriptor, ...]:
     """The full six-operation surface of `hcl.native@1`
-    (operation_registry.rs:26-46)."""
+    (operation_registry.rs)."""
     return _attribute_descriptors() + (
         _descriptor(
             "hcl.edit.insert-block@1",
@@ -152,10 +152,10 @@ def _native_descriptors() -> tuple[FormatOperationDescriptor, ...]:
 
 def format_operation_registry(profile: HclProfile) -> HclFormatOperationRegistry:
     """Returns the validated operation registry for one exact HCL profile
-    (operation_registry.rs:16-23).
+    (operation_registry.rs).
 
     The registry presents its operations in the frozen sorted order pinned
-    by the Rust registry test (operation_registry.rs:106-113):
+    by the Rust registry test (operation_registry.rs):
     insert-attribute, insert-block, remove-attribute, remove-block,
     rename-attribute, set-attribute-value for `hcl.native@1`.
     """

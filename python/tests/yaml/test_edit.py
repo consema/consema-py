@@ -15,7 +15,7 @@ Cases covered with the vector case ids cited:
   yaml.edit.anchor-dependency@1 (only the deleted subtree is collected;
   alias edges are never crossed).
 - The eight frozen operation ids
-  (https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs:16-82).
+  (https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs).
 
 Contract: RFC 0007 s12 (lines 355-398) — transactions are snapshot-bound
 and validate all operations before publishing a candidate; dry-run and
@@ -158,7 +158,7 @@ def test_edit_insert_alias_requires_visible_anchor():
 
 
 def test_edit_rename_updates_only_dependent_aliases():
-    # edit.rs:2791-2820: the second ``&x`` definition and its alias keep
+    # edit.rs: the second ``&x`` definition and its alias keep
     # the original name.
     source = "first: &x [one]\ncopy: *x\nother: &x [two]\ncopy2: *x\n"
     document = parse_source(source, YamlProfile.YAML12_CORE_V1)
@@ -174,7 +174,7 @@ def test_edit_rename_updates_only_dependent_aliases():
 
 
 def test_edit_wrong_snapshot_fails():
-    # edit.rs:404-406: a transaction bound to another snapshot fails with
+    # edit.rs: a transaction bound to another snapshot fails with
     # core.edit.wrong-snapshot@1.
     first = parse_source("a: 1\n", YamlProfile.YAML12_CORE_V1)
     second = parse_source("a: 1\n", YamlProfile.YAML12_CORE_V1)
@@ -191,7 +191,7 @@ def test_edit_wrong_snapshot_fails():
 
 
 def test_edit_structural_container_conflict():
-    # edit.rs:1974-2014: v1 accepts at most one structural mutation per
+    # edit.rs: v1 accepts at most one structural mutation per
     # base container in a transaction. Two insertions on the same container
     # first trip the duplicate-target check (the same NodeRef target); an
     # insert plus a removal on one container trips the container conflict.
@@ -227,7 +227,7 @@ def test_edit_structural_container_conflict():
 
 
 def test_operation_registry_frozen_surface():
-    # operation_registry.rs:107-135: exactly six Supported structural
+    # operation_registry.rs: exactly six Supported structural
     # operations for every profile and eight total records.
     for profile in (YamlProfile.YAML12_CORE_V1, YamlProfile.YAML11_COMPAT_V1):
         registry = format_operation_registry(profile)

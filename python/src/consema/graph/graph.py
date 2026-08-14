@@ -27,7 +27,7 @@ from consema.graph.errors import GraphBuildError, GraphBuildErrorKind
 
 
 class GraphNodeKind(enum.Enum):
-    """The three stable node kinds of PortableGraph@1 (lib.rs:50-58)."""
+    """The three stable node kinds of PortableGraph@1 (lib.rs)."""
 
     SCALAR = "Scalar"
     SEQUENCE = "Sequence"
@@ -39,7 +39,7 @@ class GraphNodeId:
 
     IDs are valid only for the completed graph built by that builder; their
     numeric values are not part of strict graph equality or canonical
-    encoding (lib.rs:28-35). ``as_u64()`` returns the builder-local numeric
+    encoding (lib.rs). ``as_u64()`` returns the builder-local numeric
     representation.
     """
 
@@ -86,7 +86,7 @@ class GraphMappingEntry:
 
 
 class GraphNode:
-    """One immutable tagged graph node (lib.rs:94-157)."""
+    """One immutable tagged graph node (lib.rs)."""
 
     __slots__ = ("tag", "content")
 
@@ -132,7 +132,7 @@ class GraphNode:
 
 @dataclass(frozen=True)
 class GraphLimits:
-    """Resource bounds for graph construction and traversal (lib.rs:160-190)."""
+    """Resource bounds for graph construction and traversal (lib.rs)."""
 
     max_roots: int = 1_000_000
     max_nodes: int = 1_000_000
@@ -251,7 +251,7 @@ class GraphBuilder:
         return self
 
     def _validate_tag(self, tag: str) -> None:
-        # lib.rs:447-456: empty tags, ASCII control characters, and ASCII
+        # lib.rs: empty tags, ASCII control characters, and ASCII
         # whitespace are invalid. (ASCII whitespace is ' ' plus the control
         # range 0x09-0x0D, so "code <= 0x20 or code == 0x7f" is the whole
         # set; non-ASCII whitespace is permitted.)
@@ -357,7 +357,7 @@ class PortableGraph:
 
 
 # --------------------------------------------------------------------------
-# canonical first-discovery traversal (lib.rs:542-578)
+# canonical first-discovery traversal (lib.rs)
 # --------------------------------------------------------------------------
 
 def _canonical_order(

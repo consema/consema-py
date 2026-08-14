@@ -161,7 +161,7 @@ def test_portable_comment_marker_and_empty_value():
 
 def test_portable_section_header_requires_line_end():
     # RFC 0009 §5 grammar: section = section-header line-end ...; a header
-    # at EOF without a line ending is malformed (parser.rs:353-357).
+    # at EOF without a line ending is malformed (parser.rs).
     document = parse(
         b"[s]",
         IniProfile.PORTABLE_V1,
@@ -377,7 +377,7 @@ def test_python_unicode16_optionxform():
 
 
 def test_python_optionxform_frozen_unicode_16_examples():
-    # Pinned optionxform examples (python_case.rs:239-244).
+    # Pinned optionxform examples (python_case.rs).
     from consema.ini.python_case import optionxform
 
     assert optionxform("Key") == "key"
@@ -444,7 +444,7 @@ def test_windows_encoding_gates():
 
 def test_portable_rejects_utf8_bom():
     # RFC 0009 §3.1: portable accepts UTF-8 without a BOM; a BOM is a
-    # profile error (parser.rs:68-69).
+    # profile error (parser.rs).
     with pytest.raises(IniFormationFailure) as caught:
         parse(
             b"\xef\xbb\xbf[s]\n",

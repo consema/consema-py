@@ -11,8 +11,8 @@ Golden cases transcribed from conformance/vectors/source-v1.json:
 - ``source.encoding.reject-utf16-odd`` (71-76) and
   ``reject-utf16-surrogate`` (77-82) -> core.source.invalid-sequence@1.
 
-Contract: RFC 0003 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
-64-122). Code registry: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
+Contract: RFC 0003 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md
+). Code registry: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
 (encoding-conflict@1:366, invalid-sequence@1:372, unsupported-bom@1:405).
 """
 
@@ -145,7 +145,7 @@ def test_reject_utf16_surrogate() -> None:
 
 def test_from_utf8_compat_surfaces_invalid_utf8_code() -> None:
     """from_utf8 maps invalid sequences to the invalid-utf8 code
-    (error_registry.rs:207; source.rs:553-568)."""
+    (error_registry.rs; source.rs)."""
     with pytest.raises(SourceError) as caught:
         SourceSnapshot.from_utf8(b"\x80")
     assert caught.value.kind is SourceErrorKind.INVALID_UTF8

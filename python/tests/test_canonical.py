@@ -83,7 +83,7 @@ def test_whitespace_is_non_canonical():
 
 
 def test_uppercase_hex_bits_are_non_canonical():
-    # BinaryFloat64 bits must be lowercase hex (value_transport.rs:215-224).
+    # BinaryFloat64 bits must be lowercase hex (value_transport.rs).
     canonical = encode_json(PortableValue.binary_float64(0x000000000000000A), LIMITS)
     assert b"000000000000000a" in canonical
     uppercase = canonical.replace(b"000000000000000a", b"000000000000000A")

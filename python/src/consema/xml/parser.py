@@ -4,7 +4,7 @@ bounded entity expansion, recovery, and exhaustive piece coverage
 
 Authority:
 
-- RFC 0012 §2 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:46-82) — source
+- RFC 0012 §2 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md) — source
   and encoding: UTF-8 (optional BOM) / UTF-16LE / UTF-16BE (required BOM);
   no-BOM defaults to UTF-8; the declaration uses version exactly ``1.0``
   and agrees with the selected encoding; raw CR/CRLF/LF spelling remains in
@@ -101,7 +101,7 @@ from consema.xml.kinds import XmlSyntaxKind
 from consema.xml.namespaces import NamespaceError, NamespaceScope
 
 # ---------------------------------------------------------------------------
-# Encoding selection (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs:69-79)
+# Encoding selection (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -114,7 +114,7 @@ class XmlEncodingSelectionKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class XmlEncodingSelection:
-    """Explicit document-entity encoding selection (lib.rs:69-79).
+    """Explicit document-entity encoding selection (lib.rs).
 
     No-BOM source defaults to UTF-8. An explicit caller choice is evidence,
     not permission to contradict a BOM or a declaration.
@@ -135,7 +135,7 @@ class XmlEncodingSelection:
 
 
 # ---------------------------------------------------------------------------
-# Parse limits (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs:81-157)
+# Parse limits (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs)
 # ---------------------------------------------------------------------------
 
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
@@ -164,7 +164,7 @@ _DEFAULT_MAX_RECOVERY_REGIONS = 100_000
 @dataclass(frozen=True, slots=True)
 class XmlParseLimits:
     """XML-specific formation, entity, and recovery limits (RFC 0012 §12;
-    lib.rs:81-157)."""
+    lib.rs)."""
 
     common: ParseLimits = field(default_factory=ParseLimits)
     max_decoded_utf8_bytes: int = _DEFAULT_MAX_DECODED_UTF8_BYTES
@@ -191,7 +191,7 @@ class XmlParseLimits:
 
     def entity_limits(self) -> EntityExpansionLimits:
         """Entity expansion limits derived from these parse limits
-        (lib.rs:159-172)."""
+        (lib.rs)."""
         return EntityExpansionLimits(
             max_declarations=self.max_entity_declarations,
             max_references=self.max_entity_references,
@@ -365,7 +365,7 @@ class _Parser:
 
     def _recover(self, code: str, span: Span, category: DiagnosticCategory) -> None:
         """Records a recovery diagnostic with its exact failing span
-        (parser.rs:1736-1749). The span lies inside token-covered bytes, so
+        (parser.rs). The span lies inside token-covered bytes, so
         it is not pushed as an additional structural piece."""
         self.recovered = True
         if self.error_regions >= self.limits.max_recovery_regions:
@@ -383,7 +383,7 @@ class _Parser:
 
     def _recover_error_region(self, start_scalar: int, end_scalar: int) -> None:
         """Recovers one tokenizer failure as an error region
-        (parser.rs:1759-1786)."""
+        (parser.rs)."""
         self.recovered = True
         if self.error_regions >= self.limits.max_recovery_regions:
             return
@@ -403,7 +403,7 @@ class _Parser:
         )
 
     def _entity_limit(self, breach, span: Span) -> None:
-        """Records one expansion breach recovery (parser.rs:1751-1757)."""
+        """Records one expansion breach recovery (parser.rs)."""
         self._recover(expansion_breach_code(breach), span, DiagnosticCategory.CONFORMANCE)
 
     # -- ordinal accounting ---------------------------------------------------
@@ -416,7 +416,7 @@ class _Parser:
     # -- content placement -----------------------------------------------------
 
     def _push_content(self, item: XmlContent) -> None:
-        """Attaches one child content occurrence (parser.rs:1403-1422)."""
+        """Attaches one child content occurrence (parser.rs)."""
         if self.stack:
             frame = self.stack[-1]
             if len(frame.children) >= self.limits.max_mixed_content_items:
@@ -430,7 +430,7 @@ class _Parser:
 
     def _push_whitespace_pieces(self, start_scalar: int, end_scalar: int) -> None:
         """Splits one whitespace-only text run into Whitespace and LineBreak
-        pieces; CRLF counts as one line break (parser.rs:1426-1458)."""
+        pieces; CRLF counts as one line break (parser.rs)."""
         segment = self.text[start_scalar:end_scalar]
         index = 0
         while index < len(segment):
@@ -460,7 +460,7 @@ class _Parser:
         self, start_scalar: int, end_scalar: int, literal_kind: XmlSyntaxKind
     ) -> list[ReferenceFragment]:
         """Splits one text or attribute-value occurrence into reference
-        fragments (parser.rs:1467-1555)."""
+        fragments (parser.rs)."""
         segment = self.text[start_scalar:end_scalar]
         if "&" not in segment:
             span = self._span(start_scalar, end_scalar)
@@ -515,7 +515,7 @@ class _Parser:
         self, body: str, ref_span: Span, depth: int
     ) -> ReferenceFragment | None:
         """Resolves one ``&…;`` reference body into a fragment
-        (parser.rs:1558-1645)."""
+        (parser.rs)."""
         if body.startswith("#"):
             digits = body[1:]
             hex_digits = None
@@ -566,7 +566,7 @@ class _Parser:
 
     def _resolve_nested(self, replacement: str, source_span: Span, depth: int) -> str | None:
         """Resolves nested references inside one replacement text
-        (parser.rs:1647-1692). Unknown references, cycles, or limit
+        (parser.rs). Unknown references, cycles, or limit
         breaches inside replacement text produce no partial native text."""
         if depth > self.limits.max_entity_expansion_depth:
             return None
@@ -597,7 +597,7 @@ class _Parser:
         self, start_scalar: int, end_scalar: int
     ) -> tuple[list[ReferenceFragment], str]:
         """Splits an attribute value into fragments and applies XML 1.0
-        CDATA normalization (parser.rs:1696-1729)."""
+        CDATA normalization (parser.rs)."""
         fragments = self._text_fragments(start_scalar, end_scalar, XmlSyntaxKind.ATTRIBUTE_VALUE)
         normalized: list[str] = []
         for fragment in fragments:
@@ -628,7 +628,7 @@ class _Parser:
         return self._finish()
 
     def _cover_bom(self) -> None:
-        """Covers a leading BOM as trivia (parser.rs:275-285)."""
+        """Covers a leading BOM as trivia (parser.rs)."""
         bom = self.source.encoding_facts().bom
         if bom is None:
             return
@@ -637,7 +637,7 @@ class _Parser:
 
     def _recover_and_resync(self, pos: int) -> int:
         """Recovers one tokenizer failure with a one-scalar error region and
-        resumes at the next ``<`` after the failure point (parser.rs:255-269)."""
+        resumes at the next ``<`` after the failure point (parser.rs)."""
         start = pos - 1 if pos > 0 else 0
         self._recover_error_region(start, pos)
         next_markup = self.text.find("<", pos + 1)
@@ -670,7 +670,7 @@ class _Parser:
         return self._start_tag(pos)
 
     def _declaration(self, pos: int) -> int:
-        """`<?xml …?>` declaration (parser.rs:334-503)."""
+        """`<?xml …?>` declaration (parser.rs)."""
         text = self.text
         end = text.find("?>", pos + 5)
         if end < 0:
@@ -757,7 +757,7 @@ class _Parser:
         return pos
 
     def _processing_instruction(self, pos: int) -> int:
-        """`<? …?>` (parser.rs:505-579)."""
+        """`<? …?>` (parser.rs)."""
         text = self.text
         end = text.find("?>", pos + 2)
         if end < 0:
@@ -818,7 +818,7 @@ class _Parser:
         return end + 2
 
     def _comment(self, pos: int) -> int:
-        """`<!-- … -->` (parser.rs:581-644)."""
+        """`<!-- … -->` (parser.rs)."""
         text = self.text
         end = text.find("-->", pos + 4)
         if end < 0:
@@ -849,7 +849,7 @@ class _Parser:
         return end + 3
 
     def _cdata(self, pos: int) -> int:
-        """`<![CDATA[ … ]]>` (parser.rs:1371-1401)."""
+        """`<![CDATA[ … ]]>` (parser.rs)."""
         text = self.text
         end = text.find("]]>", pos + 9)
         if end < 0:
@@ -869,7 +869,7 @@ class _Parser:
         return end + 3
 
     def _doctype(self, pos: int) -> int:
-        """`<!DOCTYPE …>` (parser.rs:646-911)."""
+        """`<!DOCTYPE …>` (parser.rs)."""
         text = self.text
         cursor = self._skip_spaces(pos + 9, len(text))
         name_start = cursor
@@ -925,7 +925,7 @@ class _Parser:
     def _scan_dtd_subset(self, bracket_pos: int) -> int:
         """Scans the internal subset between ``[`` and ``]>``, admitting
         entity declarations and comments, and flagging excluded declarations
-        (parser.rs:747-911). Returns the position of the closing ``>``, or
+        (parser.rs). Returns the position of the closing ``>``, or
         -1 when the subset cannot be proven."""
         text = self.text
         cursor = bracket_pos + 1
@@ -971,7 +971,7 @@ class _Parser:
         return -1
 
     def _entity_declaration(self, pos: int) -> int:
-        """`<!ENTITY name "value">` (parser.rs:747-849).
+        """`<!ENTITY name "value">` (parser.rs).
 
         The closing ``>`` is searched after the value's closing quote, so
         a ``>`` inside the replacement text cannot truncate the
@@ -1089,7 +1089,7 @@ class _Parser:
         return end + 1
 
     def _qname_facts(self, start: int, end: int, span: Span) -> QNameFacts:
-        """Builds QName facts from a scanned name span (parser.rs:1916-1942)."""
+        """Builds QName facts from a scanned name span (parser.rs)."""
         text = self.text[start:end]
         colon = text.find(":")
         if colon < 0:
@@ -1109,7 +1109,7 @@ class _Parser:
         )
 
     def _start_tag(self, pos: int) -> int:
-        """`<name …>` / `<name …/>` (parser.rs:913-961)."""
+        """`<name …>` / `<name …/>` (parser.rs)."""
         text = self.text
         cursor = pos + 1
         name_start = cursor
@@ -1157,7 +1157,7 @@ class _Parser:
         return cursor + 1
 
     def _scan_attributes(self, cursor: int) -> int:
-        """Scans attributes until ``>`` or ``/>`` (parser.rs:963-1063).
+        """Scans attributes until ``>`` or ``/>`` (parser.rs).
         Returns the position of the tag close, or -1 on a scan failure."""
         text = self.text
         while True:
@@ -1243,7 +1243,7 @@ class _Parser:
 
     def _finalize_start_tag(self) -> None:
         """Resolves element and attribute names once the whole start tag has
-        been read (parser.rs:1065-1174)."""
+        been read (parser.rs)."""
         frame = self.stack[-1]
         pending_declarations = frame.pending_declarations
         pending_attributes = frame.pending_attributes
@@ -1315,7 +1315,7 @@ class _Parser:
         frame.attributes.extend(attributes)
 
     def _end_tag(self, pos: int) -> int:
-        """`</name>` (parser.rs:1215-1246)."""
+        """`</name>` (parser.rs)."""
         text = self.text
         cursor = pos + 2
         name_start = cursor
@@ -1347,7 +1347,7 @@ class _Parser:
 
     def _push_qname_parts(self, start: int, end: int) -> None:
         """Pushes the QName part pieces for one element or end-tag name
-        (parser.rs:1945-1976)."""
+        (parser.rs)."""
         text = self.text[start:end]
         colon = text.find(":")
         if colon < 0:
@@ -1366,7 +1366,7 @@ class _Parser:
         )
 
     def _close_frame(self, end_tag_span: Span) -> None:
-        """Closes one element frame (parser.rs:1250-1305)."""
+        """Closes one element frame (parser.rs)."""
         if not self.stack:
             self._recover("xml.tree.extra-end-tag@1", end_tag_span, DiagnosticCategory.SYNTAX)
             return
@@ -1407,7 +1407,7 @@ class _Parser:
             )
 
     def _text_run(self, pos: int) -> int:
-        """One character-data run (parser.rs:1307-1369)."""
+        """One character-data run (parser.rs)."""
         text = self.text
         cursor = pos
         while cursor < len(text) and text[cursor] != "<":
@@ -1426,7 +1426,7 @@ class _Parser:
                 return cursor
             # Non-whitespace character data outside the document element is
             # recovered; the piece is an error region and the literal text is
-            # still preserved as an orphan text occurrence (parser.rs:1322-1344).
+            # still preserved as an orphan text occurrence (parser.rs).
             self._recover("xml.syntax.text-outside-root@1", raw_span, DiagnosticCategory.SYNTAX)
             self._push_piece(
                 raw_span, XmlSyntaxKind.ERROR_REGION, StructuralPieceKind.ERROR_REGION
@@ -1475,7 +1475,7 @@ class _Parser:
 
     def _build_doctype(self, end_span: Span) -> None:
         """Assembles the immutable DOCTYPE facts once its end is known
-        (parser.rs:691-711)."""
+        (parser.rs)."""
         if self.doctype_span_start is None or self.doctype_name is None:
             return
         span = self._span_raw(self.doctype_span_start, end_span.end_byte)
@@ -1487,7 +1487,7 @@ class _Parser:
         )
 
     def _finish(self) -> Document:
-        """Completes formation (parser.rs:1792-1914)."""
+        """Completes formation (parser.rs)."""
         if self.stack:
             self.recovered = True
             self.diagnostics.append(
@@ -1601,7 +1601,7 @@ def parse(
     limits: XmlParseLimits,
 ) -> Document:
     """Forms one `xml.1.0-safe@1` document from a complete document entity
-    (lib.rs:174-186; parser.rs:22-46).
+    (lib.rs; parser.rs).
 
     The Profile is selected before formation and never by extension. The
     parser consumes the supplied bytes and opens no other entity, file, URI,
@@ -1648,7 +1648,7 @@ def parse_with_profile(
     limits: XmlParseLimits | None = None,
 ) -> Document:
     """Convenience formation for the single frozen profile
-    ``xml.1.0-safe@1`` (lib.rs:61-66)."""
+    ``xml.1.0-safe@1`` (lib.rs)."""
     return parse(
         source_bytes,
         XmlProfile.SAFE_V1,
@@ -1659,7 +1659,7 @@ def parse_with_profile(
 
 def _encoding_request(selection: XmlEncodingSelection) -> EncodingRequest:
     """Resolves the source encoding request under the RFC 0012 §2 table
-    (parser.rs:56-80)."""
+    (parser.rs)."""
     if selection.kind is XmlEncodingSelectionKind.PROFILE_DEFAULT:
         return EncodingRequest.new(SourceEncoding.utf8()).with_bom_policy(
             BomPolicy.DETECT_UNICODE
@@ -1678,7 +1678,7 @@ def _encoding_request(selection: XmlEncodingSelection) -> EncodingRequest:
 
 def _validate_profile_encoding(source: SourceSnapshot, selection: XmlEncodingSelection) -> None:
     """Validates the resolved encoding under the RFC 0012 §2 table
-    (parser.rs:82-108)."""
+    (parser.rs)."""
     facts = source.encoding_facts()
     if selection.kind is XmlEncodingSelectionKind.PROFILE_DEFAULT:
         valid = facts.selected.kind in (

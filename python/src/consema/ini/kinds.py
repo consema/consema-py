@@ -4,33 +4,33 @@ Frozen names/numbers with authority citations (language-neutral first; Rust
 only for registry/byte arbitration):
 
 - ``IniProfile``: the three profile identities — https://github.com/consema/consema-rs/blob/main/consema-ini/src/
-  lib.rs:37-44 (enum), lib.rs:49-55 (id()); the profile ids
+  lib.rs (enum), lib.rs (id()); the profile ids
   ini.portable@1 / ini.windows@1 / ini.python-configparser@1 are the frozen
   language-neutral spellings (RFC 0009 §1,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:22-26).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
 - ``IniSyntaxKind``: the closed 14-kind lossless classification with the
   exact stable names ("Bom", "Whitespace", "LineBreak", "CommentMarker",
   "CommentText", "SectionOpen", "SectionName", "SectionClose", "EntryKey",
   "Delimiter", "Quote", "EntryValue", "ContinuationMarker", "ErrorRegion")
-  — lib.rs:123-152 (enum), lib.rs:157-173 (as_str), lib.rs:176-194
+  — lib.rs (enum), lib.rs (as_str), lib.rs
   (from_name); the lossless syntax domain lists exactly this vocabulary
-  (RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:306-313).
-- ``IniValueState``: Missing | Empty | Present — lib.rs:198-206; the
+  (RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
+- ``IniValueState``: Missing | Empty | Present — lib.rs; the
   ``ini.entry-value-state-is@1`` argument accepts exactly these three
-  spellings (RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:330-331).
-- ``IniQuoteStyle``: None | Single | Double — lib.rs:209-217 (Windows
-  profile outer-quote facts, RFC 0009 §6, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:199-202).
-- ``IniLogicalLineKind``: Section | Entry | Error — lib.rs:220-228.
-- ``IniEncodingSelection``: ProfileDefault | Explicit — lib.rs:59-65
+  spellings (RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
+- ``IniQuoteStyle``: None | Single | Double — lib.rs (Windows
+  profile outer-quote facts, RFC 0009 §6, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
+- ``IniLogicalLineKind``: Section | Entry | Error — lib.rs.
+- ``IniEncodingSelection``: ProfileDefault | Explicit — lib.rs
   (RFC 0009 §3: no-BOM bytes never imply the machine's active code page;
   the caller must select an explicit code page).
-- ``IniParseLimits`` defaults — lib.rs:100-118 (common ParseLimits plus
+- ``IniParseLimits`` defaults — lib.rs (common ParseLimits plus
   the INI-specific decoded/line/record/group limits; the resource names
   are pinned by conformance/vectors/ini-v1.json:108-128,
   resource.formation-limit-matrix).
-- Windows name/value character tables: parser.rs:1336-1339 (is_windows_name)
-  and materialization.rs:869-872, 874-888 (is_windows_name /
-  windows_value_needs_quotes); portable tables parser.rs:1327-1334.
+- Windows name/value character tables: parser.rs (is_windows_name)
+  and materialization.rs (is_windows_name /
+  windows_value_needs_quotes); portable tables parser.rs.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ from consema.document.ids import ProfileId
 from consema.document.limits import ParseLimits
 from consema.document.source import SourceEncoding
 
-# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:100-118.
+# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs.
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
 _DEFAULT_MAX_DECODED_SCALARS = 64 * 1024 * 1024
 _DEFAULT_MAX_PHYSICAL_LINES = 2_000_000
@@ -59,13 +59,13 @@ _DEFAULT_MAX_RECOVERY_REGIONS = 100_000
 
 
 class IniProfile(enum.Enum):
-    """Frozen INI formation profile (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:37-44).
+    """Frozen INI formation profile (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs).
 
     The profiles share bounded source decoding, physical-line scanning,
     immutable snapshot identity, lossless coverage, transaction, proof, and
     patch infrastructure; they do not share accepted encoding, delimiter,
     comment, continuation, case-equivalence, quote, duplicate, or canonical
-    generation rules (RFC 0009 §1, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:29-32).
+    generation rules (RFC 0009 §1, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
     """
 
     PORTABLE_V1 = "ini.portable"
@@ -73,13 +73,13 @@ class IniProfile(enum.Enum):
     PYTHON_CONFIGPARSER_V1 = "ini.python-configparser"
 
     def id(self) -> ProfileId:
-        """Immutable profile identifier (lib.rs:49-55)."""
+        """Immutable profile identifier (lib.rs)."""
         return ProfileId.new(self.value, 1)
 
 
 class IniEncodingSelection:
     """Explicit source-encoding selection; no host locale is consulted
-    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:59-65; RFC 0009 §3)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs; RFC 0009 §3)."""
 
     __slots__ = ("kind", "encoding")
 
@@ -117,8 +117,8 @@ class IniEncodingSelection:
 
 class IniSyntaxKind(enum.Enum):
     """Closed INI lossless syntax-piece classification
-    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:123-152; RFC 0009 §9,
-    https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:306-313)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs; RFC 0009 §9,
+    https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md)."""
 
     BOM = "Bom"
     WHITESPACE = "Whitespace"
@@ -136,12 +136,12 @@ class IniSyntaxKind(enum.Enum):
     ERROR_REGION = "ErrorRegion"
 
     def as_str(self) -> str:
-        """Stable query and protocol name (lib.rs:157-173)."""
+        """Stable query and protocol name (lib.rs)."""
         return self.value
 
     @classmethod
     def from_name(cls, name: str) -> IniSyntaxKind | None:
-        """Resolves one exact stable kind name (lib.rs:176-194)."""
+        """Resolves one exact stable kind name (lib.rs)."""
         try:
             return cls(name)
         except ValueError:
@@ -149,11 +149,11 @@ class IniSyntaxKind(enum.Enum):
 
 
 class IniValueState(enum.Enum):
-    """Native value-presence fact (lib.rs:198-206).
+    """Native value-presence fact (lib.rs).
 
     ``Missing`` is only carried by recovered error records in v1;
     ``key=`` is Empty, never converted to Missing (RFC 0009 §5,
-    https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:176-177).
+    https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
     """
 
     MISSING = "Missing"
@@ -162,7 +162,7 @@ class IniValueState(enum.Enum):
 
 
 class IniQuoteStyle(enum.Enum):
-    """Profile-recognized outer quote style (lib.rs:209-217; RFC 0009 §6)."""
+    """Profile-recognized outer quote style (lib.rs; RFC 0009 §6)."""
 
     NONE = "None"
     SINGLE = "Single"
@@ -170,7 +170,7 @@ class IniQuoteStyle(enum.Enum):
 
 
 class IniLogicalLineKind(enum.Enum):
-    """Kind of one logical INI record (lib.rs:220-228)."""
+    """Kind of one logical INI record (lib.rs)."""
 
     SECTION = "Section"
     ENTRY = "Entry"
@@ -179,13 +179,13 @@ class IniLogicalLineKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class IniParseLimits:
-    """INI-specific parse and recovery limits (lib.rs:69-98).
+    """INI-specific parse and recovery limits (lib.rs).
 
     ``common`` holds the shared source/node/piece/nesting/diagnostic limits;
     the remaining fields bound decoded text, physical/logical lines,
     continuations, sections, entries, duplicate-group members, and recovery
     regions. Exceeding any limit is a fatal formation failure; there is no
-    truncation-then-success (RFC 0009 §13, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:476-489).
+    truncation-then-success (RFC 0009 §13, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md).
     """
 
     common: ParseLimits = ParseLimits()
@@ -205,18 +205,18 @@ class IniParseLimits:
 
 
 # -- profile character tables -------------------------------------------------
-# Transcribed verbatim from https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs:1323-1339 and
-# materialization.rs:860-888; these tables are the byte authority for every
+# Transcribed verbatim from https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs and
+# materialization.rs; these tables are the byte authority for every
 # formation and edit name/value validation.
 
 
 def is_horizontal(byte: int) -> bool:
-    """Space or horizontal tab (parser.rs:1323-1325)."""
+    """Space or horizontal tab (parser.rs)."""
     return byte in (0x20, 0x09)
 
 
 def is_portable_name(byte: int) -> bool:
-    """ASCII alphanumeric plus ``_`` ``-`` ``.`` (parser.rs:1327-1329)."""
+    """ASCII alphanumeric plus ``_`` ``-`` ``.`` (parser.rs)."""
     return (
         0x30 <= byte <= 0x39
         or 0x41 <= byte <= 0x5A
@@ -227,13 +227,13 @@ def is_portable_name(byte: int) -> bool:
 
 def is_portable_value(byte: int) -> bool:
     """ASCII graphic excluding quote/backslash/colon/#/; plus space
-    (parser.rs:1331-1334)."""
+    (parser.rs)."""
     return (0x21 <= byte <= 0x7E and byte not in (0x22, 0x27, 0x5C, 0x3A, 0x23, 0x3B)) or byte == 0x20
 
 
 def is_windows_name(byte: int) -> bool:
     """ASCII graphic or space, excluding ``[`` ``]`` ``=`` NUL CR LF
-    (parser.rs:1336-1339)."""
+    (parser.rs)."""
     return (
         (0x21 <= byte <= 0x7E or byte == 0x20)
         and byte not in (0x5B, 0x5D, 0x3D, 0x00, 0x0D, 0x0A)
@@ -241,7 +241,7 @@ def is_windows_name(byte: int) -> bool:
 
 
 def windows_value_needs_quotes(value: str) -> bool:
-    """Deterministic Windows quoting decision (materialization.rs:874-888).
+    """Deterministic Windows quoting decision (materialization.rs).
 
     Quotes are needed exactly when the value starts or ends with horizontal
     whitespace, or when it begins and ends with the same quote character.

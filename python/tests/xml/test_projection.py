@@ -3,7 +3,7 @@ explicit policy targets (RFC 0012 §9).
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
 test); https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs (byte/registry arbitration);
-RFC 0012 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:313-348) and
+RFC 0012 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md) and
 RFC 0004 §8 (provenance).
 
 These tests are delivered: the full suite runs in CI (ci-python.yml
@@ -143,7 +143,7 @@ def test_text_fragments_are_preserved():
 
 def test_projection_provenance_is_direct_and_complete():
     """Every emitted value carries a source origin with a direct relation
-    and exact raw span (RFC 0004 §8, lines 193-217; projection.rs:553-572)."""
+    and exact raw span (RFC 0004 §8, lines 193-217; projection.rs)."""
     doc = _doc(b'<root a="1"><child>t</child></root>')
     result = project_document(doc, ProjectionRequest.element_tree())
     assert len(result.provenance.entries) > 0
@@ -161,7 +161,7 @@ def test_projection_provenance_is_direct_and_complete():
 
 def test_text_content_is_always_transformed():
     """text-content projection is always Transformed and reports every
-    discarded element, attribute, comment, and PI (projection.rs:975-1095)."""
+    discarded element, attribute, comment, and PI (projection.rs)."""
     doc = _doc(b"<root>a<child b=\"1\">c</child><!--d--><?pi e?>f</root>")
     result = project_document(doc, ProjectionRequest.text_content(
         doc.root().node_ref(), TextContentInclude.TEXT_AND_CDATA
@@ -178,8 +178,8 @@ def test_text_content_is_always_transformed():
 def test_simple_entry_mapping_rejects_ambiguity():
     """Simple-entry-mapping is admitted only without ambiguity; the default
     for any omitted policy is failure, not LastWins (RFC 0012 §9, lines
-    334-345). A repeated expanded child under Reject is a collision
-    (projection.rs:1161-1198 -> xml.projection.collision@1)."""
+). A repeated expanded child under Reject is a collision
+    (projection.rs -> xml.projection.collision@1)."""
     doc = _doc(b"<root><a>1</a><a>2</a></root>")
     result = project_document(doc, ProjectionRequest.simple_entry_mapping(
         doc.root().node_ref(),
@@ -194,7 +194,7 @@ def test_simple_entry_mapping_rejects_ambiguity():
 
 def test_simple_entry_mapping_prefix_attribute_keys():
     """The attribute ``@`` prefix is an explicit policy, never an automatic
-    convention (projection.rs:1269-1288)."""
+    convention (projection.rs)."""
     doc = _doc(b'<root a="1"><child>x</child></root>')
     result = project_document(doc, ProjectionRequest.simple_entry_mapping(
         doc.root().node_ref(),

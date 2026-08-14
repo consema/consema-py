@@ -171,18 +171,18 @@ from consema.plist.query import (
     execute_plist_syntax_query,
 )
 
-# Frozen profile and domain ids (RFC 0013 §1/§8; lib.rs:83-92).
+# Frozen profile and domain ids (RFC 0013 §1/§8; lib.rs).
 PLIST_XML_PROFILE = "plist.xml@1"
 PLIST_BINARY_PROFILE = "plist.binary@1"
 NATIVE_QUERY_DOMAIN_V1 = "plist.native-semantic-query@1"
 LOSSLESS_SYNTAX_QUERY_DOMAIN_V1 = "plist.lossless-syntax-query@1"
 BINARY_STRUCTURE_QUERY_DOMAIN_V1 = "plist.binary-structure-query@1"
 
-# Frozen materialization styles (RFC 0013 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:640-673).
+# Frozen materialization styles (RFC 0013 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md).
 PLIST_XML_CANONICAL_STYLE = "plist.xml-canonical@1"
 PLIST_BINARY_CANONICAL_STYLE = "plist.binary-canonical@1"
 
-# Frozen projection targets (RFC 0013 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:600-631).
+# Frozen projection targets (RFC 0013 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md).
 PLIST_PROJECTION_VALUE_TREE = "plist.projection.value-tree@1"
 PLIST_PROJECTION_REQUIRE_OBJECT = "plist.projection.require-object@1"
 

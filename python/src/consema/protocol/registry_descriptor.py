@@ -51,7 +51,7 @@ from consema.protocol.schema import (
 # --------------------------------------------------------------------------
 
 class ProfileReference:
-    """A versioned reference to a Profile (registry.rs:14-46).
+    """A versioned reference to a Profile (registry.rs).
 
     Unlike contract IDs, profile IDs may contain numeric segments
     (validate_namespace with require_dot=True).
@@ -83,7 +83,7 @@ class ProfileReference:
 
 
 class ProfileDescriptor:
-    """An immutable language profile registry descriptor (registry.rs:48-250)."""
+    """An immutable language profile registry descriptor (registry.rs)."""
 
     __slots__ = (
         "format_family_id",
@@ -297,7 +297,7 @@ def parse_verification_status(name: str) -> VerificationStatus:
 
 class CapabilityDeclaration:
     """One implementation's support and verification claim for a capability
-    (registry.rs:252-439)."""
+    (registry.rs)."""
 
     __slots__ = ("capability", "support", "verification", "suite_id")
 

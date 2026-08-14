@@ -1,13 +1,13 @@
 """The JSON-family format operation registry (8 frozen records).
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-json/src/operation_registry.rs:16-98 — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-json/src/operation_registry.rs — the exact
 operation ids, target roles, argument schemas, and support classifications;
 the structural surface is frozen by the registry test
-(operation_registry.rs:105-129: exactly six Supported structural operations
+(operation_registry.rs: exactly six Supported structural operations
 for every profile and eight total records) and RFC 0005 §10
-(https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:220-241: move-member@1 raises the registry to eight).
+(https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md: move-member@1 raises the registry to eight).
 
-Frozen records (operation_registry.rs:18-79):
+Frozen records (operation_registry.rs):
 
 1. json.edit.insert-member@1         json.object        name(String), value(PortableValue), placement(Placement)   Supported
 2. json.edit.remove-member@1         json.object-member (no arguments)                                              Supported
@@ -19,9 +19,9 @@ Frozen records (operation_registry.rs:18-79):
 8. json.edit.replace-scalar-literal@1   json.scalar     literal(ExactBytes)                                         ExistingTypedCapability
 
 Operation ids/versions and the ``id@version`` display form are frozen by
-consema-document (FormatOperationId, operation_registry.rs:10-42); the
+consema-document (FormatOperationId, operation_registry.rs); the
 EditPlan operation-metadata matching rule requires that form
-(edit_plan.rs:84-121).
+(edit_plan.rs).
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ from consema.json.kinds import JsonProfile
 
 
 class OperationSupport(enum.Enum):
-    """Support classification (operation_registry.rs:26-28, 71-78)."""
+    """Support classification (operation_registry.rs)."""
 
     SUPPORTED = "Supported"
     EXISTING_TYPED_CAPABILITY = "ExistingTypedCapability"
@@ -52,7 +52,7 @@ class OperationArgumentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class OperationArgumentDescriptor:
-    """One operation argument schema (operation_registry.rs:96-98)."""
+    """One operation argument schema (operation_registry.rs)."""
 
     name: str
     kind: OperationArgumentKind
@@ -61,7 +61,7 @@ class OperationArgumentDescriptor:
 
 @dataclass(frozen=True, slots=True)
 class FormatOperationDescriptor:
-    """One validated immutable operation record (operation_registry.rs:82-94)."""
+    """One validated immutable operation record (operation_registry.rs)."""
 
     id: FormatOperationId
     target_role: str
@@ -76,7 +76,7 @@ class FormatOperationDescriptor:
 @dataclass(frozen=True, slots=True)
 class JsonFormatOperationRegistry:
     """Validated operation registry for one exact JSON-family profile
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
 
     profile: ProfileId
     operations: tuple[FormatOperationDescriptor, ...]
@@ -113,7 +113,7 @@ def _argument(name: str, kind: OperationArgumentKind) -> tuple[str, OperationArg
 
 
 def descriptors() -> tuple[FormatOperationDescriptor, ...]:
-    """The frozen eight-record descriptor set (operation_registry.rs:16-80)."""
+    """The frozen eight-record descriptor set (operation_registry.rs)."""
     return (
         _descriptor(
             "json.edit.insert-member@1",
@@ -178,7 +178,7 @@ def descriptors() -> tuple[FormatOperationDescriptor, ...]:
 
 def format_operation_registry(profile: JsonProfile) -> JsonFormatOperationRegistry:
     """Returns the validated operation registry for one exact JSON-family
-    profile (operation_registry.rs:9-14)."""
+    profile (operation_registry.rs)."""
     return JsonFormatOperationRegistry(
         profile=profile.id(),
         operations=descriptors(),

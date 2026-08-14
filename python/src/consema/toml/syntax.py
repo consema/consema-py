@@ -3,13 +3,13 @@
 Authority:
 
 - The closed twelve-kind vocabulary is frozen by https://github.com/consema/consema-rs/blob/main/consema-toml/src/
-  lib.rs:41-109 (TomlSyntaxKind and its stable query/protocol names
+  lib.rs (TomlSyntaxKind and its stable query/protocol names
   "Whitespace", "Newline", "Comment", "String", "Bare", "Equals",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Comma", "Dot").
   The Python query validation table already freezes the same spellings
   (consema.protocol query.py:1075-1079 _is_toml_syntax_kind).
 - The tokenizer transcribes the byte classification of
-  https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs:360-501 (tokenize / is_punctuation /
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs (tokenize / is_punctuation /
   punctuation_kind / string_end): space and tab are Whitespace trivia; LF,
   CRLF, and a bare CR are Newline trivia; ``#`` to end of line is Comment
   trivia; ``'``/``"`` start a String token scanned to its closing quote
@@ -17,14 +17,14 @@ Authority:
   bytes ``= [ ] { } , .`` are one-byte tokens; everything else forms a Bare
   token ending at whitespace, ``#``, punctuation, or a quote.
 - StructuralPiece kinds: Token for string/bare/punctuation, Trivia for
-  whitespace/newline/comment (parser.rs:370-412).
-- RFC 0001 §2 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:18): the token/trivia
+  whitespace/newline/comment (parser.rs).
+- RFC 0001 §2 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md): the token/trivia
   index must cover all input with no gaps and no overlaps; the
   LosslessStructuralIndex validates exactly that.
 - max_token_count bounds tokens plus trivia/error regions during
-  tokenization (parser.rs:413-420; consema-document lib.rs:629-639
+  tokenization (parser.rs; consema-document lib.rs
   default 2_000_000); the delimiter-nesting preflight enforces
-  max_nesting_depth before the semantic parse (parser.rs:433-461) so a
+  max_nesting_depth before the semantic parse (parser.rs) so a
   pathological open-delimiter document fails before deep recursion.
 """
 
@@ -45,7 +45,7 @@ from consema.toml.errors import TomlFormationFailure
 
 class TomlSyntaxKind(enum.Enum):
     """One format-specific lossless classification of a source piece
-    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/lib.rs:41-68)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/lib.rs)."""
 
     WHITESPACE = "Whitespace"
     NEWLINE = "Newline"
@@ -61,12 +61,12 @@ class TomlSyntaxKind(enum.Enum):
     DOT = "Dot"
 
     def as_str(self) -> str:
-        """Stable query and protocol name (lib.rs:70-88)."""
+        """Stable query and protocol name (lib.rs)."""
         return self.value
 
     @classmethod
     def from_name(cls, name: str) -> TomlSyntaxKind | None:
-        """Resolves one exact stable kind name (lib.rs:90-108)."""
+        """Resolves one exact stable kind name (lib.rs)."""
         try:
             return cls(name)
         except ValueError:
@@ -101,7 +101,7 @@ def tokenize(
     max_token_count: int,
 ) -> tuple[list[StructuralPiece], list[TomlSyntaxKind]]:
     """Exhaustive ordered token/trivia coverage of one decoded UTF-8 source
-    (parser.rs:360-431).
+    (parser.rs).
 
     Returns parallel lists (pieces, kinds); raises a fatal
     resource-limit failure when the token count (pieces, including trivia)
@@ -140,7 +140,7 @@ def tokenize(
             syntax_kind = _PUNCTUATION_KINDS[byte]
         else:
             # Bare runs stop at ASCII whitespace, '#', punctuation, and
-            # quotes; non-ASCII bytes continue the run (parser.rs:402-410).
+            # quotes; non-ASCII bytes continue the run (parser.rs).
             end = cursor + 1
             while (
                 end < length
@@ -170,7 +170,7 @@ def tokenize(
 
 def _string_end(bytes_source: bytes, start: int) -> int:
     """Scan one string token to its closing quote
-    (parser.rs:480-499): escape-aware for basic strings, triple-quote
+    (parser.rs): escape-aware for basic strings, triple-quote
     aware, and falling back to end-of-source for unterminated strings (the
     semantic parser reports the real syntax error; the tokenizer must still
     produce exact coverage)."""
@@ -197,7 +197,7 @@ def preflight_delimiter_nesting(
     max_depth: int,
 ) -> None:
     """Preflight [/{ nesting depth over tokens before the semantic parse
-    (parser.rs:433-461): a depth exceeding ``max_nesting_depth`` is a fatal
+    (parser.rs): a depth exceeding ``max_nesting_depth`` is a fatal
     resource-limit failure named ``nesting_depth``."""
     depth = 0
     bytes_source = source.encode("utf-8")

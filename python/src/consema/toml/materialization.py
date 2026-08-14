@@ -3,7 +3,7 @@
 Authority:
 
 - RFC 0004 §3/§4/§6 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
-  structural-edit-v1.md:56-94, 98-127, 150-168): the common
+  structural-edit-v1.md): the common
   MaterializationRequest; the frozen style ``toml.canonical-document@1``;
   TOML requires a root Object (or an explicit
   UniqueStringEntriesToObject EntryMapping conversion), accepts
@@ -11,16 +11,16 @@ Authority:
   OffsetDateTime/Sequence/Object recursively, requires signed 64-bit
   integers, rejects non-canonical NaN payloads, and never interprets
   duplicate keys.
-- The writer transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/materialization.rs:
+- The writer transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/materialization.rs
   request validation 81-99; canonical string/key escaping 353-380 (same
-  escape set as the canonical literal, edit.rs:1516-1537); float
+  escape set as the canonical literal, edit.rs); float
   canonicalization 382-407 (canonical NaN payloads ``nan``/``-nan``,
   ``inf``/``-inf``, decimal with ``.0`` appended when integral); temporal
   canonicalization 409-486 (four-digit year 0-9999, nanosecond fraction
   with trailing zeros stripped, ``Z`` for zero offset, whole-minute
   offsets only); sequence ``[a, b]`` and inline object ``{ k = v }``
   layouts 488-536; one assignment per root entry and one final newline
-  211-259; parse limits derived from materialization limits 178-186;
+ ; parse limits derived from materialization limits ;
   provenance collection 613-864 (Direct for Object values/associations,
   Reencoded for EntryMapping, Generated for array element associations).
 - The completion algebra reuses consema.document.materialization
@@ -71,7 +71,7 @@ class MaterializationEvent:
     Exact TOML materializations emit no events; the explicit
     UniqueStringEntriesToObject conversion emits exactly one
     ``core.materialization.mapping-transformed@1`` event with the from/
-    policy/to arguments (RFC 0004 §3; error_registry.rs:568). The event
+    policy/to arguments (RFC 0004 §3; error_registry.rs). The event
     record shape follows core.materialization-report@1; the protocol agent
     owns the wire record.
     """
@@ -84,7 +84,7 @@ def materialize(
     value: PortableValue, request: MaterializationRequest
 ) -> MaterializationResult:
     """Materializes one complete PortableValue into a new immutable TOML
-    document (materialization.rs:19-34)."""
+    document (materialization.rs)."""
     try:
         complete = _materialize_complete(value, request)
         return complete
@@ -100,7 +100,7 @@ def canonical_fragment(
     value: PortableValue, limits: MaterializationLimits
 ) -> bytes:
     """Renders one canonical TOML value fragment for structural editing
-    (materialization.rs:36-45). Raises MaterializationFailure."""
+    (materialization.rs). Raises MaterializationFailure."""
     writer = _TomlWriter(NewlinePolicy.LF, limits)
     writer.value(value, ValuePath.root(), 0)
     return writer.output
@@ -158,7 +158,7 @@ def _materialize_complete(
 
 
 def _requested_contract(request: MaterializationRequest) -> None:
-    """materialization.rs:81-99."""
+    """materialization.rs."""
     if (request.target_profile.id, request.target_profile.version) != ("toml.1.0", 1):
         raise MaterializationFailure(MaterializationFailureKind.UNSUPPORTED_PROFILE)
     if (request.style.id, request.style.version) != ("toml.canonical-document", 1):
@@ -172,11 +172,11 @@ def _requested_contract(request: MaterializationRequest) -> None:
 def _prepare_root(
     value: PortableValue, request: MaterializationRequest
 ) -> tuple[list[tuple[str, PortableValue]], bool]:
-    """materialization.rs:101-176: a root Object is exact; an EntryMapping
+    """materialization.rs: a root Object is exact; an EntryMapping
     needs the explicit UniqueStringEntriesToObject policy and unique
     String keys, reported as Transformed (the mapping-transformed event
     carries code core.materialization.mapping-transformed@1 with
-    from/policy/to arguments, error_registry.rs:568)."""
+    from/policy/to arguments, error_registry.rs)."""
     if value.kind.value == "Object":
         return list(value.as_object()), False
     if value.kind.value != "EntryMapping":
@@ -205,7 +205,7 @@ def _prepare_root(
 
 class _TomlWriter:
     """The canonical TOML writer with resource limits
-    (materialization.rs:188-607)."""
+    (materialization.rs)."""
 
     __slots__ = ("newline", "limits", "input_nodes", "output")
 
@@ -248,7 +248,7 @@ class _TomlWriter:
         newline: NewlinePolicy,
     ) -> None:
         """One assignment per root entry, one final newline
-        (materialization.rs:211-259)."""
+        (materialization.rs)."""
         self.analyze(0)
         newline_bytes = newline.bytes
         for key, entry_value in entries:
@@ -302,7 +302,7 @@ class _TomlWriter:
             )
 
     def write_string(self, value: str) -> None:
-        """Canonical basic-string escaping (materialization.rs:353-380)."""
+        """Canonical basic-string escaping (materialization.rs)."""
         self.push('"')
         for character in value:
             code = ord(character)
@@ -327,7 +327,7 @@ class _TomlWriter:
         self.push('"')
 
     def write_float(self, bits: int) -> None:
-        """materialization.rs:382-407: canonical NaN payloads ``nan`` and
+        """materialization.rs: canonical NaN payloads ``nan`` and
         ``-nan``, ``inf``/``-inf``, otherwise the shortest decimal with
         ``.0`` appended when the spelling has no fraction/exponent."""
         if bits == 0x7FF8000000000000:
@@ -378,7 +378,7 @@ class _TomlWriter:
             self.push(f".{nanoseconds:0{width}d}")
 
     def write_offset(self, offset_seconds: int) -> None:
-        """materialization.rs:460-486."""
+        """materialization.rs."""
         if offset_seconds == 0:
             self.push("Z")
             return
@@ -421,7 +421,7 @@ class _TomlWriter:
 
 
 def _exact_nanoseconds(fraction: Decimal) -> int | None:
-    """materialization.rs:549-567: the fraction must be an exact
+    """materialization.rs: the fraction must be an exact
     nanosecond count in [0, 10^9)."""
     if fraction.coefficient == 0:
         return 0
@@ -443,7 +443,7 @@ def _collect_provenance(
     document: Document,
     limits: MaterializationLimits,
 ) -> MaterializationProvenanceMap:
-    """materialization.rs:613-864."""
+    """materialization.rs."""
     entries: list[MaterializationProvenanceEntry] = []
     units = 0
 
@@ -570,7 +570,7 @@ def _collect_provenance(
 
 
 def _scalar_kind_matches(input_kind: str, output_kind: TomlItemKind) -> bool:
-    """materialization.rs:866-884."""
+    """materialization.rs."""
     return (
         (input_kind == "String" and output_kind is TomlItemKind.STRING)
         or (input_kind == "Integer" and output_kind is TomlItemKind.INTEGER)

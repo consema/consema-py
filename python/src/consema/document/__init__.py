@@ -5,8 +5,8 @@ structural locations (Span over raw bytes, snapshot-bound NodeRef), formation
 status, parse limits, the common materialization request, verifiable
 byte-level source patches, untouched-byte proofs, and dry-run edit plans.
 
-Package topology mirrors RFC 0016 §3.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:
-99-109): ``consema/document`` maps to the Rust ``consema-document`` crate.
+Package topology mirrors RFC 0016 §3.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md
+): ``consema/document`` maps to the Rust ``consema-document`` crate.
 
 Authority (language-neutral first; Rust only for byte/registry arbitration):
 - conformance/vectors/source-v1.json — the machine-readable case suite

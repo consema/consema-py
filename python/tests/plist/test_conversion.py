@@ -129,7 +129,7 @@ def test_uid_inexpressible_to_xml():
 def test_binary_to_xml_conversion_render_golden():
     # The conversion render of the normalization-and-conversion case
     # (plist-v1.json:1298-1308): the root value element is written at
-    # depth 0 (document.rs:767-841).
+    # depth 0 (document.rs).
     document = binary_document(
         "62706c6973743030d1010251611001080b0d000000000000010100000000000000030000000000000000000000000000000f"
     )
@@ -150,7 +150,7 @@ def test_binary_to_xml_conversion_render_golden():
 
 def test_same_representation_is_not_a_conversion():
     # RFC 0013 §7: a target equal to the source representation is not a
-    # conversion (document.rs:262-267).
+    # conversion (document.rs).
     document = xml_document('<plist version="1.0"><string>ok</string></plist>')
     with pytest.raises(PlistConversionFailure) as excinfo:
         document.convert_to(PlistProfile.XML_V1, DEFAULT_LIMITS)

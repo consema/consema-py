@@ -3,30 +3,30 @@
 Wire constants are frozen by the Rust reference codec
 (https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs), which is the byte arbitration source:
 
-- stream magic is the ASCII octets ``PVCE`` (lib.rs:23);
-- version is minimal unsigned LEB128 ``1`` (lib.rs:25);
-- integer sign octets are 0 (zero), 1 (positive), 2 (negative) (lib.rs:9-12);
-- all unsigned lengths/counts/tags are minimal unsigned LEB128 (lib.rs:11);
+- stream magic is the ASCII octets ``PVCE`` (lib.rs);
+- version is minimal unsigned LEB128 ``1`` (lib.rs);
+- integer sign octets are 0 (zero), 1 (positive), 2 (negative) (lib.rs);
+- all unsigned lengths/counts/tags are minimal unsigned LEB128 (lib.rs);
 - record framing is tag varint, payload-length varint, payload
-  (``write_record``, lib.rs:610-614);
+  (``write_record``, lib.rs);
 - integer payload: sign octet + magnitude-length varint + minimal big-endian
-  magnitude (lib.rs:545-554); every nested field is additionally
-  length-prefixed (lib.rs:556-561);
+  magnitude (lib.rs); every nested field is additionally
+  length-prefixed (lib.rs);
 - decimal payload: two length-prefixed integer fields, coefficient then
-  exponent (lib.rs:563-566); date: year field + month/day octets
-  (lib.rs:580-584); time: hour/minute/second octets + fractional-second
-  decimal field (lib.rs:593-596); local date-time: date field + time field;
+  exponent (lib.rs); date: year field + month/day octets
+  (lib.rs); time: hour/minute/second octets + fractional-second
+  decimal field (lib.rs); local date-time: date field + time field;
   offset date-time: local date-time + offset-seconds integer field
-  (lib.rs:605-608);
+  (lib.rs);
 - float32/float64 payloads are the exact IEEE-754 bit patterns, big-endian;
 - sequence: count varint + records; object: count varint + (string-key
   record, value record)*; entry mapping: count varint + (key record, value
-  record)* (lib.rs:506-531).
+  record)* (lib.rs).
 
 Golden byte vectors are pinned by conformance/vectors/v1.json
 (`pvce.null-vector`, `pvce.negative-integer-vector`, `pvce.object-vector`,
 `pvce.reject-nonminimal-varint`) and re-pinned in the Rust tests
-(lib.rs:1191-1342). The decoder is strict: non-minimal varints,
+(lib.rs). The decoder is strict: non-minimal varints,
 non-canonical integers/decimals, trailing bytes, and resource-limit
 violations are rejected with the typed :class:`PVCEError`.
 """
@@ -77,7 +77,7 @@ _DEFAULT_MAX_BLOB_BYTES = 64 * 1024 * 1024
 
 @dataclass(frozen=True)
 class DecodeLimits:
-    """Strict decoder resource limits (lib.rs:56-82)."""
+    """Strict decoder resource limits (lib.rs)."""
 
     max_bytes: int = _DEFAULT_MAX_BYTES
     max_depth: int = _DEFAULT_MAX_DEPTH
@@ -89,7 +89,7 @@ class DecodeLimits:
 
 @dataclass(frozen=True)
 class EncodeLimits:
-    """Bounded encoder resource limits (lib.rs:111-138)."""
+    """Bounded encoder resource limits (lib.rs)."""
 
     max_bytes: int = _DEFAULT_MAX_BYTES
     max_depth: int = _DEFAULT_MAX_DEPTH
@@ -100,7 +100,7 @@ class EncodeLimits:
 
 
 # --------------------------------------------------------------------------
-# varint helpers (minimal unsigned LEB128, lib.rs:616-628)
+# varint helpers (minimal unsigned LEB128, lib.rs)
 # --------------------------------------------------------------------------
 
 def varint_size(value: int) -> int:
@@ -399,7 +399,7 @@ class _Sizer:
             payload = varint_size(len(entries))
             for key, entry_value in entries:
                 # Object keys are encoded as String records and count as nodes
-                # (lib.rs:332-341).
+                # (lib.rs).
                 payload += self.record_size(PortableValue.string(key), depth + 1)
                 payload += self.record_size(entry_value, depth + 1)
             tag = TAG_OBJECT
@@ -477,7 +477,7 @@ def decode_value(stream: bytes, limits: DecodeLimits | None = None) -> PortableV
 
 
 class _Reader:
-    """Strict streaming reader over one PVCE/1 stream or payload (lib.rs:630-723)."""
+    """Strict streaming reader over one PVCE/1 stream or payload (lib.rs)."""
 
     __slots__ = ("data", "offset", "limits", "nodes")
 

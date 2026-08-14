@@ -14,7 +14,7 @@ explicit registered Windows code page, plus CRLF; Python requires one
 non-Binary registered text encoding plus LF), strict encoding, and
 closure: output reparses under the exact target profile and reprojects to
 the identical PortableValue before success (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-
-profiles-v1.md:393-435). Failure returns no Document and no partial bytes
+profiles-v1.md). Failure returns no Document and no partial bytes
 (RFC 0004 §7).
 """
 

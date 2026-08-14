@@ -3,19 +3,19 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document shape and accessors: https://github.com/consema/consema-rs/blob/main/consema-plist/src/document.rs:38-222
-  — PlistRepresentation (document.rs:38-49), the unified Document with
+- Document shape and accessors: https://github.com/consema/consema-rs/blob/main/consema-plist/src/document.rs
+  — PlistRepresentation (document.rs), the unified Document with
   representation-specific accessors (lossless index and syntax kinds only
   for Xml; binary facts and structural regions only for Binary; hard gate
   1), snapshot identity, profile, format family "plist@1", formation
   status, and the native value arena.
-- Conversion: document.rs:224-312 (Document::convert_to; the atomic
+- Conversion: document.rs (Document::convert_to; the atomic
   cross-representation transform of RFC 0013 §7); the conversion report
-  event surface document.rs:314-434 (ConvertedDocument / ConversionReport /
-  ConversionReportEvent / ConversionEventKind); failures document.rs:436-
+  event surface document.rs (ConvertedDocument / ConversionReport /
+  ConversionReportEvent / ConversionEventKind); failures document.rs
   459. The concrete serializers live in :mod:`consema.plist.conversion`.
-- Parse dispatch: document.rs:68-93 plus the lib.rs entry points (parse
-  lib.rs:214-221, parse_xml 279-300, parse_binary 241-260).
+- Parse dispatch: document.rs plus the lib.rs entry points (parse
+  lib.rs, parse_xml 279-300, parse_binary 241-260).
 - Native model and arena: RFC 0013 §6 (:mod:`consema.plist.native`).
 
 The two representations share one native value model but have disjoint
@@ -46,7 +46,7 @@ from consema.plist.parser_xml import PlistFormedXml, PlistSyntaxKind, parse_xml
 
 
 class PlistRepresentation(enum.Enum):
-    """The two plist representations (RFC 0013 §1, §7; document.rs:38-49).
+    """The two plist representations (RFC 0013 §1, §7; document.rs).
 
     The representations share one native value model and are format
     identities, not dialects of one format; a ``.plist`` extension never
@@ -78,7 +78,7 @@ class PlistAccessError(Exception):
 @dataclass(frozen=True, slots=True)
 class PlistDocument:
     """One formed plist document under either representation
-    (document.rs:51-67).
+    (document.rs).
 
     The concrete representation is private; representation-specific facts
     are reachable only through the representation-specific accessors, so an
@@ -108,7 +108,7 @@ class PlistDocument:
         limits: PlistParseLimits,
     ) -> PlistDocument:
         """Forms one document from raw bytes under one exact profile
-        (RFC 0013 §1, §3; document.rs:68-93).
+        (RFC 0013 §1, §3; document.rs).
 
         The profile is selected by the caller before formation; neither the
         ``bplist00`` magic number nor a ``.plist`` extension selects
@@ -143,12 +143,12 @@ class PlistDocument:
     # -- identity and source -------------------------------------------------
 
     def representation(self) -> PlistRepresentation:
-        """Representation of the formed document (document.rs:96-102)."""
+        """Representation of the formed document (document.rs)."""
         return self._representation
 
     def snapshot_identity(self) -> object:
         """Snapshot identity to which every handle and span of this document
-        belongs (document.rs:148-154)."""
+        belongs (document.rs)."""
         return self.authority.identity
 
     def source_snapshot(self) -> object:
@@ -159,11 +159,11 @@ class PlistDocument:
         return self.source.bytes()
 
     def format_family(self) -> FormatFamilyId:
-        """Stable plist format family (document.rs:165-169)."""
+        """Stable plist format family (document.rs)."""
         return FormatFamilyId.new("plist", 1)
 
     def profile_id(self) -> ProfileId:
-        """Exact source profile of the formed document (document.rs:156-
+        """Exact source profile of the formed document (document.rs
         163)."""
         return self.profile.id()
 
@@ -176,14 +176,14 @@ class PlistDocument:
         return self._formation_status
 
     def diagnostic_records(self) -> tuple[PlistDiagnostic, ...]:
-        """Ordered diagnostics from formation (document.rs:137-144)."""
+        """Ordered diagnostics from formation (document.rs)."""
         return self.diagnostics
 
     # -- native model --------------------------------------------------------
 
     def document(self) -> PlistDocument | None:
         """Native value arena, when the root value is provable (RFC 0013
-        §6; document.rs:170-182). Both representations share the same
+        §6; document.rs). Both representations share the same
         native value model; not None exactly when formation proved the
         complete root value."""
         return self.native
@@ -192,28 +192,28 @@ class PlistDocument:
 
     def lossless_structural_index(self) -> LosslessStructuralIndex | None:
         """Exhaustive ordered lossless piece coverage; ``plist.xml@1`` only
-        (RFC 0013 §8.2; document.rs:184-192)."""
+        (RFC 0013 §8.2; document.rs)."""
         if self.formed_xml is None:
             return None
         return self.formed_xml.lossless_structural_index()
 
     def lossless_syntax_kinds(self) -> tuple[PlistSyntaxKind, ...] | None:
         """Ordered XML syntax kinds, parallel to the lossless structural
-        pieces; ``plist.xml@1`` only (RFC 0013 §8.2; document.rs:193-202)."""
+        pieces; ``plist.xml@1`` only (RFC 0013 §8.2; document.rs)."""
         if self.formed_xml is None:
             return None
         return self.formed_xml.lossless_syntax_kinds()
 
     def binary_facts(self) -> BinaryFacts | None:
         """Binary object/offset/reference/trailer facts; ``plist.binary@1``
-        only (RFC 0013 §8.3; document.rs:204-212)."""
+        only (RFC 0013 §8.3; document.rs)."""
         if self.formed_binary is None:
             return None
         return self.formed_binary.binary_facts()
 
     def binary_structural_index(self) -> BinaryStructuralIndex | None:
         """Exhaustive ordered binary region coverage; ``plist.binary@1``
-        only (RFC 0013 §2.2, §8.3; document.rs:213-222)."""
+        only (RFC 0013 §2.2, §8.3; document.rs)."""
         if self.formed_binary is None:
             return None
         return self.formed_binary.binary_structural_index()
@@ -222,7 +222,7 @@ class PlistDocument:
 
     def convert_to(self, target: PlistProfile, limits: PlistParseLimits) -> object:
         """Converts the document to the other representation (RFC 0013 §7;
-        document.rs:224-289). See :mod:`consema.plist.conversion`."""
+        document.rs). See :mod:`consema.plist.conversion`."""
         from consema.plist.conversion import convert
 
         return convert(self, target, limits)
@@ -250,5 +250,5 @@ def parse(
     limits: PlistParseLimits,
 ) -> PlistDocument:
     """Forms one ``plist.xml@1`` or ``plist.binary@1`` document from raw
-    bytes (RFC 0013 §1, §3; lib.rs:214-221)."""
+    bytes (RFC 0013 §1, §3; lib.rs)."""
     return PlistDocument.parse(raw, profile, selection, limits)

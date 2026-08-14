@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:374-404): V1
+- RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md): V1
   publishes eight versioned operations (xml.edit.replace-text@1,
   insert-attribute@1, remove-attribute@1, rename-attribute@1,
   set-attribute-value@1, insert-element@1, remove-element@1,
@@ -20,15 +20,15 @@ Authority:
   emits a replayable ``SourcePatch``; dry-run and commit have identical
   replacement sets and target digest.
 - The transaction, validation, preparation, and commit logic transcribe
-  https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs:44-1435 (PreparedEdit:44-56, NameFacts:
-  58-89, AttributePlacement:91-101, ContentPlacement:102-111,
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs (PreparedEdit:44-56, NameFacts:
+ AttributePlacement, ContentPlacement,
   EditOperation:113-176, EditTransaction/Builder:178-304, EditCommit:
-  306-317, EditFailure:319-408, commit:410-570, dry_run:572-588,
+ EditFailure, commit, dry_run,
   validate_dependencies:598-641, encoding helpers:643-743, prepare_*:
-  745-1307, find_node_by_span:1309-1336, source_patch_limits:1346-1356,
+ find_node_by_span, source_patch_limits,
   operation metadata:1358-1435) — byte/registry arbitration only.
 - The failure codes are the registered core.edit.*@1 codes
-  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:387-423; consema.xml.errors).
+  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md; consema.xml.errors).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
   ``xml.edit.*`` (lines 437-566).
 
@@ -74,7 +74,7 @@ from consema.xml.parser import XmlEncodingSelection, XmlParseLimits, XmlProfile,
 @dataclass(frozen=True, slots=True)
 class NameFacts:
     """A validated element or attribute name for structural operations
-    (edit.rs:58-89).
+    (edit.rs).
 
     The prefix must already be bound to ``namespace`` in the target's
     in-scope scope; the edit never guesses or fabricates namespace
@@ -91,14 +91,14 @@ class NameFacts:
 
     @property
     def spelling(self) -> str:
-        """Full lexical spelling (edit.rs:83-88)."""
+        """Full lexical spelling (edit.rs)."""
         if self.prefix is not None:
             return f"{self.prefix}:{self.local}"
         return self.local
 
 
 class PlacementKind(enum.Enum):
-    """Closed placement category (edit.rs:91-111)."""
+    """Closed placement category (edit.rs)."""
 
     BEFORE = "Before"
     AFTER = "After"
@@ -107,7 +107,7 @@ class PlacementKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class AttributePlacement:
-    """Attribute insertion placement inside one start tag (edit.rs:91-101)."""
+    """Attribute insertion placement inside one start tag (edit.rs)."""
 
     kind: PlacementKind
     anchor: NodeRef | None = None
@@ -127,7 +127,7 @@ class AttributePlacement:
 
 @dataclass(frozen=True, slots=True)
 class ContentPlacement:
-    """Content insertion placement inside one element (edit.rs:102-111)."""
+    """Content insertion placement inside one element (edit.rs)."""
 
     kind: PlacementKind
     anchor: NodeRef | None = None
@@ -146,7 +146,7 @@ class ContentPlacement:
 
 
 class EditOperationKind(enum.Enum):
-    """The closed eight-operation surface (edit.rs:113-176)."""
+    """The closed eight-operation surface (edit.rs)."""
 
     REPLACE_TEXT = "replace-text"
     INSERT_ATTRIBUTE = "insert-attribute"
@@ -159,13 +159,13 @@ class EditOperationKind(enum.Enum):
 
     @property
     def operation_id(self) -> str:
-        """The frozen operation id@version (edit.rs:1372-1383)."""
+        """The frozen operation id@version (edit.rs)."""
         return f"xml.edit.{self.value}@1"
 
 
 @dataclass(frozen=True, slots=True)
 class EditOperation:
-    """One snapshot-bound XML structural operation (edit.rs:113-176)."""
+    """One snapshot-bound XML structural operation (edit.rs)."""
 
     kind: EditOperationKind
     target: NodeRef
@@ -177,7 +177,7 @@ class EditOperation:
 
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
-    """Immutable snapshot-bound transaction (edit.rs:178-197)."""
+    """Immutable snapshot-bound transaction (edit.rs)."""
 
     base: SnapshotIdentity
     operations: tuple[EditOperation, ...] = field(default_factory=tuple)
@@ -185,7 +185,7 @@ class EditTransaction:
 
 class EditTransactionBuilder:
     """Builds one transaction against one immutable snapshot
-    (edit.rs:199-304)."""
+    (edit.rs)."""
 
     __slots__ = ("base", "operations")
 
@@ -275,7 +275,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """One complete committed edit (edit.rs:306-317)."""
+    """One complete committed edit (edit.rs)."""
 
     document: Document
     change_set: ChangeSet
@@ -285,7 +285,7 @@ class EditCommit:
 
 @dataclass(frozen=True, slots=True)
 class _PreparedEdit:
-    """One prepared raw-byte edit owned by the transaction (edit.rs:44-56)."""
+    """One prepared raw-byte edit owned by the transaction (edit.rs)."""
 
     old_span: Span
     replacement: bytes
@@ -293,7 +293,7 @@ class _PreparedEdit:
 
 
 # ---------------------------------------------------------------------------
-# Encoding helpers (edit.rs:643-743)
+# Encoding helpers (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -305,7 +305,7 @@ def _char_width(encoding: SourceEncoding) -> int:
 
 def _empty_element_tag_close(source: bytes, span_end: int, encoding: SourceEncoding) -> bool:
     """Whether the element tag ending at ``span_end`` is written with a
-    ``/>`` close, probed in raw bytes (edit.rs:655-664)."""
+    ``/>`` close, probed in raw bytes (edit.rs)."""
     offset = span_end - 2 * _char_width(encoding)
     if offset < 0:
         return False
@@ -315,7 +315,7 @@ def _empty_element_tag_close(source: bytes, span_end: int, encoding: SourceEncod
 
 def _push_encoded_text(output: bytearray, text: str, encoding: SourceEncoding) -> None:
     """Appends literal text to a replacement buffer under the source
-    encoding (edit.rs:666-687)."""
+    encoding (edit.rs)."""
     if encoding.kind is SourceEncodingKind.UTF16LE:
         output.extend(text.encode("utf-16-le"))
     elif encoding.kind is SourceEncodingKind.UTF16BE:
@@ -325,7 +325,7 @@ def _push_encoded_text(output: bytearray, text: str, encoding: SourceEncoding) -
 
 
 def _spelling_bytes(name: NameFacts, encoding: SourceEncoding) -> bytes:
-    """Encodes one name spelling under the source encoding (edit.rs:695-704)."""
+    """Encodes one name spelling under the source encoding (edit.rs)."""
     output = bytearray()
     if name.prefix is not None:
         _push_encoded_text(output, name.prefix, encoding)
@@ -336,7 +336,7 @@ def _spelling_bytes(name: NameFacts, encoding: SourceEncoding) -> bytes:
 
 def _qname_spelling_bytes(qname, encoding: SourceEncoding) -> bytes:
     """Encodes one source QName spelling under the source encoding
-    (edit.rs:706-715)."""
+    (edit.rs)."""
     output = bytearray()
     if qname.prefix is not None:
         _push_encoded_text(output, qname.prefix, encoding)
@@ -346,7 +346,7 @@ def _qname_spelling_bytes(qname, encoding: SourceEncoding) -> bytes:
 
 
 def _escape_text(text: str, encoding: SourceEncoding) -> bytes:
-    """Escapes literal character data for text content (edit.rs:717-728)."""
+    """Escapes literal character data for text content (edit.rs)."""
     output = bytearray()
     for character in text:
         if character == "&":
@@ -360,7 +360,7 @@ def _escape_text(text: str, encoding: SourceEncoding) -> bytes:
 
 def _escape_attribute(text: str, encoding: SourceEncoding) -> bytes:
     """Escapes literal text for double-quoted attribute values
-    (edit.rs:730-743)."""
+    (edit.rs)."""
     output = bytearray()
     for character in text:
         if character == "&":
@@ -376,7 +376,7 @@ def _escape_attribute(text: str, encoding: SourceEncoding) -> bytes:
 
 def _leading_whitespace_start(source: bytes, start: int) -> int:
     """Scans back over the leading whitespace of one occurrence
-    (edit.rs:1338-1344)."""
+    (edit.rs)."""
     cursor = start
     while cursor > 0 and source[cursor - 1 : cursor] in (b" ", b"\t", b"\r", b"\n"):
         cursor -= 1
@@ -384,13 +384,13 @@ def _leading_whitespace_start(source: bytes, start: int) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Transaction validation and commit (edit.rs:410-595)
+# Transaction validation and commit (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def _validate_dependencies(transaction: EditTransaction) -> None:
     """Cross-operation dependency checks before any span is computed
-    (edit.rs:598-641)."""
+    (edit.rs)."""
     targets: set[NodeRef] = set()
     for operation in transaction.operations:
         anchor: NodeRef | None = None
@@ -410,7 +410,7 @@ def _validate_dependencies(transaction: EditTransaction) -> None:
 
 def Document_commit(self: Document, transaction: EditTransaction) -> EditCommit:
     """Atomically commits structural operations. On failure the document
-    remains unchanged (edit.rs:410-570)."""
+    remains unchanged (edit.rs)."""
     if transaction.base != self.snapshot_identity():
         raise XmlEditFailure(XmlEditFailureKind.WRONG_SNAPSHOT)
     if self.status is not FormationStatus.COMPLETE:
@@ -527,7 +527,7 @@ def Document_dry_run(
     self: Document, transaction: EditTransaction, source_id: EditPlanSourceId
 ) -> EditPlan:
     """Fully validates and plans a transaction without returning a new
-    Document (edit.rs:572-588; RFC 0004 §14)."""
+    Document (edit.rs; RFC 0004 §14)."""
     commit = Document_commit(self, transaction)
     return EditPlan.new(
         source_id,
@@ -539,7 +539,7 @@ def Document_dry_run(
 
 
 # ---------------------------------------------------------------------------
-# Operation preparation (edit.rs:745-1307)
+# Operation preparation (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -572,7 +572,7 @@ def _prepare_operation(self: Document, operation: EditOperation) -> list[_Prepar
 
 def _prepare_replace_text(self: Document, target: NodeRef, text: str) -> list[_PreparedEdit]:
     """Replaces one text occurrence; CDATA is never a target (RoleXmlText
-    only, edit.rs:778-790)."""
+    only, edit.rs)."""
     text_data = _text_for(self, target)
     encoding = self.source().encoding_facts().selected
     return [
@@ -591,7 +591,7 @@ def _prepare_insert_attribute(
     value: str,
     placement: AttributePlacement,
 ) -> list[_PreparedEdit]:
-    """edit.rs:792-862."""
+    """edit.rs."""
     element = _element_for(self, target)
     _validate_name_facts(name, element, attribute=True)
     _reject_duplicate_attribute(element, name)
@@ -632,7 +632,7 @@ def _prepare_insert_attribute(
 
 
 def _prepare_remove_attribute(self: Document, target: NodeRef) -> list[_PreparedEdit]:
-    """edit.rs:864-876: the removal owns the leading whitespace too."""
+    """edit.rs: the removal owns the leading whitespace too."""
     attribute = _attribute_for(self, target)
     start = _leading_whitespace_start(self.render(), attribute.span.start_byte)
     span = self._authority.span(start, attribute.span.end_byte)
@@ -642,7 +642,7 @@ def _prepare_remove_attribute(self: Document, target: NodeRef) -> list[_Prepared
 def _prepare_rename_attribute(
     self: Document, target: NodeRef, name: NameFacts
 ) -> list[_PreparedEdit]:
-    """edit.rs:878-914."""
+    """edit.rs."""
     attribute = _attribute_for(self, target)
     element = next(
         (data for data in _elements(self) if any(a.ordinal == attribute.ordinal for a in data.attributes)),
@@ -670,7 +670,7 @@ def _prepare_rename_attribute(
 def _prepare_set_attribute_value(
     self: Document, target: NodeRef, value: str
 ) -> list[_PreparedEdit]:
-    """edit.rs:916-928: only the value span between the quotes is owned."""
+    """edit.rs: only the value span between the quotes is owned."""
     attribute = _attribute_for(self, target)
     encoding = self.source().encoding_facts().selected
     return [
@@ -689,7 +689,7 @@ def _prepare_insert_element(
     content: str | None,
     placement: ContentPlacement,
 ) -> list[_PreparedEdit]:
-    """edit.rs:930-1007."""
+    """edit.rs."""
     element = _element_for(self, target)
     _validate_name_facts(name, element, attribute=False)
     encoding = self.source().encoding_facts().selected
@@ -745,7 +745,7 @@ def _prepare_insert_element(
 
 
 def _prepare_remove_element(self: Document, target: NodeRef) -> list[_PreparedEdit]:
-    """edit.rs:1009-1030."""
+    """edit.rs."""
     element = _element_for(self, target)
     root = self.root()
     if root is not None and root.index == element.index:
@@ -759,7 +759,7 @@ def _prepare_remove_element(self: Document, target: NodeRef) -> list[_PreparedEd
 def _prepare_rename_element(
     self: Document, target: NodeRef, name: NameFacts
 ) -> list[_PreparedEdit]:
-    """edit.rs:1032-1070: both the start-tag and end-tag names are owned."""
+    """edit.rs: both the start-tag and end-tag names are owned."""
     element = _element_for(self, target)
     _validate_name_facts(name, element, attribute=False)
     encoding = self.source().encoding_facts().selected
@@ -787,7 +787,7 @@ def _prepare_rename_element(
     return edits
 
 
-# -- target resolution (edit.rs:1072-1186) -------------------------------------
+# -- target resolution (edit.rs) -------------------------------------
 
 
 def _element_for(self: Document, target: NodeRef) -> XmlElementData:
@@ -854,7 +854,7 @@ def _node_role(self: Document, index: int) -> NodeRole:
 def _content_extent_end(self: Document, index: int) -> int:
     """The exact end of one content item's full extent: for an element
     child this is its closing end tag, not its start-tag end
-    (edit.rs:1110-1144)."""
+    (edit.rs)."""
     content = self._nodes[index]
     if content.kind is not XmlContentKind.ELEMENT:
         return content.span.end_byte
@@ -874,7 +874,7 @@ def _content_extent_end(self: Document, index: int) -> int:
 
 
 def _content_span_for(self: Document, target: NodeRef) -> tuple[NodeRole, Span]:
-    """One content item span by role (edit.rs:1146-1186)."""
+    """One content item span by role (edit.rs)."""
     if target.snapshot != self.snapshot_identity():
         raise XmlEditFailure(XmlEditFailureKind.WRONG_SNAPSHOT)
     if target.role is NodeRole.XML_ELEMENT:
@@ -902,12 +902,12 @@ def _content_span_for(self: Document, target: NodeRef) -> tuple[NodeRole, Span]:
     raise XmlEditFailure(XmlEditFailureKind.WRONG_ROLE)
 
 
-# -- name validation (edit.rs:1188-1307) ----------------------------------------
+# -- name validation (edit.rs) ----------------------------------------
 
 
 def _validate_name_facts(name: NameFacts, element: XmlElementData, attribute: bool) -> None:
     """Validates name facts against one element's in-scope scope
-    (edit.rs:1188-1255)."""
+    (edit.rs)."""
     if (
         not name.local
         or ":" in name.local
@@ -953,7 +953,7 @@ def _validate_name_facts(name: NameFacts, element: XmlElementData, attribute: bo
 
 def _expanded_name_for_facts(name: NameFacts, element: XmlElementData) -> ExpandedName | None:
     """The expanded name promised by name facts, when resolvable
-    (edit.rs:1257-1287)."""
+    (edit.rs)."""
     if name.namespace is None:
         return None
     if name.prefix == "xml":
@@ -973,7 +973,7 @@ def _expanded_name_for_facts(name: NameFacts, element: XmlElementData) -> Expand
 
 def _reject_duplicate_attribute(element: XmlElementData, name: NameFacts) -> None:
     """Rejects an attribute whose expanded name already exists
-    (edit.rs:1289-1306)."""
+    (edit.rs)."""
     promised = _expanded_name_for_facts(name, element)
     if promised is None:
         return
@@ -981,11 +981,11 @@ def _reject_duplicate_attribute(element: XmlElementData, name: NameFacts) -> Non
         raise XmlEditFailure(XmlEditFailureKind.DUPLICATE_EXPANDED_ATTRIBUTE)
 
 
-# -- commit helpers (edit.rs:1309-1435) -----------------------------------------
+# -- commit helpers (edit.rs) -----------------------------------------
 
 
 def _find_node_by_span(document: Document, start: int, end: int) -> NodeRef | None:
-    """One node uniquely located by its exact span (edit.rs:1309-1336)."""
+    """One node uniquely located by its exact span (edit.rs)."""
     for content in document._nodes:
         span = content.span
         if span.start_byte == start and span.end_byte == end:
@@ -1011,7 +1011,7 @@ def _content_ordinal(content: XmlContent) -> int:
 
 
 def _source_patch_limits(limits: XmlParseLimits, operation_count: int) -> SourcePatchLimits:
-    """edit.rs:1346-1356."""
+    """edit.rs."""
     return SourcePatchLimits(
         source=SourceLimits(
             max_raw_bytes=limits.common.max_source_bytes,
@@ -1024,7 +1024,7 @@ def _source_patch_limits(limits: XmlParseLimits, operation_count: int) -> Source
 
 
 def _operation_metadata(transaction: EditTransaction) -> dict[str, str]:
-    """edit.rs:1358-1370."""
+    """edit.rs."""
     return {
         f"operation.{index}": operation.kind.operation_id
         for index, operation in enumerate(transaction.operations)
@@ -1032,7 +1032,7 @@ def _operation_metadata(transaction: EditTransaction) -> dict[str, str]:
 
 
 def _operation_summaries(transaction: EditTransaction) -> list[EditOperationSummary]:
-    """edit.rs:1385-1435."""
+    """edit.rs."""
     summaries: list[EditOperationSummary] = []
     for operation in transaction.operations:
         kind = operation.kind

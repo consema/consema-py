@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0012 §4-§7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:132-283):
+- RFC 0012 §4-§7 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md):
   the immutable Document retains prolog order, one document element, epilog
   order, and every exact source span; the native roles
   (XmlDocument/XmlDeclaration/XmlDoctype/XmlElement/XmlAttribute/
@@ -14,16 +14,16 @@ Authority:
   (Literal/CharacterReference/PredefinedEntityReference/
   GeneralEntityReference) with line-end-normalized semantic content;
   adjacent Text occurrences are never merged across markup boundaries.
-- The record shapes transcribe https://github.com/consema/consema-rs/blob/main/consema-xml/src/document.rs:96-407
+- The record shapes transcribe https://github.com/consema/consema-rs/blob/main/consema-xml/src/document.rs
   (QNameFacts:96-120, ReferenceFragment:135-172, XmlNamespaceBindingData:
-  174-187, XmlAttributeData:189-211, XmlTextData:213-222, XmlCdataData:
-  224-235, XmlCommentData:237-248, XmlPiData:250-263, XmlErrorRegionData:
-  265-272, XmlElementData:274-296, XmlContent:298-328, XmlPrologItem:
-  330-345, XmlDeclarationData:347-360, EntityDeclarationData:362-373,
+  XmlAttributeData, XmlTextData, XmlCdataData
+  XmlCommentData, XmlPiData, XmlErrorRegionData
+  XmlElementData, XmlContent, XmlPrologItem
+  XmlDeclarationData, EntityDeclarationData,
   XmlDoctypeData:375-387, Document:388-568) — byte/registry arbitration
   only; this module is a Python-idiomatic reimplementation.
 - Text semantic concatenation and line-end normalization transcribe
-  document.rs:765-799 (text_semantic, push_normalized).
+  document.rs (text_semantic, push_normalized).
 - Snapshot-bound identity roles are the closed consema.document NodeRole
   vocabulary (document/structural.py:132-144).
 
@@ -54,18 +54,18 @@ from consema.xml.namespaces import ExpandedName, NamespaceError, NamespaceScope,
 
 
 class XmlProfile(enum.Enum):
-    """Frozen XML formation profiles (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs:54-67)."""
+    """Frozen XML formation profiles (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs)."""
 
     SAFE_V1 = "xml.1.0-safe@1"
 
     def profile_id(self) -> ProfileId:
-        """Stable profile identifier (lib.rs:61-66)."""
+        """Stable profile identifier (lib.rs)."""
         return ProfileId.new("xml.1.0-safe", 1)
 
 
 @dataclass(frozen=True, slots=True)
 class QNameFacts:
-    """One lexical QName with its source-derived facts (document.rs:96-109)."""
+    """One lexical QName with its source-derived facts (document.rs)."""
 
     prefix: str | None
     local: str
@@ -74,12 +74,12 @@ class QNameFacts:
     local_span: Span
 
     def qname(self) -> QName:
-        """The plain lexical QName (document.rs:111-120)."""
+        """The plain lexical QName (document.rs)."""
         return QName(prefix=self.prefix, local=self.local)
 
 
 class ReferenceFragmentKind(enum.Enum):
-    """Closed fragment category (document.rs:136-172)."""
+    """Closed fragment category (document.rs)."""
 
     LITERAL = "literal"
     CHARACTER_REFERENCE = "character-reference"
@@ -89,7 +89,7 @@ class ReferenceFragmentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ReferenceFragment:
-    """One ordered text or attribute-value fragment (document.rs:135-172)."""
+    """One ordered text or attribute-value fragment (document.rs)."""
 
     kind: ReferenceFragmentKind
     span: Span
@@ -127,7 +127,7 @@ class ReferenceFragment:
 
 @dataclass(frozen=True, slots=True)
 class XmlNamespaceBindingData:
-    """One XML namespace declaration association (document.rs:174-187)."""
+    """One XML namespace declaration association (document.rs)."""
 
     ordinal: int
     span: Span
@@ -138,7 +138,7 @@ class XmlNamespaceBindingData:
 
 @dataclass(frozen=True, slots=True)
 class XmlAttributeData:
-    """One XML attribute association (document.rs:189-211)."""
+    """One XML attribute association (document.rs)."""
 
     ordinal: int
     span: Span
@@ -153,7 +153,7 @@ class XmlAttributeData:
 
 @dataclass(frozen=True, slots=True)
 class XmlTextData:
-    """One text occurrence with ordered fragments (document.rs:213-222)."""
+    """One text occurrence with ordered fragments (document.rs)."""
 
     ordinal: int
     span: Span
@@ -162,7 +162,7 @@ class XmlTextData:
 
 @dataclass(frozen=True, slots=True)
 class XmlCdataData:
-    """One CDATA occurrence (document.rs:224-235); content is never
+    """One CDATA occurrence (document.rs); content is never
     entity-expanded."""
 
     ordinal: int
@@ -173,7 +173,7 @@ class XmlCdataData:
 
 @dataclass(frozen=True, slots=True)
 class XmlCommentData:
-    """One comment occurrence (document.rs:237-248); content is never
+    """One comment occurrence (document.rs); content is never
     entity-expanded."""
 
     ordinal: int
@@ -184,7 +184,7 @@ class XmlCommentData:
 
 @dataclass(frozen=True, slots=True)
 class XmlPiData:
-    """One processing instruction (document.rs:250-263); content is never
+    """One processing instruction (document.rs); content is never
     entity-expanded."""
 
     ordinal: int
@@ -196,7 +196,7 @@ class XmlPiData:
 
 @dataclass(frozen=True, slots=True)
 class XmlErrorRegionData:
-    """One recovered error region (document.rs:265-272)."""
+    """One recovered error region (document.rs)."""
 
     ordinal: int
     span: Span
@@ -204,7 +204,7 @@ class XmlErrorRegionData:
 
 @dataclass(frozen=True, slots=True)
 class XmlElementData:
-    """One element occurrence (document.rs:274-296)."""
+    """One element occurrence (document.rs)."""
 
     index: int
     span: Span
@@ -218,7 +218,7 @@ class XmlElementData:
 
 
 class XmlContentKind(enum.Enum):
-    """Closed child content category (document.rs:298-313)."""
+    """Closed child content category (document.rs)."""
 
     ELEMENT = "element"
     TEXT = "text"
@@ -230,7 +230,7 @@ class XmlContentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class XmlContent:
-    """One child content occurrence (document.rs:298-328); the payload is
+    """One child content occurrence (document.rs); the payload is
     the family-specific record named by ``kind``."""
 
     kind: XmlContentKind
@@ -238,7 +238,7 @@ class XmlContent:
 
     @property
     def span(self) -> Span:
-        """Exact source span of this occurrence (document.rs:315-328)."""
+        """Exact source span of this occurrence (document.rs)."""
         return {
             XmlContentKind.ELEMENT: lambda: self.data.span,
             XmlContentKind.TEXT: lambda: self.data.span,
@@ -250,7 +250,7 @@ class XmlContent:
 
 
 class XmlPrologItemKind(enum.Enum):
-    """Closed prolog/epilog occurrence category (document.rs:330-345)."""
+    """Closed prolog/epilog occurrence category (document.rs)."""
 
     DECLARATION = "declaration"
     DOCTYPE = "doctype"
@@ -262,7 +262,7 @@ class XmlPrologItemKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class XmlPrologItem:
-    """One prolog or epilog occurrence (document.rs:330-345); payload is
+    """One prolog or epilog occurrence (document.rs); payload is
     the record named by ``kind``, or a Span for Bom/Whitespace trivia."""
 
     kind: XmlPrologItemKind
@@ -271,7 +271,7 @@ class XmlPrologItem:
 
 @dataclass(frozen=True, slots=True)
 class XmlDeclarationData:
-    """XML declaration facts (document.rs:347-360; RFC 0012 §2)."""
+    """XML declaration facts (document.rs; RFC 0012 §2)."""
 
     span: Span
     version_span: Span
@@ -282,7 +282,7 @@ class XmlDeclarationData:
 
 @dataclass(frozen=True, slots=True)
 class EntityDeclarationData:
-    """One admitted internal general entity declaration (document.rs:362-373)."""
+    """One admitted internal general entity declaration (document.rs)."""
 
     span: Span
     name: str
@@ -292,7 +292,7 @@ class EntityDeclarationData:
 
 @dataclass(frozen=True, slots=True)
 class XmlDoctypeData:
-    """DOCTYPE facts (document.rs:375-387; RFC 0012 §3)."""
+    """DOCTYPE facts (document.rs; RFC 0012 §3)."""
 
     span: Span
     name: QNameFacts
@@ -301,7 +301,7 @@ class XmlDoctypeData:
 
 
 class Document:
-    """The immutable XML document (document.rs:388-568).
+    """The immutable XML document (document.rs).
 
     The Document retains prolog order, one document element, epilog order,
     and every exact source span. The document element owns an ordered child
@@ -361,7 +361,7 @@ class Document:
 
     @property
     def status(self) -> FormationStatus:
-        """Formation status (document.rs:448-458)."""
+        """Formation status (document.rs)."""
         return self._status
 
     @property
@@ -369,25 +369,25 @@ class Document:
         return self._status
 
     def source(self) -> SourceSnapshot:
-        """Immutable raw source (document.rs:460-464)."""
+        """Immutable raw source (document.rs)."""
         return self._source
 
     def render(self) -> bytes:
         """Exact original bytes; unmodified rendering is byte-exact
-        (document.rs:465-470)."""
+        (document.rs)."""
         return self._source.bytes()
 
     def lossless_structural_index(self) -> LosslessStructuralIndex:
-        """Exhaustive ordered lossless syntax coverage (document.rs:472-478)."""
+        """Exhaustive ordered lossless syntax coverage (document.rs)."""
         return self._syntax
 
     def lossless_syntax_kinds(self) -> tuple[XmlSyntaxKind, ...]:
         """Parallel format-owned syntax kind for every structural piece
-        (document.rs:479-482)."""
+        (document.rs)."""
         return self._syntax_kinds
 
     def diagnostics(self) -> tuple[object, ...]:
-        """Ordered diagnostics from formation (document.rs:490-494)."""
+        """Ordered diagnostics from formation (document.rs)."""
         return self._diagnostics
 
     def declaration(self) -> XmlDeclarationData | None:
@@ -406,36 +406,36 @@ class Document:
 
     def root(self) -> XmlElement | None:
         """The one document element, when formation proved it
-        (document.rs:520-524)."""
+        (document.rs)."""
         if self._root is None:
             return None
         return XmlElement(self, self._root)
 
     def nodes(self) -> tuple[XmlContent, ...]:
         """All arena nodes; child content of every element is reachable here
-        (document.rs:526-530)."""
+        (document.rs)."""
         return self._nodes
 
     def snapshot_identity(self) -> SnapshotIdentity:
-        """Snapshot identity (document.rs:532-537)."""
+        """Snapshot identity (document.rs)."""
         return self._authority.identity
 
     def format_family(self) -> FormatFamilyId:
-        """XML format family contract (document.rs:545-549)."""
+        """XML format family contract (document.rs)."""
         return FormatFamilyId.new("xml", 1)
 
     def profile(self) -> ProfileId:
-        """Stable profile identifier (document.rs:552-555)."""
+        """Stable profile identifier (document.rs)."""
         return ProfileId.new("xml.1.0-safe", 1)
 
     def node_ref(self, index: int = 0, role: NodeRole = NodeRole.XML_DOCUMENT) -> NodeRef:
         """Snapshot-bound identity of one arena/ordinal-scoped occurrence
-        (document.rs:557-568); the defaults address the whole document."""
+        (document.rs); the defaults address the whole document."""
         return self._authority.node_ref(index, role)
 
     def occurrence_node_ref(self, ordinal: int, role: NodeRole) -> NodeRef:
         """Snapshot-bound identity of one ordinal-scoped occurrence
-        (document.rs:563-568)."""
+        (document.rs)."""
         return self._authority.node_ref(ordinal, role)
 
     def parse_limits(self) -> "XmlParseLimits":
@@ -488,7 +488,7 @@ class Document:
 
 
 class XmlElement:
-    """Snapshot-bound element handle (document.rs:611-679)."""
+    """Snapshot-bound element handle (document.rs)."""
 
     __slots__ = ("_owner", "_index")
 
@@ -502,19 +502,19 @@ class XmlElement:
         return self._index
 
     def node_ref(self) -> NodeRef:
-        """Snapshot-bound stable identity (document.rs:620-625)."""
+        """Snapshot-bound stable identity (document.rs)."""
         return self._owner._authority.node_ref(self._index, NodeRole.XML_ELEMENT)
 
     def span(self) -> Span:
-        """Full start-tag or empty-element span (document.rs:627-631)."""
+        """Full start-tag or empty-element span (document.rs)."""
         return self._data().span
 
     def qname(self) -> QNameFacts:
-        """Lexical QName facts (document.rs:633-637)."""
+        """Lexical QName facts (document.rs)."""
         return self._data().qname
 
     def expanded(self) -> ExpandedName | None:
-        """Resolved expanded name, when provable (document.rs:639-643)."""
+        """Resolved expanded name, when provable (document.rs)."""
         return self._data().expanded
 
     def namespace_bindings(self) -> tuple[XmlNamespaceBindingData, ...]:
@@ -527,7 +527,7 @@ class XmlElement:
 
     def children(self) -> tuple[XmlContent, ...]:
         """Ordered child content occurrences; mixed-content order is
-        retained (document.rs:657-665)."""
+        retained (document.rs)."""
         return tuple(self._owner._nodes[index] for index in self._data().children)
 
     def is_empty(self) -> bool:
@@ -540,7 +540,7 @@ class XmlElement:
 
 def text_semantic(data: XmlTextData) -> str:
     """Semantic concatenation of one text occurrence after XML line-end
-    normalization to LF (document.rs:765-783; RFC 0012 §6)."""
+    normalization to LF (document.rs; RFC 0012 §6)."""
     output: list[str] = []
     for fragment in data.fragments:
         if fragment.kind is ReferenceFragmentKind.LITERAL:
@@ -555,7 +555,7 @@ def text_semantic(data: XmlTextData) -> str:
 
 def _normalize_line_ends(text: str) -> str:
     """XML 1.0 line-end normalization: CRLF and CR become LF
-    (document.rs:785-799)."""
+    (document.rs)."""
     output: list[str] = []
     index = 0
     while index < len(text):

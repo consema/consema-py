@@ -2,11 +2,11 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (all registry spellings are
-transcribed from https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:978-1097;
+transcribed from https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs;
 the format failure enums and their code mappings are the Rust family's
 StableFailure impls):
 
-- INI diagnostic codes: error_registry.rs:979 (ini.edit.canonical-fallback
+- INI diagnostic codes: error_registry.rs (ini.edit.canonical-fallback
   @1), :985 (ini.edit.case-collision@1), :991 (ini.edit.invalid-name@1),
   :997 (ini.edit.invalid-placement@1), :1003 (ini.formation.case-collision
   @1), :1009 (ini.formation.duplicate-entry@1), :1015
@@ -19,28 +19,28 @@ StableFailure impls):
   (ini.projection.collision@1), :1081 (ini.projection.duplicate-collapsed
   @1), :1087 (ini.projection.incomplete-document@1), :1093
   (ini.query.invalid-name-mode@1).
-- Fatal formation codes: core.parse.resource-limit@1 error_registry.rs:39;
-  ini.profile.encoding@1 error_registry.rs:1063 (parser.rs:22-32, 61-94);
-  the source-layer codes core.source.invalid-utf8@1 error_registry.rs:207,
+- Fatal formation codes: core.parse.resource-limit@1 error_registry.rs;
+  ini.profile.encoding@1 error_registry.rs (parser.rs);
+  the source-layer codes core.source.invalid-utf8@1 error_registry.rs,
   core.source.encoding-conflict@1 :366, core.source.invalid-sequence@1
   :372, core.source.unsupported-bom@1 :405, core.source.resource-limit@1
   :399, core.source.code-page-required@1 :967, core.source.unsupported-
   code-page@1 :973.
-- Formation diagnostic emission: https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs:1158-1195
+- Formation diagnostic emission: https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs
   (category per code, severity Error when recovered, occurrence ordinal)
   and the deterministic sort (Diagnostic::sort_deterministically,
-  consema-core/src/diagnostic.rs:107-123).
-- Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-ini/src/projection.rs:
-  886-893 (RecoveredDocument -> ini.projection.incomplete-document@1,
+  consema-core/src/diagnostic.rs).
+- Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-ini/src/projection.rs
+ (RecoveredDocument -> ini.projection.incomplete-document@1,
   Collision -> ini.projection.collision@1, ResourceLimit ->
   core.projection.resource-limit@1, CoreInvariant ->
   core.projection.target-not-applicable@1) and the failed-attempt
-  arguments projection.rs:852-884 (reason, limit, profile).
-- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-ini/src/edit.rs:1754-1779
+  arguments projection.rs (reason, limit, profile).
+- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-ini/src/edit.rs
   (every EditFailure variant; see the module docstring of
   consema.ini.edit).
 - Query failures reuse the common core.query.*@1 codes
-  (error_registry.rs:108-118) through consema.protocol.query.QueryFailure
+  (error_registry.rs) through consema.protocol.query.QueryFailure
   — no new type is needed.
 
 Design: the INI family raises typed exceptions whose stable ``code`` is the
@@ -102,7 +102,7 @@ class IniDiagnostic:
     notes: tuple[str, ...] = field(default_factory=tuple, repr=False)
 
     def sort_key(self) -> tuple:
-        """Deterministic order key (diagnostic.rs:107-123).
+        """Deterministic order key (diagnostic.rs).
 
         Missing primary sorts last; the None-in-tuple comparison trap is
         avoided with an explicit sentinel.
@@ -113,7 +113,7 @@ class IniDiagnostic:
 
 def sort_diagnostics(diagnostics: list[IniDiagnostic]) -> None:
     """Sorts in place by (primary start, category, code, occurrence)
-    (diagnostic.rs:107-123)."""
+    (diagnostic.rs)."""
     diagnostics.sort(key=lambda diagnostic: diagnostic.sort_key())
 
 
@@ -154,11 +154,11 @@ class IniFormationFailure(Exception):
     """Fatal formation failure; no Document exists.
 
     Exceeding a configured limit is fatal with no truncation-then-success
-    (RFC 0016 §6; RFC 0009 §13, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:476-489); an invalid or
+    (RFC 0016 §6; RFC 0009 §13, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md); an invalid or
     profile-conflicting encoding is likewise fatal before a Document exists
-    (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:68-73; parser.rs:22-32, 61-94). The
-    frozen codes are core.parse.resource-limit@1 (error_registry.rs:39),
-    ini.profile.encoding@1 (error_registry.rs:1063), or the wrapped
+    (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md; parser.rs). The
+    frozen codes are core.parse.resource-limit@1 (error_registry.rs),
+    ini.profile.encoding@1 (error_registry.rs), or the wrapped
     source-layer code (core.source.*@1).
     """
 
@@ -215,7 +215,7 @@ class IniFormationFailure(Exception):
 
 
 class IniProjectionFailureKind(enum.Enum):
-    """Stable projection failure categories (projection.rs:272-286)."""
+    """Stable projection failure categories (projection.rs)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     COLLISION = "Collision"
@@ -226,7 +226,7 @@ class IniProjectionFailureKind(enum.Enum):
 class IniProjectionFailure(Exception):
     """Stable projection failure with a frozen registered code.
 
-    Code mapping authority: projection.rs:886-893. ``name`` is the exact
+    Code mapping authority: projection.rs. ``name`` is the exact
     Rust variant spelling the conformance vectors reference
     (ini-v1.json:67 "rejects" via the Collision diagnostic reason).
     """
@@ -255,7 +255,7 @@ class IniProjectionFailure(Exception):
 
     @property
     def reason(self) -> str:
-        """Stable failed-attempt ``reason`` argument (projection.rs:861-868)."""
+        """Stable failed-attempt ``reason`` argument (projection.rs)."""
         return {
             IniProjectionFailureKind.RECOVERED_DOCUMENT: "incomplete-document",
             IniProjectionFailureKind.COLLISION: "collision",
@@ -278,7 +278,7 @@ _PROJECTION_CODES = {
 
 
 class IniEditFailureKind(enum.Enum):
-    """Stable edit failure categories (edit.rs:260-303)."""
+    """Stable edit failure categories (edit.rs)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     WRONG_SNAPSHOT = "WrongSnapshot"
@@ -306,7 +306,7 @@ class IniEditFailureKind(enum.Enum):
 class IniEditFailure(Exception):
     """Stable edit failure with a frozen registered code.
 
-    Code mapping authority: edit.rs:1754-1779 (RFC 0004 §17). ``name`` is
+    Code mapping authority: edit.rs (RFC 0004 §17). ``name`` is
     the exact Rust variant spelling referenced by the conformance vectors
     (ini-v1.json:105 "wrong_snapshot_code").
     """

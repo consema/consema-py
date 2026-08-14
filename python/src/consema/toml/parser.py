@@ -8,15 +8,15 @@ Authority:
   is a fatal ``core.parse.resource-limit@1``; syntax failure is
   ``toml.parse.syntax@1`` with the backend-provable minimal span and stable
   arguments; no truncated success documents.
-- The parse pipeline order transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs:17-63.
+- The parse pipeline order transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs.
 - The value grammar transcribes the pinned backend toml_edit 0.22.27
-  (https://github.com/consema/consema-rs/blob/main/consema-toml/src/lib.rs:104 pins toml_edit 0.22.27; the backend
+  (https://github.com/consema/consema-rs/blob/main/consema-toml/src/lib.rs pins toml_edit 0.22.27; the backend
   is not the spec, RFC 0001 §1, but the arbiter for byte facts). All
   edge-case behaviors below were verified empirically against toml_edit
   0.22.27 before transcription:
   - value dispatch order string -> array -> inline-table -> date-time ->
-    float -> integer (toml_edit parser/value.rs:17-85);
-  - datetime semantics (toml_edit 0.22.27 parser/datetime.rs:25-249):
+    float -> integer (toml_edit parser/value.rs);
+  - datetime semantics (toml_edit 0.22.27 parser/datetime.rs):
     exactly four-digit year, two-digit month/day/hour/minute/second,
     second 00-60 (leap second accepted), fractional second truncated to
     nine digits and scaled to nanoseconds, separator ``T``/``t``/space,
@@ -25,28 +25,28 @@ Authority:
     trailing junk), a failed time part backtracks to a local date (opt
     semantics), and a failed offset after a matched sign commits the
     whole datetime to failure (cut_err semantics);
-  - number semantics (toml_edit parser/numbers.rs:40-305): signed decimal
+  - number semantics (toml_edit parser/numbers.rs): signed decimal
     with digit1-9 leading rule (no leading zeros, ``01``/``0_1``
     rejected), unsigned 0x/0o/0b, underscores only between digits, i64
     range enforced, float requires frac or exp (``3.e5``/``5.``/``.5``
     rejected), decimal overflow to +inf rejected while overflow to -inf is
-    accepted (numbers.rs:202-204; ``-1e99999`` parses to -inf);
-  - string grammar (toml_edit parser/strings.rs:46-362): basic escapes
+    accepted (numbers.rs; ``-1e99999`` parses to -inf);
+  - string grammar (toml_edit parser/strings.rs): basic escapes
     \\b \\t \\n \\f \\r \\" \\\\ \\uXXXX \\UXXXXXXXX with valid scalar
     values only; control characters must be escaped; multiline basic
     strings trim the first newline, normalize CRLF to LF, trim backslash-
     whitespace-newline runs, and treat runs of one or two quotes as
     content only when followed by non-quote content or by the closing
-    delimiter (mlb_quotes/mll_quotes, strings.rs:213-233, 168-194,
-    310-327); inline tables reject trailing commas while arrays allow them;
-  - the table state machine (toml_edit parser/state.rs:55-269): dotted
+    delimiter (mlb_quotes/mll_quotes, strings.rs
+); inline tables reject trailing commas while arrays allow them;
+  - the table state machine (toml_edit parser/state.rs): dotted
     keys cannot redefine tables defined in [table] form, headers cannot
     redefine dotted tables, [a.b] headers may be adopted by a later [a]
-    header (span overwritten by the adopting header, state.rs:138-173),
+    header (span overwritten by the adopting header, state.rs),
     keys cannot extend a value, array-of-tables descends into its last
     element, dotted keys inside inline tables create nested inline tables.
-- Table flavors transcribe parser.rs:232-241; the entity/span model
-  transcribes parser.rs:84-338 (root spans the source; a table spans its
+- Table flavors transcribe parser.rs; the entity/span model
+  transcribes parser.rs (root spans the source; a table spans its
   header through its last value; a key spans its literal; an entry spans
   key start through value end; implicit logical nodes use their creating
   key segment span, RFC 0001 §2.2).
@@ -81,7 +81,7 @@ from consema.toml.syntax import preflight_delimiter_nesting, tokenize
 _INT64_MIN = -(2**63)
 _INT64_MAX = 2**63 - 1
 
-# IEEE-754 binary64 canonical special bits (numbers.rs:286-305)
+# IEEE-754 binary64 canonical special bits (numbers.rs)
 _FLOAT_INF_BITS = 0x7FF0000000000000
 _FLOAT_NEG_INF_BITS = 0xFFF0000000000000
 _FLOAT_NAN_BITS = 0x7FF8000000000000
@@ -176,14 +176,14 @@ class _TableNode:
         self.span_end: int | None = None
 
     def extend_span(self, start: int, end: int) -> None:
-        """Key-value span extension (state.rs:74-76: only the current
+        """Key-value span extension (state.rs: only the current
         table extends)."""
         if self.span_start is None:
             self.span_start = start
         self.span_end = end
 
     def set_header_span(self, start: int, end: int) -> None:
-        """Header span, overwriting any adopted span (state.rs:163-168)."""
+        """Header span, overwriting any adopted span (state.rs)."""
         self.span_start = start
         self.span_end = end
 
@@ -233,7 +233,7 @@ class Parser:
         raise _SyntaxError(start, end, reason)
 
     def _consume_newline(self) -> None:
-        """newline = LF | CRLF (trivia.rs:63-72); a lone CR is not a
+        """newline = LF | CRLF (trivia.rs); a lone CR is not a
         newline and is a syntax error."""
         if self._peek() == "\r":
             self._advance(1)
@@ -411,7 +411,7 @@ class Parser:
                 self.current = entry[2]
             else:
                 self._error_bytes(leaf_start, leaf_end, "duplicate key")
-        # the header span runs from '[' through ']' (state.rs:163-168)
+        # the header span runs from '[' through ']' (state.rs)
         self.current.set_header_span(header_start, header_end)
 
     def _descend(
@@ -440,7 +440,7 @@ class Parser:
     # -- values -----------------------------------------------------------
 
     def _parse_value(self) -> _Node:
-        """value dispatch (toml_edit parser/value.rs:17-85)."""
+        """value dispatch (toml_edit parser/value.rs)."""
         start = self.pos
         char = self._peek()
         if char == '"':
@@ -493,7 +493,7 @@ class Parser:
         return self.text[start : self.pos]
 
     def _try_number(self) -> tuple[_InternalItemKind, int] | None:
-        """float -> integer (numbers.rs:197-305)."""
+        """float -> integer (numbers.rs)."""
         token = self._scan_bare_run()
         float_value = self._parse_float_token(token)
         if float_value is not None:
@@ -519,17 +519,17 @@ class Parser:
         except ValueError:
             return None
         if value == float("inf"):
-            # numbers.rs:202-204: decimal overflow to +inf is rejected;
+            # numbers.rs: decimal overflow to +inf is rejected;
             # overflow to -inf is accepted (verified against the backend)
             return None
         bits = struct.unpack(">Q", struct.pack(">d", value))[0]
         return _InternalItemKind.float_bits(bits)
 
     def _parse_integer_token(self, token: str) -> _InternalItemKind | None:
-        """integer = dec-int / hex-int / oct-int / bin-int (numbers.rs:40-50).
+        """integer = dec-int / hex-int / oct-int / bin-int (numbers.rs).
 
         The radix forms are unsigned: the value parser only dispatches
-        0x/0o/0b when the token has no sign (numbers.rs:42-46 peek on the
+        0x/0o/0b when the token has no sign (numbers.rs peek on the
         first two bytes; ``-0x1`` fails)."""
         sign = 1
         index = 0
@@ -561,7 +561,7 @@ class Parser:
     # -- strings ----------------------------------------------------------
 
     def _parse_basic_string(self) -> tuple[str, int]:
-        """basic-string (strings.rs:46-145)."""
+        """basic-string (strings.rs)."""
         assert self._peek() == '"'
         start = self.pos
         self._advance(1)
@@ -584,7 +584,7 @@ class Parser:
             self._advance(1)
 
     def _parse_escape(self) -> str:
-        """escape-seq-char (strings.rs:93-145)."""
+        """escape-seq-char (strings.rs)."""
         start = self.pos
         assert self._peek() == "\\"
         self._advance(1)
@@ -616,7 +616,7 @@ class Parser:
         return chr(scalar)
 
     def _parse_literal_string(self) -> tuple[str, int]:
-        """literal-string (strings.rs:256-282)."""
+        """literal-string (strings.rs)."""
         assert self._peek() == "'"
         start = self.pos
         self._advance(1)
@@ -636,7 +636,7 @@ class Parser:
             self._advance(1)
 
     def _parse_multiline_basic_string(self) -> tuple[str, int]:
-        """ml-basic-string (strings.rs:147-254)."""
+        """ml-basic-string (strings.rs)."""
         start = self.pos
         assert self._starts('"""')
         self._advance(3)
@@ -656,7 +656,7 @@ class Parser:
             content, advanced = self._mlb_content()
             if not advanced:
                 # the quote run is not content without following content;
-                # roll it back (mlb_body's else-break, strings.rs:184-187)
+                # roll it back (mlb_body's else-break, strings.rs)
                 self._advance(-run)
                 break
             parts.append('"' * run)
@@ -678,7 +678,7 @@ class Parser:
 
     def _mlb_quote_run(self) -> int:
         """One or two quotes followed by a non-quote, non-EOF byte
-        (mlb_quotes, strings.rs:213-233: peek(none_of('"')) fails at
+        (mlb_quotes, strings.rs: peek(none_of('"')) fails at
         end of input)."""
         if self._starts('""') and self._peek(2) not in ('"', ""):
             return 2
@@ -687,7 +687,7 @@ class Parser:
         return 0
 
     def _mlb_content(self) -> tuple[str, bool]:
-        """mlb-content (strings.rs:196-211); a quote is not content and
+        """mlb-content (strings.rs); a quote is not content and
         ends the body."""
         char = self._peek()
         if char in ("", '"'):
@@ -719,7 +719,7 @@ class Parser:
         return self.text[start : self.pos], True
 
     def _parse_multiline_literal_string(self) -> tuple[str, int]:
-        """ml-literal-string (strings.rs:284-362)."""
+        """ml-literal-string (strings.rs)."""
         start = self.pos
         assert self._starts("'''")
         self._advance(3)
@@ -857,7 +857,7 @@ class Parser:
     # -- datetimes --------------------------------------------------------
 
     def _try_datetime(self) -> tuple[_InternalItemKind, int] | None:
-        """date-time (toml_edit 0.22.27 parser/datetime.rs:25-249)."""
+        """date-time (toml_edit 0.22.27 parser/datetime.rs)."""
         result = _parse_datetime_core(self.text, self.pos)
         if result is None:
             return None
@@ -870,21 +870,21 @@ class Parser:
 
 
 def _parse_datetime_core(text: str, pos: int) -> tuple[TomlDateTime, int] | None:
-    """The toml_edit 0.22.27 datetime grammar (parser/datetime.rs:25-249),
+    """The toml_edit 0.22.27 datetime grammar (parser/datetime.rs),
     transcribed with its exact consumption semantics:
 
     - ``date-time = (full-date [time-delim partial-time [time-offset]]) /
       partial-time``; the parser consumes a valid prefix and the caller
       handles the remainder (no full-value consumption requirement);
     - a missing or failed time part after a full date backtracks to a
-      local date (``opt`` semantics, datetime.rs:29-46);
+      local date (``opt`` semantics, datetime.rs);
     - a failed offset after a matched sign is a cut error that fails the
-      whole datetime (``cut_err``, datetime.rs:110-128);
-    - pure local times never parse an offset (datetime.rs:47-49);
+      whole datetime (``cut_err``, datetime.rs);
+    - pure local times never parse an offset (datetime.rs);
     - the fractional second truncates to nine digits and scales to
-      nanoseconds (time_secfrac, datetime.rs:215-249);
+      nanoseconds (time_secfrac, datetime.rs);
     - time-hour 00-23, time-minute 00-59, time-second 00-60, offset
-      ±HH:MM within [-24h, +24h] (datetime.rs:173-213).
+      ±HH:MM within [-24h, +24h] (datetime.rs).
     """
     index = pos
     length = len(text)
@@ -999,7 +999,7 @@ def _days_in_month(year: int, month: int) -> int:
 
 
 def _scan_dec_int(token: str, index: int) -> int | None:
-    """dec-int (numbers.rs:52-88): [sign] (digit1-9 [digits/underscores] | 0)."""
+    """dec-int (numbers.rs): [sign] (digit1-9 [digits/underscores] | 0)."""
     if index >= len(token):
         return None
     if token[index] in "+-":
@@ -1025,7 +1025,7 @@ def _scan_dec_int(token: str, index: int) -> int | None:
 
 
 def _radix_ok(digits: str, radix: int) -> bool:
-    """Radix digits with underscores only between digits (numbers.rs:92-189)."""
+    """Radix digits with underscores only between digits (numbers.rs)."""
     if not digits:
         return False
     if radix == 16:
@@ -1044,7 +1044,7 @@ def _radix_ok(digits: str, radix: int) -> bool:
 
 
 def _float_grammar_ok(token: str) -> bool:
-    """float = [sign] dec-int ( exp | frac [exp] ) (numbers.rs:192-284)."""
+    """float = [sign] dec-int ( exp | frac [exp] ) (numbers.rs)."""
     if not token:
         return False
     index = 1 if token[0] in "+-" else 0
@@ -1067,7 +1067,7 @@ def _float_grammar_ok(token: str) -> bool:
 
 
 def _scan_frac(token: str, index: int) -> int | None:
-    """frac = "." zero-prefixable-int (numbers.rs:227-266)."""
+    """frac = "." zero-prefixable-int (numbers.rs)."""
     if index >= len(token) or token[index] != ".":
         return None
     index += 1
@@ -1086,7 +1086,7 @@ def _scan_frac(token: str, index: int) -> int | None:
 
 
 def _scan_exp(token: str, index: int) -> int | None:
-    """exp = (e|E) [sign] zero-prefixable-int (numbers.rs:268-284)."""
+    """exp = (e|E) [sign] zero-prefixable-int (numbers.rs)."""
     if index >= len(token) or token[index] not in "eE":
         return None
     index += 1
@@ -1107,7 +1107,7 @@ def _scan_exp(token: str, index: int) -> int | None:
 
 
 def _basic_unescaped_ok(char: str) -> bool:
-    """basic-unescaped (strings.rs:84-91)."""
+    """basic-unescaped (strings.rs)."""
     code = ord(char)
     if code < 0x80:
         return (
@@ -1120,7 +1120,7 @@ def _basic_unescaped_ok(char: str) -> bool:
 
 
 def _literal_char_ok(char: str) -> bool:
-    """literal-char (strings.rs:276-282)."""
+    """literal-char (strings.rs)."""
     code = ord(char)
     if code < 0x80:
         return code == 0x09 or 0x20 <= code <= 0x26 or 0x28 <= code <= 0x7E
@@ -1128,12 +1128,12 @@ def _literal_char_ok(char: str) -> bool:
 
 
 def _multiline_basic_unescaped_ok(char: str) -> bool:
-    """mlb-unescaped (strings.rs:235-242)."""
+    """mlb-unescaped (strings.rs)."""
     return _basic_unescaped_ok(char)
 
 
 def _multiline_literal_char_ok(char: str) -> bool:
-    """mll-char (strings.rs:334-341)."""
+    """mll-char (strings.rs)."""
     return _literal_char_ok(char)
 
 
@@ -1142,7 +1142,7 @@ def _mll_content_ok(char: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Entity building (parser.rs:84-338)
+# Entity building (parser.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1184,7 +1184,7 @@ class _EntityBuilder:
             or table.span_end is None
         ):
             # the root table always spans the whole source
-            # (parser.rs:198-199: root => 0..source_len)
+            # (parser.rs: root => 0..source_len)
             table_range = fallback
         else:
             table_range = (table.span_start, table.span_end)
@@ -1340,7 +1340,7 @@ class _EntityBuilder:
 
 def parse(source_bytes: bytes, profile: TomlProfile, limits: ParseLimits) -> Document:
     """Parses one complete immutable TOML 1.0 document snapshot
-    (parser.rs:17-63). Raises :class:`TomlFormationFailure` on any fatal
+    (parser.rs). Raises :class:`TomlFormationFailure` on any fatal
     formation failure; never returns a partial document."""
     if len(source_bytes) > limits.max_source_bytes:
         raise TomlFormationFailure.resource_limit(
@@ -1397,5 +1397,5 @@ def parse(source_bytes: bytes, profile: TomlProfile, limits: ParseLimits) -> Doc
 
 def parse_with_profile(source_bytes: bytes, limits: ParseLimits) -> Document:
     """Convenience formation for the single frozen profile ``toml.1.0@1``
-    (lib.rs:111-119)."""
+    (lib.rs)."""
     return parse(source_bytes, TomlProfile.TOML10_V1, limits)

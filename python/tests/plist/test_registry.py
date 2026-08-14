@@ -1,9 +1,9 @@
 """The frozen plist format operation registry (6 records per profile).
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs:104-132 (the
+Authority: https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs (the
 frozen surface test: exactly six Supported structural operations per
 profile, sorted) and RFC 0013 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-
-v1.md:685-695).
+v1.md).
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from consema.plist import PlistProfile, format_operation_registry
 
 
 def test_every_plist_profile_publishes_the_frozen_six_operation_surface():
-    # operation_registry.rs:104-132.
+    # operation_registry.rs.
     expected = [
         "plist.edit.insert-array-element@1",
         "plist.edit.insert-dict-entry@1",
@@ -32,7 +32,7 @@ def test_every_plist_profile_publishes_the_frozen_six_operation_surface():
 
 
 def test_descriptor_argument_schemas_are_frozen():
-    # operation_registry.rs:21-82.
+    # operation_registry.rs.
     registry = format_operation_registry(PlistProfile.XML_V1)
     set_value = registry.find("plist.edit.set-value@1")
     assert set_value is not None

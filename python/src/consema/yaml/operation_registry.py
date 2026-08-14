@@ -1,14 +1,14 @@
 """The YAML-family format operation registry (8 frozen records).
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs:16-83 — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs — the exact
 operation ids, target roles, argument schemas, and support classifications;
 the structural surface is frozen by the registry test
-(operation_registry.rs:107-135: exactly six Supported structural operations
+(operation_registry.rs: exactly six Supported structural operations
 for every profile and eight total records, with the insert-alias anchor
 argument on role yaml.sequence) and RFC 0007 s12
-(https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md:357-398).
+(https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md).
 
-Frozen records (operation_registry.rs:17-82):
+Frozen records (operation_registry.rs):
 
 1. yaml.edit.insert-alias@1           yaml.sequence         anchor(NodeRef), placement(Placement)              Supported
 2. yaml.edit.insert-mapping-entry@1   yaml.mapping          key(PortableValue), value(PortableValue), placement(Placement)  Supported
@@ -20,9 +20,9 @@ Frozen records (operation_registry.rs:17-82):
 8. yaml.edit.replace-scalar-semantic@1 yaml.scalar          value(PortableValue), representation_policy(RepresentationPolicy)  ExistingTypedCapability
 
 Operation ids/versions and the ``id@version`` display form are frozen by
-consema-document (FormatOperationId, operation_registry.rs:10-42); the
+consema-document (FormatOperationId, operation_registry.rs); the
 EditPlan operation-metadata matching rule requires that form
-(edit_plan.rs:84-121).
+(edit_plan.rs).
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ from consema.yaml.kinds import YamlProfile
 
 
 class OperationSupport(enum.Enum):
-    """Support classification (operation_registry.rs:25-27)."""
+    """Support classification (operation_registry.rs)."""
 
     SUPPORTED = "Supported"
     EXISTING_TYPED_CAPABILITY = "ExistingTypedCapability"
@@ -54,7 +54,7 @@ class OperationArgumentKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class OperationArgumentDescriptor:
-    """One operation argument schema (operation_registry.rs:99-101)."""
+    """One operation argument schema (operation_registry.rs)."""
 
     name: str
     kind: OperationArgumentKind
@@ -63,7 +63,7 @@ class OperationArgumentDescriptor:
 
 @dataclass(frozen=True, slots=True)
 class FormatOperationDescriptor:
-    """One validated immutable operation record (operation_registry.rs:90-97)."""
+    """One validated immutable operation record (operation_registry.rs)."""
 
     id: FormatOperationId
     target_role: str
@@ -78,7 +78,7 @@ class FormatOperationDescriptor:
 @dataclass(frozen=True, slots=True)
 class YamlFormatOperationRegistry:
     """Validated operation registry for one exact YAML profile
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
 
     profile: ProfileId
     operations: tuple[FormatOperationDescriptor, ...]
@@ -115,7 +115,7 @@ def _argument(name: str, kind: OperationArgumentKind) -> tuple[str, OperationArg
 
 
 def descriptors() -> tuple[FormatOperationDescriptor, ...]:
-    """The frozen eight-record descriptor set (operation_registry.rs:16-82)."""
+    """The frozen eight-record descriptor set (operation_registry.rs)."""
     return (
         _descriptor(
             "yaml.edit.insert-alias@1",
@@ -183,7 +183,7 @@ def descriptors() -> tuple[FormatOperationDescriptor, ...]:
 
 def format_operation_registry(profile: YamlProfile) -> YamlFormatOperationRegistry:
     """Returns the validated operation registry for one exact YAML profile
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
     name, version = profile.id()
     return YamlFormatOperationRegistry(
         profile=ProfileId.new(name, version),

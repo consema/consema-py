@@ -2,16 +2,16 @@
 closed YamlSyntaxKind classification, and the named anchor/alias occurrences.
 
 Authority: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/syntax.rs --the Scanner dispatch order
-(syntax.rs:111-217), the plain-scalar continuation rule (syntax.rs:120-134,
-257-282), quoted scanning (syntax.rs:284-317), block-content scanning
-(syntax.rs:335-364), the indicator dispatch (syntax.rs:366-379), and the
-anchor/alias occurrence extraction (syntax.rs:52-60). The vector surface is
+(syntax.rs), the plain-scalar continuation rule (syntax.rs,
+), quoted scanning (syntax.rs), block-content scanning
+(syntax.rs), the indicator dispatch (syntax.rs), and the
+anchor/alias occurrence extraction (syntax.rs). The vector surface is
 conformance/vectors/yaml-v1.json case ``syntax.styles-and-trivia``
 (piece_count 48, required kinds) and ``regression.plain-property-characters``
 (no Anchor/Tag pieces inside plain scalars).
 
 https://github.com/consema/consema-go/blob/main/go/yaml/syntax.go is a cross-reference only (it documents itself as a
-faithful replicate of syntax.rs:86-421).
+faithful replicate of syntax.rs).
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ class _Lexeme:
 
 @dataclass(frozen=True, slots=True)
 class NamedOccurrence:
-    """One anchor or alias occurrence with its raw span (syntax.rs:73-77)."""
+    """One anchor or alias occurrence with its raw span (syntax.rs)."""
 
     name: str
     span: Span
@@ -48,7 +48,7 @@ class NamedOccurrence:
 
 @dataclass(frozen=True, slots=True)
 class Tokenized:
-    """The tokenizer result (syntax.rs:79-84)."""
+    """The tokenizer result (syntax.rs)."""
 
     index: LosslessStructuralIndex
     kinds: tuple[YamlSyntaxKind, ...]
@@ -65,7 +65,7 @@ def _is_flow_indicator(value: str) -> bool:
 
 
 class _Scanner:
-    """Faithful port of the Rust Scanner (syntax.rs:86-421).
+    """Faithful port of the Rust Scanner (syntax.rs).
 
     Operates on the decoded text as a list of single-character strings so
     every lexeme boundary is a Unicode scalar offset exactly like the Rust
@@ -383,7 +383,7 @@ def tokenize(
     max_tokens: int,
 ) -> Tokenized:
     """Scans one source into the exhaustive piece index, the parallel kind
-    list, and the anchor/alias occurrences (syntax.rs:16-71)."""
+    list, and the anchor/alias occurrences (syntax.rs)."""
     text = source.decoded_text()
     if text is None:
         raise YamlFormationFailure(YamlFormationFailureKind.SYNTAX, code="yaml.native.invalid-source-span@1")

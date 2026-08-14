@@ -231,7 +231,7 @@ _WINDOWS_CODE_PAGES = (874, 932, 936, 949, 950, 1250, 1251, 1252, 1253, 1254, 12
 
 def windows_code_page_from_number(number: int) -> int | None:
     """Resolves one numeric code page only when source contract v2 publishes
-    it (the portable registry of https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:58-76)."""
+    it (the portable registry of https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs)."""
     if number in _WINDOWS_CODE_PAGES:
         return number
     return None
@@ -369,7 +369,7 @@ class BatchPlanFileStatus(enum.Enum):
 
 
 class BatchPlanFileEntry:
-    """One file entry of a core.batch-plan@1 manifest (cli.rs:376-541)."""
+    """One file entry of a core.batch-plan@1 manifest (cli.rs)."""
 
     __slots__ = (
         "path",
@@ -463,7 +463,7 @@ class BatchPlanFileEntry:
 
 
 class BatchPlanMessage:
-    """The full core.batch-plan@1 manifest (RFC 0015 §8; cli.rs:543-641)."""
+    """The full core.batch-plan@1 manifest (RFC 0015 §8; cli.rs)."""
 
     __slots__ = ("product_version", "files")
 
@@ -499,7 +499,7 @@ class BatchPlanMessage:
         value: PortableValue, registry: ErrorCodeRegistry | None = None
     ) -> "BatchPlanMessage":
         """Strictly decodes ``core.batch-plan@1`` under the semantic-model v7
-        error registry and default source-patch limits (cli.rs:610-614)."""
+        error registry and default source-patch limits (cli.rs)."""
         return BatchPlanMessage.from_value_with_registry_and_patch_limits(
             value, registry or ErrorCodeRegistry(7), SourcePatchLimits()
         )
@@ -570,7 +570,7 @@ class BatchResultFileStatus(enum.Enum):
 
 
 class BatchResultFileEntry:
-    """One result entry of a core.batch-result@1 manifest (cli.rs:656-743)."""
+    """One result entry of a core.batch-result@1 manifest (cli.rs)."""
 
     __slots__ = ("path", "status", "failure_code", "target_digest", "redacted")
 
@@ -612,7 +612,7 @@ class BatchResultFileEntry:
 
 
 class BatchResultMessage:
-    """The full core.batch-result@1 manifest (RFC 0015 §9; cli.rs:745-822)."""
+    """The full core.batch-result@1 manifest (RFC 0015 §9; cli.rs)."""
 
     __slots__ = ("product_version", "files")
 
@@ -670,7 +670,7 @@ class BatchResultMessage:
 # --------------------------------------------------------------------------
 
 class CliOutputMessage:
-    """The full core.cli-output@1 machine envelope (RFC 0015 §4; cli.rs:149-364)."""
+    """The full core.cli-output@1 machine envelope (RFC 0015 §4; cli.rs)."""
 
     __slots__ = ("command", "exit_class", "product_version", "payload", "diagnostics", "redaction")
 
@@ -787,7 +787,7 @@ class CliOutputMessage:
 
 def _validate_payload_schema(payload: PortableValue, command: CliCommand) -> None:
     """The payload must be an Object whose first field is ``schema`` carrying
-    one of the command's published schemas (cli.rs:824-868)."""
+    one of the command's published schemas (cli.rs)."""
     if payload.kind is not Kind.OBJECT:
         raise protocol_error(ProtocolErrorKind.WRONG_TYPE, "$.payload", "payload must be an Object")
     entries = payload.as_object()

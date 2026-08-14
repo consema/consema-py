@@ -4,25 +4,25 @@ Frozen names/numbers with authority citations (language-neutral first; Rust
 only for registry/byte arbitration):
 
 - ``PlistProfile``: the two profile identities — https://github.com/consema/consema-rs/blob/main/consema-plist/src/
-  lib.rs:76-81 (enum), lib.rs:83-92 (id()); the profile ids plist.xml@1 /
+  lib.rs (enum), lib.rs (id()); the profile ids plist.xml@1 /
   plist.binary@1 are the frozen language-neutral spellings (RFC 0013 §1,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:29-47).
-- ``PlistEncodingSelection``: ProfileDefault | Explicit — lib.rs:104-110;
+  https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md).
+- ``PlistEncodingSelection``: ProfileDefault | Explicit — lib.rs;
   the XML profile follows the RFC 0012 UTF-8/UTF-16 document-entity table
   (RFC 0013 §2.1, lines 59-76) and the binary profile admits only the
   opaque Binary source (RFC 0013 §2.2, lines 78-88).
 - ``PlistSyntaxKind``: the closed 47-kind lossless classification with the
   exact stable names ("Bom", "Whitespace", "LineBreak", "DeclarationOpen",
-  ..., "ErrorRegion") — parser_xml.rs:173-232 (enum), parser_xml.rs:233-302
+  ..., "ErrorRegion") — parser_xml.rs (enum), parser_xml.rs
   (as_str); the lossless syntax domain lists exactly this vocabulary
   (RFC 0013 §8.2, lines 565-582).
 - ``PlistStringStatus``: WellFormedUnicode | UnpairedSurrogate —
-  native.rs:39-44 (RFC 0013 §6, lines 488-492; the
+  native.rs (RFC 0013 §6, lines 488-492; the
   ``core.java-utf16-string@1`` wire pattern).
-- ``RealWidth``: Float64 | Float32 — native.rs:219-224 (the binary-only
+- ``RealWidth``: Float64 | Float32 — native.rs (the binary-only
   ``0x22`` width fact, RFC 0013 §5.5, lines 350-354).
-- ``PlistParseLimits`` defaults — lib.rs:168-194 (RFC 0013 §12, lines
-  718-732); every limit failure is fatal and never masquerades as an empty
+- ``PlistParseLimits`` defaults — lib.rs (RFC 0013 §12, lines
+); every limit failure is fatal and never masquerades as an empty
   tree or truncated data (hard gate 4).
 """
 
@@ -35,7 +35,7 @@ from consema.document.ids import ProfileId
 from consema.document.limits import ParseLimits
 from consema.document.source import SourceEncoding
 
-# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-plist/src/lib.rs:168-194.
+# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-plist/src/lib.rs.
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
 _DEFAULT_MAX_DECODED_SCALARS = 64 * 1024 * 1024
 _DEFAULT_MAX_OBJECT_COUNT = 1_000_000
@@ -59,11 +59,11 @@ _DEFAULT_MAX_RECOVERY_REGIONS = 100_000
 
 
 class PlistProfile(enum.Enum):
-    """Frozen plist formation profiles (https://github.com/consema/consema-rs/blob/main/consema-plist/src/lib.rs:76-81).
+    """Frozen plist formation profiles (https://github.com/consema/consema-rs/blob/main/consema-plist/src/lib.rs).
 
     The profile is selected by the caller before formation; neither the
     ``bplist00`` magic number nor a ``.plist`` extension selects semantics
-    (RFC 0013 §1, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:40-46). The two profiles are format
+    (RFC 0013 §1, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md). The two profiles are format
     identities, not dialects of one format, and share one native value model
     (RFC 0013 §7).
     """
@@ -72,12 +72,12 @@ class PlistProfile(enum.Enum):
     BINARY_V1 = "plist.binary"
 
     def id(self) -> ProfileId:
-        """Immutable profile identifier (lib.rs:83-92)."""
+        """Immutable profile identifier (lib.rs)."""
         return ProfileId.new(self.value, 1)
 
 
 class PlistEncodingSelection:
-    """Explicit source-encoding selection (lib.rs:104-110).
+    """Explicit source-encoding selection (lib.rs).
 
     For the XML profile the selection follows the RFC 0012 source contract:
     no-BOM source defaults to UTF-8, and an explicit caller choice is
@@ -123,14 +123,14 @@ class PlistEncodingSelection:
 
 class PlistStringStatus(enum.Enum):
     """Whether exact UTF-16 code units form Unicode scalar text
-    (https://github.com/consema/consema-rs/blob/main/consema-plist/src/native.rs:39-44; RFC 0013 §6)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-plist/src/native.rs; RFC 0013 §6)."""
 
     WELL_FORMED_UNICODE = "WellFormedUnicode"
     UNPAIRED_SURROGATE = "UnpairedSurrogate"
 
 
 class RealWidth(enum.Enum):
-    """Width fact of one exact IEEE 754 real payload (native.rs:219-224)."""
+    """Width fact of one exact IEEE 754 real payload (native.rs)."""
 
     FLOAT64 = "Float64"
     FLOAT32 = "Float32"
@@ -138,8 +138,8 @@ class RealWidth(enum.Enum):
 
 class PlistSyntaxKind(enum.Enum):
     """Closed plist XML lossless syntax-piece classification
-    (https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_xml.rs:173-232; RFC 0013 §8.2,
-    https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:565-582).
+    (https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_xml.rs; RFC 0013 §8.2,
+    https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md).
 
     The 47-kind vocabulary is exactly the lossless syntax domain list; every
     non-empty raw byte of an XML source belongs to exactly one ordered
@@ -194,7 +194,7 @@ class PlistSyntaxKind(enum.Enum):
     ERROR_REGION = "ErrorRegion"
 
     def as_str(self) -> str:
-        """Stable query and protocol name (parser_xml.rs:233-302)."""
+        """Stable query and protocol name (parser_xml.rs)."""
         return self.value
 
     @classmethod
@@ -209,7 +209,7 @@ class PlistSyntaxKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class PlistParseLimits:
     """Plist-specific formation, structure, recovery, and conversion limits
-    (lib.rs:114-166; RFC 0013 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:718-732).
+    (lib.rs; RFC 0013 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md).
 
     ``common`` holds the shared source/node/nesting/token/diagnostic limits
     (including ``max_source_bytes``; the 42-byte binary minimum is far below
@@ -241,5 +241,5 @@ class PlistParseLimits:
 
     def arena_limits(self) -> tuple[int, int]:
         """(max_objects, max_container_depth) of the native arena
-        (lib.rs:196-205)."""
+        (lib.rs)."""
         return (self.max_object_count, self.max_container_depth)

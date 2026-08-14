@@ -4,9 +4,9 @@ Frozen names/numbers with authority citations (language-neutral first;
 Rust only for registry/byte arbitration):
 
 - ``HclProfile``: the two profile identities — https://github.com/consema/consema-rs/blob/main/consema-hcl/src/
-  lib.rs:100-118 (enum and id()); the profile ids hcl.native@1 /
+  lib.rs (enum and id()); the profile ids hcl.native@1 /
   hcl.tfvars@1 are the frozen language-neutral spellings (RFC 0014 §1,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md:25-30).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md).
 - ``HclSyntaxKind``: the closed 30-kind lossless classification with the
   exact stable names ("Whitespace", "LineBreak", "LineComment",
   "InlineComment", "Identifier", "Equals", "Number", "StringOpen",
@@ -16,22 +16,22 @@ Rust only for registry/byte arbitration):
   "HeredocClose", "BraceOpen", "BraceClose", "BracketOpen",
   "BracketClose", "ParenOpen", "ParenClose", "Comma", "Colon",
   "QuestionMark", "Operator", "ErrorRegion") — RFC 0014 §7.2
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md:490-501) and https://github.com/consema/consema-rs/blob/main/consema-hcl/src/native.rs:327-475
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0014-hcl-family-profiles-v1.md) and https://github.com/consema/consema-rs/blob/main/consema-hcl/src/native.rs
   (enum, as_str, from_name). There is no ``Bom`` kind (RFC 0014 §7.2).
 - ``HclExpressionKindName``: the closed payload-free expression kind set of
   RFC 0014 §7.1 `hcl.expression-kind-is@1` — https://github.com/consema/consema-rs/blob/main/consema-hcl/src/
-  expression.rs:561-642 (enum + as_str/from_name); spellings "number",
+  expression.rs (enum + as_str/from_name); spellings "number",
   "boolean", "null", "template", "function-call", "variable-ref",
   "traversal", "unary", "binary", "conditional", "for-tuple",
   "for-object", "tuple", "object", "parenthesized".
 - The kind-family spellings of the `hcl.expression@1` record (RFC 0014
-  §8.2) — https://github.com/consema/consema-rs/blob/main/consema-hcl/src/projection.rs:996-1040: variable and
+  §8.2) — https://github.com/consema/consema-rs/blob/main/consema-hcl/src/projection.rs: variable and
   traversal are one "variable" family, for-tuple and for-object are one
   "for" family.
 - Identifier character rules — RFC 0014 §4.1 (UAX #31:
   ``Identifier = ID_Start (ID_Continue | "-")*``, underscore excluded at
   the start, §12 D-4); the Rust lexer's tables are
-  https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lexer.rs:2098-2108.
+  https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lexer.rs.
 
 Unicode note (blind-write disclosure): RFC 0014 §4.1 pins Unicode ID_Start
 and ID_Continue via UAX #31. This implementation classifies via the host
@@ -51,7 +51,7 @@ from consema.document.ids import ProfileId
 
 
 class HclProfile(enum.Enum):
-    """Frozen HCL language profile (https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lib.rs:100-107).
+    """Frozen HCL language profile (https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lib.rs).
 
     The two profiles share one grammar and one native semantic model;
     ``hcl.tfvars@1`` is ``hcl.native@1`` under the top-level
@@ -61,16 +61,16 @@ class HclProfile(enum.Enum):
     NATIVE_V1 = "hcl.native"
     TFVARS_V1 = "hcl.tfvars"
 
-    # -- profile identity (lib.rs:109-118) ----------------------------------
+    # -- profile identity (lib.rs) ----------------------------------
 
     def id(self) -> ProfileId:
-        """Immutable profile identifier (lib.rs:110-117)."""
+        """Immutable profile identifier (lib.rs)."""
         return ProfileId.new(self.value, 1)
 
 
 class HclSyntaxKind(enum.Enum):
     """Closed 30-kind HCL lossless syntax-piece classification (RFC 0014
-    §7.2; https://github.com/consema/consema-rs/blob/main/consema-hcl/src/native.rs:327-398).
+    §7.2; https://github.com/consema/consema-rs/blob/main/consema-hcl/src/native.rs).
 
     Every non-empty raw byte of a formed document belongs to exactly one
     ordered structural piece with one of these kinds; there is no ``Bom``
@@ -111,12 +111,12 @@ class HclSyntaxKind(enum.Enum):
     ERROR_REGION = "ErrorRegion"
 
     def as_str(self) -> str:
-        """Stable query and protocol name (native.rs:400-436)."""
+        """Stable query and protocol name (native.rs)."""
         return self.value
 
     @classmethod
     def from_name(cls, name: str) -> HclSyntaxKind | None:
-        """Resolves one exact stable kind name (native.rs:438-474)."""
+        """Resolves one exact stable kind name (native.rs)."""
         try:
             return cls(name)
         except ValueError:
@@ -125,7 +125,7 @@ class HclSyntaxKind(enum.Enum):
 
 class HclExpressionKindName(enum.Enum):
     """Closed payload-free expression kind name set (RFC 0014 §7.1
-    `hcl.expression-kind-is@1`; expression.rs:561-595)."""
+    `hcl.expression-kind-is@1`; expression.rs)."""
 
     NUMBER = "number"
     BOOLEAN = "boolean"
@@ -144,12 +144,12 @@ class HclExpressionKindName(enum.Enum):
     PARENTHESIZED = "parenthesized"
 
     def as_str(self) -> str:
-        """Stable kind spelling (expression.rs:597-618)."""
+        """Stable kind spelling (expression.rs)."""
         return self.value
 
     @classmethod
     def from_name(cls, name: str) -> HclExpressionKindName | None:
-        """Resolves one stable kind spelling (expression.rs:620-641)."""
+        """Resolves one stable kind spelling (expression.rs)."""
         try:
             return cls(name)
         except ValueError:
@@ -157,7 +157,7 @@ class HclExpressionKindName(enum.Enum):
 
     def kind_family(self) -> str:
         """Kind-family spelling of the `hcl.expression@1` record (RFC 0014
-        §8.2; projection.rs:996-1020).
+        §8.2; projection.rs).
 
         Variable and traversal expressions are one family; for-expressions
         are one family over the tuple and object forms.
@@ -174,16 +174,16 @@ class HclExpressionKindName(enum.Enum):
 
 
 # -- UAX #31 identifier character classes (RFC 0014 §4.1, §12 D-4;
-#    lexer.rs:2098-2108) -----------------------------------------------------
+#    lexer.rs) -----------------------------------------------------
 
 
 def is_identifier_start(character: str) -> bool:
     """ID_Start with the underscore excluded at the start (RFC 0014 §4.1,
-    §12 D-4; lexer.rs:2100-2102)."""
+    §12 D-4; lexer.rs)."""
     return character != "_" and character.isidentifier()
 
 
 def is_identifier_continue(character: str) -> bool:
-    """ID_Continue; the hyphen continuation is a scan-loop fact (lexer.rs:
-    2104-2108)."""
+    """ID_Continue; the hyphen continuation is a scan-loop fact (lexer.rs
+)."""
     return ("a" + character).isidentifier()

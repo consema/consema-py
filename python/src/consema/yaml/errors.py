@@ -4,11 +4,11 @@ SDK-internal diagnostic record.
 Frozen code names with authority citations (all registry spellings are
 transcribed verbatim from https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs):
 
-- yaml.profile.version-directive@1 error_registry.rs:856;
-- yaml.parse.syntax@1 error_registry.rs:850;
-- yaml.anchor.unknown@1 error_registry.rs:748; yaml.alias.name-mismatch@1
-  error_registry.rs:730; yaml.alias.name-unavailable@1 error_registry.rs:736;
-  yaml.anchor.name-unavailable@1 error_registry.rs:742;
+- yaml.profile.version-directive@1 error_registry.rs;
+- yaml.parse.syntax@1 error_registry.rs;
+- yaml.anchor.unknown@1 error_registry.rs; yaml.alias.name-mismatch@1
+  error_registry.rs; yaml.alias.name-unavailable@1 error_registry.rs;
+  yaml.anchor.name-unavailable@1 error_registry.rs;
 - yaml.native.invalid-source-span@1 :820; yaml.native.trailing-events@1 :826;
   yaml.native.trailing-named-occurrence@1 :832; yaml.native.unexpected-end@1
   :838; yaml.native.unexpected-event@1 :844;
@@ -30,13 +30,13 @@ transcribed verbatim from https://github.com/consema/consema-rs/blob/main/consem
   conflict@1 :784.
 
 The common edit/materialization/query failures reuse the core codes:
-core.edit.*@1 (RFC 0004 §17, error_registry.rs:388-410), the fatal formation
-code core.parse.resource-limit@1 (error_registry.rs:39), and core.query.*@1
-(error_registry.rs:108-118, raised through consema.protocol.query.QueryFailure).
+core.edit.*@1 (RFC 0004 §17, error_registry.rs), the fatal formation
+code core.parse.resource-limit@1 (error_registry.rs), and core.query.*@1
+(error_registry.rs, raised through consema.protocol.query.QueryFailure).
 
 Failure-code mappings for the YAML operations are the Rust StableFailure
-impls: edit.rs:318-343, projection.rs:174-183 and 480-497,
-materialization.rs:143-152, lib.rs backend_failure 833-858.
+impls: edit.rs, projection.rs and 480-497,
+materialization.rs, lib.rs backend_failure 833-858.
 
 Design: the family raises typed exceptions whose stable ``code`` is the
 registered code (RFC 0016 §6). Error text is human presentation only and
@@ -86,7 +86,7 @@ class YamlDiagnostic:
     arguments: dict[str, str] = field(default_factory=dict, repr=False)
 
     def sort_key(self) -> tuple:
-        """Deterministic order key (consema-core diagnostic.rs:107-123)."""
+        """Deterministic order key (consema-core diagnostic.rs)."""
         start = self.primary.start_byte if self.primary is not None else 2**64 - 1
         return (start, self.category.value, self.code, self.occurrence)
 
@@ -104,7 +104,7 @@ def sort_diagnostics(diagnostics: list[YamlDiagnostic]) -> None:
 class YamlFormationFailureKind(enum.Enum):
     """Fatal formation failure categories (FatalFormationFailure of
     consema-document; resource names follow the Rust spellings used by
-    lib.rs:266-272, 415-427 and backend.rs:147-156)."""
+    lib.rs and backend.rs)."""
 
     SOURCE_BYTES = "source-bytes"
     TOKEN_COUNT = "token-count"
@@ -123,7 +123,7 @@ class YamlFormationFailure(Exception):
 
     Exceeding a configured limit is fatal with no truncation-then-success
     (RFC 0016 §6). The frozen codes are core.parse.resource-limit@1
-    (error_registry.rs:39), core.source.invalid-utf8@1 (:207),
+    (error_registry.rs), core.source.invalid-utf8@1 (:207),
     yaml.parse.syntax@1 (:850), yaml.profile.version-directive@1 (:856),
     and the semantic formation codes of lib.rs/native.rs.
     """
@@ -164,7 +164,7 @@ class YamlFormationFailure(Exception):
 def resource_limit_failure(
     name: str, observed: int, limit: int
 ) -> YamlFormationFailure:
-    """Fatal resource-limit failure (lib.rs:266-272, 415-427)."""
+    """Fatal resource-limit failure (lib.rs)."""
     return YamlFormationFailure(
         YamlFormationFailureKind.SOURCE_BYTES
         if name == "source-bytes"
@@ -181,7 +181,7 @@ def resource_limit_failure(
 
 def semantic_failure(code: str) -> YamlFormationFailure:
     """Fatal composition failure with an exact registered semantic code
-    (native.rs:1148-1157)."""
+    (native.rs)."""
     return YamlFormationFailure(
         YamlFormationFailureKind.SEMANTIC, code=code
     )
@@ -193,7 +193,7 @@ def semantic_failure(code: str) -> YamlFormationFailure:
 
 
 class YamlProjectionFailureKind(enum.Enum):
-    """Value-projection failure categories (projection.rs:436-476)."""
+    """Value-projection failure categories (projection.rs)."""
 
     DOCUMENT_CARDINALITY = "document-cardinality"
     CYCLE = "cycle"
@@ -219,7 +219,7 @@ _CODE_BY_PROJECTION_KIND = {
 
 class YamlProjectionFailure(Exception):
     """Value-projection failure; no partial value or provenance is returned
-    (projection.rs:436-497; RFC 0007 §10: failure carries no PortableGraph/
+    (projection.rs; RFC 0007 §10: failure carries no PortableGraph/
     PortableValue and no partial provenance)."""
 
     def __init__(
@@ -240,8 +240,8 @@ class YamlProjectionFailure(Exception):
 
 
 class YamlGraphProjectionErrorKind(enum.Enum):
-    """Exact graph projection failure categories (native.rs:97-103,
-    projection.rs:154-161)."""
+    """Exact graph projection failure categories (native.rs,
+    projection.rs)."""
 
     UNSUPPORTED_TAG = "unsupported-tag"
     GRAPH = "graph"
@@ -255,7 +255,7 @@ _CODE_BY_GRAPH_ERROR_KIND = {
 
 
 class YamlGraphProjectionError(Exception):
-    """Exact graph projection failure (projection.rs:154-202)."""
+    """Exact graph projection failure (projection.rs)."""
 
     def __init__(
         self,
@@ -274,7 +274,7 @@ class YamlGraphProjectionError(Exception):
         if self.kind is YamlGraphProjectionErrorKind.GRAPH:
             # GraphBuildError::ResourceLimit/SizeOverflow map to
             # resource-limit; every other graph failure is graph-invalid
-            # (projection.rs:176-181).
+            # (projection.rs).
             if self.graph_message and "resource" in self.graph_message:
                 return "yaml.projection.resource-limit@1"
             return "yaml.projection.graph-invalid@1"
@@ -287,7 +287,7 @@ class YamlGraphProjectionError(Exception):
 
 
 class YamlGraphMaterializationFailureKind(enum.Enum):
-    """Graph materialization failure categories (materialization.rs:87-111)."""
+    """Graph materialization failure categories (materialization.rs)."""
 
     MATERIALIZATION = "materialization"
     UNSUPPORTED_TAG = "unsupported-tag"
@@ -308,7 +308,7 @@ _CODE_BY_GRAPH_MATERIALIZATION_KIND = {
 
 class YamlGraphMaterializationFailure(Exception):
     """Stable PortableGraph-to-YAML materialization failure
-    (materialization.rs:87-152)."""
+    (materialization.rs)."""
 
     def __init__(
         self,
@@ -332,12 +332,12 @@ class YamlGraphMaterializationFailure(Exception):
 
 
 # ---------------------------------------------------------------------------
-# Edit failures (RFC 0007 §12; edit.rs:318-343)
+# Edit failures (RFC 0007 §12; edit.rs)
 # ---------------------------------------------------------------------------
 
 
 class YamlEditFailureKind(enum.Enum):
-    """Stable YAML edit failure categories (edit.rs:275-314)."""
+    """Stable YAML edit failure categories (edit.rs)."""
 
     WRONG_SNAPSHOT = "wrong-snapshot"
     WRONG_ROLE = "wrong-role"
@@ -386,7 +386,7 @@ _CODE_BY_EDIT_KIND = {
 
 
 class YamlEditFailure(Exception):
-    """Stable YAML edit validation or commit failure (edit.rs:275-343)."""
+    """Stable YAML edit validation or commit failure (edit.rs)."""
 
     def __init__(
         self,

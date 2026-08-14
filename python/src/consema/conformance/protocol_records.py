@@ -77,7 +77,7 @@ class CompletionStatus(enum.Enum):
 
 
 class Completion:
-    """The ``core.completion@1`` control-flow facts record (execution.rs:40-49)."""
+    """The ``core.completion@1`` control-flow facts record (execution.rs)."""
 
     __slots__ = ("status", "processed", "produced", "limit_name", "failure_code")
 
@@ -91,7 +91,7 @@ class Completion:
     @classmethod
     def new(cls, status, processed, produced, limit_name=None, failure_code=None):
         """Validates the state-specific completion invariants against the
-        semantic-model v1 error registry (execution.rs:51-67)."""
+        semantic-model v1 error registry (execution.rs)."""
         from consema.protocol.error_registry import ErrorCodeRegistry
 
         if failure_code is not None:
@@ -155,7 +155,7 @@ def _parse_completion_status(value: PortableValue, path: str):
 
 class ExecutionPolicy:
     """The transferable ``core.execution-policy@1`` record
-    (execution.rs:189-195)."""
+    (execution.rs)."""
 
     __slots__ = ("limits", "cancellation_request_id")
 
@@ -219,7 +219,7 @@ def _valid_limit_name(name: str) -> bool:
 
 class CancellationRequest:
     """The idempotent outer-transport ``core.cancellation-request@1`` record
-    (execution.rs:279-290)."""
+    (execution.rs)."""
 
     __slots__ = ("request_id", "reason")
 
@@ -280,7 +280,7 @@ class ValuePath:
         return cls()
 
     def to_value(self) -> PortableValue:
-        # The schema-less {"segments":[...]} wire form (query.rs:441-464):
+        # The schema-less {"segments":[...]} wire form (query.rs):
         # ObjectValue segments carry a String key, the index kinds an
         # unsigned 64-bit index.
         items = []
@@ -301,7 +301,7 @@ class ValuePath:
 
     @classmethod
     def from_value(cls, value: PortableValue) -> ValuePath:
-        """Strictly decodes the schema-less path record (query.rs:466-512)."""
+        """Strictly decodes the schema-less path record (query.rs)."""
         fields = exact_fields(value, ["segments"], "$")
         segments = []
         for index, item in enumerate(sequence_of(fields[0], "$.segments")):
@@ -531,7 +531,7 @@ class ProjectionRule:
 
 
 class ProjectionRequestMessage:
-    """The ``core.projection-request@1`` record (projection.rs:89-97)."""
+    """The ``core.projection-request@1`` record (projection.rs)."""
 
     __slots__ = ("target", "default_policy", "rules", "limits")
 
@@ -762,7 +762,7 @@ class ProvenanceEntryMessage:
 
 class ProvenanceMapMessage:
     """The sorted unique ``core.provenance-map@1`` record
-    (projection.rs:321-326)."""
+    (projection.rs)."""
 
     __slots__ = ("entries",)
 
@@ -925,7 +925,7 @@ class ProjectionEventMessage:
 
 
 class ProjectionReportMessage:
-    """The ordered ``core.projection-report@1`` record (projection.rs:439-444)."""
+    """The ordered ``core.projection-report@1`` record (projection.rs)."""
 
     __slots__ = ("events",)
 
@@ -968,7 +968,7 @@ class ProjectionReportMessage:
 
 class ProjectionResultMessage:
     """The complete or explicitly failed ``core.projection-result@1`` record
-    (projection.rs:517-527)."""
+    (projection.rs)."""
 
     __slots__ = ("completion", "value", "has_value", "fidelity", "report", "provenance", "diagnostics")
 
@@ -1097,7 +1097,7 @@ def parse_match_role(text: str) -> MatchRole | None:
 
 
 class ProtocolQueryMatch:
-    """One transferable query match (query.rs:127-146)."""
+    """One transferable query match (query.rs)."""
 
     __slots__ = ("kind", "path", "value", "location", "key", "value_path", "key_path", "native")
 
@@ -1210,7 +1210,7 @@ class ProtocolQueryMatch:
 
 class QueryResultMessage:
     """The complete or explicitly non-complete ``core.query-result@1`` record
-    (query.rs:148-155)."""
+    (query.rs)."""
 
     __slots__ = ("domain", "role", "matches", "completion", "diagnostics")
 

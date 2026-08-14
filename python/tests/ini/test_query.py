@@ -8,7 +8,7 @@ Cases covered here (conformance/vectors/ini-v1.json, suite
   query.validation-limit-cancellation (56-57).
 
 The duplicate-group test pins RFC 0009 §9 (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-
-profiles-v1.md:330-335): ``ini.duplicate-group@1`` expands each input
+profiles-v1.md): ``ini.duplicate-group@1`` expands each input
 occurrence to every same-role occurrence carrying the same non-absent
 group identity, in source order; an occurrence without a group produces no
 match; repeated input groups may repeat output. Name filters require

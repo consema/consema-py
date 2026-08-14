@@ -2,22 +2,22 @@
 
 Authority:
 - RFC 0004 §14 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
-  edit-v1.md:338-356): dry-run performs every deterministic validation and
+  edit-v1.md): dry-run performs every deterministic validation and
   byte-planning step except publishing a new Document; its transferable form
   carries source_id, base_digest, profile, ordered operations with safe
   summaries, exact SourcePatch replacement facts, precomputed target_digest,
   and an ordered report. Secrets use the SourcePatch redaction rules. A
   dry-run plan is not authority to write a file and is never applied without
   rechecking base digest and every original-byte precondition.
-- RFC 0016 §5.3 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:184-187): dry-run
+- RFC 0016 §5.3 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md): dry-run
   semantics identical; nothing authorizes file writes.
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/edit_plan.rs — arbitration: EditPlanSourceId
-  bound edit_plan.rs:13-31 (non-empty, <= 1024); EditOperationSummary bounds
-  edit_plan.rs:34-70 (<= 64 arguments, names match
+  bound edit_plan.rs (non-empty, <= 1024); EditOperationSummary bounds
+  edit_plan.rs (<= 64 arguments, names match
   [a-z0-9_]*, values non-empty <= 1024); EditPlan::new operation-metadata
-  matching edit_plan.rs:84-121 (each patch metadata key "operation.{index}"
+  matching edit_plan.rs (each patch metadata key "operation.{index}"
   must equal the operation's canonical "id@version" form, and no extra
-  operation.* keys); EditPlanError edit_plan.rs:200-211.
+  operation.* keys); EditPlanError edit_plan.rs.
 
 https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
@@ -30,16 +30,16 @@ from dataclasses import dataclass, field
 from consema.document.ids import ContentDigest, FormatOperationId, ProfileId
 from consema.document.source_patch import SourcePatch, SourceReplacement
 
-_MAX_SOURCE_ID_LENGTH = 1024  # edit_plan.rs:20
-_MAX_SUMMARY_ARGUMENTS = 64  # edit_plan.rs:46
-_MAX_SUMMARY_NAME_LENGTH = 64  # edit_plan.rs:222
-_MAX_SUMMARY_VALUE_LENGTH = 1024  # edit_plan.rs:48
+_MAX_SOURCE_ID_LENGTH = 1024  # edit_plan.rs
+_MAX_SUMMARY_ARGUMENTS = 64  # edit_plan.rs
+_MAX_SUMMARY_NAME_LENGTH = 64  # edit_plan.rs
+_MAX_SUMMARY_VALUE_LENGTH = 1024  # edit_plan.rs
 
 
 @dataclass(frozen=True, slots=True)
 class EditPlanSourceId:
     """Caller-stable source identity used by a transferable edit plan
-    (edit_plan.rs:13-31)."""
+    (edit_plan.rs)."""
 
     value: str
 
@@ -59,7 +59,7 @@ class EditPlanSourceId:
 @dataclass(frozen=True, slots=True)
 class EditOperationSummary:
     """One safe, content-free summary of a declared edit operation
-    (edit_plan.rs:34-70; RFC 0004 §14: safe summaries, never raw edited
+    (edit_plan.rs; RFC 0004 §14: safe summaries, never raw edited
     values)."""
 
     operation: FormatOperationId
@@ -85,7 +85,7 @@ class EditOperationSummary:
 @dataclass(frozen=True, slots=True)
 class EditPlan:
     """Fully validated dry-run plan; possessing it does not authorize a write
-    (edit_plan.rs:73-197; RFC 0004 §14)."""
+    (edit_plan.rs; RFC 0004 §14)."""
 
     source_id: EditPlanSourceId
     profile: ProfileId
@@ -103,7 +103,7 @@ class EditPlan:
         report: list[object],
     ) -> EditPlan:
         """Closes a plan only when its ordered operation metadata matches its
-        exact patch (edit_plan.rs:84-121)."""
+        exact patch (edit_plan.rs)."""
         for index, operation in enumerate(operations):
             key = f"operation.{index}"
             if patch.metadata.get(key) != operation.operation.to_string():
@@ -137,7 +137,7 @@ class EditPlan:
 
     def source_patch(self) -> SourcePatch:
         """Underlying patch whose application rechecks digest and every
-        original-byte precondition (edit_plan.rs:165-169)."""
+        original-byte precondition (edit_plan.rs)."""
         return self.patch
 
     def with_all_replacements_redacted(
@@ -145,7 +145,7 @@ class EditPlan:
     ) -> EditPlan:
         """Redacts every original/replacement payload from review/debug
         presentation; this does not remove bytes required to apply and verify
-        the plan's SourcePatch (edit_plan.rs:174-183)."""
+        the plan's SourcePatch (edit_plan.rs)."""
         return EditPlan(
             source_id=self.source_id,
             profile=self.profile,
@@ -160,7 +160,7 @@ class EditPlan:
         self, index: int, redact_original: bool, redact_replacement: bool
     ) -> EditPlan:
         """Redacts one exact replacement from review/debug presentation
-        (edit_plan.rs:186-196)."""
+        (edit_plan.rs)."""
         return EditPlan(
             source_id=self.source_id,
             profile=self.profile,
@@ -174,7 +174,7 @@ class EditPlan:
 
 class EditPlanErrorKind(enum.Enum):
     """Edit-plan construction failure before a transferable plan exists
-    (edit_plan.rs:200-211)."""
+    (edit_plan.rs)."""
 
     INVALID_SOURCE_ID = "invalid-source-id"
     INVALID_OPERATION_SUMMARY = "invalid-operation-summary"
@@ -182,7 +182,7 @@ class EditPlanErrorKind(enum.Enum):
 
 
 class EditPlanError(Exception):
-    """Edit-plan construction failure (edit_plan.rs:200-211).
+    """Edit-plan construction failure (edit_plan.rs).
 
     Carries no registered error code; the plan is an internal dry-run
     artifact (RFC 0004 §14). Error text is human presentation only.
@@ -195,7 +195,7 @@ class EditPlanError(Exception):
 
 
 def _valid_summary_name(name: str) -> bool:
-    """Frozen summary-name vocabulary [a-z0-9_] (edit_plan.rs:221-227)."""
+    """Frozen summary-name vocabulary [a-z0-9_] (edit_plan.rs)."""
     return (
         bool(name)
         and len(name) <= _MAX_SUMMARY_NAME_LENGTH

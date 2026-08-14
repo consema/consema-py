@@ -74,7 +74,7 @@ def test_query_syntax_comments():
     # Case query.syntax-comments (yaml-v1.json:60-63). The comment ordinals
     # are the zero-based source-piece ordinals of the Comment matches.
     # yaml.syntax-kind-is@1 requires its kind argument: validation rejects a
-    # missing one with core.query.invalid-argument@1 (query.rs:604-610
+    # missing one with core.query.invalid-argument@1 (query.rs
     # expects "validated kind argument"; consema.protocol.query
     # _check_operator_arguments raises INVALID_ARGUMENT). The operator is
     # therefore built with the argument flowing into the pipeline.
@@ -122,7 +122,7 @@ def test_query_resource_limit():
 
 
 def test_query_cancellation_fails_without_prefix():
-    # query.rs:278-288: cancellation never produces a completed prefix
+    # query.rs: cancellation never produces a completed prefix
     # disguised as success.
     document = parse_source("[a, b, c]\n", YamlProfile.YAML12_CORE_V1)
     executable = executable_from_pipeline(
@@ -137,7 +137,7 @@ def test_query_cancellation_fails_without_prefix():
 
 
 def test_query_anchor_definition_and_node():
-    # query.rs:524-549: yaml.anchor-definition exposes the exact &name span
+    # query.rs: yaml.anchor-definition exposes the exact &name span
     # and yaml.anchor-node returns the anchored representation node. The
     # anchored node must be reachable by the pipeline: as in the Go twin
     # (https://github.com/consema/consema-go/blob/main/go/yaml/query_test.go:69-89) the anchor sits on the document root —
@@ -168,7 +168,7 @@ def test_query_anchor_definition_and_node():
 
 
 def test_query_where_tag_and_canonical():
-    # query.rs:441-457: yaml.where-tag and yaml.scalar-canonical-equals
+    # query.rs: yaml.where-tag and yaml.scalar-canonical-equals
     # filter on resolved tags and canonical content.
     document = parse_source("a: 1\nb: 2\n", YamlProfile.YAML12_CORE_V1)
     from consema.protocol.query import QueryDefinition, QueryDomain, QueryExpression, ExpressionKind

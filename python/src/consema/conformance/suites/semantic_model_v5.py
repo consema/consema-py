@@ -221,7 +221,7 @@ def _pgce_limits(**overrides) -> PgceLimits:
 
 
 def _graph_message_value(graph, pgce: bytes) -> PortableValue:
-    """The exact readable graph plus PGCE/1 wire record (portable_graph.rs:44-126)."""
+    """The exact readable graph plus PGCE/1 wire record (portable_graph.rs)."""
     order, canonical_ids = graph._canonical_layout()
     roots = [PortableValue.integer(canonical_ids[root.index]) for root in graph.roots()]
     nodes = []
@@ -262,7 +262,7 @@ def _graph_message_value(graph, pgce: bytes) -> PortableValue:
 
 def _graph_message_from_value(value: PortableValue, limits: PgceLimits) -> PortableGraph:
     """Strictly decodes and cross-validates the readable graph and PGCE forms
-    (portable_graph.rs:127-203)."""
+    (portable_graph.rs)."""
     fields = schema_fields(
         value,
         "core.portable-graph@1",
@@ -633,7 +633,7 @@ def _validate_graph_matches(graph, matches: list[dict]) -> None:
 def _graph_query_result_value(
     domain: QueryDomain, role: MatchRole, graph, matches: list[dict], completion_value: PortableValue
 ) -> PortableValue:
-    """Validates and encodes ``core.graph-query-result@1`` (graph_query.rs:64-100)."""
+    """Validates and encodes ``core.graph-query-result@1`` (graph_query.rs)."""
     if domain.id != "core.portable-graph-query" or domain.version != 1 or not _is_graph_role(role):
         raise invalid("$", "graph result requires core.portable-graph-query@1 and a graph role")
     produced = _completion_produced(completion_value)
@@ -724,7 +724,7 @@ def _graph_location_less(left: dict, right: dict) -> bool:
 
 def _graph_provenance_value(entries: list[dict]) -> PortableValue:
     """Validates and encodes ``core.graph-provenance-map@1``
-    (graph_projection.rs:121-141)."""
+    (graph_projection.rs)."""
     for entry in entries:
         if not entry["origins"]:
             raise invalid("$.entries", "graph provenance locations must be sorted, unique, and have origins")
@@ -838,7 +838,7 @@ def _provenance_entries_from_vector(vector: runner.Case) -> list[dict]:
 
 def _validate_graph_locations(graph, entries: list[dict]) -> None:
     """Validates every projected location against the exact graph
-    (graph_projection.rs:143-158)."""
+    (graph_projection.rs)."""
     order, _ = graph._canonical_layout()
 
     def resolve(canonical: int, name: str, path: str) -> int:
@@ -877,8 +877,8 @@ def _graph_projection_result_value(
     completion_value: PortableValue, graph, has_graph: bool, provenance: PortableValue
 ) -> PortableValue:
     """Validates and encodes ``core.graph-projection-result@1``
-    (graph_projection.rs GraphProjectionResultMessage::new, :245-254; line
-    numbers may drift, the symbol name is the anchor)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/graph_projection.rs 的
+    GraphProjectionResultMessage::new)."""
     success = _completion_status(completion_value) == "Success"
     if success != has_graph:
         raise invalid("$", "only a successful graph projection carries a graph")
@@ -1044,7 +1044,7 @@ def _yaml_domain_accepts_role(domain: QueryDomain, role: MatchRole) -> bool:
 def _yaml_query_result_value(
     domain: QueryDomain, role: MatchRole, locators: list[PortableValue], completion_value: PortableValue
 ) -> PortableValue:
-    """Validates and encodes ``core.yaml-query-result@1`` (yaml_query.rs:85-120)."""
+    """Validates and encodes ``core.yaml-query-result@1`` (yaml_query.rs)."""
     if not _yaml_domain_accepts_role(domain, role):
         raise invalid("$", "YAML query domain and result role are inconsistent")
     if _completion_produced(completion_value) != len(locators):

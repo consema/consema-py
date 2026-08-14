@@ -159,7 +159,7 @@ def test_syntax_styles_and_trivia():
     ]
     for kind in required:
         assert kind in kinds
-    # Block scalar styles decode exactly (lib.rs:1235-1261).
+    # Block scalar styles decode exactly (lib.rs).
     root = document.document(0).root()
     literal = root.mapping_entry(3).value().scalar()
     assert literal.decoded() == "a"
@@ -246,7 +246,7 @@ def test_alias_bomb_forms_one_edge_per_alias():
 
 
 def test_nesting_depth_limit_is_fatal():
-    # lib.rs:949-968: ``[[x]]`` with max_nesting_depth 1 fails with the
+    # lib.rs: ``[[x]]`` with max_nesting_depth 1 fails with the
     # resource-limit code (no truncation-then-success, RFC 0016 s6).
     with pytest.raises(YamlFormationFailure) as caught:
         parse(
@@ -259,7 +259,7 @@ def test_nesting_depth_limit_is_fatal():
 
 
 def test_profile_version_directive_conflict():
-    # lib.rs:895-905: a %YAML directive that conflicts with the selected
+    # lib.rs: a %YAML directive that conflicts with the selected
     # profile is fatal before parsing.
     with pytest.raises(YamlFormationFailure) as caught:
         parse_source("%YAML 1.1\n---\nyes\n", YamlProfile.YAML12_CORE_V1)
@@ -270,7 +270,7 @@ def test_profile_version_directive_conflict():
 
 
 def test_quoted_keywords_are_exact_strings():
-    # lib.rs:1049-1083: quoted scalars always resolve as strings with their
+    # lib.rs: quoted scalars always resolve as strings with their
     # exact decoded content, never null/bool/int/float.
     for keyword in ("~", "null", "true", "0o17", "2001-12-15"):
         for quote in ('"', "'"):
@@ -281,7 +281,7 @@ def test_quoted_keywords_are_exact_strings():
 
 
 def test_plain_null_spellings():
-    # native.rs:746-748: the empty scalar, ``~``, and the three null cases
+    # native.rs: the empty scalar, ``~``, and the three null cases
     # resolve to the null tag with empty canonical content.
     for spelling in ("~", "null", "Null", "NULL", ""):
         source = f"a: {spelling}\n" if spelling else "a:\n"
@@ -292,7 +292,7 @@ def test_plain_null_spellings():
 
 
 def test_explicit_standard_tag_validation():
-    # native.rs:1375-1398: ``!!int nope`` fails scalar grammar validation
+    # native.rs: ``!!int nope`` fails scalar grammar validation
     # (yaml.scalar.invalid-explicit-tag@1) and ``!!seq {a: b}`` fails kind
     # validation (yaml.tag.kind-mismatch@1).
     with pytest.raises(YamlFormationFailure) as caught:
@@ -305,7 +305,7 @@ def test_explicit_standard_tag_validation():
 
 
 def test_block_scalar_keywords_are_strings():
-    # lib.rs:1233-1261: block-style scalars carrying keyword text are
+    # lib.rs: block-style scalars carrying keyword text are
     # strings with their exact decoded content.
     document = parse_source("a: |\n  ~\nb: >\n  null\n", YamlProfile.YAML12_CORE_V1)
     root = document.document(0).root()

@@ -179,7 +179,7 @@ def test_terminal_odd_backslash_matches_jdk_eof_rule():
     # end of source, retains it as a ContinuationMarker, emits no code
     # unit, and does not invent an empty following natural line
     # (RFC 0010 section 5; lib.rs test terminal_odd_backslash_matches_jdk
-    # _line_reader_eof_rule, lib.rs:1007-1025).
+    # _line_reader_eof_rule, lib.rs).
     source = b"key=value\\"
     document = parse_reader(source, SourceEncoding.utf8(), DEFAULT_LIMITS)
     assert document.formation_status().value == "Complete"
@@ -349,7 +349,7 @@ def test_latin1_treats_bom_bytes_as_content():
 def test_reader_dialect_recognizes_a_supported_bom():
     # The Reader dialect honors an explicit matching UTF-16 BOM (RFC 0010
     # section 3.1; lib.rs test reader_honors_an_explicit_matching_utf16_bom,
-    # lib.rs:971-989).
+    # lib.rs).
     source = bytes.fromhex("fffe6b003d007600")
     document = parse_reader(source, SourceEncoding.utf16le(), DEFAULT_LIMITS)
     assert document.properties[0].key.to_unicode() == "k"
@@ -380,7 +380,7 @@ def test_profile_source_mismatch_is_fatal():
     # The profile is always selected by the caller; a Latin-1 profile with
     # a Reader source contract is a fatal formation failure carrying
     # java-properties.source.profile-encoding@1 (RFC 0010 section 3;
-    # parser.rs:57-91).
+    # parser.rs).
     with pytest.raises(PropertiesFormationFailure) as caught:
         parse(
             b"k=v",

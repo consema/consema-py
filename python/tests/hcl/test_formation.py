@@ -29,7 +29,7 @@ limits). Cases covered:
   hcl.limit.heredoc-size (1928-1941), hcl.limit.tuple-elements
   (1943-1956), hcl.limit.object-entries (1958-1971).
 
-Hard gate 1 (RFC 0014 §1, §13; SECURITY.md:36): HCL is never evaluated.
+Hard gate 1 (RFC 0014 §1, §13; SECURITY.md): HCL is never evaluated.
 The no-evaluation and expression-syntax-only tests pin that an expression
 is an AST fact with exact source text — no variable binding, function
 table, template expansion, or iteration exists anywhere in formation.
@@ -423,7 +423,7 @@ def test_tfvars_production_shape():
 
 
 def test_no_evaluation_binary_is_syntax_only():
-    # RFC 0014 §1, §13 hard gate 1 (SECURITY.md:36): no arithmetic is ever
+    # RFC 0014 §1, §13 hard gate 1 (SECURITY.md): no arithmetic is ever
     # computed. `bin = 1 + 2 * 3` is a Binary AST fact, never the value 7.
     document = parse(b"bin = 1 + 2 * 3\n", HclProfile.NATIVE_V1)
     expression = document.body.items[0].as_attribute().expression

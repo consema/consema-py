@@ -222,7 +222,7 @@ def test_fractional_date_policy():
 
 def test_old_record_shape_rejected():
     # Case plist.materialization.old-record-shape-rejected (plist-v1.json:
-    # 1357-1377): an Object carrying a `kind` member is not the
+    # (record 定义区间): an Object carrying a `kind` member is not the
     # plist.value-tree@1 record.
     old_shape = PortableValue.object(
         (

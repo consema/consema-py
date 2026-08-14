@@ -4,38 +4,38 @@ targets with duplicate policy and provenance.
 Authority (Rust arbitration for exact semantics):
 
 - Targets, policies, and request building: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
-  projection.rs:9-82 — BestExactEntryMappingV1 (the default,
+  projection.rs — BestExactEntryMappingV1 (the default,
   ``java-properties.projection.best-exact-entry-mapping@1``, RFC 0010
-  section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:312-323) and RequireObjectV1
+  section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md) and RequireObjectV1
   (``java-properties.projection.require-object@1``, published by the CLI
-  wire mapping https://github.com/consema/consema-rs/blob/main/consema/src/bin/consema/project_cmd.rs:158) under
+  wire mapping https://github.com/consema/consema-rs/blob/main/consema/src/bin/consema/project_cmd.rs) under
   the explicit DuplicatePolicy RequireUnique | FirstWins |
-  LastWinsJdkTable (RFC 0010 section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:324-339).
-- Limits: projection.rs:84-106 (max_source_associations 2_000_000,
+  LastWinsJdkTable (RFC 0010 section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
+- Limits: projection.rs (max_source_associations 2_000_000,
   max_value_nodes 4_000_001, max_report_entries 100_000,
   max_provenance_units 8_000_000).
-- Gates and failure algebra: projection.rs:264-306 — Recovered documents
+- Gates and failure algebra: projection.rs — Recovered documents
   fail with java-properties.projection.incomplete-document@1
-  (projection.rs:743); unpaired surrogates fail atomically with
+  (projection.rs); unpaired surrogates fail atomically with
   java-properties.projection.unpaired-surrogate@1 (:745) and no partial
-  mapping (RFC 0010 section 11, lines 316-323); the failure code mapping
-  projection.rs:741-752.
-- Duplicate collapse: projection.rs:499-611 — RequireUnique rejects with
+  mapping (RFC 0010 section 11); the failure code mapping
+  projection.rs.
+- Duplicate collapse: projection.rs — RequireUnique rejects with
   core.projection.target-not-applicable@1 (:748); First/Last collapse is
   explicitly authorized Lossy, emits one java-properties.projection.
   duplicate-collapsed@1 event per discarded association
-  (projection.rs:548-555), and records both retained and discarded
-  origins (ProvenanceRelation::Collapsed, projection.rs:556-562); the
+  (projection.rs), and records both retained and discarded
+  origins (ProvenanceRelation::Collapsed, projection.rs); the
   authorizing rules are exactly
   java-properties.duplicate-key.first-wins@1 /
   java-properties.duplicate-key.last-wins-jdk-table@1 (RFC 0010 section
-  11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:341-344).
-- Provenance: projection.rs:308-428 — Direct association origins,
+  11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
+- Provenance: projection.rs — Direct association origins,
   KeyFragment/ValueFragment raw spans, EscapeDerived escape spellings,
   Derived root origin, and the unit accounting (2 units for a new
-  location, 1 for an existing one; projection.rs:318-362).
-- Fidelity: projection.rs:108-117 (Exact/Transformed/Lossy); collapse
-  lifts fidelity to Lossy (projection.rs:410).
+  location, 1 for an existing one; projection.rs).
+- Fidelity: projection.rs (Exact/Transformed/Lossy); collapse
+  lifts fidelity to Lossy (projection.rs).
 
 The value-path and association-location records are the semantic model's
 portable input locations (RFC 0004 section 8). Golden transcription
@@ -68,7 +68,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 
 class ProjectionTarget(enum.Enum):
-    """Versioned Java Properties projection target (projection.rs:9-16).
+    """Versioned Java Properties projection target (projection.rs).
 
     The default target is the source-ordered EntryMapping preserving every
     association (RFC 0010 section 11); RequireObjectV1 is the unique-key
@@ -81,7 +81,7 @@ class ProjectionTarget(enum.Enum):
 
 class DuplicatePolicy(enum.Enum):
     """Explicit duplicate behavior for ``RequireObjectV1``
-    (projection.rs:18-27; RFC 0010 section 11)."""
+    (projection.rs; RFC 0010 section 11)."""
 
     REQUIRE_UNIQUE = "RequireUnique"
     FIRST_WINS = "FirstWins"
@@ -90,7 +90,7 @@ class DuplicatePolicy(enum.Enum):
     @property
     def authorizing_rule(self) -> str | None:
         """The authorizing rule id externalized in conversion reports
-        (RFC 0010 section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:341-344)."""
+        (RFC 0010 section 11, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md)."""
         return {
             DuplicatePolicy.FIRST_WINS: "java-properties.duplicate-key.first-wins@1",
             DuplicatePolicy.LAST_WINS_JDK_TABLE: (
@@ -101,7 +101,7 @@ class DuplicatePolicy(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectionLimits:
-    """Java Properties projection limits (projection.rs:84-106)."""
+    """Java Properties projection limits (projection.rs)."""
 
     max_source_associations: int = 2_000_000
     max_value_nodes: int = 4_000_001
@@ -111,7 +111,7 @@ class ProjectionLimits:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionRequest:
-    """Immutable explicit Properties projection request (projection.rs:29-82)."""
+    """Immutable explicit Properties projection request (projection.rs)."""
 
     target: ProjectionTarget
     duplicate_policy: DuplicatePolicy = DuplicatePolicy.REQUIRE_UNIQUE
@@ -120,19 +120,19 @@ class ProjectionRequest:
     @classmethod
     def best_exact_entry_mapping(cls) -> ProjectionRequest:
         """Exact default that preserves every property occurrence
-        (projection.rs:40-46)."""
+        (projection.rs)."""
         return cls(target=ProjectionTarget.BEST_EXACT_ENTRY_MAPPING_V1)
 
     @classmethod
     def require_object(cls, duplicate_policy: DuplicatePolicy) -> ProjectionRequest:
-        """Explicit unique Object request (projection.rs:49-56)."""
+        """Explicit unique Object request (projection.rs)."""
         return cls(
             target=ProjectionTarget.REQUIRE_OBJECT_V1,
             duplicate_policy=duplicate_policy,
         )
 
     def with_limits(self, limits: ProjectionLimits) -> ProjectionRequest:
-        """Replaces immutable resource limits (projection.rs:59-62)."""
+        """Replaces immutable resource limits (projection.rs)."""
         return replace(self, limits=limits)
 
 
@@ -200,7 +200,7 @@ class AssociationLocation:
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:108-117)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -208,7 +208,7 @@ class Fidelity(enum.Enum):
 
 
 class ProjectedLocationKind(enum.Enum):
-    """Projected location kind (projection.rs:119-126)."""
+    """Projected location kind (projection.rs)."""
 
     VALUE = "Value"
     ASSOCIATION = "Association"
@@ -216,7 +216,7 @@ class ProjectedLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """One portable projected location (projection.rs:119-126)."""
+    """One portable projected location (projection.rs)."""
 
     kind: ProjectedLocationKind
     path: ValuePath | None = None
@@ -232,7 +232,7 @@ class ProjectedLocation:
 
 
 class ProvenanceRelation(enum.Enum):
-    """Source-to-projection relation (projection.rs:128-143)."""
+    """Source-to-projection relation (projection.rs)."""
 
     DIRECT = "Direct"
     DERIVED = "Derived"
@@ -244,7 +244,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One exact source origin (projection.rs:145-156)."""
+    """One exact source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -254,7 +254,7 @@ class SourceOrigin:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
-    """One many-valued provenance entry (projection.rs:158-165)."""
+    """One many-valued provenance entry (projection.rs)."""
 
     projected: ProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -262,14 +262,14 @@ class ProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
-    """Immutable many-valued provenance mapping (projection.rs:167-179)."""
+    """Immutable many-valued provenance mapping (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class ProjectionEvent:
-    """One explicit duplicate-collapse event (projection.rs:181-196)."""
+    """One explicit duplicate-collapse event (projection.rs)."""
 
     code: str
     policy: DuplicatePolicy
@@ -281,14 +281,14 @@ class ProjectionEvent:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
-    """Complete ordered projection report (projection.rs:198-210)."""
+    """Complete ordered projection report (projection.rs)."""
 
     events: tuple[ProjectionEvent, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class CompleteProjection:
-    """Complete successful projection (projection.rs:212-223)."""
+    """Complete successful projection (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -298,7 +298,7 @@ class CompleteProjection:
 
 @dataclass(frozen=True, slots=True)
 class FailedProjectionAttempt:
-    """Failed projection attempt without a partial value (projection.rs:225-232)."""
+    """Failed projection attempt without a partial value (projection.rs)."""
 
     diagnostics: tuple[PropertiesDiagnostic, ...]
     report: ProjectionReport
@@ -313,7 +313,7 @@ class _StringComponent(enum.Enum):
 
 
 class _ProjectionContext:
-    """One projection execution (projection.rs:308-428)."""
+    """One projection execution (projection.rs)."""
 
     def __init__(
         self,
@@ -334,7 +334,7 @@ class _ProjectionContext:
         span: Span,
         relation: ProvenanceRelation,
     ) -> None:
-        """One origin under the provenance-unit budget (projection.rs:318-362)."""
+        """One origin under the provenance-unit budget (projection.rs)."""
         new_location = all(entry.projected != projected for entry in self.provenance)
         increment = 2 if new_location else 1
         self.provenance_units += increment
@@ -370,7 +370,7 @@ class _ProjectionContext:
         component: _StringComponent,
     ) -> None:
         """Fragmented key/value origins plus escape spellings
-        (projection.rs:364-404)."""
+        (projection.rs)."""
         property = self.document.properties[property_index]
         if component is _StringComponent.KEY:
             fragments, relation = property.key_fragments, ProvenanceRelation.KEY_FRAGMENT
@@ -397,7 +397,7 @@ class _ProjectionContext:
                 )
 
     def push_event(self, event: ProjectionEvent) -> None:
-        """One collapse event under the report budget (projection.rs:406-413)."""
+        """One collapse event under the report budget (projection.rs)."""
         if len(self.report) >= self.request.limits.max_report_entries:
             raise PropertiesProjectionFailure(
                 PropertiesProjectionFailureKind.RESOURCE_LIMIT,
@@ -408,7 +408,7 @@ class _ProjectionContext:
 
     def add_root_origin(self) -> None:
         """Derived root value origin over the complete document
-        (projection.rs:415-428)."""
+        (projection.rs)."""
         root_span = self.document.authority.span(0, len(self.document.render()))
         self.add_origin(
             ProjectedLocation.value_location(ValuePath.root()),
@@ -420,7 +420,7 @@ class _ProjectionContext:
 
 def project(document: PropertiesDocument, request: ProjectionRequest) -> ProjectionResult:
     """Projects one immutable snapshot under one explicit target and
-    duplicate contract (projection.rs:264-306).
+    duplicate contract (projection.rs).
 
     A failure returns no value, no partial mapping, and no provenance that
     can be mistaken for a result (RFC 0010 section 11).
@@ -460,7 +460,7 @@ def _project_exact(
     document: PropertiesDocument, request: ProjectionRequest
 ) -> CompleteProjection:
     """Source-ordered EntryMapping preserving every association
-    (projection.rs:430-497)."""
+    (projection.rs)."""
     required_nodes = len(document.properties) * 2 + 1
     if required_nodes > request.limits.max_value_nodes:
         raise PropertiesProjectionFailure(
@@ -511,7 +511,7 @@ def _project_object(
     document: PropertiesDocument, request: ProjectionRequest
 ) -> CompleteProjection:
     """Unique-key Object under one explicit duplicate policy
-    (projection.rs:499-611)."""
+    (projection.rs)."""
     keys = [
         property.key.to_unicode()
         for property in document.properties
@@ -595,7 +595,7 @@ def _project_object(
 def _select_indices(
     document: PropertiesDocument, keys: list[str], policy: DuplicatePolicy
 ) -> list[int]:
-    """Explicit duplicate retention (projection.rs:613-648)."""
+    """Explicit duplicate retention (projection.rs)."""
     first_by_key: dict[str, int] = {}
     for index, key in enumerate(keys):
         if key in first_by_key:
@@ -635,7 +635,7 @@ def _failed(
     resource_name: str | None = None,
 ) -> FailedProjectionAttempt:
     """One stable failed attempt with a deterministic diagnostic
-    (projection.rs:654-711)."""
+    (projection.rs)."""
     failure = PropertiesProjectionFailure(
         kind,
         property_node=property_node,
@@ -712,7 +712,7 @@ def _failure_span(
     property_node: NodeRef | None,
     duplicate: NodeRef | None,
 ) -> Span | None:
-    """Primary failure span (projection.rs:730-739): the unpaired or
+    """Primary failure span (projection.rs): the unpaired or
     duplicated property's complete source range."""
     target = property_node if kind is PropertiesProjectionFailureKind.UNPAIRED_SURROGATE else duplicate
     if target is None:

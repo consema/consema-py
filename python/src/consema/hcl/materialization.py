@@ -34,12 +34,12 @@ Document, partial bytes, or partial provenance.
 
 Authority (language-neutral first; Rust only for byte/registry
 arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/materialization.rs — the record
-contract materialization.rs:9-103, request validation
-materialization.rs:266-285, the canonical layout materialization.rs:105-121
-and writer materialization.rs:1133-1333, decimal rendering
-materialization.rs:1341-1494, the expression promise
-materialization.rs:1084-1120, the closure walk materialization.rs verify_closure (:1772-1799; line numbers may drift, the symbol name is the anchor),
-and the failure mapping materialization.rs:124-137.
+contract materialization.rs, request validation
+materialization.rs, the canonical layout materialization.rs
+and writer materialization.rs, decimal rendering
+materialization.rs, the expression promise
+materialization.rs, the closure walk materialization.rs verify_closure（符号名即锚）,
+and the failure mapping materialization.rs.
 """
 
 from __future__ import annotations
@@ -111,7 +111,7 @@ _KIND_FAMILY_NAMES = frozenset(
 
 
 class _Target(enum.Enum):
-    """The canonical materialization target (materialization.rs:194-201)."""
+    """The canonical materialization target (materialization.rs)."""
 
     NATIVE = "native"
     TFVARS = "tfvars"
@@ -121,7 +121,7 @@ def materialize(
     value: PortableValue, request: MaterializationRequest
 ) -> MaterializationResult:
     """Materializes one `hcl.body@1` record into a new canonical HCL
-    document (RFC 0014 §9; materialization.rs:213-226)."""
+    document (RFC 0014 §9; materialization.rs)."""
     analyzed: list[ValuePath] = []
     try:
         complete = _materialize_complete(value, request, analyzed)
@@ -157,7 +157,7 @@ def _shared_failure(failure: HclMaterializationFailure):
 
 def materialization_failure_code(failure) -> str:
     """The suite-published failure code of one shared MaterializationFailure
-    (RFC 0014 §9; https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs:1611-1616):
+    (RFC 0014 §9; https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs):
     Unrepresentable maps to hcl.materialization.unrepresentable@1,
     ResourceLimit to hcl.materialization.resource-limit@1, InvalidRequest
     to the published spelling "invalid-record"."""
@@ -200,7 +200,7 @@ def _materialize_complete(
 
 def _validate_request(request: MaterializationRequest) -> _Target:
     """Validates the request against the frozen style contract (RFC 0014
-    §9; materialization.rs:266-285)."""
+    §9; materialization.rs)."""
     profile = request.target_profile
     style = request.style
     if profile.id == "hcl.native" and profile.version == 1 and style.id == STYLE_CANONICAL and style.version == 1:
@@ -220,7 +220,7 @@ def _validate_request(request: MaterializationRequest) -> _Target:
 
 def _parse_limits(limits) -> HclParseLimits:
     """Parse limits for the closure reparse, derived from the request so a
-    bounded input cannot fail its own closure (materialization.rs:287-328)."""
+    bounded input cannot fail its own closure (materialization.rs)."""
     from consema.document.limits import ParseLimits
 
     return HclParseLimits(
@@ -263,8 +263,8 @@ def _parse_limits(limits) -> HclParseLimits:
 
 
 class _Validator:
-    """Input node budget accounting during validation (materialization.rs:
-    497-520)."""
+    """Input node budget accounting during validation (materialization.rs
+)."""
 
     def __init__(self, limits) -> None:
         self.nodes = 0
@@ -472,7 +472,7 @@ def _validate_value(
 ) -> _ValueNode:
     if value.kind is Kind.OBJECT and _looks_like_expression_record(value):
         # The raw typed member form of a derived expression: the
-        # `hcl.expression@1` record object itself (materialization.rs:61-64).
+        # `hcl.expression@1` record object itself (materialization.rs).
         return _validate_expression_record(value, limits)
     if value.kind is Kind.OBJECT and _looks_like_value_record(value):
         kind_value = _field(value, "kind", "value record is missing the kind member")
@@ -668,7 +668,7 @@ def _validate_expression_record(value: PortableValue, limits) -> _ValueNode:
 
 def _promised_expression_parse(text: str, limits) -> HclExpression:
     """Parses one promised expression text standalone; the wrapper source
-    is exactly `text.len() + 8` bytes (materialization.rs:1084-1120)."""
+    is exactly `text.len() + 8` bytes (materialization.rs)."""
     source = f"{SENTINEL_ATTRIBUTE} = {text}\n".encode("utf-8")
     try:
         document = parse_document(source, HclProfile.NATIVE_V1, limits=_expression_limits(text, limits))
@@ -735,13 +735,13 @@ def _expression_limits(text: str, limits) -> HclParseLimits:
 
 
 # ---------------------------------------------------------------------------
-# Canonical layout (RFC 0014 §9; materialization.rs:105-1333)
+# Canonical layout (RFC 0014 §9; materialization.rs)
 # ---------------------------------------------------------------------------
 
 
 class _Writer:
     """The canonical emitter: a bounded output String with checked appends
-    (materialization.rs:1133-1171)."""
+    (materialization.rs)."""
 
     def __init__(self, limits) -> None:
         self.out: list[str] = []
@@ -832,7 +832,7 @@ def _write_value(writer: _Writer, value: _ValueNode, depth: int) -> None:
 
 def _write_object_key(writer: _Writer, key: str) -> None:
     """One object key: bare for a plain identifier other than the
-    contextual `for`, else quoted (materialization.rs:1255-1264)."""
+    contextual `for`, else quoted (materialization.rs)."""
     if _is_plain_identifier(key) and key != "for":
         writer.push(key)
     else:
@@ -842,7 +842,7 @@ def _write_object_key(writer: _Writer, key: str) -> None:
 def _is_plain_identifier(text: str) -> bool:
     """Whether one text is a valid UAX #31 identifier with the frozen
     hyphen continuation and the underscore exclusion at the start (RFC
-    0014 §4.1, §12 D-4; materialization.rs:1266-1278)."""
+    0014 §4.1, §12 D-4; materialization.rs)."""
     if not text:
         return False
     first = text[0]
@@ -863,7 +863,7 @@ def escape_text(text: str) -> str:
     """Escapes one string with the minimal deterministic escape set (RFC
     0014 §9): `\\n`, `\\r`, `\\t`, `\\"`, `\\\\`, `\\uNNNN` for control
     characters, and the `$${`/`%%{` doubling for the template openers
-    (materialization.rs:1280-1333)."""
+    (materialization.rs)."""
     out: list[str] = []
     index = 0
     while index < len(text):
@@ -897,7 +897,7 @@ def escape_text(text: str) -> str:
 def render_decimal(decimal: Decimal) -> str:
     """Renders one normalized decimal as its plain canonical spelling: the
     coefficient digits with the exponent folded into the decimal point
-    position, `"0"` for zero (RFC 0014 §9; materialization.rs:1341-1428)."""
+    position, `"0"` for zero (RFC 0014 §9; materialization.rs)."""
     coefficient = decimal.coefficient
     if coefficient == 0:
         return "0"
@@ -924,7 +924,7 @@ def render_decimal(decimal: Decimal) -> str:
 def _double_to_canonical_decimal(bits: int) -> str | None:
     """Exact canonical decimal spelling of one binary64 datum; None for
     NaN and infinity, which the HCL number grammar cannot express
-    (materialization.rs:1450-1494)."""
+    (materialization.rs)."""
     if bits >> 63:
         sign = 1
     else:
@@ -963,7 +963,7 @@ def _place_decimal_point(digits: str, fraction: int) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Closure verification and provenance (materialization.rs verify_closure, :1772-1799; line numbers may drift, the symbol name is the anchor)
+# Closure verification and provenance (materialization.rs verify_closure，符号名即锚)
 # ---------------------------------------------------------------------------
 
 
@@ -1129,7 +1129,7 @@ def _verify_closure(record: _Record, document: HclDocument, limits) -> Materiali
 
 def _native_key_text(key) -> str:
     """The canonical string spelling of one native object key, exactly as
-    the canonical emitter renders it (materialization.rs:1255-1264)."""
+    the canonical emitter renders it (materialization.rs)."""
     if key.kind == "identifier":
         return key.name or ""
     if key.kind == "number" and key.number is not None:

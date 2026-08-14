@@ -110,7 +110,7 @@ class CompletionStatus(enum.Enum):
 
 
 class Completion:
-    """The ``core.completion@1`` control-flow facts record (execution.rs:40-49)."""
+    """The ``core.completion@1`` control-flow facts record (execution.rs)."""
 
     __slots__ = ("status", "processed", "produced", "limit_name", "failure_code")
 
@@ -124,7 +124,7 @@ class Completion:
     @classmethod
     def from_value_with_registry(cls, value: PortableValue, registry: ErrorCodeRegistry) -> "Completion":
         """Validates the state-specific completion invariants against one
-        explicit semantic-model registry (execution.rs:51-67)."""
+        explicit semantic-model registry (execution.rs)."""
         fields = schema_fields(
             value,
             "core.completion@1",
@@ -163,7 +163,7 @@ def _parse_completion_status(value: PortableValue, path: str) -> CompletionStatu
 
 
 class ExecutionPolicy:
-    """The transferable ``core.execution-policy@1`` record (execution.rs:189-195)."""
+    """The transferable ``core.execution-policy@1`` record (execution.rs)."""
 
     __slots__ = ("limits", "cancellation_request_id")
 
@@ -197,7 +197,7 @@ class ExecutionPolicy:
 
 class CancellationRequest:
     """The idempotent outer-transport ``core.cancellation-request@1`` record
-    (execution.rs:279-290)."""
+    (execution.rs)."""
 
     __slots__ = ("request_id", "reason")
 
@@ -243,7 +243,7 @@ class ValuePathSegmentKind(enum.Enum):
 
 class ValuePath:
     """The schema-less ``{"segments": [...]}`` value-path wire record
-    (query.rs:441-464; records_valuepath.go pathValue)."""
+    (query.rs; records_valuepath.go pathValue)."""
 
     __slots__ = ("segments",)
 
@@ -252,7 +252,7 @@ class ValuePath:
 
     @classmethod
     def from_value(cls, value: PortableValue) -> "ValuePath":
-        """Strictly decodes the schema-less path record (query.rs:466-512)."""
+        """Strictly decodes the schema-less path record (query.rs)."""
         fields = exact_fields(value, ["segments"], "$")
         segments = []
         for index, item in enumerate(sequence_of(fields[0], "$.segments")):
@@ -296,7 +296,7 @@ class AssociationLocation:
     @classmethod
     def from_value(cls, value: PortableValue) -> "AssociationLocation":
         # The schema-less {"container","ordinal","role"} record
-        # (query.rs:514-553; records_valuepath.go associationValue).
+        # (query.rs; records_valuepath.go associationValue).
         fields = exact_fields(value, ["container", "ordinal", "role"], "$")
         path = ValuePath.from_value(fields[0])
         ordinal = unsigned64(fields[1], "$.ordinal")
@@ -398,7 +398,7 @@ class ProjectionRule:
 
 
 class ProjectionRequestMessage:
-    """The ``core.projection-request@1`` record (projection.rs:89-97)."""
+    """The ``core.projection-request@1`` record (projection.rs)."""
 
     __slots__ = ("target", "default_policy", "rules", "limits")
 
@@ -557,7 +557,7 @@ class ProvenanceEntryMessage:
 
 
 class ProvenanceMapMessage:
-    """The sorted unique ``core.provenance-map@1`` record (projection.rs:321-326)."""
+    """The sorted unique ``core.provenance-map@1`` record (projection.rs)."""
 
     __slots__ = ("entries",)
 
@@ -696,7 +696,7 @@ class _SourceLocation:
 
 
 class ProjectionReportMessage:
-    """The ordered ``core.projection-report@1`` record (projection.rs:439-444)."""
+    """The ordered ``core.projection-report@1`` record (projection.rs)."""
 
     __slots__ = ("events",)
 
@@ -726,7 +726,7 @@ class ProjectionReportMessage:
 
 class ProjectionResultMessage:
     """The complete or explicitly failed ``core.projection-result@1`` record
-    (projection.rs:517-527)."""
+    (projection.rs)."""
 
     __slots__ = ("completion", "value", "has_value", "fidelity", "report", "provenance", "diagnostics")
 
@@ -829,7 +829,7 @@ def _parse_match_role(text: str) -> MatchRole | None:
 
 
 class ProtocolQueryMatch:
-    """One transferable query match (query.rs:127-146)."""
+    """One transferable query match (query.rs)."""
 
     __slots__ = ("kind", "path", "value", "location", "key", "value_path", "key_path", "native")
 
@@ -902,7 +902,7 @@ class ProtocolQueryMatch:
 
 class QueryResultMessage:
     """The complete or explicitly non-complete ``core.query-result@1`` record
-    (query.rs:148-155)."""
+    (query.rs)."""
 
     __slots__ = ("domain", "role", "matches", "completion", "diagnostics")
 
@@ -1729,7 +1729,7 @@ def _materialization_request_from_value(
 
 def _parse_materialization_encoding_v1(value: PortableValue, path: str) -> SourceEncoding:
     """The v1 encoding spelling: a lowercase string, so a disguised v2
-    payload fails with wrong-type at $.encoding (materialization.rs:59-66)."""
+    payload fails with wrong-type at $.encoding (materialization.rs)."""
     text = string_of(value, path)
     if text not in ("binary", "utf-8", "utf-16le", "utf-16be", "latin-1"):
         raise invalid(path, "unknown source encoding")
@@ -1755,7 +1755,7 @@ def _materialization_request_v2_from_value(value: PortableValue) -> None:
 
 
 def _materialization_report_from_value(value: PortableValue, registry: ErrorCodeRegistry) -> None:
-    """Strictly decodes ordered v3 diagnostics (materialization.rs:263-278)."""
+    """Strictly decodes ordered v3 diagnostics (materialization.rs)."""
     fields = schema_fields(value, "core.materialization-report@1", ["schema", "events"], "$")
     for index, event in enumerate(sequence_of(fields[1], "$.events")):
         Diagnostic.from_value(event, registry)
@@ -1763,7 +1763,7 @@ def _materialization_report_from_value(value: PortableValue, registry: ErrorCode
 
 def _materialization_provenance_from_value(value: PortableValue) -> None:
     """Strictly decodes the ordered provenance map
-    (materialization.rs:507-540)."""
+    (materialization.rs)."""
     fields = schema_fields(
         value, "core.materialization-provenance-map@1", ["schema", "entries"], "$"
     )
@@ -1972,7 +1972,7 @@ def _parse_java_unit(text: str) -> int | None:
 
 def _java_utf16_from_value(value: PortableValue, limits: ProtocolLimits) -> None:
     """Strictly decodes and canonically re-verifies one exact Java string
-    (java_utf16.rs:84-146)."""
+    (java_utf16.rs)."""
     fields = schema_fields(
         value,
         "core.java-utf16-string@1",
@@ -2116,7 +2116,7 @@ def _java_properties_query_result_from_value(
 
 
 def _portable_graph_value(graph, pgce: bytes) -> PortableValue:
-    """The exact readable graph plus PGCE/1 wire record (portable_graph.rs:44-126)."""
+    """The exact readable graph plus PGCE/1 wire record (portable_graph.rs)."""
     order, canonical_ids = graph._canonical_layout()
     roots = [PortableValue.integer(canonical_ids[root.index]) for root in graph.roots()]
     nodes = []
@@ -2157,7 +2157,7 @@ def _portable_graph_value(graph, pgce: bytes) -> PortableValue:
 
 def _portable_graph_from_value(value: PortableValue, limits: PgceLimits):
     """Strictly decodes and cross-validates the readable graph and PGCE forms
-    (portable_graph.rs:127-203)."""
+    (portable_graph.rs)."""
     fields = schema_fields(
         value,
         "core.portable-graph@1",
@@ -2366,7 +2366,7 @@ def _validate_graph_matches(graph, matches: list[dict]) -> None:
 
 
 def _graph_query_result_from_value(value: PortableValue, registry: ErrorCodeRegistry) -> None:
-    """Strictly decodes ``core.graph-query-result@1`` (graph_query.rs:64-100)."""
+    """Strictly decodes ``core.graph-query-result@1`` (graph_query.rs)."""
     fields = schema_fields(
         value,
         "core.graph-query-result@1",
@@ -2467,7 +2467,7 @@ def _parse_graph_origin(value: PortableValue, path: str) -> PortableValue:
 
 def _graph_provenance_entries(value: PortableValue) -> list[dict]:
     """Strictly decodes and sorts the ordered provenance entries
-    (graph_projection.rs:121-141)."""
+    (graph_projection.rs)."""
     fields = schema_fields(value, "core.graph-provenance-map@1", ["schema", "entries"], "$")
     entries = []
     for index, entry_value in enumerate(sequence_of(fields[1], "$.entries")):
@@ -2490,7 +2490,7 @@ def _graph_provenance_entries(value: PortableValue) -> list[dict]:
 
 def _validate_graph_locations(graph, entries: list[dict]) -> None:
     """Validates every projected location against the exact graph
-    (graph_projection.rs:143-158)."""
+    (graph_projection.rs)."""
     order, _ = graph._canonical_layout()
 
     def resolve(canonical: int, name: str, path: str) -> int:
@@ -2533,8 +2533,8 @@ def _graph_projection_result_from_value(
     value: PortableValue, registry: ErrorCodeRegistry
 ) -> None:
     """Strictly decodes ``core.graph-projection-result@1``
-    (graph_projection.rs GraphProjectionResultMessage::new, :245-254; line
-    numbers may drift, the symbol name is the anchor)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/graph_projection.rs 的
+    GraphProjectionResultMessage::new)."""
     fields = schema_fields(
         value,
         "core.graph-projection-result@1",
@@ -2585,7 +2585,7 @@ def _yaml_domain_accepts_role(domain: QueryDomain, role: MatchRole) -> bool:
 
 
 def _yaml_query_result_from_value(value: PortableValue, registry: ErrorCodeRegistry) -> None:
-    """Strictly decodes ``core.yaml-query-result@1`` (yaml_query.rs:85-120)."""
+    """Strictly decodes ``core.yaml-query-result@1`` (yaml_query.rs)."""
     fields = schema_fields(
         value,
         "core.yaml-query-result@1",
@@ -2638,7 +2638,7 @@ def _parse_materialization_fidelity(value: PortableValue, path: str) -> str:
 
 def _conversion_report_from_value(value: PortableValue, registry: ErrorCodeRegistry) -> None:
     """Strictly decodes both stage reports under one semantic-model registry
-    (conversion.rs:175-209)."""
+    (conversion.rs)."""
     fields = schema_fields(
         value,
         "core.conversion-report@1",
@@ -2707,7 +2707,7 @@ def _materialization_report_fields(value: PortableValue, registry: ErrorCodeRegi
 
 
 def _edit_plan_from_value(value: PortableValue, registry: ErrorCodeRegistry) -> None:
-    """Strictly decodes and revalidates a dry-run plan (operation.rs:334-381)."""
+    """Strictly decodes and revalidates a dry-run plan (operation.rs)."""
     fields = schema_fields(
         value,
         "core.edit-plan@1",
@@ -2737,7 +2737,7 @@ _SUPPORT_KINDS = ("Supported", "ExistingTypedCapability", "Unsupported")
 
 def _format_operation_registry_from_value(value: PortableValue) -> None:
     """Strictly decodes and revalidates IDs, schemas, order, and uniqueness
-    (operation.rs:83-99)."""
+    (operation.rs)."""
     fields = schema_fields(
         value,
         "core.format-operation-registry@1",

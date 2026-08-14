@@ -2,25 +2,25 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/query.rs:189-222
-  (native, hcl.native-semantic-query@1) and query.rs:244-285 (syntax,
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/query.rs
+  (native, hcl.native-semantic-query@1) and query.rs (syntax,
   hcl.lossless-syntax-query@1); both profiles share the one syntax system,
   so only the domain identity is guarded.
-- Match model: query.rs:51-161 (HclMatch roles Body/Attribute/Block/
+- Match model: query.rs (HclMatch roles Body/Attribute/Block/
   BlockLabel/Expression/TemplatePart/ErrorRegion; HclSyntaxMatch with
   kind/ordinal).
-- Operator semantics: query.rs:594-1148 (the full operator table of RFC
+- Operator semantics: query.rs (the full operator table of RFC
   0014 §7.1), 1185-1215 (hcl.syntax-kind-is, hcl.syntax-text-equals),
-  1150-1190 (core.take, core.distinct-by-identity).
-- Selection algebra: query.rs:302-330 (All/First/Last/ZeroOrOne/RequireOne
+ (core.take, core.distinct-by-identity).
+- Selection algebra: query.rs (All/First/Last/ZeroOrOne/RequireOne
   with CardinalityViolation).
-- The typed literal accessor family: query.rs:795-860 —
+- The typed literal accessor family: query.rs —
   `hcl.attribute-literal-value@1` with accessors as-string, as-integer,
   as-real, as-boolean-is, as-null-is; a non-literal expression is reported
   as TargetUnavailable (the conformance layer maps it to
   hcl.query.non-literal@1), a type mismatch as RequiredTypeMismatch
-  (hcl.query.type-mismatch@1) — https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs:
-  658-668.
+  (hcl.query.type-mismatch@1) — https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs
+ .（区间定义处）
 - Limits and cancellation: the common QueryLimits defaults
   max_steps=100_000, max_results=100_000.
 
@@ -61,7 +61,7 @@ SYNTAX_DOMAIN_ID = "hcl.lossless-syntax-query"
 
 
 class HclMatchKind(enum.Enum):
-    """Match role of one native query result (query.rs:51-112)."""
+    """Match role of one native query result (query.rs)."""
 
     BODY = "Body"
     ATTRIBUTE = "Attribute"
@@ -74,7 +74,7 @@ class HclMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class HclMatch:
-    """One snapshot-bound HCL native semantic query match (query.rs:51-112).
+    """One snapshot-bound HCL native semantic query match (query.rs).
 
     Every match carries a snapshot-bound handle and a reference into the
     immutable native tree of the queried document: the same tree node
@@ -101,7 +101,7 @@ class HclMatch:
 
 @dataclass(frozen=True, slots=True)
 class HclSyntaxMatch:
-    """One snapshot-bound lossless syntax query match (query.rs:128-161)."""
+    """One snapshot-bound lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -167,7 +167,7 @@ def execute_hcl_native_query(
     limits: HclQueryLimits,
     cancellation: HclCancellationToken,
 ) -> HclQueryExecution:
-    """Executes a validated HCL native semantic query (query.rs:189-222).
+    """Executes a validated HCL native semantic query (query.rs).
 
     The domain serves both profiles: the two profiles own the one native
     model, so only the domain identity is guarded here.
@@ -197,7 +197,7 @@ def execute_hcl_syntax_query(
     cancellation: HclCancellationToken,
 ) -> HclQueryExecution:
     """Executes a validated HCL lossless syntax query in raw source order
-    (query.rs:244-285).
+    (query.rs).
 
     The lossless index is always present under both profiles because both
     share the one syntax system.

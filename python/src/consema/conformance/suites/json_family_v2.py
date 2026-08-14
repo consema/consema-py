@@ -107,7 +107,7 @@ def _materialization_request(
     profile: json_kinds.JsonProfile, style: str
 ) -> MaterializationRequest:
     """Strict request with the frozen style id and no trailing newline
-    (materialization.rs:122-132; json_family_v2.go:470)."""
+    (materialization.rs; json_family_v2.go:470)."""
     return MaterializationRequest.new(
         profile.id(), MaterializationStyleId.new(style, 1)
     ).with_newline(NewlinePolicy.NONE)

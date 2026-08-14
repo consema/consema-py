@@ -3,39 +3,39 @@
 Authority (Rust arbitration for exact semantics):
 
 - Targets, policies, and request building: https://github.com/consema/consema-rs/blob/main/consema-json/src/
-  projection.rs:13-144 — ProjectAsObjectV1 / ProjectAsEntryMappingV1 /
-  BestExactCoreV1 / Json5BestExactCoreV1 (projection.rs:15-24),
-  DuplicateKeyPolicy Reject/FirstWins/LastWins (projection.rs:28-35),
-  the builder's global-Reject default (projection.rs:84-94) and the
-  equal-precedence conflict rule (projection.rs:130-137).
-- Limits: projection.rs:146-168 (max_value_nodes 1_000_000,
+  projection.rs — ProjectAsObjectV1 / ProjectAsEntryMappingV1 /
+  BestExactCoreV1 / Json5BestExactCoreV1 (projection.rs),
+  DuplicateKeyPolicy Reject/FirstWins/LastWins (projection.rs),
+  the builder's global-Reject default (projection.rs) and the
+  equal-precedence conflict rule (projection.rs).
+- Limits: projection.rs (max_value_nodes 1_000_000,
   max_report_entries 100_000, max_provenance_entries 2_000_000,
   max_depth 256).
-- Gates and failure algebra: projection.rs:357-429 — Recovered documents
-  fail with json.projection.incomplete-document@1 (projection.rs:361-366,
-  756), the JSON5/profile target binding (projection.rs:367-376),
-  ProjectAs* root-object requirement (projection.rs:400-410); failure code
-  mapping projection.rs:754-765; failed attempts never contain a partial
-  value (RFC 0004 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:170-191).
-- Value mapping: projection.rs:443-499 (null/bool/integer/decimal/
+- Gates and failure algebra: projection.rs — Recovered documents
+  fail with json.projection.incomplete-document@1 (projection.rs,
+  756), the JSON5/profile target binding (projection.rs),
+  ProjectAs* root-object requirement (projection.rs); failure code
+  mapping projection.rs; failed attempts never contain a partial
+  value (RFC 0004 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md).
+- Value mapping: projection.rs (null/bool/integer/decimal/
   BinaryFloat64/string/array; unavailable regions fail semantic-
   unavailable).
-- Object mapping and duplicate handling: projection.rs:501-639 —
+- Object mapping and duplicate handling: projection.rs —
   EntryMapping under ProjectAsEntryMapping or duplicate names under
-  BestExact (projection.rs:524-534) with the StructureReencoded event
-  (projection.rs:536-548), key/value association origins
-  (projection.rs:550-571), select_members policy retention
-  (projection.rs:691-728) with DuplicateCollapsed events (projection.rs:
-  585-609).
-- Provenance: projection.rs:183-241 and add_origin projection.rs:659-678
+  BestExact (projection.rs) with the StructureReencoded event
+  (projection.rs), key/value association origins
+  (projection.rs), select_members policy retention
+  (projection.rs) with DuplicateCollapsed events (projection.rs
+（区间定义处）)
+- Provenance: projection.rs and add_origin projection.rs
   (every projected value and supported association maps Direct to its
-  source node/span; limit projection.rs:665-667).
-- Fidelity: projection.rs:170-181 (Exact/Transformed/Lossy); whole-project
-  fidelity lifted on re-encoding (projection.rs:537) or collapse
-  (projection.rs:576-578).
+  source node/span; limit projection.rs).
+- Fidelity: projection.rs (Exact/Transformed/Lossy); whole-project
+  fidelity lifted on re-encoding (projection.rs) or collapse
+  (projection.rs).
 - Target contract ids: json.projection.best-exact-core@1 and
   json5.projection.best-exact-core@1 are the frozen target spellings
-  (RFC 0005 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:174-193); the v1 vectors reference the
+  (RFC 0005 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md); the v1 vectors reference the
   target by the alias "BestExactCore@1" (conformance/vectors/v1.json:91).
 
 Design: the value-path and association-location records are the semantic
@@ -69,7 +69,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 
 class ProjectionTarget(enum.Enum):
-    """Versioned projection target contract (projection.rs:15-24)."""
+    """Versioned projection target contract (projection.rs)."""
 
     PROJECT_AS_OBJECT_V1 = "json.projection.project-as-object@1"
     PROJECT_AS_ENTRY_MAPPING_V1 = "json.projection.project-as-entry-mapping@1"
@@ -78,7 +78,7 @@ class ProjectionTarget(enum.Enum):
 
 
 class DuplicateKeyPolicy(enum.Enum):
-    """Explicit duplicate member policy (projection.rs:28-35)."""
+    """Explicit duplicate member policy (projection.rs)."""
 
     REJECT = "Reject"
     FIRST_WINS = "FirstWins"
@@ -86,7 +86,7 @@ class DuplicateKeyPolicy(enum.Enum):
 
 
 class ProjectionPolicyScope:
-    """Scope supported by v1 projection policy rules (projection.rs:38-44)."""
+    """Scope supported by v1 projection policy rules (projection.rs)."""
 
     def __init__(self, node: NodeRef | None) -> None:
         self.node = node
@@ -110,7 +110,7 @@ class ProjectionPolicyScope:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionLimits:
-    """Projection resource limits (projection.rs:146-168)."""
+    """Projection resource limits (projection.rs)."""
 
     max_value_nodes: int = 1_000_000
     max_report_entries: int = 100_000
@@ -120,7 +120,7 @@ class ProjectionLimits:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionRequest:
-    """Immutable versioned projection request (projection.rs:52-72)."""
+    """Immutable versioned projection request (projection.rs)."""
 
     target: ProjectionTarget
     duplicate_rules: tuple[tuple[ProjectionPolicyScope, DuplicateKeyPolicy], ...] = ()
@@ -129,7 +129,7 @@ class ProjectionRequest:
 
 class ProjectionRequestBuilder:
     """Builder that rejects conflicting equal-precedence rules
-    (projection.rs:74-144)."""
+    (projection.rs)."""
 
     def __init__(self, target: ProjectionTarget) -> None:
         self._target = target
@@ -159,7 +159,7 @@ class ProjectionRequestBuilder:
 
     def build(self) -> ProjectionRequest:
         """Validates rule precedence and completes the request
-        (projection.rs:130-137)."""
+        (projection.rs)."""
         for index, (scope, policy) in enumerate(self._rules):
             for other_scope, other_policy in self._rules[index + 1 :]:
                 if scope == other_scope and policy is not other_policy:
@@ -233,7 +233,7 @@ class AssociationLocation:
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:170-181)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -241,7 +241,7 @@ class Fidelity(enum.Enum):
 
 
 class ProjectedLocationKind(enum.Enum):
-    """Projected location kind (projection.rs:183-190)."""
+    """Projected location kind (projection.rs)."""
 
     VALUE = "Value"
     ASSOCIATION = "Association"
@@ -249,7 +249,7 @@ class ProjectedLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """One portable projected location (projection.rs:183-190)."""
+    """One portable projected location (projection.rs)."""
 
     kind: ProjectedLocationKind
     path: ValuePath | None = None
@@ -265,7 +265,7 @@ class ProjectedLocation:
 
 
 class ProvenanceRelation(enum.Enum):
-    """Relationship from portable fact to source fact (projection.rs:192-205)."""
+    """Relationship from portable fact to source fact (projection.rs)."""
 
     DIRECT = "Direct"
     REENCODED = "Reencoded"
@@ -274,7 +274,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One source origin (projection.rs:207-217)."""
+    """One source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -284,7 +284,7 @@ class SourceOrigin:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
-    """One projected location mapped to its source origins (projection.rs:220-227)."""
+    """One projected location mapped to its source origins (projection.rs)."""
 
     projected: ProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -292,13 +292,13 @@ class ProvenanceEntry:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
-    """Complete projection provenance map (projection.rs:229-241)."""
+    """Complete projection provenance map (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = ()
 
 
 class ProjectionEventKind(enum.Enum):
-    """Stable projection event kinds (projection.rs:243-258)."""
+    """Stable projection event kinds (projection.rs)."""
 
     STRUCTURE_REENCODED = "StructureReencoded"
     DUPLICATE_COLLAPSED = "DuplicateCollapsed"
@@ -306,7 +306,7 @@ class ProjectionEventKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectionEvent:
-    """One reportable projection event (projection.rs:260-276)."""
+    """One reportable projection event (projection.rs)."""
 
     kind: ProjectionEventKind
     policy: DuplicateKeyPolicy | None
@@ -320,14 +320,14 @@ class ProjectionEvent:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
-    """Complete ordered projection report (projection.rs:281-289)."""
+    """Complete ordered projection report (projection.rs)."""
 
     events: tuple[ProjectionEvent, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class CompleteProjection:
-    """Complete successful projection (projection.rs:295-307)."""
+    """Complete successful projection (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -337,7 +337,7 @@ class CompleteProjection:
 
 @dataclass(frozen=True, slots=True)
 class FailedProjectionAttempt:
-    """Failed attempt with no value (projection.rs:308-318)."""
+    """Failed attempt with no value (projection.rs)."""
 
     diagnostics: tuple[JsonDiagnostic, ...]
     report: ProjectionReport
@@ -549,7 +549,7 @@ class _ProjectionContext:
 
     def duplicate_policy(self, node: NodeRef) -> DuplicateKeyPolicy:
         """Exact-node rules first, then the global rule, else Reject
-        (projection.rs:641-657)."""
+        (projection.rs)."""
         for scope, policy in self.request.duplicate_rules:
             if scope.node == node:
                 return policy
@@ -595,7 +595,7 @@ def select_members(
     policy: DuplicateKeyPolicy,
     node: NodeRef,
 ) -> list[int]:
-    """Applies the explicit duplicate policy (projection.rs:691-728)."""
+    """Applies the explicit duplicate policy (projection.rs)."""
     counts: dict[str, int] = {}
     for name in names:
         counts[name] = counts.get(name, 0) + 1
@@ -622,7 +622,7 @@ def select_members(
 
 def project(document: JsonDocument, request: ProjectionRequest) -> ProjectionResult:
     """Applies an immutable request; a failure never contains a partial value
-    (projection.rs:357-429)."""
+    (projection.rs)."""
     if document.formation_status() is not FormationStatus.COMPLETE:
         return _failed(JsonProjectionFailureKind.RECOVERED_DOCUMENT)
     if (

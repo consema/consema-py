@@ -1,9 +1,9 @@
 """Operation-registry intent tests: the frozen eight-operation XML surface.
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-xml/src/operation_registry.rs:16-89 (the exact
-descriptors) and its surface test operation_registry.rs:100-124 (the
+Authority: https://github.com/consema/consema-rs/blob/main/consema-xml/src/operation_registry.rs (the exact
+descriptors) and its surface test operation_registry.rs (the
 frozen eight-operation list); RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-
-profile-v1.md:376-387).
+profile-v1.md).
 
 These tests are delivered: the full suite runs in CI (ci-python.yml
 python-gates job) against the provisioned conformance data.
@@ -21,7 +21,7 @@ from consema.xml import (
     format_operation_registry,
 )
 
-# The frozen eight-operation surface, operation_registry.rs:100-124.
+# The frozen eight-operation surface, operation_registry.rs.
 EXPECTED_OPERATIONS = (
     "xml.edit.insert-attribute@1",
     "xml.edit.insert-element@1",
@@ -36,7 +36,7 @@ EXPECTED_OPERATIONS = (
 
 def test_frozen_eight_operation_surface():
     """The XML profile publishes exactly the frozen eight-operation surface
-    (operation_registry.rs:100-124)."""
+    (operation_registry.rs)."""
     registry = format_operation_registry(ProfileId.new("xml.1.0-safe", 1))
     operations = tuple(
         descriptor.id.to_string() for descriptor in registry.operations()
@@ -50,7 +50,7 @@ def test_frozen_eight_operation_surface():
 
 def test_descriptor_target_roles_and_arguments():
     """Each descriptor carries its frozen target role and argument schema
-    (operation_registry.rs:16-74)."""
+    (operation_registry.rs)."""
     registry = format_operation_registry(ProfileId.new("xml.1.0-safe", 1))
     by_id = {descriptor.id.to_string(): descriptor for descriptor in registry.operations()}
     replace_text = by_id["xml.edit.replace-text@1"]
@@ -79,6 +79,6 @@ def test_descriptor_target_roles_and_arguments():
 
 def test_foreign_profile_is_rejected():
     """The registry binds exactly one profile: ``xml.1.0-safe@1``
-    (operation_registry.rs:9-14)."""
+    (operation_registry.rs)."""
     with pytest.raises(ValueError):
         format_operation_registry(ProfileId.new("toml.1.0", 1))

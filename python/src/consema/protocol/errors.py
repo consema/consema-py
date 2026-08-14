@@ -58,7 +58,7 @@ class ProtocolError(Exception):
 
     @property
     def code(self) -> str:
-        """The frozen registered code (error.rs:35-49; RFC 0016 §6)."""
+        """The frozen registered code (error.rs; RFC 0016 §6)."""
         return _CODE_BY_KIND[self.kind]
 
     def __str__(self) -> str:

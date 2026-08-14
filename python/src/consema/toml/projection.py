@@ -2,7 +2,7 @@
 
 Authority:
 
-- RFC 0001 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:78-100): the frozen
+- RFC 0001 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md): the frozen
   target ``toml.best-exact-core@1``; the kind mapping table (Boolean ->
   Boolean, Integer -> Integer, Float -> BinaryFloat64, String -> String,
   LocalDate -> Date, LocalTime -> Time, LocalDateTime -> LocalDateTime,
@@ -16,7 +16,7 @@ Authority:
   the whole projection with ``toml.projection.unrepresentable-datetime@1``
   — no truncation, normalization, or silent substitution.
 - The completion algebra and failure mapping transcribe
-  https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:9-227 and 410-435:
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs and 410-435:
   CompleteProjection{value, fidelity, report, provenance} or
   FailedProjectionAttempt{diagnostics, report, partial_analysis};
   fidelity Exact/Transformed/Lossy; failure codes
@@ -24,10 +24,10 @@ Authority:
   core.projection.resource-limit@1 (with the ``limit`` argument),
   toml.projection.core-invariant@1; provenance relations Direct/Derived
   and the per-value/association origin roles (TomlItem, TomlArrayElement,
-  TomlEntry, TomlKey) at projection.rs:237-365.
+  TomlEntry, TomlKey) at projection.rs.
 - ProjectionLimits defaults: max_value_nodes 1_000_000,
   max_report_entries 100_000, max_provenance_entries 2_000_000,
-  max_depth 256 (projection.rs:53-75).
+  max_depth 256 (projection.rs).
 - RFC 0016 §5.2: the conservative default policy is
   core.projection.exact-or-reject@1 — never invented values.
 """
@@ -58,14 +58,14 @@ from consema.toml.paths import (
 
 
 class ProjectionTarget(enum.Enum):
-    """Versioned TOML projection target contract (projection.rs:9-14)."""
+    """Versioned TOML projection target contract (projection.rs)."""
 
     BEST_EXACT_CORE_V1 = "toml.best-exact-core@1"
 
 
 @dataclass(frozen=True, slots=True)
 class ProjectionLimits:
-    """Projection resource limits (projection.rs:53-75)."""
+    """Projection resource limits (projection.rs)."""
 
     max_value_nodes: int = 1_000_000
     max_report_entries: int = 100_000
@@ -79,7 +79,7 @@ class ProjectionLimits:
 
 @dataclass(frozen=True, slots=True)
 class ProjectionRequest:
-    """Immutable explicit projection request (projection.rs:15-51)."""
+    """Immutable explicit projection request (projection.rs)."""
 
     target: ProjectionTarget
     limits: ProjectionLimits = field(default_factory=ProjectionLimits.default)
@@ -93,7 +93,7 @@ class ProjectionRequest:
 
 
 class Fidelity(enum.Enum):
-    """Projection fidelity classification (projection.rs:77-86)."""
+    """Projection fidelity classification (projection.rs)."""
 
     EXACT = "Exact"
     TRANSFORMED = "Transformed"
@@ -107,7 +107,7 @@ class ProjectedLocationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ProjectedLocation:
-    """Projected value or association location (projection.rs:88-95)."""
+    """Projected value or association location (projection.rs)."""
 
     kind: ProjectedLocationKind
     path: ValuePath | None = None
@@ -123,7 +123,7 @@ class ProjectedLocation:
 
 
 class ProvenanceRelation(enum.Enum):
-    """Source-to-projection relation (projection.rs:97-104)."""
+    """Source-to-projection relation (projection.rs)."""
 
     DIRECT = "Direct"
     DERIVED = "Derived"
@@ -131,7 +131,7 @@ class ProvenanceRelation(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class SourceOrigin:
-    """One exact source origin (projection.rs:106-117)."""
+    """One exact source origin (projection.rs)."""
 
     snapshot: SnapshotIdentity
     node: NodeRef
@@ -141,7 +141,7 @@ class SourceOrigin:
 
 @dataclass(frozen=True, slots=True)
 class ProvenanceEntry:
-    """One many-valued provenance mapping entry (projection.rs:119-126)."""
+    """One many-valued provenance mapping entry (projection.rs)."""
 
     projected: ProjectedLocation
     origins: tuple[SourceOrigin, ...]
@@ -150,7 +150,7 @@ class ProvenanceEntry:
 @dataclass(frozen=True, slots=True)
 class ProvenanceMap:
     """Immutable multi-map from projected locations to source origins
-    (projection.rs:128-140)."""
+    (projection.rs)."""
 
     entries: tuple[ProvenanceEntry, ...] = field(default_factory=tuple)
 
@@ -158,7 +158,7 @@ class ProvenanceMap:
 @dataclass(frozen=True, slots=True)
 class ProjectionReport:
     """Complete ordered projection report; exact TOML projections emit no
-    transformation or loss events (projection.rs:142-156)."""
+    transformation or loss events (projection.rs)."""
 
     events: tuple[TomlDiagnostic, ...] = field(default_factory=tuple)
 
@@ -166,7 +166,7 @@ class ProjectionReport:
 @dataclass(frozen=True, slots=True)
 class CompleteProjection:
     """Complete successful projection; its value is never partial
-    (projection.rs:158-169)."""
+    (projection.rs)."""
 
     value: PortableValue
     fidelity: Fidelity
@@ -176,14 +176,14 @@ class CompleteProjection:
 
 @dataclass(frozen=True, slots=True)
 class FailedProjectionAttempt:
-    """Failed attempt without a partial PortableValue (projection.rs:171-180)."""
+    """Failed attempt without a partial PortableValue (projection.rs)."""
 
     diagnostics: tuple[TomlDiagnostic, ...]
     report: ProjectionReport = field(default_factory=ProjectionReport)
     partial_analysis: tuple[str, ...] = field(default_factory=tuple)
 
 
-# The closed projection completion algebra (projection.rs:182-189).
+# The closed projection completion algebra (projection.rs).
 ProjectionResult = CompleteProjection | FailedProjectionAttempt
 
 
@@ -270,7 +270,7 @@ class _ProjectionContext:
         return value
 
     def _project_datetime(self, value: TomlDateTime, span: Span) -> PortableValue:
-        """projection.rs:367-408. Temporal fields outside the PortableValue
+        """projection.rs. Temporal fields outside the PortableValue
         closure (leap seconds, invalid core fields) fail the whole
         projection with toml.projection.unrepresentable-datetime@1."""
         date = value.date
@@ -334,7 +334,7 @@ class _ProjectionContext:
 
 
 def project_document(document: Document, request: ProjectionRequest) -> ProjectionResult:
-    """Applies an immutable explicit projection request (projection.rs:202-227)."""
+    """Applies an immutable explicit projection request (projection.rs)."""
     if request.target is not ProjectionTarget.BEST_EXACT_CORE_V1:
         return FailedProjectionAttempt(
             diagnostics=(

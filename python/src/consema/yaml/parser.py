@@ -11,14 +11,14 @@ Authority (language-neutral first; Rust only for arbitration):
   no expansion), and the security rules s13 (400-429: no evaluation, no
   network, no alias expansion).
 - The scalar resolution grammar is frozen by https://github.com/consema/consema-rs/blob/main/consema-yaml/src/
-  native.rs:565-716 (resolve_scalar/resolve_explicit/resolve_implicit),
-  746-766 (null/bool), 768-801 (integer), 803-846 (float), 848-912
+  native.rs (resolve_scalar/resolve_explicit/resolve_implicit),
+ (null/bool), (integer), (float), 
   (sexagesimal), 969-1075 (timestamp), 1077-1111 (binary).
 - The event grammar mirrors the saphyr event model through
-  https://github.com/consema/consema-rs/blob/main/consema-yaml/src/backend.rs:24-57 (event kinds) and the native
-  composition order https://github.com/consema/consema-rs/blob/main/consema-yaml/src/native.rs:224-508.
-- The profile version directive gate is lib.rs:789-831; fatal limit mapping
-  is backend.rs:147-156 and lib.rs:833-858.
+  https://github.com/consema/consema-rs/blob/main/consema-yaml/src/backend.rs (event kinds) and the native
+  composition order https://github.com/consema/consema-rs/blob/main/consema-yaml/src/native.rs.
+- The profile version directive gate is lib.rs; fatal limit mapping
+  is backend.rs and lib.rs.
 - Scalar resolution surface: conformance/vectors/yaml-v1.json cases
   profile.yaml12-scalars and profile.yaml11-scalars (kinds and canonical
   spellings), formation.undefined-alias (yaml.parse.syntax@1),
@@ -30,7 +30,7 @@ https://github.com/consema/consema-go/blob/main/go/yaml/parser.go is a cross-ref
 
 The parser is intentionally private: Consema owns profile decisions, source
 identity, diagnostics, resource limits, native semantics, and graph
-composition (lib.rs:1-8).
+composition (lib.rs).
 """
 
 from __future__ import annotations
@@ -65,7 +65,7 @@ from consema.yaml.kinds import (
 )
 from consema.yaml.syntax import tokenize
 
-# -- standard resolved tags (native.rs:17-31) --------------------------------
+# -- standard resolved tags (native.rs) --------------------------------
 
 TAG_NULL = "tag:yaml.org,2002:null"
 TAG_BOOL = "tag:yaml.org,2002:bool"
@@ -100,7 +100,7 @@ _STANDARD_SCALAR_TAGS = frozenset(
 )
 
 
-# -- native model records (native.rs:33-94) ----------------------------------
+# -- native model records (native.rs) ----------------------------------
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,7 +159,7 @@ class NativeStream:
     aliases: list[NativeAlias]
 
 
-# -- backend events (backend.rs:24-57) ---------------------------------------
+# -- backend events (backend.rs) ---------------------------------------
 
 
 class _EventKind(enum.Enum):
@@ -195,7 +195,7 @@ class _ParseError(Exception):
 
 
 # ---------------------------------------------------------------------------
-# Scalar resolution (native.rs:746-1111)
+# Scalar resolution (native.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -227,7 +227,7 @@ def _split_sign(value: str) -> tuple[int, str] | None:
 
 
 def _valid_underscored(value: str) -> str | None:
-    """1.1 underscore rule: only between alphanumerics (native.rs:930-943)."""
+    """1.1 underscore rule: only between alphanumerics (native.rs)."""
     for index, item in enumerate(value):
         if item == "_" and (
             index == 0
@@ -298,7 +298,7 @@ def _digit_value(character: str, base: int) -> int:
 
 def _normalize_decimal_lexeme(value: str) -> str:
     """JSON-number normalization before exact decimal parse
-    (native.rs:831-846)."""
+    (native.rs)."""
     if value.startswith("+"):
         value = value[1:]
     if value.startswith("-."):
@@ -576,7 +576,7 @@ def _base64_value(value: str) -> int | None:
 
 
 def canonical_base64(value: str) -> str | None:
-    """Validates and canonicalizes one YAML base64 scalar (native.rs:1077-1111)."""
+    """Validates and canonicalizes one YAML base64 scalar (native.rs)."""
     cleaned = "".join(character for character in value if not character.isspace())
     padding = 0
     for character in reversed(cleaned):
@@ -654,10 +654,10 @@ def _break_length(text: str, offset: int) -> int:
 class _EventParser:
     """One pass over the BOM-stripped decoded text producing backend events.
 
-    The parser mirrors the saphyr event grammar through backend.rs:24-57 and
-    enforces the nesting/event limits (backend.rs:147-156). Span offsets are
+    The parser mirrors the saphyr event grammar through backend.rs and
+    enforces the nesting/event limits (backend.rs). Span offsets are
     Unicode scalar offsets in the FULL decoded text (scalar_offset_base
-    applied at event creation), matching backend.rs:139-142.
+    applied at event creation), matching backend.rs.
     """
 
     def __init__(
@@ -948,7 +948,7 @@ class _EventParser:
     # -- block node parsing -------------------------------------------------
 
     def _starts_structure(self, content_start: int, content_end: int) -> bool:
-        """The tokenizer's starts_indented_structure rule (syntax.rs:257-282):
+        """The tokenizer's starts_indented_structure rule (syntax.rs):
         ``-``/``?`` followed by separation, or ``:`` followed by separation
         anywhere in the line."""
         if self.text[content_start] in ("-", "?") and (
@@ -1750,7 +1750,7 @@ def _decode_block_content(
     folded: bool,
 ) -> str:
     """Decodes literal/folded block content with the frozen chomping rules
-    (block scalars; the decoded content is pinned by lib.rs:1235-1261:
+    (block scalars; the decoded content is pinned by lib.rs
     ``a: |`` with content ``  ~`` decodes to ``"~\\n"``)."""
     if not lines:
         return ""
@@ -1814,7 +1814,7 @@ def _decode_block_content(
 
 
 class _RawByteResolver:
-    """One-pass decoded-scalar to raw-byte offset resolution (offsets.rs:13-80).
+    """One-pass decoded-scalar to raw-byte offset resolution (offsets.rs).
 
     Event and lexeme boundaries arrive in non-decreasing order, so a single
     forward walk reproduces the exact raw offsets in O(source + lookups).
@@ -1855,7 +1855,7 @@ class _RawByteResolver:
 
 
 # ---------------------------------------------------------------------------
-# Native composition (native.rs:224-508)
+# Native composition (native.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -2007,7 +2007,7 @@ def _compose(
             return (index, index, span, False)
         raise semantic_failure("yaml.native.unexpected-event@1")
 
-    # Stream composition (native.rs:224-257).
+    # Stream composition (native.rs).
     if not events or events[0].kind is not _EventKind.STREAM_START:
         raise semantic_failure("yaml.native.unexpected-event@1")
     position = 1
@@ -2042,7 +2042,7 @@ def _exact_empty_scalar(
     event: _Event, source: SourceSnapshot, raw: _RawByteResolver
 ) -> str:
     """Rewrites the empty-plain-scalar placeholder back to the empty string
-    (native.rs:510-539): a plain decoded ``~`` whose presentation is not
+    (native.rs): a plain decoded ``~`` whose presentation is not
     literally ``~`` is the empty scalar."""
     if event.style is YamlScalarStyle.PLAIN and event.decoded == "~":
         start = raw.decoded_byte_at(event.start)
@@ -2054,7 +2054,7 @@ def _exact_empty_scalar(
 
 
 def _resolve_collection_tag(explicit: str | None, expected: str) -> str:
-    """Kind validation for explicit collection tags (native.rs:541-563)."""
+    """Kind validation for explicit collection tags (native.rs)."""
     if explicit is None:
         return expected
     if explicit == "!":
@@ -2078,7 +2078,7 @@ def _resolve_scalar(
     explicit: str | None,
     profile: YamlProfile,
 ) -> tuple[str, NativeScalar]:
-    """Profile scalar resolution (native.rs:565-716)."""
+    """Profile scalar resolution (native.rs)."""
     public_style = style if style is not None else YamlScalarStyle.PLAIN
     if explicit is not None:
         tag = explicit
@@ -2161,7 +2161,7 @@ def _resolve_implicit(
 
 
 # ---------------------------------------------------------------------------
-# Version directive gate (lib.rs:789-831)
+# Version directive gate (lib.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -2199,7 +2199,7 @@ def parse(
     limits: ParseLimits,
 ) -> object:
     """Parses one exact YAML stream using BOM-detected UTF-8/UTF-16 source
-    rules (lib.rs:259-320). Returns the immutable YAML Document or raises
+    rules (lib.rs). Returns the immutable YAML Document or raises
     YamlFormationFailure (fatal; no Document exists)."""
     from consema.yaml.document import Document
 
@@ -2260,5 +2260,5 @@ def _syntax_failure(snapshot: SourceSnapshot, scalar_offset: int) -> YamlFormati
 
 
 def node_ref(authority: DocumentAuthority, index: int) -> object:
-    """One YamlNode handle (native.rs:1159-1161)."""
+    """One YamlNode handle (native.rs)."""
     return authority.node_ref(index, NodeRole.YAML_NODE)

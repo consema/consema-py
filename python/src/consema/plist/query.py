@@ -2,32 +2,32 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-plist/src/query.rs:269-459
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-plist/src/query.rs
   — ``plist.native-semantic-query@1`` serves both representations
-  (query.rs:269-283), ``plist.lossless-syntax-query@1`` exists only for
-  ``plist.xml@1`` (query.rs:322-335), and ``plist.binary-structure-query@1``
-  exists only for ``plist.binary@1`` (query.rs:388-402); a domain applied
+  (query.rs), ``plist.lossless-syntax-query@1`` exists only for
+  ``plist.xml@1`` (query.rs), and ``plist.binary-structure-query@1``
+  exists only for ``plist.binary@1`` (query.rs); a domain applied
   to a document of the wrong representation is a DomainMismatch (hard
   gate 1).
-- Native operators: query.rs:817-1160 — plist.document-root@1,
+- Native operators: query.rs — plist.document-root@1,
   plist.dict-entries@1, plist.dict-entry-key@1, plist.dict-entry-value@1,
   plist.dict-key-equals@1, plist.duplicate-key-group@1, plist.array-
   elements@1, plist.value-type-is@1, plist.value-as-integer@1,
   plist.value-as-real@1, plist.value-as-string@1, plist.value-as-data@1,
   plist.value-as-date@1, plist.value-as-uid@1, plist.value-as-boolean-is@1
-  (the exact RFC 0013 §8.1 surface, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md:543-558); the
-  closed kind names of ``plist.value-type-is@1`` (query.rs:1188-1200).
-- Syntax operators: query.rs:1260-1280 (plist.syntax-kind-is@1,
-  plist.syntax-text-equals@1); binary structure operators query.rs:1335-
+  (the exact RFC 0013 §8.1 surface, https://github.com/consema/consema/blob/main/docs/rfcs/0013-plist-family-profiles-v1.md); the
+  closed kind names of ``plist.value-type-is@1`` (query.rs).
+- Syntax operators: query.rs (plist.syntax-kind-is@1,
+  plist.syntax-text-equals@1); binary structure operators query.rs
   1358 (plist.object-table@1, plist.top-object@1, plist.object-offset@1,
   plist.offset-table@1, plist.object-refs@1, plist.trailer-facts@1).
-- Matches: query.rs:55-126 (PlistMatch), 128-162 (PlistSyntaxMatch),
-  164-264 (PlistBinaryMatch).
-- Selection algebra and limits: consema-core/src/query.rs:2967-2981
+- Matches: query.rs (PlistMatch), 128-162 (PlistSyntaxMatch),
+ (PlistBinaryMatch).
+- Selection algebra and limits: consema-core/src/query.rs
   (QueryLimits defaults max_steps=100_000, max_results=100_000);
   typed-accessor type mismatch is the runner-mapped
   ``plist.query.type-mismatch@1`` (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/
-  plist_v1.rs:1149).
+  plist_v1.rs).
 - Expression evaluation and StructureOrderMerge: the common query model of
   consema.protocol.query (RFC 0016 §5.4), as the other families use.
 
@@ -62,7 +62,7 @@ BINARY_DOMAIN_ID = "plist.binary-structure-query"
 
 
 class PlistMatchKind(enum.Enum):
-    """Match role of one native query result (query.rs:60-114)."""
+    """Match role of one native query result (query.rs)."""
 
     DOCUMENT = "Document"
     VALUE = "Value"
@@ -73,7 +73,7 @@ class PlistMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class PlistMatch:
-    """One snapshot-bound native semantic query match (query.rs:60-114).
+    """One snapshot-bound native semantic query match (query.rs).
 
     Value matches reference the arena of the queried document, so shared
     identity from the binary object table survives querying: one native
@@ -91,13 +91,13 @@ class PlistMatch:
 
     @property
     def identity(self) -> NodeRef:
-        """Stable match identity (query.rs:116-126)."""
+        """Stable match identity (query.rs)."""
         return self.node
 
 
 @dataclass(frozen=True, slots=True)
 class PlistSyntaxMatch:
-    """One snapshot-bound lossless syntax query match (query.rs:128-162)."""
+    """One snapshot-bound lossless syntax query match (query.rs)."""
 
     node: NodeRef
     span: Span
@@ -106,7 +106,7 @@ class PlistSyntaxMatch:
 
 
 class PlistBinaryMatchKind(enum.Enum):
-    """Match role of one binary structure query result (query.rs:164-251)."""
+    """Match role of one binary structure query result (query.rs)."""
 
     STRUCTURE = "Structure"
     OBJECT = "Object"
@@ -118,7 +118,7 @@ class PlistBinaryMatchKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class PlistBinaryMatch:
-    """One snapshot-bound binary structure query match (query.rs:164-251).
+    """One snapshot-bound binary structure query match (query.rs).
 
     The binary structure facts are document-level: ``Structure`` is the
     domain root, and every structure operator projects its fact set once
@@ -168,7 +168,7 @@ class PlistCancellationToken:
 
 
 class PlistQueryLimits:
-    """Query resource limits (consema-core/src/query.rs:2967-2981)."""
+    """Query resource limits (consema-core/src/query.rs)."""
 
     def __init__(self, max_steps: int = 100_000, max_results: int = 100_000) -> None:
         self.max_steps = max_steps
@@ -237,7 +237,7 @@ def execute_plist_native_query(
     limits: PlistQueryLimits,
     cancellation: PlistCancellationToken,
 ) -> PlistQueryExecution:
-    """Executes a validated plist native semantic query (query.rs:269-283).
+    """Executes a validated plist native semantic query (query.rs).
 
     The native domain serves both representations; only the domain identity
     is guarded here."""
@@ -268,7 +268,7 @@ def execute_plist_syntax_query(
     limits: PlistQueryLimits,
     cancellation: PlistCancellationToken,
 ) -> PlistQueryExecution:
-    """Executes a validated plist lossless syntax query (query.rs:322-335).
+    """Executes a validated plist lossless syntax query (query.rs).
 
     The domain exists only for the ``plist.xml@1`` representation; a binary
     document is a DomainMismatch (hard gate 1)."""
@@ -308,7 +308,7 @@ def execute_plist_binary_query(
     limits: PlistQueryLimits,
     cancellation: PlistCancellationToken,
 ) -> PlistQueryExecution:
-    """Executes a validated plist binary structure query (query.rs:388-402).
+    """Executes a validated plist binary structure query (query.rs).
 
     The domain exists only for the ``plist.binary@1`` representation; an
     XML document is a DomainMismatch (hard gate 1)."""
@@ -386,7 +386,7 @@ def _end_byte(document: PlistDocument, match: object) -> int:
 
 
 def _apply_operator(operator, input_matches: list[PlistMatch], context: _Context) -> list[PlistMatch]:
-    """One native-domain operator (query.rs:814-1160)."""
+    """One native-domain operator (query.rs)."""
     from consema.protocol.query import OperatorCall
 
     assert isinstance(operator, OperatorCall)
@@ -438,7 +438,7 @@ def _apply_operator(operator, input_matches: list[PlistMatch], context: _Context
 
 def _document_root(input_matches: list[PlistMatch], context: _Context) -> list[PlistMatch]:
     """``plist.document-root``: the root value, when formation proved it
-    (query.rs:852-876)."""
+    (query.rs)."""
     native = context.document.document()
     output: list[PlistMatch] = []
     for match in input_matches:
@@ -461,7 +461,7 @@ def _document_root(input_matches: list[PlistMatch], context: _Context) -> list[P
 
 def _dict_entries(input_matches: list[PlistMatch], context: _Context) -> list[PlistMatch]:
     """``plist.dict-entries``: the ordered associations of every dictionary
-    value match (query.rs:878-899)."""
+    value match (query.rs)."""
     native = context.document.document()
     assert native is not None
     output: list[PlistMatch] = []
@@ -493,7 +493,7 @@ def _dict_entries(input_matches: list[PlistMatch], context: _Context) -> list[Pl
 
 def _dict_entry_key(input_matches: list[PlistMatch], context: _Context) -> list[PlistMatch]:
     """``plist.dict-entry-key``: the string key identity of every entry
-    match (query.rs:901-928)."""
+    match (query.rs)."""
     output: list[PlistMatch] = []
     for match in input_matches:
         if match.kind is not PlistMatchKind.DICT_ENTRY:
@@ -514,7 +514,7 @@ def _dict_entry_key(input_matches: list[PlistMatch], context: _Context) -> list[
 
 def _dict_entry_value(input_matches: list[PlistMatch], context: _Context) -> list[PlistMatch]:
     """``plist.dict-entry-value``: the associated value of every entry
-    match (query.rs:929-953)."""
+    match (query.rs)."""
     output: list[PlistMatch] = []
     for match in input_matches:
         if match.kind is not PlistMatchKind.DICT_ENTRY:
@@ -528,7 +528,7 @@ def _dict_key_equals(
     operator, input_matches: list[PlistMatch], context: _Context
 ) -> list[PlistMatch]:
     """``plist.dict-key-equals``: exact Unicode key equality; case is never
-    folded (query.rs:954-974; RFC 0013 §8.1)."""
+    folded (query.rs; RFC 0013 §8.1)."""
     from consema.protocol.query import OperatorCall
 
     assert isinstance(operator, OperatorCall)
@@ -548,7 +548,7 @@ def _duplicate_key_group(
 ) -> list[PlistMatch]:
     """``plist.duplicate-key-group``: expands one entry match to every
     same-key association of the same dictionary in source order
-    (query.rs:975-999)."""
+    (query.rs)."""
     native = context.document.document()
     assert native is not None
     output: list[PlistMatch] = []
@@ -586,7 +586,7 @@ def _duplicate_key_group(
 
 def _array_elements(input_matches: list[PlistMatch], context: _Context) -> list[PlistMatch]:
     """``plist.array-elements``: the ordered element associations of every
-    array value match (query.rs:1000-1035)."""
+    array value match (query.rs)."""
     native = context.document.document()
     assert native is not None
     output: list[PlistMatch] = []
@@ -618,7 +618,7 @@ def _value_type_is(
     operator, input_matches: list[PlistMatch], context: _Context
 ) -> list[PlistMatch]:
     """``plist.value-type-is``: keeps value-bearing matches of exactly the
-    closed kind name (query.rs:1036-1083)."""
+    closed kind name (query.rs)."""
     from consema.protocol.query import OperatorCall
 
     assert isinstance(operator, OperatorCall)
@@ -645,7 +645,7 @@ def _value_as_typed(
 ) -> list[PlistMatch]:
     """The ``plist.value-as-*@1`` typed accessors: validate the value type
     before returning; a type mismatch is a query failure (RFC 0013 §8.1;
-    query.rs:1084-1158)."""
+    query.rs)."""
     output: list[PlistMatch] = []
     for match in input_matches:
         kind = _value_kind_of(match)
@@ -668,7 +668,7 @@ def _value_as_boolean_is(
     operator, input_matches: list[PlistMatch], context: _Context
 ) -> list[PlistMatch]:
     """``plist.value-as-boolean-is``: validates that every value-bearing
-    match is a boolean of the argument value (query.rs:1084-1158)."""
+    match is a boolean of the argument value (query.rs)."""
     from consema.protocol.query import OperatorCall
 
     assert isinstance(operator, OperatorCall)
@@ -877,7 +877,7 @@ def _object_facts(
 ) -> list[PlistBinaryMatch]:
     """``plist.object-table`` / ``plist.top-object``: the object facts, or
     only the trailer's top object with its ordered reference facts
-    (query.rs:1351-1412)."""
+    (query.rs)."""
     output: list[PlistBinaryMatch] = []
     trailer = facts.trailer
     if top_only:
@@ -922,7 +922,7 @@ def _object_facts(
 
 
 # ---------------------------------------------------------------------------
-# Selection algebra (query.rs:693-710)
+# Selection algebra (query.rs)
 # ---------------------------------------------------------------------------
 
 

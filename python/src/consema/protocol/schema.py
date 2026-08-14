@@ -18,7 +18,7 @@ def exact_fields(value: PortableValue, expected: list[str], path: str) -> list[P
     The value must be an Object; every field must be declared by the
     schema, every declared field must be present, and the fields must
     appear exactly in the canonical order. Returns the field values in
-    schema order (schema.rs:16-53).
+    schema order (schema.rs).
     """
     if value.kind is not Kind.OBJECT:
         raise protocol_error(ProtocolErrorKind.WRONG_TYPE, path, "expected Object")
@@ -50,7 +50,7 @@ def schema_fields(
     value: PortableValue, schema: str, expected: list[str], path: str
 ) -> list[PortableValue]:
     """Validates a fixed-field record whose first field is the schema
-    discriminator and returns all field values (schema.rs:55-70)."""
+    discriminator and returns all field values (schema.rs)."""
     fields = exact_fields(value, expected, path)
     observed = string_of(fields[0], f"{path}.schema")
     if observed != schema:

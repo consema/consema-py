@@ -2,7 +2,7 @@
 
 Golden facts pinned here come from conformance/vectors/v1.json (the
 `value.decimal-normalization` and `value.float-signed-zero` cases) and the
-kind registry of https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs:622-653. These tests run
+kind registry of https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs. These tests run
 in CI (ci-python.yml python-gates job) against the provisioned conformance
 data.
 """
@@ -24,7 +24,7 @@ from consema.core.errors import PVCEError, PVCEErrorKind
 
 
 def test_fifteen_kinds_are_closed_and_named():
-    # The language-neutral kind list (RFC 0016 §4.1; value.rs:622-653).
+    # The language-neutral kind list (RFC 0016 §4.1; value.rs).
     assert [kind.value for kind in Kind] == [
         "Null", "Boolean", "Integer", "Decimal", "BinaryFloat32", "BinaryFloat64",
         "String", "Bytes", "Date", "Time", "LocalDateTime", "OffsetDateTime",
@@ -87,7 +87,7 @@ def test_entry_mapping_allows_duplicate_and_arbitrary_keys():
 
 
 def test_decimal_normalization_strips_trailing_zeros():
-    # value.rs:277-292: 10 × 10^0 → 1 × 10^1; zero coefficient → exponent 0;
+    # value.rs: 10 × 10^0 → 1 × 10^1; zero coefficient → exponent 0;
     # -1200 × 10^-2 → -12 × 10^0.
     assert decimal(10, 0) == decimal(1, 1)
     assert decimal(0, 5) == decimal(0, 0)
@@ -139,7 +139,7 @@ def test_equal_values_hash_equal():
 
 
 def test_date_leap_rule_uses_absolute_magnitude():
-    # value.rs:433-434: year -400 is a leap year, year -100 is not.
+    # value.rs: year -400 is a leap year, year -100 is not.
     assert PortableValue.date(-400, 2, 29).kind is Kind.DATE
     with pytest.raises(PVCEError) as caught:
         PortableValue.date(-100, 2, 29)

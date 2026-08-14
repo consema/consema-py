@@ -1,8 +1,8 @@
 """Dry-run EditPlan tests.
 
 Contract: RFC 0004 §14 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
-structural-edit-v1.md:338-356); arbitration https://github.com/consema/consema-rs/blob/main/consema-document/
-src/edit_plan.rs:13-31, 34-70, 84-121, 200-211. A dry-run plan is not
+structural-edit-v1.md); arbitration https://github.com/consema/consema-rs/blob/main/consema-document/
+src/edit_plan.rs. A dry-run plan is not
 authority to write a file and is never applied without rechecking base
 digest and every original-byte precondition.
 """
@@ -52,7 +52,7 @@ def test_summary_arguments_are_bounded_and_safe() -> None:
 
 def test_plan_requires_stable_source_and_matching_operation_metadata() -> None:
     """The patch metadata key operation.{index} must equal the operation's
-    canonical id@version form (edit_plan.rs:91-98)."""
+    canonical id@version form (edit_plan.rs)."""
     source = SourceSnapshot.from_utf8(b"a")
     patch = SourcePatch.create(
         source,

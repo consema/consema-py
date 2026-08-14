@@ -2,34 +2,34 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and transaction model: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs:
-  16-56 (EditOperation), 70-163 (EditTransaction/Builder).
-- Failure algebra and codes: edit.rs:178-253 (EditFailure; StableFailure
-  code mapping edit.rs:237-252).
-- Atomic commit: edit.rs:270-442 — Complete/WrongSnapshot gates
-  (edit.rs:273-278), removed-anchor validation (edit.rs:487-505),
-  per-operation preparation (semantic edit.rs:312-327 with the canonical
+- Operation and transaction model: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs
+ (EditOperation), (EditTransaction/Builder).
+- Failure algebra and codes: edit.rs (EditFailure; StableFailure
+  code mapping edit.rs).
+- Atomic commit: edit.rs — Complete/WrongSnapshot gates
+  (edit.rs), removed-anchor validation (edit.rs),
+  per-operation preparation (semantic edit.rs with the canonical
   fallback warning java-properties.edit.canonical-fallback@1 at
-  edit.rs:722-730 and preserve_direct_value edit.rs:578-599; literal
-  edit.rs:329-341 with validate_literal edit.rs:694-720; insertion
-  edit.rs:342-371 with insertion_location edit.rs:507-541 and
-  canonical_record edit.rs:616-663; removal edit.rs:372-379 with
-  record_ownership edit.rs:543-560; rename edit.rs:380-387),
-  non-overlapping ownership (edit.rs:779-792), bounded target length and
-  rendering (edit.rs:732-760), reparse closure (edit.rs:398-409),
-  ChangeSet source edits/node mappings (edit.rs:835-923), SourcePatch
-  derivation (edit.rs:421-429), UntouchedByteProof (edit.rs:430-435).
-- Dry-run: edit.rs:445-459 (identical patch and target digest; RFC 0004
+  edit.rs and preserve_direct_value edit.rs; literal
+  edit.rs with validate_literal edit.rs; insertion
+  edit.rs with insertion_location edit.rs and
+  canonical_record edit.rs; removal edit.rs with
+  record_ownership edit.rs; rename edit.rs),
+  non-overlapping ownership (edit.rs), bounded target length and
+  rendering (edit.rs), reparse closure (edit.rs),
+  ChangeSet source edits/node mappings (edit.rs), SourcePatch
+  derivation (edit.rs), UntouchedByteProof (edit.rs).
+- Dry-run: edit.rs (identical patch and target digest; RFC 0004
   section 14).
-- Operation metadata and summaries: edit.rs:1077-1157
+- Operation metadata and summaries: edit.rs
   (operation.{index} = "java-properties.edit.*@1"; safe summaries).
-- Newline convention: edit.rs:665-683 (first CR -> CRLF/CR, first LF ->
-  LF, default LF); the line-boundary test edit.rs:685-692.
-- Literal ownership: edit.rs:872-892 (one exact value ownership
+- Newline convention: edit.rs (first CR -> CRLF/CR, first LF ->
+  LF, default LF); the line-boundary test edit.rs.
+- Literal ownership: edit.rs (one exact value ownership
   interval, no delimiter/comment/newline consumption; RFC 0010 section 13,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:397-399).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
 - The five frozen operation ids (RFC 0010 section 13,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:385-393; operation_registry.rs:16-48):
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md; operation_registry.rs):
   java-properties.edit.replace-semantic-value@1,
   replace-literal-value@1, insert-property@1, remove-property@1,
   rename-property@1.
@@ -95,7 +95,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 
 class EditOperationKind(enum.Enum):
-    """Typed edit operation kinds (edit.rs:16-56)."""
+    """Typed edit operation kinds (edit.rs)."""
 
     REPLACE_SEMANTIC_VALUE = "ReplaceSemanticValue"
     REPLACE_LITERAL_VALUE = "ReplaceLiteralValue"
@@ -106,7 +106,7 @@ class EditOperationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class EditOperation:
-    """One typed Java Properties structural edit operation (edit.rs:16-56)."""
+    """One typed Java Properties structural edit operation (edit.rs)."""
 
     kind: EditOperationKind
     target: NodeRef | None = None
@@ -135,14 +135,14 @@ class EditOperation:
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
     """Immutable edit transaction; every operation resolves against one
-    base snapshot (edit.rs:70-89)."""
+    base snapshot (edit.rs)."""
 
     base: object
     operations: tuple[EditOperation, ...] = ()
 
 
 class EditTransactionBuilder:
-    """Builder that is not a committed edit (edit.rs:91-163)."""
+    """Builder that is not a committed edit (edit.rs)."""
 
     def __init__(self, document: PropertiesDocument) -> None:
         self._base = document.snapshot_identity()
@@ -150,7 +150,7 @@ class EditTransactionBuilder:
 
     def semantic_value(self, target: NodeRef, value: JavaString) -> EditTransactionBuilder:
         """Replaces one property's semantic Java UTF-16 value
-        (edit.rs:108-114)."""
+        (edit.rs)."""
         self._operations.append(
             EditOperation(
                 kind=EditOperationKind.REPLACE_SEMANTIC_VALUE,
@@ -161,7 +161,7 @@ class EditTransactionBuilder:
         return self
 
     def literal_value(self, target: NodeRef, literal: bytes) -> EditTransactionBuilder:
-        """Replaces one property's exact raw value literal (edit.rs:115-122)."""
+        """Replaces one property's exact raw value literal (edit.rs)."""
         self._operations.append(
             EditOperation(
                 kind=EditOperationKind.REPLACE_LITERAL_VALUE,
@@ -178,7 +178,7 @@ class EditTransactionBuilder:
         value: JavaString,
         placement: AssociationPlacement,
     ) -> EditTransactionBuilder:
-        """Inserts one canonical property occurrence (edit.rs:124-139)."""
+        """Inserts one canonical property occurrence (edit.rs)."""
         self._operations.append(
             EditOperation(
                 kind=EditOperationKind.INSERT_PROPERTY,
@@ -192,7 +192,7 @@ class EditTransactionBuilder:
 
     def remove_property(self, target: NodeRef) -> EditTransactionBuilder:
         """Removes one exact property occurrence and all its natural lines
-        (edit.rs:141-147)."""
+        (edit.rs)."""
         self._operations.append(
             EditOperation(kind=EditOperationKind.REMOVE_PROPERTY, target=target)
         )
@@ -200,7 +200,7 @@ class EditTransactionBuilder:
 
     def rename_property(self, target: NodeRef, key: JavaString) -> EditTransactionBuilder:
         """Replaces one exact property's semantic Java UTF-16 key
-        (edit.rs:149-153)."""
+        (edit.rs)."""
         self._operations.append(
             EditOperation(
                 kind=EditOperationKind.RENAME_PROPERTY, target=target, key=key
@@ -210,13 +210,13 @@ class EditTransactionBuilder:
 
     def build(self) -> EditTransaction:
         """Completes the request; validation remains atomic at dry-run or
-        commit (edit.rs:156-162)."""
+        commit (edit.rs)."""
         return EditTransaction(base=self._base, operations=tuple(self._operations))
 
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """Atomic edit success (edit.rs:165-176)."""
+    """Atomic edit success (edit.rs)."""
 
     document: PropertiesDocument
     change_set: ChangeSet
@@ -229,7 +229,7 @@ class EditCommit:
 
 @dataclass(frozen=True, slots=True)
 class _ExpectedProperty:
-    """The expected post-commit property fact (edit.rs:255-263)."""
+    """The expected post-commit property fact (edit.rs)."""
 
     old: NodeRef | None
     key: JavaString
@@ -241,14 +241,14 @@ class _ExpectedProperty:
 
 @dataclass(frozen=True, slots=True)
 class _PreparedEdit:
-    """One planned raw-byte replacement (edit.rs:265-268)."""
+    """One planned raw-byte replacement (edit.rs)."""
 
     old_span: Span
     replacement: bytes
 
 
 class _EditPlanner:
-    """One planner bound to the base document (edit.rs:270-761)."""
+    """One planner bound to the base document (edit.rs)."""
 
     def __init__(self, document: PropertiesDocument) -> None:
         self.document = document
@@ -256,7 +256,7 @@ class _EditPlanner:
     # -- resolution ---------------------------------------------------------
 
     def property_ordinal(self, target: NodeRef) -> int:
-        """Resolves one property target (edit.rs:461-472)."""
+        """Resolves one property target (edit.rs)."""
         if target.snapshot != self.document.snapshot_identity():
             raise PropertiesEditFailure(PropertiesEditFailureKind.WRONG_SNAPSHOT)
         if target.role is not NodeRole.PROPERTIES_PROPERTY:
@@ -267,7 +267,7 @@ class _EditPlanner:
         raise PropertiesEditFailure(PropertiesEditFailureKind.TARGET_NOT_FOUND)
 
     def validate_document_target(self, target: NodeRef) -> None:
-        """Resolves one document target (edit.rs:474-485)."""
+        """Resolves one document target (edit.rs)."""
         if target.snapshot != self.document.snapshot_identity():
             raise PropertiesEditFailure(PropertiesEditFailureKind.WRONG_SNAPSHOT)
         if target.role is not NodeRole.PROPERTIES_DOCUMENT:
@@ -277,7 +277,7 @@ class _EditPlanner:
 
     def validate_removed_anchors(self, transaction: EditTransaction) -> None:
         """An insertion anchored to a removed property is a conflict
-        (edit.rs:487-505)."""
+        (edit.rs)."""
         removed = {
             operation.target
             for operation in transaction.operations
@@ -301,7 +301,7 @@ class _EditPlanner:
 
     def record_ownership(self, property) -> Span:
         """The property's complete natural-line record range including
-        terminators (edit.rs:543-560)."""
+        terminators (edit.rs)."""
         logical = self.document.logical_line(property.logical_line)
         first = logical.natural_lines[0]
         last = logical.natural_lines[-1]
@@ -317,13 +317,13 @@ class _EditPlanner:
         )
 
     def key_ownership(self, property) -> Span:
-        """The raw key ownership interval (edit.rs:562-564)."""
+        """The raw key ownership interval (edit.rs)."""
         return _fragment_ownership(
             self.document, property.key_fragments, property.key_anchor
         )
 
     def value_ownership(self, property) -> Span:
-        """The raw value ownership interval (edit.rs:570-576)."""
+        """The raw value ownership interval (edit.rs)."""
         return _fragment_ownership(
             self.document, property.value_fragments, property.value_anchor
         )
@@ -331,7 +331,7 @@ class _EditPlanner:
     def insertion_location(
         self, placement: AssociationPlacement
     ) -> tuple[int, int]:
-        """(boundary, raw position) for one insertion (edit.rs:507-541)."""
+        """(boundary, raw position) for one insertion (edit.rs)."""
         count = len(self.document.properties)
         if placement.kind == "Start":
             if self.document.properties:
@@ -360,7 +360,7 @@ class _EditPlanner:
 
     def validate_literal(self, literal: bytes) -> None:
         """Literal bytes must form exactly one raw value element without
-        line breaks (edit.rs:694-720)."""
+        line breaks (edit.rs)."""
         if len(literal) > self.document.parse_limits.common.max_source_bytes:
             raise PropertiesEditFailure(
                 PropertiesEditFailureKind.RESOURCE_LIMIT,
@@ -398,7 +398,7 @@ class _EditPlanner:
 
     def preserve_direct_value(self, property, value: JavaString) -> bytes | None:
         """Direct style preservation when every precondition holds
-        (edit.rs:578-599)."""
+        (edit.rs)."""
         logical = self.document.logical_line(property.logical_line)
         if len(logical.natural_lines) != 1:
             return None
@@ -422,7 +422,7 @@ class _EditPlanner:
 
     def canonical_fragment(self, value: JavaString, is_key: bool) -> bytes:
         """Canonical escaped fragment under the selected source encoding
-        (edit.rs:601-613)."""
+        (edit.rs)."""
         text = canonical_fragment(
             value,
             self.document.profile,
@@ -449,7 +449,7 @@ class _EditPlanner:
         self, position: int, key: JavaString, value: JavaString
     ) -> bytes:
         """One canonical ``key=value`` record with the newline convention
-        (edit.rs:616-663)."""
+        (edit.rs)."""
         newline = self.newline_convention()
         text = ""
         if position > 0 and not self.is_line_boundary(position):
@@ -485,7 +485,7 @@ class _EditPlanner:
             ) from None
 
     def newline_convention(self) -> str:
-        """The existing newline convention (edit.rs:665-683)."""
+        """The existing newline convention (edit.rs)."""
         text = self.document.source.decoded_text()
         assert text is not None, "Properties source is text"
         index = text.find("\r")
@@ -497,7 +497,7 @@ class _EditPlanner:
 
     def is_line_boundary(self, raw: int) -> bool:
         """Whether a raw position is preceded by a line terminator
-        (edit.rs:685-692)."""
+        (edit.rs)."""
         text = self.document.source.decoded_text()
         assert text is not None, "Properties source is text"
         position = self.document.source.decoded_position(raw)
@@ -505,7 +505,7 @@ class _EditPlanner:
 
     def canonical_fallback_diagnostic(self, span: Span) -> PropertiesDiagnostic:
         """Authorized canonical representation fallback warning
-        (edit.rs:722-730)."""
+        (edit.rs)."""
         return PropertiesDiagnostic(
             code="java-properties.edit.canonical-fallback@1",
             category=DiagnosticCategory.EDIT,
@@ -515,7 +515,7 @@ class _EditPlanner:
 
     def apply_prepared(self, prepared: list[_PreparedEdit]) -> bytes:
         """Renders the target bytes from ordered prepared edits
-        (edit.rs:732-760)."""
+        (edit.rs)."""
         target_len = len(self.document.render())
         for edit in prepared:
             target_len = (
@@ -542,7 +542,7 @@ class _EditPlanner:
 
 def commit(document: PropertiesDocument, transaction: EditTransaction) -> EditCommit:
     """Atomically commits every declared Properties operation
-    (edit.rs:270-442)."""
+    (edit.rs)."""
     if document.formation_status() is not FormationStatus.COMPLETE:
         raise PropertiesEditFailure(PropertiesEditFailureKind.RECOVERED_DOCUMENT)
     if transaction.base != document.snapshot_identity():
@@ -739,7 +739,7 @@ def dry_run(
     source_id: EditPlanSourceId,
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:445-459)."""
+    (edit.rs)."""
     commit_result = commit(document, transaction)
     try:
         return EditPlan.new(
@@ -764,7 +764,7 @@ def _fragment_ownership(
     document: PropertiesDocument, fragments: tuple[Span, ...], anchor: Span
 ) -> Span:
     """The ownership interval of one key/value fragment list
-    (edit.rs:763-777)."""
+    (edit.rs)."""
     if not fragments:
         return anchor
     return document.authority.span(
@@ -773,7 +773,7 @@ def _fragment_ownership(
 
 
 def _validate_non_overlapping(prepared: list[_PreparedEdit]) -> None:
-    """Ownership conflict detection (edit.rs:779-792)."""
+    """Ownership conflict detection (edit.rs)."""
     for left, right in zip(prepared, prepared[1:]):
         if (
             left.old_span == right.old_span
@@ -790,7 +790,7 @@ def _assemble_expected(
     old: list[_ExpectedProperty], insertions: dict[int, _ExpectedProperty]
 ) -> list[_ExpectedProperty]:
     """Ordered expected facts with insertions at their boundaries
-    (edit.rs:794-808)."""
+    (edit.rs)."""
     output: list[_ExpectedProperty] = []
     for boundary in range(len(old) + 1):
         if boundary in insertions:
@@ -803,7 +803,7 @@ def _assemble_expected(
 def _verify_expected(
     document: PropertiesDocument, expected: list[_ExpectedProperty]
 ) -> None:
-    """Reparse closure verification (edit.rs:810-833)."""
+    """Reparse closure verification (edit.rs)."""
     if len(document.properties) != len(expected):
         raise PropertiesEditFailure(
             PropertiesEditFailureKind.INVALID_LITERAL
@@ -824,7 +824,7 @@ def _verify_expected(
 def _build_source_edits(
     new_document: PropertiesDocument, prepared: list[_PreparedEdit]
 ) -> list[SourceEdit]:
-    """Ordered old-to-new source edits (edit.rs:835-870)."""
+    """Ordered old-to-new source edits (edit.rs)."""
     delta = 0
     source_edits: list[SourceEdit] = []
     for edit in prepared:
@@ -847,7 +847,7 @@ def _verify_literal_ownership(
     source_edits: list[SourceEdit],
 ) -> None:
     """Literal replacements must own exactly one raw value interval
-    (edit.rs:872-892)."""
+    (edit.rs)."""
     for ordinal, item in enumerate(expected):
         if not item.literal:
             continue
@@ -872,7 +872,7 @@ def _build_node_mappings(
     expected: list[_ExpectedProperty],
     transaction: EditTransaction,
 ) -> list[NodeMapping]:
-    """Explicit old-to-new node mapping facts (edit.rs:894-923)."""
+    """Explicit old-to-new node mapping facts (edit.rs)."""
     mappings: list[NodeMapping] = []
     for operation in transaction.operations:
         if operation.kind is EditOperationKind.REMOVE_PROPERTY:
@@ -910,7 +910,7 @@ def _build_node_mappings(
 def _original_encoding_selection(
     document: PropertiesDocument,
 ) -> PropertiesEncodingSelection:
-    """The base document's exact source contract (edit.rs:1038-1045)."""
+    """The base document's exact source contract (edit.rs)."""
     if document.profile is PropertiesProfile.READER_V1:
         return PropertiesEncodingSelection.reader(
             document.source.encoding_facts().selected
@@ -921,7 +921,7 @@ def _original_encoding_selection(
 def _source_patch_limits(
     limits: PropertiesParseLimits, operation_count: int
 ) -> SourcePatchLimits:
-    """Patch limits derived from the parse limits (edit.rs:1062-1075)."""
+    """Patch limits derived from the parse limits (edit.rs)."""
     return SourcePatchLimits(
         source=SourceLimits(
             max_raw_bytes=limits.common.max_source_bytes,
@@ -934,7 +934,7 @@ def _source_patch_limits(
 
 
 def _operation_metadata(transaction: EditTransaction) -> dict[str, str]:
-    """Deterministic operation metadata (edit.rs:1077-1089)."""
+    """Deterministic operation metadata (edit.rs)."""
     return {
         f"operation.{index}": f"{operation.operation_id}@1"
         for index, operation in enumerate(transaction.operations)
@@ -942,7 +942,7 @@ def _operation_metadata(transaction: EditTransaction) -> dict[str, str]:
 
 
 def _operation_summaries(transaction: EditTransaction) -> list[EditOperationSummary]:
-    """Safe content-free operation summaries (edit.rs:1091-1138)."""
+    """Safe content-free operation summaries (edit.rs)."""
     summaries = []
     for operation in transaction.operations:
         arguments: dict[str, str] = {}
@@ -988,7 +988,7 @@ _OPERATION_ID_BY_KIND = {
 
 def _encode_selected(text: str, encoding, max_bytes: int) -> bytes:
     """Encodes canonical text under the selected source encoding
-    (materialization.rs:566-631)."""
+    (materialization.rs)."""
     from consema.properties.materialization import _encode_fragment
 
     return _encode_fragment(text, encoding, max_bytes)

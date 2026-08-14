@@ -24,7 +24,7 @@ this module can derive from the backend packages is derived from them:
 
 The module also implements the single parse entry by profile id
 (``parse_document``) over the opaque :class:`Document` union
-(https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs:512-820):
+(https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs):
 the concrete representation is private and format access is only possible
 through the typed adapters. All returned facts are immutable snapshot
 facts.
@@ -472,7 +472,7 @@ class FormatMismatch(Exception):
 
 class Document:
     """Common opaque snapshot over the supported format documents
-    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs:512-820).
+    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs).
 
     The concrete representation is private; format access is only possible
     through the typed adapters (``as_json``, ``as_toml``, ...). All returned
@@ -652,7 +652,7 @@ class ProfileError(Exception):
 
     The text is human presentation only (RFC 0016 §6); the frozen code
     mirrors the Rust facade's unknown-profile failure diagnostic
-    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs:298-307).
+    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs).
     """
 
     def __init__(self, profile: ProfileId):

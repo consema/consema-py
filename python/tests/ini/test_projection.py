@@ -11,13 +11,13 @@ Cases covered here (conformance/vectors/ini-v1.json, suite
 RFC 0009 §10 contract facts pinned here: the default exact projection is
 ``ini.projection.best-exact-entry-mapping@1`` producing a nested
 EntryMapping in source order with duplicate spellings preserved
-(https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:349-353); the Python DEFAULT
+(https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md); the Python DEFAULT
 section is an ordinary association (lines 355-358); RequireObjectV1 needs
 an explicit NameComparison and CollisionPolicy (Reject | First | Last) and
 every authorized collapse is Transformed with one report event per
 discarded association and retained/discarded provenance (lines 364-381);
 provenance distinguishes Direct, Derived, ContinuationFragment,
-QuoteDerived, and Collapsed relations (lines 383-385; projection.rs:146-
+QuoteDerived, and Collapsed relations (lines 383-385; projection.rs
 159).
 """
 

@@ -2,7 +2,7 @@
 
 Authority (language-neutral first; Rust only for byte/registry arbitration):
 
-- RFC 0003 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:250-291):
+- RFC 0003 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md):
   the exact core.source-patch@1 fields (base_digest, target_digest,
   encoding, ordered replacements, metadata) and the application rules —
   old ranges are half-open, ordered, and non-overlapping; `original` exactly
@@ -23,15 +23,15 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   the exact new SourceSnapshot, and operation metadata; the derived patch
   must reapply to the old snapshot and reproduce the exact new digest.
 - https://github.com/consema/consema-rs/blob/main/consema-document/src/source_patch.rs — arbitration: SourcePatchLimits
-  defaults source_patch.rs:19-27; SourceReplacement source_patch.rs:30-108;
-  SourcePatch::new/create/apply/derive source_patch.rs:143-280; error-to-code
-  mapping source_patch.rs:434-458; replacement validation source_patch.rs:469-
-  512; application source_patch.rs:514-554.
+  defaults source_patch.rs; SourceReplacement source_patch.rs;
+  SourcePatch::new/create/apply/derive source_patch.rs; error-to-code
+  mapping source_patch.rs; replacement validation source_patch.rs
+  512; application source_patch.rs.
 - Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
   (core.source.patch-base-mismatch@1:381, patch-original-mismatch@1:387,
   patch-target-mismatch@1:393, resource-limit@1:399, encoding-conflict@1:366,
   unsupported-bom@1:405, invalid-sequence@1:372; structural patch defects map
-  to core.protocol.invalid-value@1:87 per source_patch.rs:453-456).
+  to core.protocol.invalid-value@1:87 per source_patch.rs).
 - Vector cases: conformance/vectors/source-v1.json lines 119-154
   (source.patch.success / reject-stale-base / reject-original-mismatch /
   reject-overlap / reject-target-mismatch / reject-encoding-change) and
@@ -56,7 +56,7 @@ from consema.document.source import (
     SourceSnapshot,
 )
 
-# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/source_patch.rs:19-27
+# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/source_patch.rs
 _DEFAULT_MAX_REPLACEMENTS = 100_000
 _DEFAULT_MAX_PATCH_BYTES = 128 * 1024 * 1024
 
@@ -64,7 +64,7 @@ _DEFAULT_MAX_PATCH_BYTES = 128 * 1024 * 1024
 @dataclass(frozen=True, slots=True)
 class SourcePatchLimits:
     """Resource bounds for constructing or applying one source patch
-    (source_patch.rs:9-27; RFC 0003 §12)."""
+    (source_patch.rs; RFC 0003 §12)."""
 
     source: SourceLimits = field(default_factory=SourceLimits)
     max_replacements: int = _DEFAULT_MAX_REPLACEMENTS
@@ -74,7 +74,7 @@ class SourcePatchLimits:
 @dataclass(frozen=True, slots=True)
 class SourceReplacement:
     """One raw-byte precondition and replacement in a source patch
-    (source_patch.rs:30-108; RFC 0003 §10).
+    (source_patch.rs; RFC 0003 §10).
 
     ``original`` must exactly equal the base bytes in [old_start, old_end);
     ``redact_original``/``redact_replacement`` control review/debug
@@ -96,7 +96,7 @@ class SourceReplacement:
         original: bytes,
         replacement: bytes,
     ) -> SourceReplacement:
-        """Creates one half-open raw-byte replacement (source_patch.rs:43-57)."""
+        """Creates one half-open raw-byte replacement (source_patch.rs)."""
         return cls(old_start=old_start, old_end=old_end, original=original, replacement=replacement)
 
     def with_original_redacted(self, redacted: bool) -> SourceReplacement:
@@ -132,7 +132,7 @@ class SourceReplacement:
 
 class SourcePatchErrorKind(enum.Enum):
     """Stable source patch construction or application failure
-    (source_patch.rs:388-432)."""
+    (source_patch.rs)."""
 
     CHANGE_SET_MISMATCH = "change-set-mismatch"
     INVALID_REPLACEMENT = "invalid-replacement"
@@ -161,9 +161,9 @@ _CODE_BY_PATCH_KIND = {
 
 class SourcePatchError(Exception):
     """Stable source patch construction or application failure with a frozen
-    registered code (source_patch.rs:388-459; error_registry.rs citations in
+    registered code (source_patch.rs; error_registry.rs citations in
     the module docstring). Structural defects map to
-    core.protocol.invalid-value@1 (error_registry.rs:87); the SOURCE variant
+    core.protocol.invalid-value@1 (error_registry.rs); the SOURCE variant
     delegates to the wrapped SourceError's code (encoding-conflict,
     unsupported-bom, invalid-sequence, resource-limit). Error text is human
     presentation only (RFC 0016 §6).
@@ -210,7 +210,7 @@ class SourcePatchError(Exception):
 @dataclass(frozen=True, slots=True)
 class SourcePatch:
     """Immutable, transferable facts needed to verify one raw source
-    transition (source_patch.rs:134-365; RFC 0003 §10).
+    transition (source_patch.rs; RFC 0003 §10).
 
     Applying rechecks the base digest, the encoding facts, every
     original-byte precondition, and the computed target digest; any mismatch
@@ -239,7 +239,7 @@ class SourcePatch:
         limits: SourcePatchLimits,
     ) -> SourcePatch:
         """Creates a patch from externally supplied facts after structural
-        and resource validation (source_patch.rs:208-224)."""
+        and resource validation (source_patch.rs)."""
         _validate_replacements(replacements, limits)
         return cls(
             base_digest=base_digest,
@@ -258,7 +258,7 @@ class SourcePatch:
         limits: SourcePatchLimits,
     ) -> SourcePatch:
         """Builds a self-consistent patch against one immutable base snapshot
-        (source_patch.rs:227-251)."""
+        (source_patch.rs)."""
         _validate_replacements(replacements, limits)
         target_bytes = _apply_replacements(base.bytes(), replacements, limits)
         target = _snapshot_from_bytes(base, target_bytes, limits)
@@ -282,7 +282,7 @@ class SourcePatch:
         limits: SourcePatchLimits,
     ) -> SourcePatch:
         """Derives and verifies a portable patch from one complete
-        document-level change fact (source_patch.rs:145-205; RFC 0004 §16)."""
+        document-level change fact (source_patch.rs; RFC 0004 §16)."""
         if base.encoding_facts() != target.encoding_facts():
             raise SourcePatchError(SourcePatchErrorKind.ENCODING_MISMATCH)
         edits = change_set.source_edits
@@ -341,7 +341,7 @@ class SourcePatch:
 
     def apply(self, base: SourceSnapshot, limits: SourcePatchLimits) -> SourceSnapshot:
         """Applies all facts atomically and returns a new immutable snapshot
-        only on complete success (source_patch.rs:254-280)."""
+        only on complete success (source_patch.rs)."""
         _validate_replacements(list(self.replacements), limits)
         if base.digest() != self.base_digest:
             raise SourcePatchError(SourcePatchErrorKind.BASE_MISMATCH)
@@ -362,7 +362,7 @@ class SourcePatch:
     ) -> SourcePatch:
         """Marks every replacement payload for redacted review/debug
         presentation; exact bytes remain present for digest and original-byte
-        precondition checks (source_patch.rs:315-336)."""
+        precondition checks (source_patch.rs)."""
         return SourcePatch(
             base_digest=self.base_digest,
             target_digest=self.target_digest,
@@ -380,7 +380,7 @@ class SourcePatch:
         self, index: int, redact_original: bool, redact_replacement: bool
     ) -> SourcePatch:
         """Marks one exact replacement payload for redacted review/debug
-        presentation (source_patch.rs:339-364)."""
+        presentation (source_patch.rs)."""
         if index >= len(self.replacements):
             raise SourcePatchRedactionError(index=index)
         redacted = list(self.replacements)
@@ -398,7 +398,7 @@ class SourcePatch:
 
 class SourcePatchRedactionError(Exception):
     """Review-redaction selection failure; patch bytes and application facts
-    are unchanged (source_patch.rs:368-377). Carries no registered code."""
+    are unchanged (source_patch.rs). Carries no registered code."""
 
     def __init__(self, index: int | None = None) -> None:
         super().__init__("redaction-selection" if index is None else f"unknown-replacement-{index}")
@@ -413,7 +413,7 @@ class SourcePatchRedactionError(Exception):
 def _validate_replacements(
     replacements: list[SourceReplacement], limits: SourcePatchLimits
 ) -> None:
-    """Canonical structural validation (source_patch.rs:469-512; RFC 0003
+    """Canonical structural validation (source_patch.rs; RFC 0003
     §10: half-open, ordered, non-overlapping, original length exact,
     duplicate insertion points rejected)."""
     _check_patch_limit("patch-replacements", len(replacements), limits.max_replacements)
@@ -449,7 +449,7 @@ def _apply_replacements(
     limits: SourcePatchLimits,
 ) -> bytes:
     """Applies replacements to exact base bytes, rechecking every original-byte
-    precondition (source_patch.rs:514-554)."""
+    precondition (source_patch.rs)."""
     target_len = len(base)
     for index, replacement in enumerate(replacements):
         if (
@@ -473,7 +473,7 @@ def _apply_replacements(
 def _snapshot_from_bytes(
     base: SourceSnapshot, target_bytes: bytes, limits: SourcePatchLimits
 ) -> SourceSnapshot:
-    """Reruns encoding resolution on the result bytes (source_patch.rs:267-272;
+    """Reruns encoding resolution on the result bytes (source_patch.rs;
     RFC 0003 §10: successful application reruns encoding resolution)."""
     try:
         return SourceSnapshot.from_raw(
@@ -488,8 +488,8 @@ def _snapshot_from_bytes(
 
 
 def _resolution_request(facts: EncodingFacts) -> EncodingRequest:
-    """Rebuilds the EncodingRequest from recorded facts (source.rs:371-378;
-    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/source.rs:791-800)."""
+    """Rebuilds the EncodingRequest from recorded facts (source.rs;
+    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/source.rs)."""
     request = EncodingRequest.new(facts.profile_default).with_bom_policy(facts.bom_policy)
     if facts.declaration is not None:
         request = request.with_declaration(facts.declaration)

@@ -1,9 +1,9 @@
 """MaterializationRequest, limits, provenance, and failure-code tests.
 
 Contract: RFC 0004 §3/§7/§8 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
-structural-edit-v1.md:56-94, 170-217); arbitration
-https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs:95-203, 282-391; codes
-https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:556-604.
+structural-edit-v1.md); arbitration
+https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs; codes
+https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ from consema.document import (
 
 def test_request_defaults_and_policies() -> None:
     """new() creates a strict request with UTF-8, LF, Object-only, and
-    ExactOnly defaults (materialization.rs:122-132)."""
+    ExactOnly defaults (materialization.rs)."""
     request = MaterializationRequest.new(
         ProfileId.new("json.strict", 1),
         MaterializationStyleId.new("json.canonical-pretty", 1),
@@ -83,7 +83,7 @@ def test_report_enforces_event_limit() -> None:
 
 def test_provenance_is_target_bound_and_limited() -> None:
     """Provenance origins must all bind to the target snapshot
-    (materialization.rs:289-318; RFC 0004 §8)."""
+    (materialization.rs; RFC 0004 §8)."""
     target = DocumentAuthority.fresh()
     origin = MaterializedOrigin(
         snapshot=target.identity,
@@ -138,8 +138,8 @@ def test_provenance_is_target_bound_and_limited() -> None:
 
 
 def test_failure_kind_code_mapping() -> None:
-    """The full failure-to-code mapping (materialization.rs:379-390;
-    error_registry.rs:556-604)."""
+    """The full failure-to-code mapping (materialization.rs;
+    error_registry.rs)."""
     expected = {
         MaterializationFailureKind.INVALID_REQUEST: "core.materialization.invalid-request@1",
         MaterializationFailureKind.UNSUPPORTED_PROFILE: "core.materialization.unsupported-profile@1",

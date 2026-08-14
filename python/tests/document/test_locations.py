@@ -11,11 +11,11 @@ Golden cases transcribed from conformance/vectors/source-v1.json:
 - ``source.location.binary-no-text`` (lines 95-100): binary sources raise
   the NoDecodedText location error.
 
-Contract: RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
-124-141) — only scalar boundaries are addressable; a raw offset inside a
+Contract: RFC 0003 §5 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md
+) — only scalar boundaries are addressable; a raw offset inside a
 UTF-8 scalar or between a UTF-16 surrogate pair is rejected rather than
 rounded; Binary snapshots have no decoded boundaries. Location variant
-spellings per https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:582-604.
+spellings per https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs.
 """
 
 from __future__ import annotations
@@ -87,7 +87,7 @@ def test_binary_no_text() -> None:
 
 def test_terminal_boundary_resolves() -> None:
     """The terminal raw offset is the valid half-open end of the source
-    (source.rs:624-626; https://github.com/consema/consema-go/blob/main/go/document/source.go:322-323): a piece ending
+    (source.rs; https://github.com/consema/consema-go/blob/main/go/document/source.go:322-323): a piece ending
     exactly at the source end addresses the terminal DecodedPosition, and
     only offsets beyond the source are out of bounds."""
     snapshot = _snapshot("41f09f988042", SourceEncoding.utf8())

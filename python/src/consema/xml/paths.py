@@ -3,20 +3,20 @@
 Authority:
 
 - RFC 0004 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-
-  edit-v1.md:193-217): input locations are ``Value(ValuePath)`` and
+  edit-v1.md): input locations are ``Value(ValuePath)`` and
   ``Association(AssociationLocation)``; the process-local map is complete
   for every emitted value and supported association.
 - The ValuePath/AssociationLocation shapes are the semantic-model records
   of consema-core (https://github.com/consema/consema-rs/blob/main/consema-core/src/value_path.rs and
   association_location.rs); the segment vocabulary is frozen:
   ``ObjectValue(String)``, ``SequenceElement(u64)``, ``EntryKey(u64)``,
-  ``EntryValue(u64)`` (https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs:594-598 and
-  materialization.rs:215-255 use exactly these segments).
+  ``EntryValue(u64)`` (https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs and
+  materialization.rs use exactly these segments).
 - AssociationRole is closed at ObjectEntry / ObjectKey / EntryMappingEntry
   (https://github.com/consema/consema-rs/blob/main/consema-core/src/association_location.rs); the XML family uses
   EntryMappingEntry for simple-entry-mapping associations and ObjectEntry
   for materialization-generated namespace bindings
-  (materialization.rs:558-562).
+  (materialization.rs).
 
 These records are typed opaquely by consema.document
 (materialization.py:169-195 MaterializationInputLocation). If the protocol

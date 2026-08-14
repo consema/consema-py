@@ -559,7 +559,7 @@ def test_binary_value_integrity_matrix():
 
 def test_binary_minimum_size_is_fatal():
     # RFC 0013 §2.2: a minimum size of 42 bytes is enforced before a
-    # Document can exist (parser_binary.rs:529-540).
+    # Document can exist (parser_binary.rs).
     with pytest.raises(PlistFormationFailure) as excinfo:
         parse_binary_hex("62706c6973743030")
     assert excinfo.value.code == "plist.binary.minimum-size@1"
@@ -568,7 +568,7 @@ def test_binary_minimum_size_is_fatal():
 def test_binary_encoding_selection_conflict_is_fatal():
     # RFC 0013 §2.2: the binary profile admits only ProfileDefault and
     # Explicit(Binary); any other selection is plist.binary.encoding@1
-    # (lib.rs:241-260).
+    # (lib.rs).
     from consema.document.source import SourceEncoding
 
     with pytest.raises(PlistFormationFailure) as excinfo:

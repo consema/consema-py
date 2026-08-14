@@ -683,7 +683,7 @@ def _recovered_atomic(vector: runner.Case) -> str | None:
 def _formation_malformed_escape_in_key(vector: runner.Case) -> str | None:
     r"""One malformed `\uXXXX` escape in the KEY position: the logical line
     is recovered without a partial property and the error line carries the
-    family parse code (parser.rs:626-666)."""
+    family parse code (parser.rs)."""
     document, message = _properties_parse_case(vector)
     if message:
         return message
@@ -708,7 +708,7 @@ def _formation_fatal_encoding(vector: runner.Case) -> str | None:
     """One fatal encoding failure of the Reader profile: bytes that cannot
     be decoded under the explicit encoding (`core.source.invalid-sequence@1`)
     or a BOM that contradicts it (`core.source.encoding-conflict@1`) fail the
-    whole parse before any document forms (parser.rs:24-33)."""
+    whole parse before any document forms (parser.rs)."""
     encoding_name = compare.string_field(vector.input, "encoding")
     source_hex = compare.string_field(vector.input, "source_hex")
     expected_code = compare.string_field(vector.expected, "code")

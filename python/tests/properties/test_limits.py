@@ -27,8 +27,8 @@ from consema.properties import (
 
 DEFAULT_LIMITS = PropertiesParseLimits()
 
-# The four common limits live on ParseLimits (lib.rs:64-66); the rest are
-# format-owned fields (lib.rs:67-97).
+# The four common limits live on ParseLimits (lib.rs); the rest are
+# format-owned fields (lib.rs).
 _COMMON_LIMIT_NAMES = frozenset(
     ("max_source_bytes", "max_token_count", "max_node_count", "max_diagnostics")
 )

@@ -2,38 +2,38 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and policy model: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/edit.rs:21-53
-  (RepresentationPolicy, ScalarReplacement), 63-114 (EditOperation),
-  116-258 (EditTransaction/Builder).
-- Failure algebra and codes: edit.rs:275-343 (EditFailure and the code
+- Operation and policy model: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/edit.rs
+  (RepresentationPolicy, ScalarReplacement), (EditOperation),
+ (EditTransaction/Builder).
+- Failure algebra and codes: edit.rs (EditFailure and the code
   mapping).
-- Atomic commit: edit.rs:401-551 — WrongSnapshot gate (edit.rs:404-406),
-  dependency validation (edit.rs:407, 1974-2014), prepared-edit ownership
-  conflicts (edit.rs:2454-2467), bounded target length (edit.rs:417-428),
-  rendering and reparse (edit.rs:429-441), candidate validation
-  (edit.rs:442, 1682-1764), ChangeSet source edits and node mappings
-  (edit.rs:444-523), SourcePatch derivation (edit.rs:531-538),
-  UntouchedByteProof (edit.rs:539-544). Dry-run produces the identical
-  patch and target digest (edit.rs:553-568; RFC 0004 s14).
-- Scalar preparation: edit.rs:603-706 (canonical_scalar_fragment via the
-  canonical-flow value materializer edit.rs:1569-1614), the anchor-safe
+- Atomic commit: edit.rs — WrongSnapshot gate (edit.rs),
+  dependency validation (edit.rs), prepared-edit ownership
+  conflicts (edit.rs), bounded target length (edit.rs),
+  rendering and reparse (edit.rs), candidate validation
+  (edit.rs), ChangeSet source edits and node mappings
+  (edit.rs), SourcePatch derivation (edit.rs),
+  UntouchedByteProof (edit.rs). Dry-run produces the identical
+  patch and target digest (edit.rs; RFC 0004 s14).
+- Scalar preparation: edit.rs (canonical_scalar_fragment via the
+  canonical-flow value materializer edit.rs), the anchor-safe
   rules (RFC 0007 s12: a scalar edit of an anchored node changes the shared
   graph node; aliases are not rewritten).
-- Structural preparation: edit.rs:742-920 (insertion fragments
+- Structural preparation: edit.rs (insertion fragments
   ``? {key} : {value}`` and block lines, placement and comma ownership
-  edit.rs:1053-1158, removal spans edit.rs:1160-1200, block-owned spans
-  edit.rs:1226-1344), anchor visibility edit.rs:1346-1396.
-- Anchor-dependency validation: edit.rs:1398-1442 — ``collect_owned_nodes``
+  edit.rs, removal spans edit.rs, block-owned spans
+  edit.rs), anchor visibility edit.rs.
+- Anchor-dependency validation: edit.rs — ``collect_owned_nodes``
   collects only the deleted subtrees (never crossing alias edges), then any
   alias outside the removed span whose target was collected fails with
   yaml.edit.anchor-dependency@1.
-- Candidate isomorphism: edit.rs:1766-1947 (structural ValidationModel) and
-  2017-2324 (ValidationModel/compare).
+- Candidate isomorphism: edit.rs (structural ValidationModel) and
+ (ValidationModel/compare).
 - The v1 vector goldens this module must reproduce byte-for-byte:
   conformance/vectors/yaml-v1.json edit.scalar-atomic, edit.anchor-rename,
   edit.structural-insert, edit.anchor-dependency.
 
-Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs:16-82):
+Frozen operation ids (https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs):
 yaml.edit.insert-alias@1, insert-mapping-entry@1, insert-sequence-element@1,
 remove-mapping-entry@1, remove-sequence-element@1, rename-anchor@1,
 replace-scalar-literal@1, replace-scalar-semantic@1.
@@ -100,7 +100,7 @@ from consema.protocol.error_registry import DiagnosticCategory
 
 
 class RepresentationPolicy(enum.Enum):
-    """Explicit semantic scalar representation policy (edit.rs:21-32)."""
+    """Explicit semantic scalar representation policy (edit.rs)."""
 
     EXACT_LITERAL = "ExactLiteral"
     PRESERVE_COMPATIBLE = "PreserveCompatible"
@@ -109,7 +109,7 @@ class RepresentationPolicy(enum.Enum):
 
 
 class ScalarReplacementKind(enum.Enum):
-    """Scalar operation kind (edit.rs:34-53)."""
+    """Scalar operation kind (edit.rs)."""
 
     SEMANTIC = "Semantic"
     LITERAL = "Literal"
@@ -118,7 +118,7 @@ class ScalarReplacementKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class ScalarReplacement:
     """One scalar operation bound to the transaction base snapshot
-    (edit.rs:34-53)."""
+    (edit.rs)."""
 
     target: NodeRef
     value: PortableValue | None = None
@@ -133,7 +133,7 @@ class ScalarReplacement:
 
 
 class EditOperationKind(enum.Enum):
-    """Typed edit operation kinds (edit.rs:63-114)."""
+    """Typed edit operation kinds (edit.rs)."""
 
     REPLACE_SCALAR = "ReplaceScalar"
     RENAME_ANCHOR = "RenameAnchor"
@@ -147,7 +147,7 @@ class EditOperationKind(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class EditOperation:
     """One typed YAML edit operation bound to one immutable base snapshot
-    (edit.rs:63-114)."""
+    (edit.rs)."""
 
     kind: EditOperationKind
     scalar: ScalarReplacement | None = None
@@ -164,14 +164,14 @@ class EditOperation:
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
     """Immutable transaction; every operation resolves against one base
-    snapshot (edit.rs:116-135)."""
+    snapshot (edit.rs)."""
 
     base: object
     operations: tuple[EditOperation, ...] = ()
 
 
 class EditTransactionBuilder:
-    """Builder that is not a committed edit (edit.rs:137-258)."""
+    """Builder that is not a committed edit (edit.rs)."""
 
     def __init__(self, document: Document) -> None:
         self._base = document.snapshot_identity()
@@ -274,7 +274,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """Atomic edit success (edit.rs:260-271)."""
+    """Atomic edit success (edit.rs)."""
 
     document: Document
     change_set: ChangeSet
@@ -314,7 +314,7 @@ class _CanonicalScalar:
 
 class _EditPlanner:
     """One planner bound to the base document (mirror of the Rust
-    Document::prepare_* methods, edit.rs:570-2014)."""
+    Document::prepare_* methods, edit.rs)."""
 
     def __init__(self, document: Document) -> None:
         self.document = document
@@ -719,7 +719,7 @@ class _EditPlanner:
 
     def association_span(self, span: Span) -> Span:
         """Expands an association span backwards over tag/anchor/explicit-key
-        pieces (edit.rs:1018-1051)."""
+        pieces (edit.rs)."""
         pieces = self.document.structural_index.pieces
         kinds = self.document.syntax_kinds
         start = span.start_byte
@@ -963,7 +963,7 @@ class _EditPlanner:
             tail = ""
         return self.encode_fragment(f"{indent}{empty}{tail}")
 
-    # -- anchor safety (edit.rs:1346-1442) ----------------------------------
+    # -- anchor safety (edit.rs) ----------------------------------
 
     def validate_visible_anchor(self, sequence: int, anchor: int, insertion: int) -> None:
         anchor_node = self.document.native.nodes[anchor]
@@ -1001,7 +1001,7 @@ class _EditPlanner:
     def validate_removal_dependencies(self, owned: Span, roots) -> None:
         """Anchor-dependency validation: only the deleted subtrees are
         collected (alias edges are never crossed), then any alias outside
-        the removed span whose target was collected fails (edit.rs:1398-1418,
+        the removed span whose target was collected fails (edit.rs,
         RFC 0007 s12: removing an anchored definition while aliases remain
         is rejected)."""
         removed: set[int] = set()
@@ -1187,7 +1187,7 @@ def _utf8_offset(value: int):
 
 
 # ---------------------------------------------------------------------------
-# Candidate validation (edit.rs:1682-1947, 2017-2324)
+# Candidate validation (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1224,7 +1224,7 @@ class _ValidationNode:
 
 
 class _ValidationModel:
-    """Cycle-safe representation-graph isomorphism (edit.rs:2017-2324)."""
+    """Cycle-safe representation-graph isomorphism (edit.rs)."""
 
     def __init__(self, roots: list[int], nodes: list[_ValidationNode]) -> None:
         self.roots = roots
@@ -1424,14 +1424,14 @@ class _ValidationComparison:
 
 
 # ---------------------------------------------------------------------------
-# Transaction commit and dry run (edit.rs:401-568)
+# Transaction commit and dry run (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def commit(document: Document, transaction: EditTransaction) -> EditCommit:
     """Atomically commits validated YAML scalar, collection, anchor, and
     alias operations; on failure the base document remains unchanged
-    (edit.rs:401-551)."""
+    (edit.rs)."""
     if transaction.base != document.snapshot_identity():
         raise YamlEditFailure(YamlEditFailureKind.WRONG_SNAPSHOT)
     validate_dependencies(document, transaction)
@@ -1561,7 +1561,7 @@ def dry_run(
     source_id: EditPlanSourceId,
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:553-568)."""
+    (edit.rs)."""
     commit_result = commit(document, transaction)
     try:
         return EditPlan.new(
@@ -1577,7 +1577,7 @@ def dry_run(
 
 def validate_dependencies(document: Document, transaction: EditTransaction) -> None:
     """Duplicate targets and single-mutation-per-container rules
-    (edit.rs:1974-2014; RFC 0007 s12: v1 accepts at most one structural
+    (edit.rs; RFC 0007 s12: v1 accepts at most one structural
     mutation per base container in a transaction)."""
     targets: set[NodeRef] = set()
     structural_containers: set[int] = set()
@@ -1627,7 +1627,7 @@ def _structural_container(operation: EditOperation, planner: _EditPlanner) -> in
 
 def validate_prepared_ownership(prepared: list[_PreparedEdit]) -> None:
     """Overlap and reuse checks on the ordered prepared edits
-    (edit.rs:2454-2467)."""
+    (edit.rs)."""
     for index in range(len(prepared) - 1):
         left, right = prepared[index], prepared[index + 1]
         if (
@@ -1644,7 +1644,7 @@ def validate_candidate(
     document: Document, candidate: Document, transaction: EditTransaction
 ) -> tuple[dict[int, int], dict[int, int]]:
     """Validates the reparsed candidate against the declared operations
-    (edit.rs:1682-1947); returns the old-to-new node and alias maps."""
+    (edit.rs); returns the old-to-new node and alias maps."""
     if any(_is_structural_operation(operation) for operation in transaction.operations):
         return _validate_structural_candidate(document, candidate, transaction)
     scalar_targets: set[int] = set()
@@ -1701,7 +1701,7 @@ def _validate_structural_candidate(
     document: Document, candidate: Document, transaction: EditTransaction
 ) -> tuple[dict[int, int], dict[int, int]]:
     """Cycle-safe representation-graph isomorphism validation
-    (edit.rs:1766-1947): the exact tags, scalar canonical values, ordered
+    (edit.rs): the exact tags, scalar canonical values, ordered
     associations, anchors, alias names, sharing, and cycles are compared
     without relying on reparsed node ordinals (RFC 0007 s12)."""
     if len(document.native.documents) != len(candidate.native.documents):
@@ -1836,13 +1836,13 @@ def _same_scalar_semantics(old, new) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Operation metadata and summaries (edit.rs:2577-2697)
+# Operation metadata and summaries (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def operation_metadata(transaction: EditTransaction) -> dict[str, str]:
     """Operation metadata keys: operation.{index} = "id@version"
-    (edit.rs:2577-2604)."""
+    (edit.rs)."""
     metadata: dict[str, str] = {}
     for index, operation in enumerate(transaction.operations):
         metadata[f"operation.{index}"] = _operation_id(operation)
@@ -1865,7 +1865,7 @@ def _operation_id(operation: EditOperation) -> str:
 
 
 def operation_summaries(transaction: EditTransaction) -> list[EditOperationSummary]:
-    """Safe, content-free operation summaries (edit.rs:2606-2679)."""
+    """Safe, content-free operation summaries (edit.rs)."""
     summaries: list[EditOperationSummary] = []
     for index, operation in enumerate(transaction.operations):
         summaries.append(
@@ -1929,7 +1929,7 @@ def _policy_name(policy: RepresentationPolicy) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Limits and encoding (edit.rs:2491-2575)
+# Limits and encoding (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1987,7 +1987,7 @@ def _encode_fragment(text: str, encoding: SourceEncoding, max_bytes: int) -> byt
 
 
 # ---------------------------------------------------------------------------
-# Preserved literals (edit.rs:2326-2385)
+# Preserved literals (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -2026,7 +2026,7 @@ def _preserved_literal(
     value_kind: Kind,
     profile: YamlProfile,
 ) -> str | None:
-    """The preserve-compatible rendering (edit.rs:2326-2362)."""
+    """The preserve-compatible rendering (edit.rs)."""
     if old_kind != _yaml_kind(value_kind) or old_tag != _shorthand_tag_uri(canonical.tag):
         return None
     decoded = _decode_canonical_literal(canonical.literal)

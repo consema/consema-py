@@ -1,7 +1,7 @@
 """The transferable `core.diagnostic@1` record.
 
 Authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/diagnostic.rs (the record shape and
-the code/category registry binding, diagnostic.rs:336-351); RFC 0016 §6:
+the code/category registry binding, diagnostic.rs); RFC 0016 §6:
 "unknown code or category contradiction is a protocol error". Go
 (https://github.com/consema/consema-go/blob/main/go/protocol/diagnostic.go) is a cross-reference only.
 
@@ -140,7 +140,7 @@ class Diagnostic:
     """The full `core.diagnostic@1` record independent from control flow.
 
     Construction validates the code against the frozen error registry and
-    the category against the registry record (diagnostic.rs:336-351).
+    the category against the registry record (diagnostic.rs).
     """
 
     __slots__ = (

@@ -12,9 +12,9 @@ Golden case transcribed from conformance/vectors/source-v1.json:
   -> core.source.encoding-conflict@1; ``source.resource.patch-count-limit``
   (167-172) -> core.source.resource-limit@1.
 
-Contract: RFC 0003 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
-250-291); arbitration https://github.com/consema/consema-rs/blob/main/consema-document/src/source_patch.rs:143-280,
-469-554; codes https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:381,387,393,399,
+Contract: RFC 0003 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md
+); arbitration https://github.com/consema/consema-rs/blob/main/consema-document/src/source_patch.rs,
+; codes https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs,
 366,87.
 """
 
@@ -177,7 +177,7 @@ def test_duplicate_insertion_is_rejected() -> None:
 
 
 def test_derive_from_change_set_reapplies_exactly() -> None:
-    """SourcePatch::derive (source_patch.rs:145-205; RFC 0004 §16): the
+    """SourcePatch::derive (source_patch.rs; RFC 0004 §16): the
     derived patch reapplies to the old snapshot and reproduces the exact new
     bytes and digest."""
     base = _utf8(b"abc")
@@ -217,7 +217,7 @@ def test_derive_from_change_set_reapplies_exactly() -> None:
 
 def test_redaction_hides_payloads_from_repr_only() -> None:
     """Redaction controls review/debug presentation, not application
-    (source_patch.rs:792-802; RFC 0003 §10)."""
+    (source_patch.rs; RFC 0003 §10)."""
     replacement = SourceReplacement.new(0, 6, b"secret", b"hidden").with_original_redacted(
         True
     ).with_replacement_redacted(True)

@@ -4,39 +4,39 @@ document.
 Authority (Rust arbitration for exact semantics):
 
 - Parse entry and profile/source contract: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
-  parser.rs:17-91 - encoding request construction (parser.rs:38-55),
-  snapshot construction under PropertiesParseLimits (parser.rs:24-33),
+  parser.rs - encoding request construction (parser.rs),
+  snapshot construction under PropertiesParseLimits (parser.rs),
   profile/encoding validation with java-properties.source.profile-
-  encoding@1 (parser.rs:57-91).
-- Atom model and natural-line scanning: parser.rs:93-108, 230-298 (limits
+  encoding@1 (parser.rs).
+- Atom model and natural-line scanning: parser.rs (limits
   natural-lines / natural-line-scalars / natural-line-bytes; CR, LF, CRLF,
   EOF terminators).
-- Logical-line assembly: parser.rs:352-469 - odd trailing backslash runs
+- Logical-line assembly: parser.rs - odd trailing backslash runs
   continue across the terminator (the final backslash, terminator, and
   leading Properties whitespace of the following natural line contribute
-  no code units; RFC 0010 section 5, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:132-158); the EOF
+  no code units; RFC 0010 section 5, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md); the EOF
   unmatched-backslash rule retains the byte as a ContinuationMarker.
-- Key/separator/element grammar: parser.rs:471-507 - first unescaped
+- Key/separator/element grammar: parser.rs - first unescaped
   ``=``, ``:``, or Properties whitespace terminates the raw key; optional
   ``=``/``:`` plus surrounding whitespace forms the separator (RFC 0010
-  section 6, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:159-181).
-- Escape processing: parser.rs:909-996 - named, backslash, Unicode (one
+  section 6, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
+- Escape processing: parser.rs - named, backslash, Unicode (one
   lowercase ``u`` + exactly four hex digits), and dropped-backslash kinds;
-  no recursive decoding (RFC 0010 section 7, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:183-206).
-- Recovery: parser.rs:626-666 - a malformed Unicode escape forms one
+  no recursive decoding (RFC 0010 section 7, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
+- Recovery: parser.rs - a malformed Unicode escape forms one
   deterministic error record with stable diagnostic
   java-properties.parse.malformed-unicode-escape@1; valid records before
   and after remain inspectable but cannot be projected as a partial
-  completed property list (RFC 0010 section 8, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:208-234).
-- Duplicate groups: parser.rs:668-696 - deterministic exact-code-unit
+  completed property list (RFC 0010 section 8, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
+- Duplicate groups: parser.rs - deterministic exact-code-unit
   groups numbered from 1 in sorted-key order.
-- Structural pieces: parser.rs:698-729 with the Token/Trivia/ErrorRegion
-  classification parser.rs:1002-1017; exhaustive, non-overlapping syntax
+- Structural pieces: parser.rs with the Token/Trivia/ErrorRegion
+  classification parser.rs; exhaustive, non-overlapping syntax
   coverage over every raw byte (RFC 0010 section 9).
-- Natural/logical/comment/property/escape records: parser.rs:310-350
+- Natural/logical/comment/property/escape records: parser.rs
   (comments), 509-624 (property records with key/value anchors,
   fragments, value state, escapes), and the lib.rs record accessors
-  (lib.rs:309-588).
+  (lib.rs).
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
 cases formation.* (lines 5-59). https://github.com/consema/consema-go/blob/main/go/properties is a cross-reference only.
@@ -90,12 +90,12 @@ from consema.protocol.error_registry import DiagnosticCategory
 MALFORMED_UNICODE_ESCAPE_CODE = "java-properties.parse.malformed-unicode-escape@1"
 
 # Properties whitespace is exactly space, tab, and form feed (RFC 0010
-# section 5, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:140-141).
+# section 5, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
 _PROPERTIES_WHITESPACE = frozenset((" ", "\t", ""))
 
 
 def is_properties_whitespace(character: str) -> bool:
-    """Exact space/tab/form-feed test (parser.rs:998-1000)."""
+    """Exact space/tab/form-feed test (parser.rs)."""
     return character in _PROPERTIES_WHITESPACE
 
 
@@ -153,7 +153,7 @@ def parse(
     limits: PropertiesParseLimits,
 ) -> object:
     """Parses one immutable Java Properties snapshot under one exact
-    profile/source contract (parser.rs:17-36).
+    profile/source contract (parser.rs).
 
     Returns the ``PropertiesDocument`` from :mod:`consema.properties.
     document`; raises :class:`PropertiesFormationFailure` for fatal limits
@@ -184,7 +184,7 @@ def parse_reader(
     limits: PropertiesParseLimits,
 ) -> object:
     """Parses Reader input using one explicit published text encoding
-    (lib.rs:788-799)."""
+    (lib.rs)."""
     return parse(
         raw,
         PropertiesProfile.READER_V1,
@@ -195,7 +195,7 @@ def parse_reader(
 
 def parse_latin1(raw: bytes, limits: PropertiesParseLimits) -> object:
     """Parses InputStream-compatible Latin-1 bytes with marker bytes as
-    content (lib.rs:802-812)."""
+    content (lib.rs)."""
     return parse(
         raw,
         PropertiesProfile.LATIN1_V1,
@@ -207,7 +207,7 @@ def parse_latin1(raw: bytes, limits: PropertiesParseLimits) -> object:
 def _encoding_request(
     profile: PropertiesProfile, selection: PropertiesEncodingSelection
 ) -> EncodingRequest:
-    """Explicit source request (parser.rs:38-55)."""
+    """Explicit source request (parser.rs)."""
     if (
         profile is PropertiesProfile.READER_V1
         and selection.kind is PropertiesEncodingSelectionKind.READER
@@ -233,7 +233,7 @@ def _validate_profile_encoding(
     profile: PropertiesProfile,
     selection: PropertiesEncodingSelection,
 ) -> None:
-    """Profile/source contract validation (parser.rs:57-81)."""
+    """Profile/source contract validation (parser.rs)."""
     facts = source.encoding_facts()
     if profile is PropertiesProfile.READER_V1:
         valid = (
@@ -255,12 +255,12 @@ def _validate_profile_encoding(
 
 def _profile_failure() -> PropertiesFormationFailure:
     """Fatal profile/source mismatch carrying the format-owned code
-    (parser.rs:83-91)."""
+    (parser.rs)."""
     return PropertiesFormationFailure(PropertiesFormationFailureKind.PROFILE_ENCODING)
 
 
 class _Parser:
-    """One deterministic parse over an immutable snapshot (parser.rs:130-880)."""
+    """One deterministic parse over an immutable snapshot (parser.rs)."""
 
     def __init__(
         self,
@@ -293,7 +293,7 @@ class _Parser:
 
     def parse(self) -> object:
         """Complete the document after exhaustive processing
-        (parser.rs:186-228)."""
+        (parser.rs)."""
         line_index = 0
         while line_index < len(self.lines):
             if self._is_blank(line_index):
@@ -336,7 +336,7 @@ class _Parser:
 
     def _scan_natural_lines(self) -> None:
         """Splits the atom list into natural lines with exact terminators
-        (parser.rs:230-298)."""
+        (parser.rs)."""
         start = 0
         if (
             self.source.encoding_facts().bom is not None
@@ -406,7 +406,7 @@ class _Parser:
 
     def _is_blank(self, line_index: int) -> bool:
         """A natural line whose content is all Properties whitespace
-        (parser.rs:300-305)."""
+        (parser.rs)."""
         line = self.lines[line_index]
         return all(
             is_properties_whitespace(atom.ch)
@@ -415,7 +415,7 @@ class _Parser:
 
     def _is_comment(self, line_index: int) -> bool:
         """A comment line has ``#`` or ``!`` as its first non-whitespace
-        character (parser.rs:307-313; RFC 0010 section 5)."""
+        character (parser.rs; RFC 0010 section 5)."""
         line = self.lines[line_index]
         for atom in self.atoms[line.atom_start : line.atom_content_end]:
             if not is_properties_whitespace(atom.ch):
@@ -428,7 +428,7 @@ class _Parser:
 
     def _add_comment(self, line_index: int) -> None:
         """One comment occurrence; a comment line never continues even if
-        it ends in backslash (parser.rs:320-350; RFC 0010 section 5)."""
+        it ends in backslash (parser.rs; RFC 0010 section 5)."""
         self._check_limit("comments", len(self.comments) + 1, self.limits.max_comments)
         line = self.lines[line_index]
         marker_index = line.atom_start
@@ -459,7 +459,7 @@ class _Parser:
 
     def _add_logical_line(self, first_line: int) -> int:
         """Assembles one property/error logical line from its natural-line
-        constituents (parser.rs:352-469)."""
+        constituents (parser.rs)."""
         self._check_limit(
             "logical-lines", len(self.logical_lines) + 1, self.limits.max_logical_lines
         )
@@ -565,7 +565,7 @@ class _Parser:
         self, logical_atoms: list[int], key_start: int
     ) -> tuple[int, int, int, bool]:
         """Key/separator/element split with escaped-terminator tracking
-        (parser.rs:471-507; RFC 0010 section 6)."""
+        (parser.rs; RFC 0010 section 6)."""
         cursor = key_start
         escaped = False
         while cursor < len(logical_atoms):
@@ -606,7 +606,7 @@ class _Parser:
         last_line: int,
     ) -> None:
         """Property record construction with every format limit
-        (parser.rs:509-624)."""
+        (parser.rs)."""
         self._check_limit("properties", len(self.properties) + 1, self.limits.max_properties)
         self._check_limit(
             "java-code-units-per-string",
@@ -718,7 +718,7 @@ class _Parser:
         error: _DecodeError,
     ) -> None:
         """One recovered malformed logical line with its stable diagnostic
-        (parser.rs:626-666)."""
+        (parser.rs)."""
         self._check_limit(
             "recovery-regions",
             len(self.error_lines) + 1,
@@ -758,7 +758,7 @@ class _Parser:
 
     def _assign_duplicate_groups(self) -> None:
         """Deterministic exact-code-unit duplicate groups numbered from 1
-        in sorted-key order (parser.rs:668-696)."""
+        in sorted-key order (parser.rs)."""
         groups: dict[tuple[int, ...], list[int]] = {}
         for index, property in enumerate(self.properties):
             groups.setdefault(property.key.code_units(), []).append(index)
@@ -784,7 +784,7 @@ class _Parser:
         self,
     ) -> tuple[list[StructuralPiece], list[PropertiesSyntaxKind]]:
         """Exhaustive ordered coverage; contiguous atoms with one syntax
-        merge into one piece (parser.rs:698-729)."""
+        merge into one piece (parser.rs)."""
         pieces: list[StructuralPiece] = []
         syntax_kinds: list[PropertiesSyntaxKind] = []
         cursor = 0
@@ -834,7 +834,7 @@ class _Parser:
         self, logical_atoms: list[int], start: int, end: int
     ) -> tuple[Span, ...]:
         """Ordered raw spans of the key/element content, split at every raw
-        discontinuity (parser.rs:748-769)."""
+        discontinuity (parser.rs)."""
         if start >= end:
             return ()
         spans: list[Span] = []
@@ -850,7 +850,7 @@ class _Parser:
         return tuple(spans)
 
     def _logical_source_span(self, first_line: int, last_line: int) -> Span:
-        """Complete first-to-last property source range (parser.rs:771-779)."""
+        """Complete first-to-last property source range (parser.rs)."""
         first = self.lines[first_line]
         last = self.lines[last_line]
         return self._atom_span(first.atom_start, last.atom_content_end)
@@ -859,7 +859,7 @@ class _Parser:
         self, logical_atoms: list[int], position: int, empty_fallback: int
     ) -> Span:
         """Zero-width anchor at the start of the decoded key or value
-        (parser.rs:781-798)."""
+        (parser.rs)."""
         if position < len(logical_atoms):
             raw = self.atoms[logical_atoms[position]].raw_start
         elif logical_atoms:
@@ -869,7 +869,7 @@ class _Parser:
         return self.authority.span(raw, raw)
 
     def _atom_span(self, start: int, end: int) -> Span:
-        """Raw span of atom indices [start, end) (parser.rs:800-816)."""
+        """Raw span of atom indices [start, end) (parser.rs)."""
         if start < len(self.atoms):
             raw_start = self.atoms[start].raw_start
         else:
@@ -886,7 +886,7 @@ class _Parser:
 
     def _issue_node(self, role: NodeRole) -> NodeRef:
         """Issues one snapshot-bound handle under the node-count limit
-        (parser.rs:818-828)."""
+        (parser.rs)."""
         self._check_limit("nodes", self.next_node + 1, self.limits.common.max_node_count)
         node = self.authority.node_ref(self.next_node, role)
         self.next_node += 1
@@ -905,7 +905,7 @@ class _Parser:
 
     def _diagnostic(self, code: str, span: Span) -> None:
         """Pushes one error record under the diagnostic limit; recovery
-        becomes explicit (parser.rs:847-879)."""
+        becomes explicit (parser.rs)."""
         self._check_limit(
             "diagnostics", len(self.diagnostics) + 1, self.limits.common.max_diagnostics
         )
@@ -950,7 +950,7 @@ _KIND_BY_LIMIT_NAME = {
 
 
 def _atom_syntax(atom: _Atom) -> PropertiesSyntaxKind:
-    """Explicit syntax with the ErrorRegion fallback (parser.rs:704-716)."""
+    """Explicit syntax with the ErrorRegion fallback (parser.rs)."""
     return (
         atom.syntax
         if atom.syntax is not None
@@ -976,7 +976,7 @@ def _replace_property(property, duplicate_group: int):
 
 def _build_atoms(source: SourceSnapshot) -> list[_Atom]:
     """One atom per decoded scalar with its exact raw span
-    (parser.rs:882-907)."""
+    (parser.rs)."""
     text = source.decoded_text()
     assert text is not None, "Properties source profiles always select text decoding"
     atoms: list[_Atom] = []
@@ -993,7 +993,7 @@ def _decode_java_string(
     atoms: list[_Atom], atom_indices: list[int]
 ) -> _DecodedJavaString | _DecodeError:
     """Decodes one key/element into exact Java code units plus escapes
-    (parser.rs:909-996; RFC 0010 section 7)."""
+    (parser.rs; RFC 0010 section 7)."""
     units: list[int] = []
     escapes: list[_EscapeSpec] = []
     unicode_escapes = 0
@@ -1088,7 +1088,7 @@ def _hex_digit(ch: str) -> int | None:
 
 
 def _structural_kind(syntax: PropertiesSyntaxKind) -> StructuralPieceKind:
-    """Token/Trivia/ErrorRegion classification (parser.rs:1002-1017)."""
+    """Token/Trivia/ErrorRegion classification (parser.rs)."""
     if syntax in (
         PropertiesSyntaxKind.WHITESPACE,
         PropertiesSyntaxKind.LINE_BREAK,

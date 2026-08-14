@@ -3,36 +3,36 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and path model: https://github.com/consema/consema-rs/blob/main/consema-plist/src/edit.rs:76-186
+- Operation and path model: https://github.com/consema/consema-rs/blob/main/consema-plist/src/edit.rs
   (EditPathStep DictKey{key, occurrence} | ArrayIndex, EditPath,
   DictPlacement End | Before | After, EditValue), 187-374 (EditOperation,
   EditTransaction, EditTransactionBuilder).
-- Failure algebra and codes: edit.rs:389-455 (EditFailure and the
+- Failure algebra and codes: edit.rs (EditFailure and the
   StableFailure code mapping: core.edit.*@1 shared codes plus
   plist.edit.uid-in-xml@1 and plist.edit.unrepresentable@1).
-- Atomic commit: edit.rs:457-576 — the base snapshot, Complete-with-native
+- Atomic commit: edit.rs — the base snapshot, Complete-with-native
   gate, per-operation reparse under the exact base request, byte splices,
   and final reparse; dry-run produces the identical patch and target
-  digest (edit.rs:466-480; RFC 0004 §14).
-- XML edits: edit.rs:504-539 (commit_xml), 840-1040 (xml_layout: every
+  digest (edit.rs; RFC 0004 §14).
+- XML edits: edit.rs (commit_xml), 840-1040 (xml_layout: every
   value element's byte facts in arena ordinal order), 1043-1226
   (prepare_xml_operation: set-value replaces the element span,
   insert-dict-entry/insert-array-element splice at the computed position
   wrapping self-closing tags, remove spans the entry's key-through-value
   range, rename replaces only the key text), 1247-1350 (entry_markup /
   encode_xml_element / encode_xml_key / encode_key_text / encode_text),
-  1352-1419 (check_xml_value / check_xml_key / check_xml_string).
-- Binary edits: edit.rs:544-575 (commit_binary), 1422-1568 (binary_step:
+ (check_xml_value / check_xml_key / check_xml_string).
+- Binary edits: edit.rs (commit_binary), 1422-1568 (binary_step:
   container reference blocks re-encoded at the minimal ref width, fresh
   objects appended after the object area, offset table and trailer
   regenerated), 1595-1762 (binary_plan), 1765-1931 (encode_container /
   encode_binary_value / encode_binary_string / width helpers).
-- Splice machinery: edit.rs:578-748 (apply_step, record_edit with fold
+- Splice machinery: edit.rs (apply_step, record_edit with fold
   merging, unmap_in / map_in, apply_splices), 1572-1592 (shifted /
   add_length_delta).
-- Commit artifacts: edit.rs:1935+ (ChangeSet, SourcePatch derivation,
+- Commit artifacts: edit.rs (ChangeSet, SourcePatch derivation,
   UntouchedByteProof; RFC 0004 §13-§16). Frozen operation ids:
-  https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs:20-83.
+  https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs.
 
 Values are supplied as typed native facts (integer, real, boolean, date,
 data, string, UID), never as raw markup or raw bytes (RFC 0013 §11). No
@@ -88,13 +88,13 @@ from consema.plist.parser_xml import PlistFormedXml, parse_xml
 
 
 # ---------------------------------------------------------------------------
-# Paths, placements, and values (edit.rs:76-186)
+# Paths, placements, and values (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 @dataclass(frozen=True, slots=True)
 class EditPathStep:
-    """One root-relative path step (RFC 0013 §11; edit.rs:76-94).
+    """One root-relative path step (RFC 0013 §11; edit.rs).
 
     A ``DictKey`` step selects one physical dictionary association by exact
     key content and occurrence: with duplicate keys, ``occurrence`` is the
@@ -118,7 +118,7 @@ class EditPathStep:
 
 @dataclass(frozen=True, slots=True)
 class EditPath:
-    """A root-relative path to one value or container (edit.rs:96-130).
+    """A root-relative path to one value or container (edit.rs).
 
     The empty path denotes the root value. A path step that meets a
     container of the wrong kind is a role failure; a step that does not
@@ -140,7 +140,7 @@ class EditPath:
 
 
 class DictPlacement(enum.Enum):
-    """Dictionary entry insertion placement (edit.rs:132-143)."""
+    """Dictionary entry insertion placement (edit.rs)."""
 
     END = "End"
     BEFORE = "Before"
@@ -150,7 +150,7 @@ class DictPlacement(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class DictEntryPlacement:
     """One explicit dict-entry placement with its anchor position
-    (edit.rs:132-143)."""
+    (edit.rs)."""
 
     kind: DictPlacement
     position: int | None = None
@@ -171,7 +171,7 @@ class DictEntryPlacement:
 @dataclass(frozen=True, slots=True)
 class EditValue:
     """One typed native plist value supplied to an edit (RFC 0013 §11;
-    edit.rs:146-185). Values are typed native facts, never raw markup or
+    edit.rs). Values are typed native facts, never raw markup or
     raw bytes."""
 
     kind: PlistValueKind
@@ -207,7 +207,7 @@ class EditValue:
 
 
 class EditOperationKind(enum.Enum):
-    """Typed edit operation kinds (edit.rs:187-251)."""
+    """Typed edit operation kinds (edit.rs)."""
 
     SET_VALUE = "SetValue"
     INSERT_DICT_ENTRY = "InsertDictEntry"
@@ -219,7 +219,7 @@ class EditOperationKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class EditOperation:
-    """One snapshot-bound plist structural operation (edit.rs:187-251).
+    """One snapshot-bound plist structural operation (edit.rs).
 
     The path, key, occurrence, index, and placement of every operation
     refer to the document state as of the operation's own application:
@@ -239,14 +239,14 @@ class EditOperation:
 
 @dataclass(frozen=True, slots=True)
 class EditTransaction:
-    """Immutable snapshot-bound transaction (edit.rs:253-272)."""
+    """Immutable snapshot-bound transaction (edit.rs)."""
 
     base: object
     operations: tuple[EditOperation, ...] = ()
 
 
 class EditTransactionBuilder:
-    """Builder that is not a committed edit (edit.rs:274-374)."""
+    """Builder that is not a committed edit (edit.rs)."""
 
     def __init__(self, document: PlistDocument) -> None:
         self._base = document.snapshot_identity()
@@ -332,7 +332,7 @@ class EditTransactionBuilder:
 
 @dataclass(frozen=True, slots=True)
 class EditCommit:
-    """One complete committed edit (edit.rs:376-387)."""
+    """One complete committed edit (edit.rs)."""
 
     document: PlistDocument
     change_set: ChangeSet
@@ -341,13 +341,13 @@ class EditCommit:
 
 
 # ---------------------------------------------------------------------------
-# Resolution helpers (edit.rs:749-787)
+# Resolution helpers (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def _resolve_path(native, path: EditPath) -> PlistValueRef:
     """Resolves one root-relative path against the native arena
-    (edit.rs:749-769)."""
+    (edit.rs)."""
     current = native.root()
     for step in path.segments:
         node = native.get(current)
@@ -372,7 +372,7 @@ def _resolve_path(native, path: EditPath) -> PlistValueRef:
 
 def _nth_key_position(entries, key: PlistKey, occurrence: int) -> int:
     """Source position of the occurrence-th association with the given key
-    (edit.rs:772-787)."""
+    (edit.rs)."""
     seen = 0
     for position, entry in enumerate(entries):
         if entry.key == key:
@@ -383,7 +383,7 @@ def _nth_key_position(entries, key: PlistKey, occurrence: int) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Splice machinery (edit.rs:578-748, 1572-1592)
+# Splice machinery (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -414,7 +414,7 @@ def _shifted(base: int, delta: int) -> int:
 
 def _map_in(edits: list[_AppliedEdit], pos: int) -> int:
     """Maps one position from one pre-state to the final state through the
-    applied edits in application order (edit.rs:648-659)."""
+    applied edits in application order (edit.rs)."""
     for edit in edits:
         if pos <= edit.pre_start:
             continue
@@ -426,7 +426,7 @@ def _map_in(edits: list[_AppliedEdit], pos: int) -> int:
 
 def _unmap_in(edits: list[_AppliedEdit], pos: int) -> int:
     """Maps one position from the final state back to the base snapshot
-    through the applied edits in reverse application order (edit.rs:627-
+    through the applied edits in reverse application order (edit.rs
     644)."""
     for index in range(len(edits) - 1, -1, -1):
         edit = edits[index]
@@ -448,7 +448,7 @@ def _record_edit(
 ) -> None:
     """Records one splice and rejects two insertions that map to the same
     base position; an operation whose span lies inside an earlier
-    replacement folds into it (edit.rs:668-732)."""
+    replacement folds into it (edit.rs)."""
     if pre_len == 0 and not replacement:
         return
     for index in range(len(edits) - 1, -1, -1):
@@ -478,7 +478,7 @@ def _apply_splices(bytes_: bytes, splices: list[_AppliedEdit]) -> bytes:
     """Builds the new bytes by applying the splices sequentially against a
     working buffer; every splice's pre-span is expressed in its own pre-
     state, so each application position is exact in the evolving bytes
-    (edit.rs:730-746)."""
+    (edit.rs)."""
     working = bytearray(bytes_)
     for splice in splices:
         end = splice.pre_start + splice.pre_len
@@ -495,7 +495,7 @@ def _apply_step(
     splices: list[_AppliedEdit],
 ) -> bytes:
     """Applies one step's splices with target-length validation (hard gate
-    4; edit.rs:581-607)."""
+    4; edit.rs)."""
     target_len = len(bytes_)
     for splice in splices:
         target_len = target_len - splice.pre_len + len(splice.replacement)
@@ -519,7 +519,7 @@ def _apply_step(
 
 
 # ---------------------------------------------------------------------------
-# XML layout (edit.rs:840-1040)
+# XML layout (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -587,7 +587,7 @@ def _open_kind_for(close: PlistSyntaxKind) -> PlistSyntaxKind:
 
 
 def _piece_text(source, start: int, end: int) -> str:
-    """Decoded text of one piece span (edit.rs:1027-1040)."""
+    """Decoded text of one piece span (edit.rs)."""
     try:
         return source.bytes()[start:end].decode("utf-8")
     except UnicodeDecodeError:
@@ -599,7 +599,7 @@ def _piece_text(source, start: int, end: int) -> str:
 
 def _xml_layout(formed: PlistFormedXml) -> list[_XmlNodeLayout]:
     """Walks the lossless pieces and assigns every value element its byte
-    span in arena ordinal order (edit.rs:840-978)."""
+    span in arena ordinal order (edit.rs)."""
     source = formed.source
     pieces = formed.lossless_structural_index().pieces
     kinds = formed.lossless_syntax_kinds()
@@ -704,7 +704,7 @@ def _finalize_xml_frame(
     self_closing: bool,
 ) -> None:
     """Assigns the next arena ordinal to one closed frame and updates its
-    parent dictionary's pending entry (edit.rs:996-1024)."""
+    parent dictionary's pending entry (edit.rs)."""
     ordinal = len(layouts)
     if stack:
         parent = stack[-1]
@@ -729,13 +729,13 @@ def _finalize_xml_frame(
 
 
 # ---------------------------------------------------------------------------
-# XML value/key encoding (edit.rs:1247-1350)
+# XML value/key encoding (edit.rs)
 # ---------------------------------------------------------------------------
 
 
 def _encode_text(text: str, source: SourceSnapshot) -> bytes:
     """Encodes one decoded string under the source encoding
-    (edit.rs:1336-1350)."""
+    (edit.rs)."""
     from consema.document.source import SourceEncodingKind
 
     selected = source.encoding_facts().selected
@@ -748,7 +748,7 @@ def _encode_text(text: str, source: SourceSnapshot) -> bytes:
 
 
 def _encode_xml_element(value: EditValue, source: SourceSnapshot) -> bytes:
-    """One value element written as markup (edit.rs:1258-1308)."""
+    """One value element written as markup (edit.rs)."""
     if value.kind is PlistValueKind.STRING:
         text = "<string>" + _escape_xml_text(value.payload.to_unicode()) + "</string>"
     elif value.kind is PlistValueKind.INTEGER:
@@ -780,18 +780,18 @@ def _encode_xml_element(value: EditValue, source: SourceSnapshot) -> bytes:
 
 
 def _encode_xml_key(key: PlistKey, source: SourceSnapshot) -> bytes:
-    """One key element written as markup (edit.rs:1311-1321)."""
+    """One key element written as markup (edit.rs)."""
     text = "<key>" + _escape_xml_text(key.to_unicode()) + "</key>"
     return _encode_text(text, source)
 
 
 def _encode_key_text(key: PlistKey, source: SourceSnapshot) -> bytes:
-    """Escaped key content only (edit.rs:1324-1333)."""
+    """Escaped key content only (edit.rs)."""
     return _encode_text(_escape_xml_text(key.to_unicode()), source)
 
 
 def _check_xml_value(value: EditValue) -> None:
-    """Validates one typed value for the XML representation (edit.rs:1353-
+    """Validates one typed value for the XML representation (edit.rs
     1377)."""
     if value.kind is PlistValueKind.STRING:
         _check_xml_string(value.payload)
@@ -828,7 +828,7 @@ def _entry_markup(key: PlistKey, value: EditValue, source: SourceSnapshot) -> by
 
 
 # ---------------------------------------------------------------------------
-# XML operation preparation (edit.rs:1043-1226)
+# XML operation preparation (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -960,7 +960,7 @@ def _prepare_xml_operation(
 
 
 # ---------------------------------------------------------------------------
-# Binary encoding helpers (edit.rs:1765-1931)
+# Binary encoding helpers (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1028,7 +1028,7 @@ def _encode_binary_string(string: PlistString) -> bytes:
 
 
 def _encode_binary_value(value: EditValue) -> bytes:
-    """One binary object payload (edit.rs:1790-1834)."""
+    """One binary object payload (edit.rs)."""
     out = bytearray()
     if value.kind is PlistValueKind.STRING:
         return _encode_binary_string(value.payload)
@@ -1065,7 +1065,7 @@ def _encode_binary_value(value: EditValue) -> bytes:
 
 
 def _encode_container(refs: list[int], is_dict: bool, ref_size: int) -> bytes:
-    """One container's marker and reference block (edit.rs:1775-1789)."""
+    """One container's marker and reference block (edit.rs)."""
     out = bytearray()
     if is_dict:
         count = len(refs) // 2
@@ -1084,7 +1084,7 @@ def _container_is_dict(document, index: int) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Binary operation planning and splicing (edit.rs:1422-1762)
+# Binary operation planning and splicing (edit.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -1192,7 +1192,7 @@ def _binary_step(
 
 def _binary_plan(document, facts: BinaryFacts, operation: EditOperation) -> dict:
     """Computes one operation's structural changes over the current arena
-    (edit.rs:1595-1762)."""
+    (edit.rs)."""
     node_count = document.node_count()
     dict_counts: list[int] = []
     for index in range(node_count):
@@ -1328,13 +1328,13 @@ def _binary_plan(document, facts: BinaryFacts, operation: EditOperation) -> dict
 
 
 # ---------------------------------------------------------------------------
-# Commit and dry-run (edit.rs:457-576, 1935+)
+# Commit and dry-run (edit.rs+)
 # ---------------------------------------------------------------------------
 
 
 def _xml_encoding_selection(document: PlistDocument) -> PlistEncodingSelection:
     """Reparse under the exact request the base was formed with, so the
-    committed snapshot reproduces the base encoding facts (edit.rs:515-
+    committed snapshot reproduces the base encoding facts (edit.rs
     518)."""
     override = document.source.encoding_facts().caller_override
     if override is not None:
@@ -1344,7 +1344,7 @@ def _xml_encoding_selection(document: PlistDocument) -> PlistEncodingSelection:
 
 def commit(document: PlistDocument, transaction: EditTransaction) -> EditCommit:
     """Atomically commits structural operations; on failure the base
-    document remains unchanged (edit.rs:457-575)."""
+    document remains unchanged (edit.rs)."""
     if transaction.base != document.snapshot_identity():
         raise PlistEditFailure(PlistEditFailureKind.WRONG_SNAPSHOT)
     if document.formation_status() is not FormationStatus.COMPLETE or document.document() is None:
@@ -1364,7 +1364,7 @@ def _commit_xml(
 ) -> EditCommit:
     """XML byte-level commit: each operation resolves against the current
     reparse, replaces only operation-owned spans, and reparses after every
-    operation (edit.rs:504-539)."""
+    operation (edit.rs)."""
     selection = _xml_encoding_selection(document)
     bytes_ = document.render()
     edits: list[_AppliedEdit] = []
@@ -1386,7 +1386,7 @@ def _commit_binary(
 ) -> EditCommit:
     """Binary structural commit: each operation rewrites the owning object
     bytes, appends fresh objects for new values, regenerates the offset
-    table and trailer, and reparses after every operation (edit.rs:544-
+    table and trailer, and reparses after every operation (edit.rs
     575)."""
     bytes_ = document.render()
     edits: list[_AppliedEdit] = []
@@ -1411,7 +1411,7 @@ def _build_commit(
     edits: list[_AppliedEdit],
 ) -> EditCommit:
     """Builds the ChangeSet, SourcePatch, and UntouchedByteProof from the
-    recorded splices (edit.rs:1935-2033; RFC 0004 §13-§16).
+    recorded splices (edit.rs; RFC 0004 §13-§16).
 
     The recorded edits are merged into maximal non-overlapping base runs
     (spans that overlap or touch, including the binary structural regions
@@ -1565,7 +1565,7 @@ def dry_run(
     source_id: EditPlanSourceId,
 ) -> EditPlan:
     """Fully validates and plans an edit without returning a new Document
-    (edit.rs:466-480; RFC 0004 §14)."""
+    (edit.rs; RFC 0004 §14)."""
     commit_result = commit(document, transaction)
     try:
         return EditPlan.new(
@@ -1586,7 +1586,7 @@ def dry_run(
 
 def operation_metadata(transaction: EditTransaction) -> dict[str, str]:
     """Operation metadata keys: operation.{index} = "id@version"
-    (edit.rs:2153-2158)."""
+    (edit.rs)."""
     metadata: dict[str, str] = {}
     for index, operation in enumerate(transaction.operations):
         metadata[f"operation.{index}"] = _operation_id(operation)

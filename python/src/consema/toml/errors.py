@@ -3,27 +3,27 @@
 Authority (language-neutral first; Rust only for registry arbitration):
 
 - The four toml-family codes are frozen by
-  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:
+  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
   ``toml.edit.representation-fallback@1`` :339,
   ``toml.parse.syntax@1`` :345,
   ``toml.projection.core-invariant@1`` :351,
   ``toml.projection.unrepresentable-datetime@1`` :357.
 - The core codes consumed by the TOML family are registered at
-  error_registry.rs:39 (core.parse.resource-limit@1), :57
+  error_registry.rs (core.parse.resource-limit@1), :57
   (core.projection.resource-limit@1), :141-201 (core.query.*@1),
   :466-550 (core.edit.*@1) — the edit codes were introduced by RFC 0004
-  §17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:
-  387-423).
-- The edit failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs:244-279
-  and its code mapping edit.rs:1280-1332 (StableFailure impl).
+  §17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md
+（区间定义处）)
+- The edit failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs
+  and its code mapping edit.rs (StableFailure impl).
 - The projection failure vocabulary follows
-  https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:191-200 and the diagnostic mapping
-  projection.rs:410-435.
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs and the diagnostic mapping
+  projection.rs.
 - Diagnostic categories follow the eleven frozen semantic categories
-  (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1657-1671; Python
+  (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs; Python
   consema.protocol DiagnosticCategory). Severity follows the three frozen
   presentation severities (protocol diagnostic.rs).
-- RFC 0016 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:195-200): SDK operations
+- RFC 0016 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md): SDK operations
   return typed errors whose stable code is always the registered code; error
   text is human presentation only and never participates in conformance
   comparison.
@@ -49,7 +49,7 @@ from consema.protocol.diagnostic import Severity
 
 
 class TomlFormationFailureKind(enum.Enum):
-    """Closed formation failure category (https://github.com/consema/consema-rs/blob/main/consema-toml parser.rs:65-82
+    """Closed formation failure category (https://github.com/consema/consema-rs/blob/main/consema-toml parser.rs
     and consema-document FatalFormationFailure)."""
 
     SYNTAX = "syntax"
@@ -68,7 +68,7 @@ class TomlDiagnostic:
     diagnostic.rs). The vector suite references only the code
     (conformance/vectors/toml-v1.json:87 ``"toml.parse.syntax@1"``) and the
     argument names used by the resource-limit records ("name", "observed",
-    "limit"; parser.rs:780-781).
+    "limit"; parser.rs).
     """
 
     code: str
@@ -81,15 +81,15 @@ class TomlDiagnostic:
 
 class TomlFormationFailure(Exception):
     """Fatal formation failure; no document is ever returned
-    (RFC 0001 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md:53-62: formation runs
+    (RFC 0001 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md: formation runs
     max_source_bytes, UTF-8 validation, TOML syntax/semantic validation,
     then max_token_count / max_node_count / max_nesting_depth; any limit hit
     is a fatal resource-limit failure; syntax failure carries the backend-
     provable minimal span and stable arguments).
 
-    Code mapping: ``toml.parse.syntax@1`` (error_registry.rs:345) for
+    Code mapping: ``toml.parse.syntax@1`` (error_registry.rs) for
     syntax/semantic failures; ``core.parse.resource-limit@1``
-    (error_registry.rs:39) for every resource-limit failure
+    (error_registry.rs) for every resource-limit failure
     (RFC 0001 §3: any resource limit hit returns the clear
     core.parse.resource-limit@1 code); source failures delegate to the
     wrapped core.source.* code.
@@ -103,7 +103,7 @@ class TomlFormationFailure(Exception):
     @classmethod
     def syntax(cls, span: Span | None, reason: str) -> TomlFormationFailure:
         """One syntax failure carrying the minimal provable span and the
-        stable ``parser_reason`` argument (parser.rs:65-82)."""
+        stable ``parser_reason`` argument (parser.rs)."""
         diagnostic = TomlDiagnostic(
             code="toml.parse.syntax@1",
             category=DiagnosticCategory.SYNTAX,
@@ -117,7 +117,7 @@ class TomlFormationFailure(Exception):
     @classmethod
     def resource_limit(cls, name: str, observed: int, limit: int) -> TomlFormationFailure:
         """One fatal resource-limit failure with stable arguments
-        (parser.rs:22-28, 92-116, 413-420, 447-454)."""
+        (parser.rs)."""
         diagnostic = TomlDiagnostic(
             code="core.parse.resource-limit@1",
             category=DiagnosticCategory.RESOURCE,
@@ -143,7 +143,7 @@ class TomlFormationFailure(Exception):
 
 class TomlProjectionFailureKind(enum.Enum):
     """Stable projection failure category
-    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:191-200)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs)."""
 
     UNREPRESENTABLE_DATETIME = "unrepresentable-datetime"
     RESOURCE_LIMIT = "resource-limit"
@@ -160,11 +160,11 @@ _CODE_BY_PROJECTION_KIND = {
 class TomlProjectionFailure(Exception):
     """Stable projection failure with a frozen registered code.
 
-    Code mapping: projection.rs:410-435 — UnrepresentableDateTime →
-    toml.projection.unrepresentable-datetime@1 (error_registry.rs:357),
-    ResourceLimit → core.projection.resource-limit@1 (error_registry.rs:57)
+    Code mapping: projection.rs — UnrepresentableDateTime →
+    toml.projection.unrepresentable-datetime@1 (error_registry.rs),
+    ResourceLimit → core.projection.resource-limit@1 (error_registry.rs)
     with the ``limit`` argument, CoreInvariant →
-    toml.projection.core-invariant@1 (error_registry.rs:351).
+    toml.projection.core-invariant@1 (error_registry.rs).
     """
 
     def __init__(
@@ -184,7 +184,7 @@ class TomlProjectionFailure(Exception):
         return _CODE_BY_PROJECTION_KIND[self.kind]
 
     def to_diagnostic(self) -> TomlDiagnostic:
-        """One snapshot-bound failure diagnostic (projection.rs:410-435)."""
+        """One snapshot-bound failure diagnostic (projection.rs)."""
         category = (
             DiagnosticCategory.PROJECTION
             if self.kind is not TomlProjectionFailureKind.RESOURCE_LIMIT
@@ -208,7 +208,7 @@ class TomlProjectionFailure(Exception):
 
 class TomlEditFailureKind(enum.Enum):
     """Stable TOML edit validation or commit failure
-    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs:244-279, transcribed verbatim)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs, transcribed verbatim)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"
@@ -253,7 +253,7 @@ _CODE_BY_EDIT_KIND = {
 class TomlEditFailure(Exception):
     """Stable TOML edit validation or commit failure with a frozen
     registered code (RFC 0004 §13; the code mapping is the Rust
-    StableFailure impl, edit.rs:1280-1332; registry lines in the module
+    StableFailure impl, edit.rs; registry lines in the module
     docstring). The failure kind spellings are the exact Rust variant
     names (RFC 0016 §5.3/§8: one vocabulary per code)."""
 

@@ -3,31 +3,31 @@
 
 Authority (Rust arbitration for the exact semantics):
 
-- Conversion algebra: https://github.com/consema/consema-rs/blob/main/consema-plist/src/document.rs:224-312
+- Conversion algebra: https://github.com/consema/consema-rs/blob/main/consema-plist/src/document.rs
   (Document::convert_to: same-representation, recovered, and missing-native
   gates), 494-552 (convert_xml_to_binary: node/key/report budget checks,
   serialization, reparse closure with native-model equality, and the
   value-mapped event mapping), 553-593 (convert_binary_to_xml:
   reachable-graph analysis, expressibility validation, serialization,
   reparse closure).
-- Expressibility boundary: document.rs:619-741 (analyze — one
+- Expressibility boundary: document.rs (analyze — one
   ``plist.conversion.inexpressible@1`` diagnostic per violating node in
   source arena order with the ``fact`` argument naming the binary-only
   fact: shared-identity, uid, float32-width, real-nan-payload,
   unpaired-surrogate, non-xml-character, fractional-seconds,
-  date-year-range), document.rs:931-946 (real_expressible), 958-1000
+  date-year-range), document.rs (real_expressible), 958-1000
   (whole_second_date / civil_from_days), 1028-1057 (is_xml_char /
   is_xml_text).
-- Serializers: serialize_xml document.rs:767-890 (Apple header spelling,
+- Serializers: serialize_xml document.rs (Apple header spelling,
   four-space indentation, LF line endings, a trailing newline; the root
-  value element is written at depth 0), serialize_binary document.rs:1080-
+  value element is written at depth 0), serialize_binary document.rs
   1123 (document-ordered object table, one target object per source node
   so shared identity survives, key objects before their dictionary, minimal
   offset/ref sizes, ``sortVersion = 0x00``).
-- Report events: document.rs:314-434 (one RepresentationChange event
+- Report events: document.rs (one RepresentationChange event
   followed by one ValueMapped event per reachable native node, in source
   arena order; hard gate 2).
-- Failure codes: document.rs:264 (same-representation@1), 270-276
+- Failure codes: document.rs (same-representation@1), 270-276
   (formation@1), 718 (inexpressible@1), 1297 (internal@1), 1303
   (reparse@1).
 
@@ -69,7 +69,7 @@ _NEGATIVE_ZERO_BITS = 0x8000_0000_0000_0000
 
 
 class ConversionEventKind(enum.Enum):
-    """Event kinds of one conversion report (document.rs:425-434)."""
+    """Event kinds of one conversion report (document.rs)."""
 
     REPRESENTATION_CHANGE = "RepresentationChange"
     VALUE_MAPPED = "ValueMapped"
@@ -77,7 +77,7 @@ class ConversionEventKind(enum.Enum):
 
 @dataclass(frozen=True, slots=True)
 class ConversionReportEvent:
-    """One conversion report event (document.rs:379-423)."""
+    """One conversion report event (document.rs)."""
 
     kind: ConversionEventKind
     source: PlistValueRef | None = None
@@ -87,7 +87,7 @@ class ConversionReportEvent:
 @dataclass(frozen=True, slots=True)
 class ConversionReport:
     """Conversion report of one cross-representation conversion
-    (document.rs:345-377)."""
+    (document.rs)."""
 
     events: tuple[ConversionReportEvent, ...]
 
@@ -102,7 +102,7 @@ class ConversionReport:
 
 @dataclass(frozen=True, slots=True)
 class ConvertedDocument:
-    """One successful cross-representation conversion (document.rs:314-343)."""
+    """One successful cross-representation conversion (document.rs)."""
 
     document: PlistDocument
     report: ConversionReport
@@ -112,7 +112,7 @@ class ConvertedDocument:
 
 
 # ---------------------------------------------------------------------------
-# Expressibility and reachable graph (document.rs:619-741)
+# Expressibility and reachable graph (document.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -128,7 +128,7 @@ def _is_xml_char(character: str) -> bool:
 
 def _is_xml_text(units: tuple[int, ...]) -> bool:
     """Whether every scalar of one well-formed UTF-16 sequence is an XML
-    1.0 character; an unpaired surrogate is not (document.rs:1038-1057)."""
+    1.0 character; an unpaired surrogate is not (document.rs)."""
     index = 0
     while index < len(units):
         unit = units[index]
@@ -150,7 +150,7 @@ def _is_xml_text(units: tuple[int, ...]) -> bool:
 
 def _real_expressible(real: PlistReal) -> bool:
     """Whether the exact bits of one real survive the XML spelling
-    (document.rs:931-946)."""
+    (document.rs)."""
     value = real.as_f64()
     if value != value:  # NaN
         import struct
@@ -175,7 +175,7 @@ _NAN_BITS = 0x7FF8_0000_0000_0000
 
 def _render_real(real: PlistReal) -> str:
     """Deterministic shortest-round-trip decimal spelling of one real
-    (RFC 0013 §4.6, §10.1; document.rs:914-929)."""
+    (RFC 0013 §4.6, §10.1; document.rs)."""
     value = real.as_f64()
     if value != value:
         return "nan"
@@ -186,7 +186,7 @@ def _render_real(real: PlistReal) -> str:
 
 def _civil_from_days(days: int) -> tuple[int, int, int]:
     """Proleptic Gregorian calendar date of ``days`` since the Unix epoch
-    (document.rs:985-1000)."""
+    (document.rs)."""
     z = days + 719_468
     era = (z if z >= 0 else z - 146_096) // 146_097
     day_of_era = z - era * 146_097
@@ -204,7 +204,7 @@ def _civil_from_days(days: int) -> tuple[int, int, int]:
 
 def _whole_second_date(seconds: float):
     """Decomposes exact plist-epoch seconds into XML calendar fields
-    (document.rs:958-983). Returns (year, month, day, hour, minute,
+    (document.rs). Returns (year, month, day, hour, minute,
     second) or raises PlistConversionFailure(INEXPRESSIBLE)."""
     if seconds != int(seconds):
         return None
@@ -246,7 +246,7 @@ def _analyze(
 ) -> _ReachableGraph:
     """Validates one native document against the XML expressibility
     boundary (RFC 0013 §7, hard gate 3) and computes the reachable-graph
-    facts (document.rs:626-741)."""
+    facts (document.rs)."""
     node_count = native.node_count()
     if node_count > limits.max_conversion_nodes:
         raise PlistConversionFailure(
@@ -330,7 +330,7 @@ def _analyze(
 
 
 # ---------------------------------------------------------------------------
-# Serializers (document.rs:767-890, 1080-1123)
+# Serializers (document.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -341,7 +341,7 @@ def _write_indent(out: list[str], depth: int) -> None:
 
 def _escape_xml_text(text: str) -> str:
     """Escapes XML text content (RFC 0013 §4.9, §10.1): ``&``, ``<``, ``>``,
-    and a literal CR (document.rs:899-912)."""
+    and a literal CR (document.rs)."""
     return (
         text.replace("&", "&amp;")
         .replace("<", "&lt;")
@@ -422,7 +422,7 @@ def _integer_width(value: int) -> int:
 
 def serialize_xml(native: PlistDocument, graph: _ReachableGraph) -> bytes:
     """Serializes one native value graph as a ``plist.xml@1`` source
-    (RFC 0013 §4, §7; document.rs:767-890). The document uses the Apple
+    (RFC 0013 §4, §7; document.rs). The document uses the Apple
     header spelling, four-space indentation, LF line endings, and a
     trailing newline; the root value element is written at depth 0."""
     out: list[str] = []
@@ -491,7 +491,7 @@ def _emit_scalar_xml(
     out: list[str], native: PlistDocument, node: PlistValueRef, depth: int
 ) -> None:
     """Emits one scalar value element at the given depth
-    (document.rs:843-890)."""
+    (document.rs)."""
     _write_indent(out, depth)
     value = native.get(node)
     if value is None:
@@ -522,7 +522,7 @@ def _emit_scalar_xml(
 
 def serialize_binary(native: PlistDocument) -> bytes:
     """Serializes one native value graph as a ``plist.binary@1`` source
-    (RFC 0013 §5, §7; document.rs:1080-1123).
+    (RFC 0013 §5, §7; document.rs).
 
     The object table is document-ordered with one target object per source
     node (shared identity survives), every dictionary is followed by its
@@ -648,7 +648,7 @@ def convert(
     document: PlistDocument, target: PlistProfile, limits: PlistParseLimits
 ) -> ConvertedDocument:
     """Converts one document to the other representation (RFC 0013 §7;
-    document.rs:252-289)."""
+    document.rs)."""
     source_representation = document.representation()
     target_representation = (
         PlistRepresentation.XML
@@ -677,7 +677,7 @@ def _convert_xml_to_binary(
     native: PlistDocument, limits: PlistParseLimits
 ) -> ConvertedDocument:
     """Converts one ``plist.xml@1`` document to ``plist.binary@1``
-    (RFC 0013 §7; document.rs:494-552)."""
+    (RFC 0013 §7; document.rs)."""
     node_count = native.node_count()
     if node_count > limits.max_conversion_nodes:
         raise PlistConversionFailure(
@@ -751,7 +751,7 @@ def _convert_binary_to_xml(
     native: PlistDocument, limits: PlistParseLimits
 ) -> ConvertedDocument:
     """Converts one ``plist.binary@1`` document to ``plist.xml@1``
-    (RFC 0013 §7; document.rs:553-593)."""
+    (RFC 0013 §7; document.rs)."""
     graph = _analyze(native, limits)
     reachable_count = len(graph.reachable)
     event_count = 1 + reachable_count

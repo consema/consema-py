@@ -27,13 +27,13 @@ facts.
 Authority (language-neutral first; Rust only for byte/registry
 arbitration):
 
-- Kind model and equality: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/expression.rs:192-559.
-- canonical_decimal: expression.rs:719-851 (pure decimal string
+- Kind model and equality: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/expression.rs.
+- canonical_decimal: expression.rs (pure decimal string
   arithmetic; the exponent folding is bounded by the frozen
-  max_number_digits budget of HclParseLimits, expression.rs:736-851).
-- Literal boundary and typed projection: expression.rs:1506-1786.
+  max_number_digits budget of HclParseLimits, expression.rs).
+- Literal boundary and typed projection: expression.rs.
 - Structural fingerprint serialization: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/
-  materialization.rs:1496-1768 (FNV-1a 64-bit over the canonical
+  materialization.rs (FNV-1a 64-bit over the canonical
   structural serialization; the shared M6/M7 adaptation point of the
   `hcl.expression@1` codec).
 """
@@ -46,7 +46,7 @@ from dataclasses import dataclass
 from consema.document.structural import Span
 from consema.hcl.kinds import HclExpressionKindName
 
-# FNV-1a 64-bit parameters (materialization.rs:1507-1515).
+# FNV-1a 64-bit parameters (materialization.rs).
 _FNV_OFFSET_BASIS = 0xCBF2_9CE4_8422_2325
 _FNV_PRIME = 0x0000_0100_0000_01B3
 
@@ -58,7 +58,7 @@ _FNV_PRIME = 0x0000_0100_0000_01B3
 
 class UnaryOp(enum.Enum):
     """Unary operator set; exactly `-` and `!` exist (RFC 0014 §4.3,
-    expression.rs:853-882)."""
+    expression.rs)."""
 
     MINUS = "-"
     NOT = "!"
@@ -66,7 +66,7 @@ class UnaryOp(enum.Enum):
 
 class BinaryOp(enum.Enum):
     """Binary operator set, frozen by the RFC 0014 §4.3 precedence table
-    (expression.rs:884-956)."""
+    (expression.rs)."""
 
     EQUAL = "=="
     NOT_EQUAL = "!="
@@ -84,7 +84,7 @@ class BinaryOp(enum.Enum):
 
 
 class HeredocMode(enum.Enum):
-    """Heredoc mode fact: `<<` or `<<-` (RFC 0014 §4.5, expression.rs:1157-
+    """Heredoc mode fact: `<<` or `<<-` (RFC 0014 §4.5, expression.rs
     1176)."""
 
     PLAIN = "<<"
@@ -93,7 +93,7 @@ class HeredocMode(enum.Enum):
 
 class ObjectSeparator(enum.Enum):
     """Object-constructor key/value separator source fact (RFC 0014 §4.6,
-    expression.rs:1486-1504)."""
+    expression.rs)."""
 
     EQUALS = "="
     COLON = ":"
@@ -102,13 +102,13 @@ class ObjectSeparator(enum.Enum):
 @dataclass(frozen=True, slots=True)
 class HeredocFacts:
     """Heredoc representation facts of one template (RFC 0014 §4.5, §6;
-    expression.rs:1178-1249).
+    expression.rs).
 
     The mode, marker spelling, marker span, and closing-line span are
     preserved representation facts; the `<<-` indentation stripping is
     performed only when the template's literal value is read, never
     destructively. Structural equality compares the mode and marker
-    spelling only (expression.rs:1236-1249).
+    spelling only (expression.rs).
     """
 
     mode: HeredocMode
@@ -128,7 +128,7 @@ class HeredocFacts:
 @dataclass(frozen=True, slots=True)
 class HclTraversalRoot:
     """Traversal root; keyword spellings are dual-read roots (RFC 0014
-    §4.1, expression.rs:958-970).
+    §4.1, expression.rs).
 
     ``kind`` is "variable" | "boolean" | "null"; ``name`` is the variable
     spelling when kind is "variable".
@@ -158,12 +158,12 @@ class HclTraversalRoot:
 
 @dataclass(frozen=True, slots=True)
 class HclTraversalStep:
-    """One static traversal step (RFC 0014 §4.3, expression.rs:971-1040).
+    """One static traversal step (RFC 0014 §4.3, expression.rs).
 
     Attribute steps admit identifiers only: the numeric form `foo.0` is a
     grammar error (RFC 0014 §12 D-5). Splat steps nest further steps.
     ``kind`` is "get-attr" | "index" | "attr-splat" | "full-splat".
-    Structural equality never includes the step span (expression.rs:1005-
+    Structural equality never includes the step span (expression.rs
     1040).
     """
 
@@ -216,11 +216,11 @@ class HclTraversalStep:
 @dataclass(frozen=True, slots=True)
 class HclNumber:
     """Exact decimal number literal: source spelling plus canonical value
-    (RFC 0014 §4.1, §6, §8; expression.rs:644-717).
+    (RFC 0014 §4.1, §6, §8; expression.rs).
 
     Numeric equality is canonical-decimal equality, so `1.50`, `1.5`, and
     `15e-1` compare equal as values while remaining distinct source facts
-    (expression.rs:705-717).
+    (expression.rs).
     """
 
     span: Span
@@ -238,7 +238,7 @@ class HclNumber:
 def canonical_decimal(spelling: str, max_digits: int = 100_000) -> str | None:
     """Normalizes one decimal number spelling to its canonical form by pure
     decimal string arithmetic — zero floating-point computation (hard
-    gate 1; RFC 0014 §4.1, §9; expression.rs:719-851).
+    gate 1; RFC 0014 §4.1, §9; expression.rs).
 
     The canonical form strips leading zeros, strips trailing fraction
     zeros, and folds the exponent into the decimal point position, so
@@ -310,7 +310,7 @@ def canonical_decimal(spelling: str, max_digits: int = 100_000) -> str | None:
 
 def number_literal(canonical: str) -> "HclLiteralValue":
     """A canonical decimal without a fraction projects as an integer, one
-    with a fraction as a real (RFC 0014 §8.2; expression.rs:1678-1684)."""
+    with a fraction as a real (RFC 0014 §8.2; expression.rs)."""
     if "." in canonical:
         return HclLiteralValue(kind="real", text=canonical)
     return HclLiteralValue(kind="integer", text=canonical)
@@ -323,13 +323,13 @@ def number_literal(canonical: str) -> "HclLiteralValue":
 
 @dataclass(frozen=True, slots=True)
 class HclTemplatePart:
-    """One ordered template part (RFC 0014 §6, expression.rs:1042-1130).
+    """One ordered template part (RFC 0014 §6, expression.rs).
 
     A literal part keeps its exact escape-decoded text; the raw escaped
     spelling remains a source fact of the part's span. The `~` strip
     markers of interpolations and directives are span-internal source
     facts, never applied. ``kind`` is "literal" | "interpolation" |
-    "directive". Structural equality (expression.rs:1091-1130): a literal
+    "directive". Structural equality (expression.rs): a literal
     part compares by decoded text, an interpolation by its expression, a
     directive by its kind.
     """
@@ -370,13 +370,13 @@ class HclTemplatePart:
 
     def is_literal(self) -> bool:
         """Whether this part is a literal run with no interpolation or
-        directive (expression.rs:1560-1566)."""
+        directive (expression.rs)."""
         return self.kind == "literal"
 
 
 @dataclass(frozen=True, slots=True)
 class HclDirectiveKind:
-    """One template directive kind (RFC 0014 §4.4, expression.rs:1132-1155).
+    """One template directive kind (RFC 0014 §4.4, expression.rs).
 
     The single-identifier for-directive `%{ for x in list }` is valid —
     the key is read only when a comma follows (RFC 0014 §12 D-7).
@@ -411,10 +411,10 @@ class HclDirectiveKind:
 @dataclass(frozen=True, slots=True)
 class HclForIntro:
     """The `for` introduction of a for-expression or for-directive (RFC
-    0014 §4.6, expression.rs:1280-1347).
+    0014 §4.6, expression.rs).
 
     Structural equality compares the key, value, and collection only
-    (expression.rs:1333-1347).
+    (expression.rs).
     """
 
     key: str | None
@@ -438,7 +438,7 @@ class HclForIntro:
 @dataclass(frozen=True, slots=True)
 class HclCallArg:
     """One function-call argument with its expansion marker fact (RFC 0014
-    §4.3, expression.rs:1251-1278)."""
+    §4.3, expression.rs)."""
 
     expression: HclExpression
     expand: bool = False
@@ -451,10 +451,10 @@ class HclCallArg:
 
 @dataclass(frozen=True, slots=True)
 class HclObjectKey:
-    """One object-constructor key (RFC 0014 §4.6, expression.rs:1349-1401).
+    """One object-constructor key (RFC 0014 §4.6, expression.rs).
 
     ``kind`` is "identifier" | "number" | "template" | "paren". Structural
-    equality never includes spans (expression.rs:1366-1401).
+    equality never includes spans (expression.rs).
     """
 
     kind: str
@@ -502,10 +502,10 @@ class HclObjectKey:
 
 @dataclass(frozen=True, slots=True)
 class HclTemplateKey:
-    """A quoted-template object key (RFC 0014 §4.6, expression.rs:1403-
+    """A quoted-template object key (RFC 0014 §4.6, expression.rs
     1442).
 
-    Structural equality compares the ordered parts only (expression.rs:1430-
+    Structural equality compares the ordered parts only (expression.rs
     1442).
     """
 
@@ -524,7 +524,7 @@ class HclTemplateKey:
 @dataclass(frozen=True, slots=True)
 class HclObjectEntry:
     """One ordered object-constructor entry: key, separator, and value
-    (RFC 0014 §4.6, expression.rs:1444-1484).
+    (RFC 0014 §4.6, expression.rs).
 
     Duplicate keys are preserved as ordered native facts with independent
     spans and are never collapsed.
@@ -543,7 +543,7 @@ class HclObjectEntry:
 @dataclass(frozen=True, slots=True)
 class HclExpressionKind:
     """Closed native HCL expression kind (RFC 0014 §4.3-§4.6,
-    expression.rs:192-312).
+    expression.rs).
 
     ``name`` is the payload-free kind name of RFC 0014 §7.1; ``payload``
     is one variant-specific frozen record. A quoted template and a heredoc
@@ -639,12 +639,12 @@ class HclExpressionKind:
         return cls(HclExpressionKindName.PARENTHESIZED, inner)
 
     def as_str(self) -> str:
-        """Stable kind spelling (expression.rs:314-342)."""
+        """Stable kind spelling (expression.rs)."""
         return self.name.as_str()
 
     def kind_family(self) -> str:
         """Kind-family spelling of the `hcl.expression@1` record (RFC 0014
-        §8.2; projection.rs:1004-1020)."""
+        §8.2; projection.rs)."""
         return self.name.kind_family()
 
 
@@ -652,10 +652,10 @@ class HclExpressionKind:
 class HclExpression:
     """Half-open raw-byte range of one expression AST node; the exact
     source text is always derived from the span against the frozen source
-    (RFC 0014 §6 double preservation; expression.rs:40-176).
+    (RFC 0014 §6 double preservation; expression.rs).
 
     Snapshot-bound query handles derive their ordinal from the document's
-    deterministic pre-order tree walk (projection.rs:124-130); spans and
+    deterministic pre-order tree walk (projection.rs); spans and
     identities are never part of structural equality.
     """
 
@@ -665,7 +665,7 @@ class HclExpression:
     def __eq__(self, other: object) -> bool:
         """Structural equality: recursive over kind and children; node
         identity and source spans are never part of value equality (RFC
-        0014 §6; expression.rs:178-190)."""
+        0014 §6; expression.rs)."""
         if not isinstance(other, HclExpression):
             return NotImplemented
         return self.kind == other.kind
@@ -675,7 +675,7 @@ class HclExpression:
 
     def text(self, source) -> str:
         """Exact source text derived from the span against one source
-        snapshot (expression.rs:73-78). Spans are half-open raw-byte
+        snapshot (expression.rs). Spans are half-open raw-byte
         ranges; the UTF-8-only source contract makes the byte slice the
         exact original spelling."""
         raw = source.bytes()
@@ -683,7 +683,7 @@ class HclExpression:
 
     def children(self) -> list[HclExpression]:
         """Ordered direct child expressions in source order
-        (expression.rs:88-175)."""
+        (expression.rs)."""
         children: list[HclExpression] = []
         name = self.kind.name
         payload = self.kind.payload
@@ -770,7 +770,7 @@ def _collect_template_part_children(
 def is_literal_complete(expression: HclExpression) -> bool:
     """Whether an expression is literal-complete: its value is uniquely
     determined by the source text alone — no evaluation, no context (RFC
-    0014 §8.1; expression.rs:1506-1558).
+    0014 §8.1; expression.rs).
 
     Exactly the following are literal-complete: a number literal; `true`,
     `false`, or `null`; a quoted or heredoc template containing zero
@@ -821,7 +821,7 @@ def _literal_complete_key(key: HclObjectKey) -> bool:
 
 @dataclass(frozen=True, slots=True)
 class HclLiteralKey:
-    """One object-literal key (RFC 0014 §8.1-§8.2; expression.rs:1770-1786).
+    """One object-literal key (RFC 0014 §8.1-§8.2; expression.rs).
 
     ``kind`` is "identifier" | "number" | "string" | "value".
     """
@@ -833,7 +833,7 @@ class HclLiteralKey:
 
 @dataclass(frozen=True, slots=True)
 class HclLiteralObjectEntry:
-    """One ordered object literal entry (expression.rs:1744-1768)."""
+    """One ordered object literal entry (expression.rs)."""
 
     key: HclLiteralKey
     value: HclLiteralValue
@@ -842,7 +842,7 @@ class HclLiteralObjectEntry:
 @dataclass(frozen=True, slots=True)
 class HclLiteralValue:
     """Typed literal projection of a literal-complete expression (RFC 0014
-    §8.2; expression.rs:1714-1741).
+    §8.2; expression.rs).
 
     Integers and reals carry the exact canonical decimal spelling with an
     optional leading `-`; strings carry exact decoded code points,
@@ -888,12 +888,12 @@ class HclLiteralValue:
 
 class NonLiteralExpression(Exception):
     """A literal-complete expression must be a typed literal value; this is
-    the explicit-failure path of RFC 0014 §8 (expression.rs:1568-1582)."""
+    the explicit-failure path of RFC 0014 §8 (expression.rs)."""
 
 
 def literal_value(expression: HclExpression) -> HclLiteralValue:
     """Extracts the typed literal value of a literal-complete expression
-    (RFC 0014 §8.1-§8.2; expression.rs:1584-1676).
+    (RFC 0014 §8.1-§8.2; expression.rs).
 
     A derived expression raises NonLiteralExpression — never a null, empty,
     or converted result.
@@ -956,7 +956,7 @@ def literal_value(expression: HclExpression) -> HclLiteralValue:
 def _strip_heredoc_indentation(text: str) -> str:
     """Applies the `<<-` indentation stripping: removes the minimum number
     of leading spaces from each line's leading literal text (RFC 0014 §4.5;
-    expression.rs:1686-1712)."""
+    expression.rs)."""
     minimum: int | None = None
     for line in text.split("\n"):
         if not line:
@@ -974,15 +974,15 @@ def _strip_heredoc_indentation(text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Structural fingerprint serialization (RFC 0014 §8.2; materialization.rs:
-# 1496-1768)
+# Structural fingerprint serialization (RFC 0014 §8.2; materialization.rs
+# (fingerprint 定义区间)
 # ---------------------------------------------------------------------------
 
 
 def structural_fingerprint(expression: HclExpression) -> int:
     """Structural fingerprint value of one expression: a 64-bit FNV-1a hash
     over the canonical structural serialization (RFC 0014 §8.2;
-    materialization.rs:1507-1516).
+    materialization.rs).
 
     The serialization covers the frozen structural equality of RFC 0014 §6
     — kind, ordered children, canonical decimals, exact literal texts,
@@ -999,7 +999,7 @@ def structural_fingerprint(expression: HclExpression) -> int:
 
 
 def structural_fingerprint_hex(expression: HclExpression) -> str:
-    """The hex of the structural fingerprint (materialization.rs:1518-1522)."""
+    """The hex of the structural fingerprint (materialization.rs)."""
     return f"{structural_fingerprint(expression):016x}"
 
 

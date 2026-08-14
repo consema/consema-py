@@ -130,7 +130,7 @@ def test_project_expression_policy():
     assert record["kind"].as_string() == "binary"
     assert record["text"].as_string() == "1 + 2"
     # The fingerprint is the 16 lowercase hex digits of the structural
-    # fingerprint (projection.rs:81-88).
+    # fingerprint (projection.rs).
     fingerprint = record["fingerprint"].as_string()
     assert len(fingerprint) == 16
     int(fingerprint, 16)
@@ -190,7 +190,7 @@ def test_recovered_document_never_projects():
 
 
 def test_expression_kind_family_spellings():
-    # The closed kind-family table (projection.rs:996-1040): variable and
+    # The closed kind-family table (projection.rs): variable and
     # traversal are one family; for-expressions are one family.
     from consema.hcl.expression import HclExpressionKindName
 

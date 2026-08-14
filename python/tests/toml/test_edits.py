@@ -5,7 +5,7 @@ toml.edit.reject-unrepresentable (conformance/vectors/toml-v1.json);
 the Rust transaction tests of https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs are the
 semantic arbitration (byte-exact expected renders), RFC 0004 §12/§13 the
 contract, and the operation ids the registry
-(operation_registry.rs:16-74).
+(operation_registry.rs).
 """
 
 from __future__ import annotations
@@ -136,7 +136,7 @@ def test_edit_round_trip_change_set_patch_proof():
 def test_structural_insert_entry_root_and_table():
     """insert-entry preserves table ownership: a root insertion lands
     before the [service] header, a standard-table insertion after its
-    entries (edit.rs:1840-1892)."""
+    entries (edit.rs)."""
     document = _document(b"root = 1\n\n[service]\nport = 80\n")
     service = _root_entry(document, "service").item()
 
@@ -169,7 +169,7 @@ def test_structural_insert_entry_root_and_table():
 
 def test_inline_table_operations_preserve_association_identity():
     """Inline-table insert/rename/remove touch exact association spans
-    (edit.rs:1894-1940)."""
+    (edit.rs)."""
     document = _document(b"point = { a = 1, b = 2 }\n")
     point = _root_entry(document, "point").item()
     entries = point.table_entries()
@@ -199,7 +199,7 @@ def test_inline_table_operations_preserve_association_identity():
 
 def test_array_insert_and_remove_cover_empty_and_commented_arrays():
     """Array element insert/remove around empty and commented arrays
-    (edit.rs:1942-1977)."""
+    (edit.rs)."""
     empty = _document(b"items = [ ]\n")
     array = _root_entry(empty, "items").item()
     start = empty.commit(
@@ -238,7 +238,7 @@ def test_array_insert_and_remove_cover_empty_and_commented_arrays():
 def test_conflicts_fail_atomically():
     """Duplicate keys, duplicate targets, removed anchors, table removal,
     and cross-container anchors fail without changing the base
-    (edit.rs:1979-2093)."""
+    (edit.rs)."""
     document = _document(b"a = 1\nb = 2\n\n[service]\nport = 80\n")
     entries = document.root().table_entries()
     a = next(entry for entry in entries if entry.name() == "a")
@@ -343,7 +343,7 @@ def test_conflicts_fail_atomically():
 
 def test_dry_run_matches_commit_and_redacts_secrets():
     """Dry-run and commit produce the same replacement set and target
-    digest; summaries never contain raw edited values (edit.rs:2122-2155)."""
+    digest; summaries never contain raw edited values (edit.rs)."""
     document = _document(b"value = 1\n")
     transaction = (
         EditTransactionBuilder(document)

@@ -1,9 +1,9 @@
 """Versioned typed query definitions, validation, and binding.
 
 Authority: RFC 0016 §5.4 and the operator validation table of
-https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs:899-1897 (transcribed verbatim, including
-the closed kind-name vocabularies at query.rs:1900-2209); the match-role
-spellings are the language-neutral MatchRole names (query.rs:169-316). Go
+https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs (transcribed verbatim, including
+the closed kind-name vocabularies at query.rs); the match-role
+spellings are the language-neutral MatchRole names (query.rs). Go
 (https://github.com/consema/consema-go/blob/main/go/protocol/query.go, query_validate.go) is a cross-reference only.
 
 The table maps ``(domain, operator)`` to the expected input role, the
@@ -28,7 +28,7 @@ from consema.protocol.registry_descriptor import CapabilityId, CapabilitySet
 # --------------------------------------------------------------------------
 
 class MatchRole(enum.Enum):
-    """One typed match role of the query model (query.rs:169-316)."""
+    """One typed match role of the query model (query.rs)."""
 
     VALUE = "Value"
     OBJECT_ENTRY = "ObjectEntry"
@@ -111,7 +111,7 @@ ROLE_ANY = None  # table placeholder for input-dependent rows
 # --------------------------------------------------------------------------
 
 class QueryDomain:
-    """A versioned query domain (query.rs:12-166)."""
+    """A versioned query domain (query.rs)."""
 
     __slots__ = ("id", "version")
 
@@ -241,7 +241,7 @@ class ExpressionKind(enum.Enum):
 
 
 class QueryExpression:
-    """The declarative operator tree (query.rs:363-390)."""
+    """The declarative operator tree (query.rs)."""
 
     __slots__ = ("kind", "input", "operator", "branches")
 
@@ -375,7 +375,7 @@ class QueryDefinition:
 
     def validate(self) -> "ValidatedQuery":
         """Validates the domain, argument schemas, composition, and role
-        typing (query.rs:500-530). The required capability set of a
+        typing (query.rs). The required capability set of a
         validated query is always [core.query.ordered-results@1]."""
         input_role = _domain_input_role(self.domain.id, self.domain.version)
         if input_role is None:
@@ -427,7 +427,7 @@ class ExecutableQuery:
 
 
 def _domain_input_role(id: str, version: int) -> MatchRole | None:
-    """Maps a domain to its root match role (query.rs:502-523)."""
+    """Maps a domain to its root match role (query.rs)."""
     table = {
         ("core.portable-value-query", 1): MatchRole.VALUE,
         ("core.portable-graph-query", 1): MatchRole.GRAPH_NODE,
@@ -487,7 +487,7 @@ def _validate_expression(
 
 
 # --------------------------------------------------------------------------
-# the operator validation table (query.rs:899-1897)
+# the operator validation table (query.rs)
 # --------------------------------------------------------------------------
 
 def _row(
@@ -958,7 +958,7 @@ def _hcl_error_region_input_roles(role: MatchRole) -> bool:
 
 
 # --------------------------------------------------------------------------
-# semantic argument-value checks (query.rs:1634-1897)
+# semantic argument-value checks (query.rs)
 # --------------------------------------------------------------------------
 
 def _check_operator_arguments(domain: QueryDomain, operator: OperatorCall) -> None:
@@ -1200,7 +1200,7 @@ def _exact_object_fields(value: PortableValue, names: list[str], context: str) -
 
 
 class QueryDefinitionCodec:
-    """The fixed-field `core.query-definition@1` wire codec (query.rs:532-598)."""
+    """The fixed-field `core.query-definition@1` wire codec (query.rs)."""
 
     @staticmethod
     def to_value(definition: QueryDefinition) -> PortableValue:

@@ -129,8 +129,8 @@ from consema.yaml.query import (
     execute_yaml_syntax_query,
 )
 
-# Frozen profile and domain ids (RFC 0007 s1/s9; lib.rs:241-257;
-# query.rs:167-177, 213-223).
+# Frozen profile and domain ids (RFC 0007 s1/s9; lib.rs;
+# query.rs).
 YAML12_CORE_PROFILE = "yaml.1.2-core@1"
 YAML11_COMPAT_PROFILE = "yaml.1.1-compat@1"
 NATIVE_QUERY_DOMAIN_V1 = "yaml.native-semantic-query@1"

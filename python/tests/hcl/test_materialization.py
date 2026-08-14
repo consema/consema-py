@@ -216,7 +216,7 @@ def test_unrepresentable_cases():
     assert materialization_failure_code(result.failure) == "hcl.materialization.unrepresentable@1"
 
     # Sample 2: a wrong record name fails with the published "invalid-record"
-    # spelling (hcl_v1.rs:1611-1616).
+    # spelling (hcl_v1.rs).
     wrong_record = PortableValue.object(
         (
             ("record", PortableValue.string("hcl.something-else@1")),

@@ -1,7 +1,7 @@
 """Intent documents for PortableGraph and the PGCE/1 byte codec.
 
 Golden byte vectors are frozen by the Rust tests
-(https://github.com/consema/consema-rs/blob/main/consema-graph/src/pgce.rs:664-686): a scalar graph with tag
+(https://github.com/consema/consema-rs/blob/main/consema-graph/src/pgce.rs): a scalar graph with tag
 `tag:yaml.org,2002:str` and content "x", and the empty graph.
 """
 
@@ -31,7 +31,7 @@ MAP_TAG = "tag:yaml.org,2002:map"
 
 
 def test_scalar_byte_vector_is_frozen():
-    # pgce.rs:664-678.
+    # pgce.rs.
     builder = GraphBuilder(GraphLimits())
     root = builder.reserve_node()
     builder.define_scalar(root, STR_TAG, "x").push_root(root)
@@ -49,14 +49,14 @@ def test_scalar_byte_vector_is_frozen():
 
 
 def test_empty_graph_byte_vector_is_frozen():
-    # pgce.rs:681-686.
+    # pgce.rs.
     graph = GraphBuilder(GraphLimits()).build()
     assert encode_pgce(graph).hex() == "50474345010000"
     assert decode_pgce(encode_pgce(graph)) == graph
 
 
 def test_sharing_cycles_and_duplicate_arbitrary_keys_are_values():
-    # lib.rs:717-746.
+    # lib.rs.
     builder = GraphBuilder(GraphLimits())
     mapping = builder.reserve_node()
     key = builder.reserve_node()
@@ -78,7 +78,7 @@ def test_sharing_cycles_and_duplicate_arbitrary_keys_are_values():
 
 
 def test_strict_equality_ignores_builder_ids_but_preserves_topology():
-    # lib.rs:748-788.
+    # lib.rs.
     def build(shared_first: bool) -> PortableGraph:
         builder = GraphBuilder(GraphLimits())
         if shared_first:
@@ -108,7 +108,7 @@ def test_strict_equality_ignores_builder_ids_but_preserves_topology():
 
 
 def test_builder_rejects_incomplete_unreachable_duplicate_and_invalid_tag():
-    # lib.rs:814-857.
+    # lib.rs.
     incomplete = GraphBuilder(GraphLimits())
     missing = incomplete.reserve_node()
     incomplete.push_root(missing)
@@ -148,7 +148,7 @@ def test_builder_rejects_incomplete_unreachable_duplicate_and_invalid_tag():
 
 
 def test_graph_build_failures_have_stable_codes():
-    # lib.rs:893-911.
+    # lib.rs.
     assert GraphBuildError(GraphBuildErrorKind.INVALID_TAG).code == "core.graph.invalid@1"
     assert (
         GraphBuildError(
@@ -160,7 +160,7 @@ def test_graph_build_failures_have_stable_codes():
 
 
 def test_decode_rejects_nonminimal_varint_trailing_and_invalid_reference():
-    # pgce.rs:749-771.
+    # pgce.rs.
     scalar = bytes.fromhex("504743450101010020157461673a79616d6c2e6f72672c323030323a7374720178")
     nonminimal = scalar[:4] + bytes([0x81, 0x00]) + scalar[5:]
     with pytest.raises(PgceDecodeError) as caught:
@@ -180,7 +180,7 @@ def test_decode_rejects_nonminimal_varint_trailing_and_invalid_reference():
 
 
 def test_decode_rejects_noncanonical_node_numbering():
-    # pgce.rs:774-792: a root referencing node 1 violates canonical discovery.
+    # pgce.rs: a root referencing node 1 violates canonical discovery.
     stream = (
         b"PGCE"
         + bytes([1, 1, 2, 1, 0x20, 21])
@@ -207,7 +207,7 @@ def test_decode_rejects_unknown_node_kind_and_bad_magic():
 
 
 def test_encode_and_decode_limits_fail_atomically():
-    # pgce.rs:795-817.
+    # pgce.rs.
     scalar = bytes.fromhex("504743450101010020157461673a79616d6c2e6f72672c323030323a7374720178")
     limits = PgceLimits(max_stream_bytes=len(scalar) - 1)
     with pytest.raises(PgceDecodeError) as caught:

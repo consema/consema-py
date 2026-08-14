@@ -33,10 +33,10 @@ python/README.md Verify) on a fresh clone without it.
 Measured status (2026-08-12): 83/83 cases verified (40/40 accept, 43/43
 reject) after the envelope.py record codec fixes: the value-path wire
 record is the schema-less ``object[("segments", ...)]`` shape
-(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/query.rs:441-464) and the
+(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/query.rs) and the
 materialization-request style reference rejects ``version: 0`` exactly
 like the authority (Rust ``ContractId::new`` version validation,
-materialization.rs:1357-1363).
+materialization.rs).
 """
 
 from __future__ import annotations

@@ -2,32 +2,32 @@
 
 Authority (Rust arbitration for exact semantics):
 
-- Parse entry and fatal limits: https://github.com/consema/consema-rs/blob/main/consema-json/src/parser.rs:73-166 —
-  source-bytes limit (parser.rs:78-84), UTF-8 snapshot construction
-  (parser.rs:85), structural-index construction (parser.rs:99-120),
-  trailing-content recovery (parser.rs:136-144), formation status
-  (parser.rs:145-149), deterministic diagnostic sorting
-  (diagnostic.rs:107-123).
-- Value/object/array parsing with recovery: parser.rs:829-1133 —
-  missing-value (parser.rs:838-849), JSON5 identifier literals
-  (parser.rs:910-935), object key / colon / comma recovery
-  (parser.rs:971-1057), duplicate-member diagnostics with related
-  first-member location (parser.rs:1007-1024), strict trailing-comma
-  recovery (parser.rs:1025-1039), missing-close recovery
-  (parser.rs:1059-1068, 1086-1096).
-- String decoding: parser.rs:1232-1347 (JSON5 extensions per RFC 0005 §5,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:93-113); the json5.string.unescaped-line-separator@1
-  warning parser.rs:884-892.
-- Number decoding: parser.rs:863-878 (strict) and parse_json5_number
-  parser.rs:1375-1443 (RFC 0005 §6); the frozen non-finite bits
-  parser.rs:1382-1401 and RFC 0005 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:133-139).
-- IdentifierName decoding: parser.rs:910-935 and decode_json5_identifier
-  parser.rs:1349-1373.
-- Entity allocation and the fatal node-count limit: parser.rs:1147-1189.
+- Parse entry and fatal limits: https://github.com/consema/consema-rs/blob/main/consema-json/src/parser.rs —
+  source-bytes limit (parser.rs), UTF-8 snapshot construction
+  (parser.rs), structural-index construction (parser.rs),
+  trailing-content recovery (parser.rs), formation status
+  (parser.rs), deterministic diagnostic sorting
+  (diagnostic.rs).
+- Value/object/array parsing with recovery: parser.rs —
+  missing-value (parser.rs), JSON5 identifier literals
+  (parser.rs), object key / colon / comma recovery
+  (parser.rs), duplicate-member diagnostics with related
+  first-member location (parser.rs), strict trailing-comma
+  recovery (parser.rs), missing-close recovery
+  (parser.rs).
+- String decoding: parser.rs (JSON5 extensions per RFC 0005 §5,
+  https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md); the json5.string.unescaped-line-separator@1
+  warning parser.rs.
+- Number decoding: parser.rs (strict) and parse_json5_number
+  parser.rs (RFC 0005 §6); the frozen non-finite bits
+  parser.rs and RFC 0005 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md).
+- IdentifierName decoding: parser.rs and decode_json5_identifier
+  parser.rs.
+- Entity allocation and the fatal node-count limit: parser.rs.
 
 Decimal normalization (coefficient/exponent canonical form) is the core
 value model's contract (consema.core.value.Decimal; https://github.com/consema/consema-rs/blob/main/consema-core/
-src/value.rs:277-292). Integer and Decimal values remain arbitrary
+src/value.rs). Integer and Decimal values remain arbitrary
 precision; parsing never rounds through a host float (RFC 0005 §6).
 """
 
@@ -101,7 +101,7 @@ class InternalValue:
 
 @dataclass(frozen=True, slots=True)
 class ValueEntity:
-    """One value entity (parser.rs:1161-1176)."""
+    """One value entity (parser.rs)."""
 
     span: object  # consema.document.Span
     literal_span: object  # consema.document.Span | None
@@ -111,7 +111,7 @@ class ValueEntity:
 
 @dataclass(frozen=True, slots=True)
 class MemberEntity:
-    """One exact object member association (parser.rs:997-1006)."""
+    """One exact object member association (parser.rs)."""
 
     span: object
     key: int
@@ -121,7 +121,7 @@ class MemberEntity:
 
 @dataclass(frozen=True, slots=True)
 class ElementEntity:
-    """One exact array element association (parser.rs:1101-1106)."""
+    """One exact array element association (parser.rs)."""
 
     span: object
     value: int
@@ -129,7 +129,7 @@ class ElementEntity:
 
 
 # The frozen non-finite binary64 bit patterns (RFC 0005 §6,
-# https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:133-139; parser.rs:1382-1401).
+# https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md; parser.rs).
 BITS_POSITIVE_INFINITY = 0x7FF0000000000000
 BITS_NEGATIVE_INFINITY = 0xFFF0000000000000
 BITS_NAN = 0x7FF8000000000000
@@ -531,7 +531,7 @@ def parse(
     limits: ParseLimits,
 ) -> object:
     """Parses a complete immutable JSON/JSONC/JSON5 document snapshot
-    (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:161-168, parser.rs:73-166).
+    (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs, parser.rs).
 
     Returns the ``JsonDocument`` from :mod:`consema.json.document`; raises
     :class:`JsonFormationFailure` for fatal limits or invalid UTF-8.
@@ -622,13 +622,13 @@ def parse(
 
 
 # ---------------------------------------------------------------------------
-# String decoding (parser.rs:1232-1347; RFC 0005 §5)
+# String decoding (parser.rs; RFC 0005 §5)
 # ---------------------------------------------------------------------------
 
 
 def decode_json_string(literal: str, profile: JsonProfile) -> tuple[str, bool] | None:
     """Decodes one complete string literal; None on invalid escapes
-    (parser.rs:1232-1315). Returns (value, has_unescaped_line_separator)."""
+    (parser.rs). Returns (value, has_unescaped_line_separator)."""
     quote = literal[0] if literal else ""
     if quote != '"' and not (profile.is_json5() and quote == "'"):
         return None
@@ -738,7 +738,7 @@ def decode_json_string(literal: str, profile: JsonProfile) -> tuple[str, bool] |
 
 
 # ---------------------------------------------------------------------------
-# Number decoding (parser.rs:863-878, 1375-1443)
+# Number decoding (parser.rs)
 # ---------------------------------------------------------------------------
 
 
@@ -765,7 +765,7 @@ def parse_json_decimal(text: str) -> Decimal:
 
 
 def parse_json5_number(text: str) -> InternalValue:
-    """Decodes one validated JSON5 number (parser.rs:1375-1443)."""
+    """Decodes one validated JSON5 number (parser.rs)."""
     if text.startswith("-"):
         negative = True
         unsigned = text[1:]
@@ -802,7 +802,7 @@ def parse_json5_number(text: str) -> InternalValue:
 
 
 # ---------------------------------------------------------------------------
-# IdentifierName decoding (parser.rs:1349-1373)
+# IdentifierName decoding (parser.rs)
 # ---------------------------------------------------------------------------
 
 

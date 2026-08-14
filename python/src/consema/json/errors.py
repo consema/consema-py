@@ -6,7 +6,7 @@ transcribed from https://github.com/consema/consema-rs/blob/main/consema-protoco
 failure enums and their code mappings are the Rust family's StableFailure
 impls):
 
-- JSON syntax/conformance/semantic diagnostic codes: error_registry.rs:213
+- JSON syntax/conformance/semantic diagnostic codes: error_registry.rs
   (json.edit.representation-fallback@1), :219 (json.object.duplicate-
   member@1), :225 (json.projection.duplicate-keys@1), :231
   (json.projection.semantic-unavailable@1), :237 (json.strict.comment-not-
@@ -15,15 +15,15 @@ impls):
   (json.projection.structure-reencoded@1), :649 (json5.string.unescaped-
   line-separator@1), :655 (json5.syntax.invalid-identifier@1), :1332
   (json.projection.incomplete-document@1).
-- Fatal formation codes: core.parse.resource-limit@1 error_registry.rs:39;
-  core.source.invalid-utf8@1 error_registry.rs:207.
-- Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-json/src/projection.rs:754-765.
-- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-json/src/edit.rs:1299-1323
-  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:386-423).
-- Query failures reuse the common core.query.*@1 codes (error_registry.rs:108-118)
+- Fatal formation codes: core.parse.resource-limit@1 error_registry.rs;
+  core.source.invalid-utf8@1 error_registry.rs.
+- Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-json/src/projection.rs.
+- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-json/src/edit.rs
+  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md).
+- Query failures reuse the common core.query.*@1 codes (error_registry.rs)
   through consema.protocol.query.QueryFailure — no new type is needed.
 - Diagnostic ordering: Diagnostic::sort_deterministically,
-  https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs:107-123 (primary start, category,
+  https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs (primary start, category,
   code, occurrence; missing primary sorts last).
 
 Design: the JSON family raises typed exceptions whose stable ``code`` is the
@@ -87,7 +87,7 @@ class JsonDiagnostic:
     notes: tuple[str, ...] = field(default_factory=tuple, repr=False)
 
     def sort_key(self) -> tuple:
-        """Deterministic order key (diagnostic.rs:107-123).
+        """Deterministic order key (diagnostic.rs).
 
         Missing primary sorts last (u64::MAX in Rust; Python's None-in-
         tuple comparison is avoided by using an explicit sentinel).
@@ -98,7 +98,7 @@ class JsonDiagnostic:
 
 def sort_diagnostics(diagnostics: list[JsonDiagnostic]) -> None:
     """Sorts in place by (primary start, category, code, occurrence)
-    (diagnostic.rs:107-123)."""
+    (diagnostic.rs)."""
     diagnostics.sort(key=lambda diagnostic: diagnostic.sort_key())
 
 
@@ -110,7 +110,7 @@ def sort_diagnostics(diagnostics: list[JsonDiagnostic]) -> None:
 class JsonFormationFailureKind(enum.Enum):
     """Fatal formation failure categories (FatalFormationFailure of
     consema-document; the resource names follow the Rust spellings used by
-    parser.rs:79-83, 390-394, 832-835, 1180-1184)."""
+    parser.rs)."""
 
     SOURCE_BYTES = "source-bytes"
     TOKEN_COUNT = "token-count"
@@ -125,8 +125,8 @@ class JsonFormationFailure(Exception):
     Exceeding a configured limit is fatal with no truncation-then-success
     (RFC 0016 §6); invalid UTF-8 at the JSON entry point is likewise fatal
     (RFC 0005 §2: JSON5 accepts UTF-8 source only). The frozen code is
-    core.parse.resource-limit@1 (error_registry.rs:39) or
-    core.source.invalid-utf8@1 (error_registry.rs:207).
+    core.parse.resource-limit@1 (error_registry.rs) or
+    core.source.invalid-utf8@1 (error_registry.rs).
     """
 
     def __init__(
@@ -157,7 +157,7 @@ class JsonFormationFailure(Exception):
 
 
 class JsonProjectionFailureKind(enum.Enum):
-    """Stable projection failure categories (projection.rs:328-355)."""
+    """Stable projection failure categories (projection.rs)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     CONFLICTING_POLICY_RULES = "ConflictingPolicyRules"
@@ -172,7 +172,7 @@ class JsonProjectionFailureKind(enum.Enum):
 class JsonProjectionFailure(Exception):
     """Stable projection failure with a frozen registered code.
 
-    Code mapping authority: projection.rs:754-765. ``name`` is the exact
+    Code mapping authority: projection.rs. ``name`` is the exact
     Rust variant spelling the conformance vectors reference.
     """
 
@@ -219,7 +219,7 @@ _PROJECTION_CODES = {
 
 
 class JsonEditFailureKind(enum.Enum):
-    """Stable edit failure categories (edit.rs:260-299)."""
+    """Stable edit failure categories (edit.rs)."""
 
     RECOVERED_DOCUMENT = "RecoveredDocument"
     WRONG_SNAPSHOT = "WrongSnapshot"
@@ -245,7 +245,7 @@ class JsonEditFailureKind(enum.Enum):
 class JsonEditFailure(Exception):
     """Stable edit failure with a frozen registered code.
 
-    Code mapping authority: edit.rs:1299-1323 (RFC 0004 §17). ``name`` is
+    Code mapping authority: edit.rs (RFC 0004 §17). ``name`` is
     the exact Rust variant spelling referenced by the conformance vectors
     (json-family-v2.json:183 "TargetNotFound").
     """

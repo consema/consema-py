@@ -10,7 +10,7 @@ formation failure or an atomic operation failure; a limit failure never
 masquerades as an empty body, truncated expression, shortened query,
 partial target, or successful edit (hard gate 4).
 
-Authority: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lib.rs:166-234 (fields) and lib.rs:236-273
+Authority: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lib.rs (fields) and lib.rs
 (the frozen R-3 default values, transcribed verbatim).
 """
 
@@ -24,7 +24,7 @@ from consema.document.limits import ParseLimits
 @dataclass(frozen=True, slots=True)
 class HclParseLimits:
     """Resource bounds applied during HCL formation (RFC 0014 §11;
-    lib.rs:166-234)."""
+    lib.rs)."""
 
     common: ParseLimits = field(default_factory=ParseLimits)
     max_decoded_utf8_bytes: int = 128 * 1024 * 1024

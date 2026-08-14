@@ -1,9 +1,9 @@
 """The frozen TOML operation registry (seven operations).
 
 The exact ids, target roles, argument kinds, and support classification
-are transcribed from https://github.com/consema/consema-rs/blob/main/consema-toml/src/operation_registry.rs:16-74;
+are transcribed from https://github.com/consema/consema-rs/blob/main/consema-toml/src/operation_registry.rs;
 the structural surface (five Supported operations) and the total count
-are pinned by the Rust registry test operation_registry.rs:94-119.
+are pinned by the Rust registry test operation_registry.rs.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ def test_registry_has_exactly_seven_frozen_operations():
 
 
 def test_structural_surface_is_the_five_supported_operations():
-    """operation_registry.rs:99-118: the mandatory structural surface is
+    """operation_registry.rs: the mandatory structural surface is
     exactly the five Supported operations."""
     registry = format_operation_registry(ProfileId.new("toml.1.0", 1))
     structural = [

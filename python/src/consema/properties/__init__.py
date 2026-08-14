@@ -22,7 +22,7 @@ arbitration):
   RFC 0016 sections 5-6 (API shapes and error classification,
   https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md);
 - https://github.com/consema/consema-rs/blob/main/consema-properties/src/*.rs and
-  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1098-1169 for byte/
+  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs for byte/
   registry arbitration only;
 - https://github.com/consema/consema-go/blob/main/go/properties as a cross-reference only (never a template).
 
@@ -139,25 +139,25 @@ from consema.properties.query import (
     execute_properties_syntax_query_cursor,
 )
 
-# Frozen profile and domain ids (RFC 0010 section 1/10; lib.rs:44-49;
-# query.rs:124-150, 167-211).
+# Frozen profile and domain ids (RFC 0010 section 1/10; lib.rs;
+# query.rs).
 READER_PROFILE = "java-properties.reader@1"
 LATIN1_PROFILE = "java-properties.latin1@1"
 NATIVE_QUERY_DOMAIN = "java-properties.native-semantic-query@1"
 SYNTAX_QUERY_DOMAIN = "java-properties.lossless-syntax-query@1"
 
 # Frozen materialization styles (RFC 0010 section 12,
-# https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:357-364; materialization.rs:96-110).
+# https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md; materialization.rs).
 READER_CANONICAL_STYLE = "java-properties.reader-canonical@1"
 LATIN1_CANONICAL_STYLE = "java-properties.latin1-canonical@1"
 
 # Frozen projection targets (RFC 0010 section 11,
-# https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:312-314; project_cmd.rs:158).
+# https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md; project_cmd.rs).
 BEST_EXACT_ENTRY_MAPPING_TARGET = "java-properties.projection.best-exact-entry-mapping@1"
 REQUIRE_OBJECT_TARGET = "java-properties.projection.require-object@1"
 
 # Frozen duplicate-key authorizing rules (RFC 0010 section 11,
-# https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:341-344).
+# https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md).
 DUPLICATE_KEY_FIRST_WINS_RULE = "java-properties.duplicate-key.first-wins@1"
 DUPLICATE_KEY_LAST_WINS_JDK_TABLE_RULE = (
     "java-properties.duplicate-key.last-wins-jdk-table@1"
