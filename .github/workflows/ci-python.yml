@@ -35,10 +35,11 @@
 # beside this repository and copy the conformance data into the workspace
 # root (the runner and the differential harnesses resolve conformance/* by
 # repository-relative path). The consema checkout is pinned by commit (ref)
-# to 9aa6597 — the 2026-08-15 wave-4 R5 unified provision pin (mother-repo
-# HEAD with all wave-3/wave-4 manifest+conformance fixes) that carries the
-# cfd6e296 519-case inventory (the digest hard-pin lives in
-# python/tests/conformance/test_runner.py; the fc-manifest sha256 3fdf9a77
+# to ccc9943 — the 2026-08-15 wave-4 R5 unified provision pin re-anchored
+# by F2 to the mother-repo HEAD (after b8bf4cb's R40 field-anchor evidence
+# rework, manifest digest 3fdf9a77 → 5cb4ab51) that carries the cfd6e296
+# 519-case inventory (the digest hard-pin lives in
+# python/tests/conformance/test_runner.py; the fc-manifest sha256 5cb4ab51
 # is asserted inside the provision action) — so the provisioned data cannot
 # drift with the spec repository's default branch. The differential job
 # additionally checks out consema/consema-rs (the Rust emitter workspace;
@@ -93,7 +94,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 9aa65976d51d27f93afcffca957475368a69e93b # wave-4 unified provision pin (mother-repo HEAD; fc-manifest sha256 3fdf9a77)
+          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: ${{ matrix.python-version }}
@@ -159,7 +160,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 9aa65976d51d27f93afcffca957475368a69e93b # wave-4 unified provision pin (mother-repo HEAD; fc-manifest sha256 3fdf9a77)
+          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
@@ -186,7 +187,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 9aa65976d51d27f93afcffca957475368a69e93b # wave-4 unified provision pin (mother-repo HEAD; fc-manifest sha256 3fdf9a77)
+          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
@@ -239,7 +240,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 9aa65976d51d27f93afcffca957475368a69e93b # wave-4 unified provision pin (mother-repo HEAD; fc-manifest sha256 3fdf9a77)
+          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
       # G70 (adversarial audit, 2026-08-14): the Rust emitter toolchain is
       # pinned to 1.97.1 — the version this harness was locally verified
       # with (钉定本机实测版本), so the differential goldens are
@@ -398,12 +399,18 @@ jobs:
   # five-language SDK chain example (parse -> native query -> best-exact
   # projection -> semantic edit -> canonical materialization -> TOML
   # conversion; language-neutral contract reference: consema repository
-  # https://github.com/consema/consema/blob/main/docs/cookbook.md). It must actually run and exit 0 with the package
-  # importable via PYTHONPATH=src (the gates job pattern). The example is a
-  # pure SDK chain (no conformance data), so no multi-repo checkout or
-  # provision step is needed.
+  # https://github.com/consema/consema/blob/main/docs/cookbook.md). python/examples/quickstart.py
+  # is the committed copy of the root README quick-start fence (wave-4 R6,
+  # 2026-08-15: kt-style fence gate — the README ```python fence is
+  # compared byte-for-byte against the copy, replacing the pre-gate state
+  # where the fence had no committed twin and no CI step executed or
+  # compared it, so the "粘贴版与入库版必须保持一致" claim is now
+  # enforced, not asserted). Both must actually run and exit 0 with the
+  # package importable via PYTHONPATH=src (the gates job pattern). The
+  # examples are pure SDK chains (no conformance data), so no multi-repo
+  # checkout or provision step is needed.
   examples:
-    name: examples (python examples/sdk_chain.py)
+    name: examples (fence gate + sdk_chain + quickstart)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -415,11 +422,43 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
+      # Knit-style doc-example gate (wave-4 R6, 2026-08-15; mirrors the
+      # consema-kt ci-kotlin.yml fence step): the README ```python
+      # quick-start fence must equal the committed
+      # python/examples/quickstart.py body (both sides normalized for CRLF
+      # and trimmed), so the README snippet can never drift from what CI
+      # actually runs. The fence is located by content, not by position —
+      # every ```python fence in the README is compared against the file
+      # body and exactly one must match, so a new fence inserted earlier
+      # can never silently switch the comparison target.
+      - name: README quick-start fence must match python/examples/quickstart.py
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $readme = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'README.md') -Raw
+          $file = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'python/examples/quickstart.py') -Raw
+          $body = ($file -replace "`r", '').Trim()
+          $matches = @()
+          foreach ($m in [regex]::Matches($readme, '(?s)```python\r?\n(.*?)\r?\n```')) {
+            $fence = ($m.Groups[1].Value -replace "`r", '').Trim()
+            if ($fence -eq $body) {
+              $matches += $fence
+            }
+          }
+          if ($matches.Count -ne 1) {
+            throw "README.md must contain exactly one ```python fence equal to python/examples/quickstart.py (after CRLF normalization and trim) — found $($matches.Count) matching fence(s)"
+          }
+          Write-Output 'README quick-start fence matches python/examples/quickstart.py (located by content)'
       - name: python examples/sdk_chain.py (must exit 0)
         working-directory: python
         env:
           PYTHONPATH: src
         run: python examples/sdk_chain.py
+      - name: python examples/quickstart.py (committed quick-start, must exit 0)
+        working-directory: python
+        env:
+          PYTHONPATH: src
+        run: python examples/quickstart.py
 
   # L5 packaging gate (five-language-ci-design.md §1.1 package row / §5.3
   # L5 row): `pip wheel --no-deps .` builds the wheel through the hatchling

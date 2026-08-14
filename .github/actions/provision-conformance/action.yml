@@ -29,9 +29,10 @@ runs:
         }
         Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
         # Wave-4 R5 manifest sha256 assertion (unified provision pin
-        # 9aa6597): the pinned checkout must carry exactly the digest
-        # recorded at the pin — silent manifest drift fails the job.
-        $expectedDigest = '3fdf9a77323705dfaf24e8f3a822b9217da20dd243e668165f4d06a9ea64676d'
+        # ccc9943, F2 re-anchor): the pinned checkout must carry exactly
+        # the digest recorded at the pin — silent manifest drift fails
+        # the job.
+        $expectedDigest = '5cb4ab518cc3b3e1754a07f21953693b4b9ec113443d44c6ed8a6d4fa8faa6f8'
         $actualDigest = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json')).Hash.ToLowerInvariant()
         if ($actualDigest -ne $expectedDigest) {
           throw "fc-manifest sha256 mismatch after provision: expected $expectedDigest, got $actualDigest"

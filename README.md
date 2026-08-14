@@ -18,7 +18,7 @@ check-version-consistency job 断言 README `Version:` 行与 pyproject 一致�
 pip install consema（当前版本见上方 Version: 行；发布后可用）
 ```
 
-把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python quickstart.py`）（一个 JSON 文档走完 parse → query → edit → render 四条链）：
+把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python quickstart.py`）（一个 JSON 文档走完 parse → query → edit → render 四条链；该示例已入库为 [`python/examples/quickstart.py`](python/examples/quickstart.py)，由 CI `examples` job 与下方 README 栅栏**逐字节比对**——R6，波 4 裁决 2026-08-15：补齐 kt 式 fence 比对门禁；入库前该栅栏无仓库副本、纯手工维护，无任何 CI 步骤执行或比对该栅栏）：
 
 ```python
 from consema.core import PortableValue
@@ -91,8 +91,8 @@ if __name__ == "__main__":
   audit.yml）、python-package（pip wheel --no-deps 打包门禁）、
   check-version-consistency（四处一致：README `Version:` 行 /
   pyproject.toml version / `__init__.__version__` / bug_report.yml 版本
-  字面量）、examples（SDK 链示例实跑）；另有
-  aggregate `check (all gates green)` 门禁。
+  字面量）、examples（fence 比对门禁 + sdk_chain 与 quickstart 实跑）；
+  另有 aggregate `check (all gates green)` 门禁。
 
 ## 构建与测试
 
@@ -116,14 +116,15 @@ runner 测试（tests/conformance/）与 capability parity 测试读取仓库相
 skip 跳过（见 python/README.md Verify）。本地运行前先把规范仓并排检出并把
 conformance 数据 provision 到工作区根（与 CI 的
 `.github/actions/provision-conformance` 复合 action 相同；CI 把规范仓钉在
-`096e5f8`——cfd6e296 519-case 清单对应的 commit、2026-08-14 波 2 统一升级）：
+`ccc9943`——波 4 R5 统一 provision 钉、F2 再锚到母仓收口时点 HEAD；该 commit 的
+`docs/fc-manifest-0.13.0.json` sha256 为 `5cb4ab51…`，与 CI provision 断言一致）：
 
 ```text
 # 规范仓并排检出到 ../consema；本地 checkout 必须与 CI 钉在同一个 commit
-# （CI 用 096e5f8——cfd6e296 519-case 清单对应的 commit、2026-08-14 波 2 统一升级），否则 provision
-# 的数据与 CI 不同：
+# （CI 用 ccc9943——波 4 R5 统一 provision 钉、F2 再锚；manifest sha256 5cb4ab51，
+# 与 CI 断言一致），否则 provision 的数据与 CI 不同：
 #   git clone https://github.com/consema/consema ../consema
-#   cd ../consema && git checkout 096e5f840ecc714912db779706fd881405b92308
+#   cd ../consema && git checkout ccc99430a6e3003bc1b0830d81cbad245323f0a4
 # PowerShell 等价：Copy-Item -Recurse ../consema/conformance ./conformance
 # 与 Copy-Item ../consema/docs/fc-manifest-0.13.0.json ./docs/
 cp -r ../consema/conformance ./conformance
