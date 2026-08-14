@@ -19,7 +19,7 @@ version = "1.0.0-rc.1"
 description = "Language-neutral Consema contracts: closed fifteen-kind PortableValue, PortableGraph, PVCE/1 and PGCE/1 codecs, protocol registries (L0-L5 closed)"
 readme = "README.md"
 requires-python = ">=3.12"
-license = { text = "MIT" }
+license = "MIT"
 keywords = ["consema", "configuration", "language-neutral", "portable-value"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -44,16 +44,20 @@ Repository = "https://github.com/consema/consema-py"
 # so the dev versions are the reproducibility anchor.
 dev = ["pytest==9.1.1", "pytest-cov==7.1.0"]
 
+# G95 (2026-08-14): the MIT LICENSE text must ship in both the sdist and
+# the wheel. The file lives inside the project root (python/LICENSE, kept
+# byte-identical to the repository-root LICENSE — enforced by the
+# check-version-consistency CI job) so hatchling resolves it with no path
+# escaping the project root. A "../LICENSE" force-include broke the
+# wheel-from-sdist build, because force-include paths resolve relative to
+# the extracted sdist root (python -m build P0, fixed 2026-08-14). PEP 639
+# license-files covers both artifacts (sdist root + wheel
+# dist-info/licenses/LICENSE, asserted by the release.yml artifact check).
+[tool.hatch.metadata]
+license-files = { paths = ["LICENSE"] }
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/consema"]
-# G95 (2026-08-14): the LICENSE text lives at the repository root, one
-# level above the project root (python/); force-include ships it into the
-# wheel root and the sdist root so the MIT terms travel with the release
-# artifacts (verified by the release.yml artifact check).
-force-include = { "../LICENSE" = "LICENSE" }
-
-[tool.hatch.build.targets.sdist]
-force-include = { "../LICENSE" = "LICENSE" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

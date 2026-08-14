@@ -305,7 +305,11 @@ jobs:
 
   # Version-consistency gate (tokio check-readme pattern): the README
   # "Version:" line must equal the python/pyproject.toml version, so a
-  # version bump that forgets the README fails CI.
+  # version bump that forgets the README fails CI. The same sync-gate
+  # shape guards the build-consumed license copy (P0 2026-08-14): the
+  # hatchling build ships python/LICENSE into the sdist and wheel (G95),
+  # so python/LICENSE must stay byte-identical to the repository-root
+  # LICENSE.
   check-version-consistency:
     name: check README version vs pyproject.toml (version consistency)
     runs-on: ubuntu-latest
@@ -345,6 +349,19 @@ jobs:
             exit 1
           }
           echo "README and __init__ versions consistent with pyproject.toml: $version"
+      # License parity gate (P0, 2026-08-14): python/LICENSE is the file
+      # hatchling ships into the sdist and wheel (pyproject.toml
+      # [tool.hatch.metadata] license-files); it must never drift from the
+      # repository-root LICENSE.
+      - name: assert python/LICENSE is byte-identical to the repository-root LICENSE
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! cmp -s LICENSE python/LICENSE; then
+            echo "::error::python/LICENSE must be byte-identical to the repository-root LICENSE (the hatchling build ships python/LICENSE into the sdist and wheel)"
+            exit 1
+          fi
+          echo "python/LICENSE byte-identical to the repository-root LICENSE"
 
   # SDK examples gate: python/examples/sdk_chain.py is the committed
   # five-language SDK chain example (parse -> native query -> best-exact

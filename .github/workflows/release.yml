@@ -116,9 +116,10 @@ jobs:
           python -m build
       # Artifact verification (adversarial audit G106/G72): assert the
       # wheel really contains the package and its implementation modules
-      # (including the conformance suites subpackage) and the sdist carries
-      # the package tree plus the LICENSE text, before anything reaches
-      # PyPI.
+      # (including the conformance suites subpackage) plus the LICENSE text
+      # (PEP 639 license-files, dist-info/licenses/LICENSE — G95), and the
+      # sdist carries the package tree plus the LICENSE text, before
+      # anything reaches PyPI.
       - name: verify built wheel + sdist contents
         shell: pwsh
         run: |
@@ -134,6 +135,12 @@ jobs:
             if (-not ($listing -match [regex]::Escape($entry))) {
               throw "wheel must contain $entry (src/consema → consema/)"
             }
+          }
+          # G95 (2026-08-14): the wheel must carry the MIT LICENSE text
+          # (PEP 639 license-files location; the dist-info prefix is
+          # version-dependent, so the check matches the stable tail).
+          if (-not ($listing -match [regex]::Escape('dist-info/licenses/LICENSE'))) {
+            throw 'wheel must carry the LICENSE text (dist-info/licenses/LICENSE)'
           }
           $tarList = tar -tzf $sdist.FullName
           if ($LASTEXITCODE -ne 0) { throw "tar listing failed (exit $LASTEXITCODE)" }
