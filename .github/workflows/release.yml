@@ -89,7 +89,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 096e5f840ecc714912db779706fd881405b92308 # cfd6e296 519-case conformance data pin
+          ref: 9aa65976d51d27f93afcffca957475368a69e93b # wave-4 unified provision pin (mother-repo HEAD; fc-manifest sha256 3fdf9a77)
       - uses: ./.github/actions/provision-conformance
       - name: pip install -e '.[dev]' (pytest for the release-path gates)
         working-directory: python

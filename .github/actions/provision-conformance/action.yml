@@ -20,6 +20,7 @@ runs:
         if (-not (Test-Path -LiteralPath $source)) {
           throw "conformance data not found in the consema checkout: $source"
         }
+        if (Test-Path -LiteralPath $target) { Remove-Item -LiteralPath $target -Recurse -Force }
         Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
         New-Item -ItemType Directory -Force (Join-Path $env:GITHUB_WORKSPACE 'docs') | Out-Null
         $manifest = Join-Path $env:GITHUB_WORKSPACE 'consema-repo\docs\fc-manifest-0.13.0.json'
@@ -27,6 +28,14 @@ runs:
           throw "fc-manifest not found in the consema checkout: $manifest"
         }
         Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
+        # Wave-4 R5 manifest sha256 assertion (unified provision pin
+        # 9aa6597): the pinned checkout must carry exactly the digest
+        # recorded at the pin — silent manifest drift fails the job.
+        $expectedDigest = '3fdf9a77323705dfaf24e8f3a822b9217da20dd243e668165f4d06a9ea64676d'
+        $actualDigest = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json')).Hash.ToLowerInvariant()
+        if ($actualDigest -ne $expectedDigest) {
+          throw "fc-manifest sha256 mismatch after provision: expected $expectedDigest, got $actualDigest"
+        }
         # The toml.corpus.cargo-manifest case reads the committed fixture
         # conformance/fixtures/toml/Cargo.toml (single authority), which is
         # included in the conformance/ copy above; no workspace-root
