@@ -224,7 +224,10 @@ class Parser:
         return self.text.startswith(prefix, at)
 
     def _error(self, start: int, end: int, reason: str):
-        """Raises a syntax failure at character indices."""
+        """Raises a syntax failure at character indices; an end position
+        one past the last character (an error landing on EOF) is clamped
+        to the source end so the failure stays a valid byte span."""
+        end = min(end, len(self.text))
         raise _SyntaxError(self.bm.byte(start), self.bm.byte(end), reason)
 
     def _error_bytes(self, start: int, end: int, reason: str):

@@ -180,6 +180,20 @@ def test_parse_reject_syntax_variants():
         assert caught.value.code == "toml.parse.syntax@1"
 
 
+def test_syntax_error_at_eof_is_formation_failure_not_index_error():
+    """A syntax error landing exactly on EOF used to crash with a bare
+    IndexError (byte map out of range); it must be a TomlFormationFailure
+    through both the direct parse and the facade parse_document."""
+    cases = (b"abc", b"1.9", b"a =", b"[tbl", b"a = [1,", b"a = 1\nb")
+    for source in cases:
+        with pytest.raises(TomlFormationFailure) as caught:
+            _parse(source)
+        assert caught.value.code == "toml.parse.syntax@1", source
+        with pytest.raises(TomlFormationFailure) as facade_caught:
+            parse_document(source, ProfileId.new("toml.1.0", 1))
+        assert facade_caught.value.code == "toml.parse.syntax@1", source
+
+
 def test_resource_token_limit():
     """toml.resource.token-limit: max_token_count=3 fails fatally with
     core.parse.resource-limit@1 and no truncated success."""
