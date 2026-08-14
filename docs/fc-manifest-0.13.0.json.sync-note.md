@@ -12,10 +12,10 @@
 
 ## 来源与同步
 
-- source: consema@0146e6f1（母仓 HEAD，2026-08-14 同步时刻；内容 sha256 `5c263ed4…`）
-- synced: 2026-08-14（波 3 W3-04 修复，agent F3）
-- 同步范围：`feature_complete_judgment.open_items[].evidence`（C-2 条，:812）残留行号区间 `docs/fuzz-evidence-0.13.0.md` → 母仓现行节锚 `docs/fuzz-evidence-0.13.0.md §7（完成路径）`。
-- 同步后 sha256：`5c263ed466483ff5d316d1845b5feaff7fbf62eafc44d10f04eda804eed452ca`（与 consema@0146e6f1 的 `docs/fc-manifest-0.13.0.json` 逐字节一致）。
+- source: consema@e6d0246（母仓 HEAD，2026-08-14 重同步时刻；内容 sha256 `21141047…`）
+- synced: 2026-08-14（波 3 W3-04 修复，agent F3；W3-12/F7 重同步：母仓 f58dc1f 删注记字符串行号后副本逐字节重随）
+- 同步范围：`feature_complete_judgment.open_items[].evidence`（C-2 条）残留行号区间 `docs/fuzz-evidence-0.13.0.md` → 母仓现行节锚 `docs/fuzz-evidence-0.13.0.md §7（完成路径）`；W3-12/F7 重同步随母仓注记字符串行号删除。
+- 同步后 sha256：`211410478b455ec92ee7e6ad1df8f17fa2b4258e9db6c633debb1deb0544c407`（与 consema@e6d0246 的 `docs/fc-manifest-0.13.0.json` 逐字节一致）。
 
 ## 同步 / 比对命令
 
