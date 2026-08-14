@@ -4,7 +4,7 @@ resolution, and the public parse entry point.
 Authority (language-neutral first; Rust only for arbitration):
 
 - RFC 0007 (https://github.com/consema/consema/blob/main/docs/rfcs/0007-yaml-family-profiles-and-safety-v1.md): source
-  and encoding s3 (lines 56-72), formation and recovery s4 (73-97), the
+  and encoding s3, formation and recovery s4 (73-97), the
   1.2 Core profile s5 (98-139), the 1.1 compatibility profile s6 (140-166),
   graph composition and alias safety s8 (194-213: reserve identity, register
   anchor before descending, most-recent-preceding rule, backward cycles,
@@ -2233,7 +2233,7 @@ def _validate_version_directives(text: str, profile: YamlProfile) -> None:
     for line_index, line in enumerate(text.split("\n")):
         if line.endswith("\r"):
             line = line[:-1]
-        if line.startswith("﻿"):
+        if line.startswith("\ufeff"):
             line = line[1:]
         if not line.startswith("%YAML"):
             continue
@@ -2279,8 +2279,8 @@ def parse(
         raise YamlFormationFailure(
             YamlFormationFailureKind.SYNTAX, code="yaml.native.invalid-source-span@1"
         )
-    backend_text = text[1:] if text.startswith("﻿") else text
-    scalar_offset_base = 1 if text.startswith("﻿") else 0
+    backend_text = text[1:] if text.startswith("\ufeff") else text
+    scalar_offset_base = 1 if text.startswith("\ufeff") else 0
     _validate_version_directives(backend_text, profile)
     try:
         events = _EventParser(

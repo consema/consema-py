@@ -39,7 +39,7 @@ Authority (Rust arbitration for exact semantics):
   (lib.rs).
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
-cases formation.* (lines 5-59). https://github.com/consema/consema-go/blob/main/go/properties is a cross-reference only.
+cases formation.*. https://github.com/consema/consema-go/blob/main/go/properties is a cross-reference only.
 """
 
 from __future__ import annotations
@@ -341,7 +341,7 @@ class _Parser:
         if (
             self.source.encoding_facts().bom is not None
             and self.atoms
-            and self.atoms[0].ch == "﻿"
+            and self.atoms[0].ch == "\ufeff"
         ):
             self.atoms[0] = _replace(self.atoms[0], syntax=PropertiesSyntaxKind.BOM)
             start = 1

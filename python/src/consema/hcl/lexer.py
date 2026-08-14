@@ -570,7 +570,7 @@ class _Lexer:
         else:
             ch = self.char_at(self.pos)
             assert ch is not None
-            if ch == "﻿":
+            if ch == "\ufeff":
                 self.emit_error_region(
                     self.pos, self.pos + 3, "hcl.parse.byte-order-mark@1", DiagnosticCategory.ENCODING
                 )
@@ -743,7 +743,7 @@ class _Lexer:
         else:
             ch = self.char_at(self.pos)
             assert ch is not None
-            if ch == "﻿":
+            if ch == "\ufeff":
                 self.recover(
                     "hcl.parse.byte-order-mark@1",
                     DiagnosticCategory.ENCODING,

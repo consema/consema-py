@@ -630,7 +630,7 @@ _ORIGINAL_DECODED_POSITION = SourceSnapshot.decoded_position
 def _boundary_aware_decoded_position(snapshot, raw_byte):
     """Accepts the terminal raw offset (raw_byte == source length), which
     the family implementation rejects with OutOfBounds
-    (consema/document/source.py:632-634); end-of-source is a valid
+    (consema/document/source.py); end-of-source is a valid
     half-open span boundary per the shared vector behavior."""
     if raw_byte == snapshot.len() and snapshot.decoded_text() is not None:
         index = snapshot._index
@@ -656,7 +656,7 @@ class _TerminalBoundaryPatch:
 
 def _ini_decoded_span_text(document, span) -> str | None:
     """Decoded text of one syntax span; tolerates the terminal raw
-    boundary that consema.ini.query._decoded_span_text (ini/query.py:484)
+    boundary that consema.ini.query._decoded_span_text (ini/query.py)
     rejects with OutOfBounds."""
     text = document.source.decoded_text()
     if text is None:
@@ -729,15 +729,21 @@ def _syntax_query(vector: runner.Case) -> str | None:
         kinds = [match.kind.as_str() for match in matches]
         ordinals = [match.ordinal for match in matches]
         role_matches = all(match.node.role is NodeRole.INI_SYNTAX_PIECE for match in matches)
-    except Exception:
-        # Workaround: the family executor raises LocationError(OutOfBounds)
-        # for pieces ending at the source boundary (ini/query.py:484); the
-        # runner evaluates the same merge over the lossless pieces instead.
+    except LocationError:
+        # Workaround (wave-4 R54): the family executor raises
+        # LocationError(OutOfBounds) for pieces ending at the source
+        # boundary (ini/query.py — the _decoded_span_text boundary path is
+        # the anchor); the runner evaluates the same merge over the
+        # lossless pieces instead. The fallback re-derives kinds and
+        # ordinals but cannot verify the family executor's node roles, so
+        # it does not claim the role fact — a role assertion fails loudly
+        # instead of silently passing. Any non-OutOfBounds executor
+        # regression propagates (no silent green).
         merged = _ini_syntax_merge_ordinals(document, text, kind)
         pieces = document.lossless_structural_index().pieces
         kinds = [document.lossless_syntax_kinds()[ordinal].as_str() for ordinal in merged]
         ordinals = merged
-        role_matches = True
+        role_matches = False
     expected_kinds = compare.string_sequence(vector.expected, "kinds")
     increasing = compare.boolean_field(vector.expected, "strictly_increasing_ordinals")
     role = compare.string_field(vector.expected, "role")

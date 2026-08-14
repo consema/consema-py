@@ -8,7 +8,7 @@ offset facts, exhaustive coverage, and fatal limits).
 
 Cases covered here:
 
-- plist-v1.json: plist.xml-formation.all-value-types (lines 9-45),
+- plist-v1.json: plist.xml-formation.all-value-types,
   plist.xml-formation.doctype-violations (59-88),
   plist.xml-formation.root-contracts (89-128),
   plist.xml-formation.integer-matrix (178-236),
@@ -82,12 +82,12 @@ def assert_binary_coverage(document, raw: bytes) -> None:
 
 
 # ---------------------------------------------------------------------------
-# plist.xml-formation.all-value-types (plist-v1.json:9-45)
+# plist.xml-formation.all-value-types (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_xml_all_value_types_golden():
-    # Case plist.xml-formation.all-value-types (plist-v1.json:10-44).
+    # Case plist.xml-formation.all-value-types (plist-v1.json).
     source = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" '
@@ -146,7 +146,7 @@ def test_xml_all_value_types_golden():
 
 
 def test_xml_doctype_violations_are_recovered():
-    # Case plist.xml-formation.doctype-violations (plist-v1.json:60-87).
+    # Case plist.xml-formation.doctype-violations (plist-v1.json).
     samples = [
         (
             '<!DOCTYPE wrong PUBLIC "-//Apple//DTD PLIST 1.0//EN" '
@@ -175,7 +175,7 @@ def test_xml_doctype_violations_are_recovered():
 
 
 def test_xml_root_contracts_are_recovered():
-    # Case plist.xml-formation.root-contracts (plist-v1.json:90-127).
+    # Case plist.xml-formation.root-contracts (plist-v1.json).
     samples = [
         ("<plist><string>ok</string></plist>", "plist.parse.root-version@1"),
         ('<plist version="2.0"><string>ok</string></plist>', "plist.parse.root-version@1"),
@@ -190,7 +190,7 @@ def test_xml_root_contracts_are_recovered():
 
 
 def test_xml_integer_matrix():
-    # Case plist.xml-formation.integer-matrix (plist-v1.json:179-236).
+    # Case plist.xml-formation.integer-matrix (plist-v1.json).
     samples = [
         ("<integer>-42</integer>", "Complete", -42),
         ("<integer>0x2A</integer>", "Complete", 42),
@@ -210,7 +210,7 @@ def test_xml_integer_matrix():
 
 
 def test_xml_real_special_values_admitted():
-    # Case plist.xml-formation.real-special-values (plist-v1.json:238-251).
+    # Case plist.xml-formation.real-special-values (plist-v1.json).
     source = (
         '<plist version="1.0"><array><real>nan</real><real>-inf</real>'
         "<real>+infinity</real><real>1.5e3</real></array></plist>"
@@ -227,7 +227,7 @@ def test_xml_real_special_values_admitted():
 
 
 def test_xml_date_matrix():
-    # Case plist.xml-formation.date-matrix (plist-v1.json:254-293).
+    # Case plist.xml-formation.date-matrix (plist-v1.json).
     samples = [
         ("2023-01-01T00:00:00Z", "Complete", 694224000.0),
         ("2023-01-01T00:00:00.5Z", "Recovered", None),
@@ -244,7 +244,7 @@ def test_xml_date_matrix():
 
 
 def test_xml_base64_matrix():
-    # Case plist.xml-formation.base64-matrix (plist-v1.json:295-334).
+    # Case plist.xml-formation.base64-matrix (plist-v1.json).
     samples = [
         ("<data>QUJD</data>", "Complete", "414243"),
         ("<data>QU\nJD</data>", "Complete", "414243"),
@@ -262,7 +262,7 @@ def test_xml_base64_matrix():
 
 
 def test_xml_empty_value_matrix():
-    # Case plist.xml-formation.empty-value-matrix (plist-v1.json:390-435).
+    # Case plist.xml-formation.empty-value-matrix (plist-v1.json).
     samples = [
         ("<date/>", "Recovered", "plist.parse.empty-value@1"),
         ("<integer/>", "Recovered", "plist.parse.empty-value@1"),
@@ -284,7 +284,7 @@ def test_xml_empty_value_matrix():
 
 
 def test_xml_trailing_content_is_recovered():
-    # Case plist.xml-formation.trailing-content (plist-v1.json:361-371).
+    # Case plist.xml-formation.trailing-content (plist-v1.json).
     source = '<plist version="1.0"><string>ok</string></plist> trailing'
     document = parse_xml_source(source)
     assert document.formation_status().value == "Recovered"
@@ -294,9 +294,9 @@ def test_xml_trailing_content_is_recovered():
 
 
 def test_xml_utf16le_input_golden():
-    # Case plist.xml-formation.utf16le-input (plist-v1.json:437-449).
+    # Case plist.xml-formation.utf16le-input (plist-v1.json).
     source = '<plist version="1.0"><string>中文</string></plist>'
-    raw = ("﻿" + source).encode("utf-16-le")
+    raw = ("\ufeff" + source).encode("utf-16-le")
     document = parse(
         raw,
         PlistProfile.XML_V1,
@@ -313,12 +313,12 @@ def test_xml_utf16le_input_golden():
 
 
 # ---------------------------------------------------------------------------
-# plist.binary-formation.minimal-document (plist-v1.json:450-467)
+# plist.binary-formation.minimal-document (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_binary_minimal_document_golden():
-    # Case plist.binary-formation.minimal-document (plist-v1.json:451-466).
+    # Case plist.binary-formation.minimal-document (plist-v1.json).
     raw = bytes.fromhex(
         "62706c697374303050080000000000000101000000000000000100000000000000000000000000000009"
     )
@@ -337,12 +337,12 @@ def test_binary_minimal_document_golden():
 
 
 # ---------------------------------------------------------------------------
-# plist.binary-formation.all-types-document (plist-v1.json:468-508)
+# plist.binary-formation.all-types-document (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_binary_all_types_document_golden():
-    # Case plist.binary-formation.all-types-document (plist-v1.json:469-507).
+    # Case plist.binary-formation.all-types-document (plist-v1.json).
     raw = bytes.fromhex(
         "62706c6973743030d90102030405060708090a0d0e0f101112131455617272617954626f6f"
         "6c54646174615464617465536633325a6672616374696f6e616c53696e74547265616c537374"
@@ -390,7 +390,7 @@ def test_binary_all_types_document_golden():
 
 
 def test_binary_integer_width_matrix():
-    # Case plist.binary-formation.integer-width-matrix (plist-v1.json:510-598).
+    # Case plist.binary-formation.integer-width-matrix (plist-v1.json).
     samples = [
         "62706c6973743030100008000000000000010100000000000000010000000000000000000000000000000a",
         "62706c6973743030100108000000000000010100000000000000010000000000000000000000000000000a",
@@ -426,7 +426,7 @@ def test_binary_integer_width_matrix():
 
 
 def test_binary_strings_matrix():
-    # Case plist.binary-formation.strings-matrix (plist-v1.json:600-641).
+    # Case plist.binary-formation.strings-matrix (plist-v1.json).
     ascii_good = "62706c69737430305548656c6c6f08000000000000010100000000000000010000000000000000000000000000000e"
     utf16_good = "62706c6973743030624e16754c08000000000000010100000000000000010000000000000000000000000000000d"
     high_bit = "62706c697374303051e908000000000000010100000000000000010000000000000000000000000000000a"
@@ -448,7 +448,7 @@ def test_binary_strings_matrix():
 
 
 def test_binary_uid_matrix():
-    # Case plist.binary-formation.uid-matrix (plist-v1.json:642-683).
+    # Case plist.binary-formation.uid-matrix (plist-v1.json).
     good = "62706c6973743030800508000000000000010100000000000000010000000000000000000000000000000a"
     wide = "62706c6973743030830102030408000000000000010100000000000000010000000000000000000000000000000d"
     non_minimal = "62706c69737430308500000000000508000000000000010100000000000000010000000000000000000000000000000f"
@@ -465,12 +465,12 @@ def test_binary_uid_matrix():
 
 
 # ---------------------------------------------------------------------------
-# Trailer hardening: no false Complete (plist-v1.json:774-859)
+# Trailer hardening: no false Complete (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_binary_header_and_trailer_matrix():
-    # Case plist.binary-formation.header-and-trailer (plist-v1.json:775-818).
+    # Case plist.binary-formation.header-and-trailer (plist-v1.json).
     bad_version = "62706c697374303150080000000000000101000000000000000100000000000000000000000000000009"
     sort_one = "62706c697374303050080000000000010101000000000000000100000000000000000000000000000009"
     sort_two = "62706c697374303050080100000000000101000000000000000100000000000000000000000000000009"
@@ -497,7 +497,7 @@ def test_binary_header_and_trailer_matrix():
 
 
 def test_binary_offset_and_reference_matrix():
-    # Case plist.binary-formation.offset-and-reference (plist-v1.json:821-858).
+    # Case plist.binary-formation.offset-and-reference (plist-v1.json).
     offset_below_8 = "62706c697374303050500805000000000000010100000000000000020000000000000000000000000000000a"
     offset_past_table = "62706c69737430305050080a000000000000010100000000000000020000000000000000000000000000000a"
     ref_out_of_range = "62706c6973743030a10250080a000000000000010100000000000000020000000000000000000000000000000b"
@@ -519,7 +519,7 @@ def test_binary_offset_and_reference_matrix():
 
 
 def test_binary_extended_size_and_cycle():
-    # Case plist.binary-formation.extended-size-and-cycle (plist-v1.json:861-886).
+    # Case plist.binary-formation.extended-size-and-cycle (plist-v1.json).
     extended = (
         "62706c6973743030af101002030405060708090a0b0c0d0e0f1011"
         + "50" * 16
@@ -540,7 +540,7 @@ def test_binary_extended_size_and_cycle():
 
 
 def test_binary_value_integrity_matrix():
-    # Case plist.binary-formation.value-integrity (plist-v1.json:888-916).
+    # Case plist.binary-formation.value-integrity (plist-v1.json).
     non_finite_date = "62706c6973743030337ff8000000000000080000000000000101000000000000000100000000000000000000000000000011"
     non_string_key = "62706c6973743030d1010210015161080b0d000000000000010100000000000000030000000000000000000000000000000f"
     bad_extended = (
@@ -584,7 +584,7 @@ def test_binary_encoding_selection_conflict_is_fatal():
 
 
 def test_binary_duplicate_keys_preserved():
-    # Case plist.binary-formation.duplicate-keys (plist-v1.json:704-723).
+    # Case plist.binary-formation.duplicate-keys (plist-v1.json).
     raw = bytes.fromhex(
         "62706c6973743030d201010203516b10011002080d0f110000000000000101000000000000000400000000000000000000000000000013"
     )

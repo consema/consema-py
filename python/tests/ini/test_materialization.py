@@ -3,7 +3,7 @@
 Cases covered here (conformance/vectors/ini-v1.json, suite
 "consema.ini.conformance@1"):
 
-- materialization.all-canonical-styles (lines 76-81),
+- materialization.all-canonical-styles,
   materialization.atomic-failures-and-limits (85-86).
 
 RFC 0009 §11 contract facts pinned here: the canonical styles
@@ -71,12 +71,12 @@ def python_request() -> MaterializationRequest:
 
 
 # ---------------------------------------------------------------------------
-# materialization.all-canonical-styles (ini-v1.json:76-81)
+# materialization.all-canonical-styles (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_portable_canonical_style():
-    # Case materialization.all-canonical-styles (ini-v1.json:76-81).
+    # Case materialization.all-canonical-styles (ini-v1.json).
     value = nested_entry_mapping([("main", [("key", "value"), ("empty", "")])])
     result = materialize(value, portable_request())
     assert isinstance(result, CompleteMaterialization)
@@ -86,12 +86,12 @@ def test_portable_canonical_style():
 
 
 def test_windows_canonical_style():
-    # Case materialization.all-canonical-styles (ini-v1.json:76-81).
+    # Case materialization.all-canonical-styles (ini-v1.json).
     value = nested_entry_mapping([("Main", [("quoted", " value "), ("plain", "value")])])
     result = materialize(value, windows_request())
     assert isinstance(result, CompleteMaterialization)
     assert result.document.source.decoded_text() == (
-        "﻿[Main]\r\nquoted=\" value \"\r\nplain=value\r\n"
+        "\ufeff[Main]\r\nquoted=\" value \"\r\nplain=value\r\n"
     )
     assert result.document.source.encoding_facts().selected == SourceEncoding.utf16le()
     assert result.document.entries[0].value == " value "
@@ -99,7 +99,7 @@ def test_windows_canonical_style():
 
 
 def test_python_canonical_style():
-    # Case materialization.all-canonical-styles (ini-v1.json:76-81).
+    # Case materialization.all-canonical-styles (ini-v1.json).
     value = nested_entry_mapping(
         [("DEFAULT", [("raw", "%(name)s"), ("multi", "first\n\nthird")])]
     )
@@ -131,12 +131,12 @@ def test_materialization_closure_reprojects_identically():
 
 
 # ---------------------------------------------------------------------------
-# materialization.atomic-failures-and-limits (ini-v1.json:85-86)
+# materialization.atomic-failures-and-limits (ini-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_non_mapping_root_fails_unrepresentable():
-    # Case materialization.atomic-failures-and-limits (ini-v1.json:85-86):
+    # Case materialization.atomic-failures-and-limits (ini-v1.json):
     # a scalar input fails with core.materialization.unrepresentable@1.
     result = materialize(PortableValue.string("x"), portable_request())
     assert isinstance(result, FailedMaterializationAttempt)
@@ -144,7 +144,7 @@ def test_non_mapping_root_fails_unrepresentable():
 
 
 def test_limit_outcomes_are_atomic():
-    # Case materialization.atomic-failures-and-limits (ini-v1.json:85-86):
+    # Case materialization.atomic-failures-and-limits (ini-v1.json):
     # max_input_nodes / max_output_bytes / max_depth /
     # max_provenance_entries fail; max_report_entries is irrelevant to the
     # success path and stays Complete. All failures return no Document.

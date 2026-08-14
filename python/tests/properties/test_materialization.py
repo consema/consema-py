@@ -3,7 +3,7 @@
 Cases covered:
 
 - java-properties-v1.json: materialization.canonical-styles-encodings-
-  and-closure (lines 91-99), materialization.atomic-failures-and-limits
+  and-closure, materialization.atomic-failures-and-limits
   (101-104).
 - Closure (RFC 0010 section 12): canonical output reparses under the
   exact target profile and reprojects to the identical PortableValue.
@@ -59,7 +59,7 @@ def mapping(entries: list[tuple[str, str]]) -> PortableValue:
 
 def test_reader_canonical_escapes_structure_and_controls():
     # Case materialization.canonical-styles-encodings-and-closure, reader
-    # sample (java-properties-v1.json:93).
+    # sample (java-properties-v1.json).
     value = mapping([(" a#", "  v:=!\\\t\b值")])
     result = materialize(value, reader_request())
     assert isinstance(result, CompleteMaterialization)
@@ -77,7 +77,7 @@ def test_reader_canonical_escapes_structure_and_controls():
 
 def test_latin1_canonical_uses_uppercase_utf16_escapes_without_bom():
     # Case materialization.canonical-styles-encodings-and-closure, latin1
-    # sample (java-properties-v1.json:94).
+    # sample (java-properties-v1.json).
     value = mapping([("emoji😀", "café")])
     result = materialize(value, latin1_request().with_newline(NewlinePolicy.CRLF))
     assert isinstance(result, CompleteMaterialization)
@@ -90,7 +90,7 @@ def test_latin1_canonical_uses_uppercase_utf16_escapes_without_bom():
 
 def test_reader_utf16_and_strict_code_pages_are_explicit():
     # Case materialization.canonical-styles-encodings-and-closure, utf16be
-    # sample (java-properties-v1.json:95).
+    # sample (java-properties-v1.json).
     unicode = mapping([("名", "值")])
     utf16 = reader_request().with_encoding(SourceEncoding.utf16be()).with_newline(
         NewlinePolicy.CRLF
@@ -102,15 +102,15 @@ def test_reader_utf16_and_strict_code_pages_are_explicit():
         result.document.source.encoding_facts().selected == SourceEncoding.utf16be()
     )
     # The decoded text is the BOM plus "名=值\r\n".
-    assert result.document.source.decoded_text() == "﻿名=值\r\n"
+    assert result.document.source.decoded_text() == "\ufeff名=值\r\n"
 
 
 def test_reader_strict_cp1252_encoding():
     # Case materialization.canonical-styles-encodings-and-closure, cp1252
-    # sample (java-properties-v1.json:96): "name=caf\xE9\n" in the strict
+    # sample (java-properties-v1.json): "name=caf\xE9\n" in the strict
     # code page, and the unrepresentable-scalar rejection.
     #
-    # BLOCKED by a document-domain defect: consema/document/source.py:838
+    # BLOCKED by a document-domain defect: consema/document/source.py
     # unpacks a two-tuple from the Python 3.12 incremental decoder, which
     # returns the decoded string only. The closure reparse depends on
     # SourceSnapshot.from_raw; the fix belongs to the document agent.
@@ -153,7 +153,7 @@ def test_duplicate_entry_mapping_and_unique_object_close_exactly():
 
 def test_invalid_requests_shapes_and_limits_fail_atomically():
     # Case materialization.atomic-failures-and-limits
-    # (java-properties-v1.json:101-104).
+    # (java-properties-v1.json).
     value = mapping([("key", "value")])
     # A scalar value cannot become a property document.
     failed = materialize(PortableValue.string("scalar"), reader_request())
@@ -173,7 +173,7 @@ def test_invalid_requests_shapes_and_limits_fail_atomically():
     assert failed.failure.kind is MaterializationFailureKind.UNSUPPORTED_NEWLINE
     # The five materialization limits; the report limit never fires
     # because this materializer publishes no report events
-    # (limit_outcomes fact, java-properties-v1.json:103).
+    # (limit_outcomes fact, java-properties-v1.json).
     outcomes = []
     for limits in [
         MaterializationLimits(max_input_nodes=1),

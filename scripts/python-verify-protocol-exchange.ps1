@@ -212,5 +212,17 @@ if ($verifyCode -ne 0) {
     Write-Error "the Rust verify pass found divergences or failed (exit $verifyCode): a divergence here is a real Python encoder/decoder bug (the record codec gaps are closed — measured status in the header above)"
     exit $verifyCode
 }
+# Wave-4 (D5-02 family): the reverse leg must prove the verify mode
+# actually ran — assert the emit_protocol_exchange summary line, mirroring
+# the normalized-differential reverse-leg assertion (the Rust emitter
+# prints "emit_protocol_exchange (verify): N accept cases and M reject
+# cases verified into <dir>").
+$verifySummary = [regex]::Match((Get-Content $verifyLog -Raw), 'emit_protocol_exchange \(verify\): \d+ accept cases and \d+ reject cases verified')
+if ($verifySummary.Success) {
+    Write-Host "RESULT (verify): $($verifySummary.Value)"
+} else {
+    Write-Error 'cannot find the emit_protocol_exchange verify summary line in the verify-mode output'
+    exit 1
+}
 Write-Host "protocol exchange verification complete (exit 0)"
 exit 0

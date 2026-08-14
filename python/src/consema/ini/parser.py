@@ -25,7 +25,7 @@ Authority (Rust arbitration for exact byte semantics):
   duplicate-entry@1 / case-collision@1; recovery only for non-Windows).
 - Limits and fatal failures: parser.rs (nodes, syntax pieces,
   diagnostics); the resource names are pinned by
-  conformance/vectors/ini-v1.json:108-128 (resource.formation-limit-
+  conformance/vectors/ini-v1.json (resource.formation-limit-
   matrix: 17 fatal outcomes, no partial documents).
 - Python optionxform: crate python_case.rs (transcribed in
   consema.ini.python_case).
@@ -87,7 +87,7 @@ from consema.ini.kinds import (
 from consema.ini.python_case import optionxform
 from consema.protocol.error_registry import DiagnosticCategory
 
-_FEFF_UTF8_LEN = len("﻿".encode("utf-8"))
+_FEFF_UTF8_LEN = len("\ufeff".encode("utf-8"))
 
 
 # ---------------------------------------------------------------------------
@@ -273,7 +273,7 @@ class _Parser:
     def scan_physical_lines(self) -> None:
         """Splits the decoded text into physical lines (parser.rs)."""
         start = _FEFF_UTF8_LEN if (
-            self.source.encoding_facts().bom is not None and self.text.startswith("﻿")
+            self.source.encoding_facts().bom is not None and self.text.startswith("\ufeff")
         ) else 0
         decoded_lines: list[tuple[int, int, int, int, int]] = []
         while start < len(self.text_utf8):
@@ -762,7 +762,7 @@ class _Parser:
 
     def push_bom(self) -> None:
         """The BOM scalar is trivia with kind Bom (parser.rs)."""
-        if self.source.encoding_facts().bom is not None and self.text.startswith("﻿"):
+        if self.source.encoding_facts().bom is not None and self.text.startswith("\ufeff"):
             self.push_piece(0, _FEFF_UTF8_LEN, StructuralPieceKind.TRIVIA, IniSyntaxKind.BOM)
 
     def push_comment(self, line: _ScannedLine, leading: int) -> None:
