@@ -23,8 +23,9 @@ tag 推送后 `.github/workflows/release.yml` 自动构建 wheel + sdist 并发�
    git push origin vX.Y.Z
    ```
    发布 workflow 会先校验两道前置守卫，任一不满足即 exit 1 中止：
-   - **tag 必须指向 main HEAD**（tag 指向的 commit 必须在 origin/main 历史
-     内，防止从陈旧/分叉 commit 发布旧代码）；
+   - **tag 必须指向 origin/main 历史内的 commit**（merge-base 祖先判定：
+     tag 指向的 commit 必须在 origin/main 历史内，防止从陈旧/分叉 commit
+     发布旧代码）；
    - **tag↔版本一致**（tag 去掉 `v` 前缀必须等于 `python/pyproject.toml`
      的 version）。
    校验通过后构建 wheel + sdist 并发布到 PyPI。

@@ -346,8 +346,16 @@ def run_argv(argv: list[str] | None = None) -> int:
     try:
         report = runner.run()
     except OSError as error:
-        # Missing/unreadable input (vectors dir, manifest) is a data error
-        # (exit class 2), not an internal error (RFC 0015 §5.1).
+        # Input read failures (missing/unreadable vectors dir, manifest,
+        # fixtures) are data errors (exit 2; RFC 0015 §5.1 input-file read
+        # failures). Actual-path note: malformed input content is not
+        # uniformly data — a corrupt manifest (JSON decode failure, missing
+        # keys) and vector-content parse errors raised at the digest stage
+        # (verify_vectors_digest runs before the suite loop) escape this
+        # OSError catch and land in the generic handler as exit 5
+        # (internal); only suite-load parse errors become suite.parse data
+        # failures (→ 2). Docs match the implementation; classification
+        # behavior unchanged.
         print(f"consema-conformance: {error}", file=sys.stderr)
         return 2
     except Exception as error:  # noqa: BLE001 — CLI boundary

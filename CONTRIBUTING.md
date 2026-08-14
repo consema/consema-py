@@ -32,7 +32,9 @@ conftest 作为模块导入：`from conftest import …`）。**前置：** conf
 把数据 provision 到工作区根（与 CI 的 `.github/actions/provision-conformance`
 复合 action 相同，步骤见 [python/README.md](python/README.md) Verify；规范仓
 钉在 `096e5f8`（2026-08-14 波 2 统一升级），即 cfd6e296 519-case 清单对应 commit）。缺数据时差分
-integrity 测试与 fixture 测试按 documented skip 跳过。
+integrity 测试与差分 case 文件完整性测试按 documented skip 跳过；fixture
+测试与 runner/capability parity 测试缺失即失败（G68 守卫：缺失即失败，
+不做静默 skip；与 python/README.md Verify 口径一致）。
 
 ## 贡献点
 
