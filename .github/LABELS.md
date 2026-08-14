@@ -18,7 +18,7 @@ complements the human-chosen `kind:` label.
 | `kind: docs`    | `0075ca` | Documentation-only change                                          |
 | `kind: chore`   | `5319e7` | Maintenance: tooling, CI, dependencies, refactor without behavior change |
 | `kind: release` | `fbca04` | Release preparation / version bump                                 |
-| `area: core`    | `d93f0b` | Implementation / authoritative content (repo source tree)          |
+| `area: core`    | `d93f0b` | Implementation / authoritative content (repo source tree: `python/**`; root meta files `LICENSE`/`.gitignore`/`.gitattributes`) |
 | `area: ci`      | `bfd4f2` | CI / tooling: `.github/**`, `scripts/**`                           |
 | `area: docs`    | `c2e0c6` | Documentation: `*.md`                                             |
 | `needs-info`    | `1d76db` | Issues awaiting information: the stale workflow (`only-labels: needs-info`) target |
