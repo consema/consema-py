@@ -524,4 +524,4 @@ def _edit_case(vector: runner.Case) -> str | None:
     return None
 
 
-runner.register_suite("xml-1-0-safe-v1.json", "consema.xml-1-0-safe.conformance@1", "", 34, run)
+runner.register_suite("xml-1-0-safe-v1.json", "consema.xml-1-0-safe.conformance@1", "core.semantic-model@6", 34, run)

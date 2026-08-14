@@ -112,10 +112,13 @@ def test_parse_document_round_trips_every_profile():
 
 
 def test_parse_document_unknown_profile_raises_typed_error():
+    # Wave-4 R1 (2026-08-15): an unknown profile reports the frozen
+    # core.materialization.unsupported-profile@1 code — the semantically
+    # closest registered code (no new frozen code; v8, post-1.0.0).
     try:
         parse_document(b"x", ProfileId.new("example.unknown", 1))
     except ProfileError as error:
-        assert error.code() == "core.source.encoding-conflict@1"
+        assert error.code() == "core.materialization.unsupported-profile@1"
     else:
         raise AssertionError("unknown profile must raise ProfileError")
 

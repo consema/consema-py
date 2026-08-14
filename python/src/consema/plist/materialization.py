@@ -46,6 +46,7 @@ directly.
 from __future__ import annotations
 
 import enum
+import math
 from dataclasses import dataclass
 
 from consema.core.value import Decimal, Kind, PortableValue
@@ -133,7 +134,7 @@ class _PlistCodedFailure(MaterializationFailure):
     """Shared-shaped failure carrying the plist-owned ``plist.materialization.*@1``
     spellings for the plist materialization facts (RFC 0013 §12).
 
-    Mirrors https://github.com/consema/consema-go/blob/main/go/plist/materialization.go Code() (lines 125-140): a Date-kind
+    Mirrors https://github.com/consema/consema-go/blob/main/go/plist/materialization.go Code(): a Date-kind
     Unrepresentable maps to ``plist.materialization.fractional-date@1``,
     every other plist Unrepresentable to ``plist.materialization.unrepresentable@1``,
     and ResourceLimit to ``plist.materialization.resource-limit@1``; the
@@ -232,12 +233,28 @@ class _ValueNode:
 
 
 def _decimal_to_f64(decimal: Decimal) -> float | None:
-    """Converts one canonical Decimal to its double value
-    (materialization.rs)."""
-    try:
-        return float(decimal.coefficient) * (10.0 ** decimal.exponent)
-    except (OverflowError, ValueError):
+    """Converts one canonical Decimal to its double value; ``None`` when
+    the decimal is outside the double range (wave-4 R42).
+
+    Single-pass correctly-rounded conversion: ``Decimal.scaleb`` is exact
+    (it only shifts the exponent) and ``float`` rounds the exact value once
+    to the nearest double (strtod semantics), so double-rounding decimals
+    reproduce the exact double spelling (RFC 0013 §6). Regression cases:
+    7.038531e-26 (coefficient 7038531, exponent -32) must yield
+    7.038531e-26 — the two-step ``float(coefficient) * 10.0 ** exponent``
+    form double-rounds it to a different double (e.g. 3e-40 →
+    2.9999999999999998e-40); |exponent| > 308 and magnitude overflow
+    (e.g. 1e1000, 1e-1000, 5e308) must fail atomically with ``None``
+    instead of clamping or wrapping to a wrong finite double.
+    """
+    if decimal.exponent > 308 or decimal.exponent < -308:
         return None
+    from decimal import Decimal as _Decimal
+
+    value = float(_Decimal(decimal.coefficient).scaleb(decimal.exponent))
+    if not math.isfinite(value):
+        return None
+    return value
 
 
 def _leaf_real(value: PortableValue) -> PlistReal | None:
@@ -1141,7 +1158,7 @@ def materialize(
         complete = _materialize_complete(value, request, analyzed)
     except PlistMaterializationFailure as failure:
         # The date-kind name distinguishes the fractional-date spelling
-        # (https://github.com/consema/consema-go/blob/main/go/plist/materialization.go:125-140); the returned failure carries
+        # (https://github.com/consema/consema-go/blob/main/go/plist/materialization.go); the returned failure carries
         # the plist-owned ``plist.materialization.*@1`` codes directly.
         name = (
             "date"

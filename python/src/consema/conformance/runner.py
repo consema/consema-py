@@ -3,17 +3,19 @@
 
 The runner executes the 18 shared vector suites (519 cases) from the
 repository ``conformance/vectors`` directory, verifies the aggregate digest
-against the Feature-Complete Manifest (fc-manifest-0.13.0.json:39), and
+against the Feature-Complete Manifest (fc-manifest-0.13.0.json), and
 reports per-suite pass/fail with documented skips (never silent). The
 vector files themselves are the authority: the runner holds no vector
 content copy, but the suite/case counts and the aggregate digest are hard
 pins inside this module (conformance/README.md rules 3-4; the pins live
 here, the vector content is authoritative).
 
-Suite-level fixed validations (mirroring the Go runner,
-https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go:225-269): the suite and semantic-model
-identifiers, case-ID uniqueness, the frozen case-count assertion, and
-unknown-case rejection.
+Suite-level fixed validations (mirroring the Go runner's ``runSuite``
+fixed checks, symbol-anchored): the suite and semantic-model identifiers
+(every suite whose vector file declares a semantic_model must carry the
+same declaration in its registration — 12 of the 18 suites declare one),
+case-ID uniqueness, the frozen case-count assertion, and unknown-case
+rejection.
 """
 
 from __future__ import annotations
@@ -27,7 +29,7 @@ from consema.conformance import loader
 from consema.core.value import PortableValue
 
 # The frozen aggregate digest and inventory pins (five-runner shared pin;
-# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json:35-41).
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json).
 AGGREGATE_SHA256 = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 EXPECTED_SUITES = 18
 EXPECTED_CASES = 519
@@ -151,7 +153,7 @@ class SuiteDefinition:
 
 
 # The frozen 18-suite inventory in fc-manifest order
-# (fc-manifest-0.13.0.json:35-41; case counts re-pinned by the digest check).
+# (fc-manifest-0.13.0.json; case counts re-pinned by the digest check).
 SUITE_DEFINITIONS: list[SuiteDefinition] = []
 
 
@@ -181,7 +183,16 @@ class Runner:
 
         with open(self.manifest_path, "r", encoding="utf-8") as handle:
             manifest = json_module.load(handle)
-        record = manifest["digests"]["conformance_suite"]
+        try:
+            record = manifest["digests"]["conformance_suite"]
+        except KeyError as error:
+            # A manifest missing the frozen key is a strict-decode failure
+            # of the input file (data, RFC 0015 §5.1), not an internal
+            # error — report it as ValueError so the CLI classifies it
+            # exit 2 (wave-4 R18).
+            raise ValueError(
+                "manifest is missing digests.conformance_suite"
+            ) from error
         return (
             record["aggregate_sha256"],
             int(record["suites"]),
@@ -215,8 +226,14 @@ class Runner:
             semantic_model=data.semantic_model,
             expected_cases=definition.expected_cases,
         )
+        # Wave-4 R4 (2026-08-15): the semantic-model identifier check is
+        # vector-driven — every suite whose vector file declares a
+        # semantic_model must carry the same declaration in its frozen
+        # registration; a vector with no declaration skips the comparison.
+        # This validates all 12 vectors that declare a semantic_model
+        # (previously only the 4 registered declarations were compared).
         if data.suite != definition.suite_id or (
-            definition.semantic_model and data.semantic_model != definition.semantic_model
+            data.semantic_model and data.semantic_model != definition.semantic_model
         ):
             report.failed.append(
                 CaseFailure(id="suite.schema", message="unexpected suite or semantic-model identifier")
@@ -345,17 +362,16 @@ def run_argv(argv: list[str] | None = None) -> int:
     runner = Runner(args.vectors, args.fixtures, manifest)
     try:
         report = runner.run()
-    except OSError as error:
-        # Input read failures (missing/unreadable vectors dir, manifest,
-        # fixtures) are data errors (exit 2; RFC 0015 §5.1 input-file read
-        # failures). Actual-path note: malformed input content is not
-        # uniformly data — a corrupt manifest (JSON decode failure, missing
-        # keys) and vector-content parse errors raised at the digest stage
-        # (verify_vectors_digest runs before the suite loop) escape this
-        # OSError catch and land in the generic handler as exit 5
-        # (internal); only suite-load parse errors become suite.parse data
-        # failures (→ 2). Docs match the implementation; classification
-        # behavior unchanged.
+    except (OSError, ValueError) as error:
+        # Input data failures are data errors (exit 2; RFC 0015 §5.1
+        # input-file read failures + request/plan files failing strict
+        # decode): missing/unreadable vectors dir, manifest or fixtures
+        # (OSError), a corrupt manifest (JSON decode failure or missing
+        # digests.conformance_suite key — ValueError), and vector-content
+        # parse errors raised at the digest stage (verify_vectors_digest
+        # runs before the suite loop). Wave-4 R18: these are corrupted
+        # input data, not internal errors — the generic handler below
+        # stays reserved for genuine internal bugs (exit 5).
         print(f"consema-conformance: {error}", file=sys.stderr)
         return 2
     except Exception as error:  # noqa: BLE001 — CLI boundary

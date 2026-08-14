@@ -1547,7 +1547,7 @@ def _projection_samples(vector: runner.Case, samples) -> str | None:
                     return "missing first_sample keys/values"
                 # The require-object projection value carries the unique-key
                 # object; the Python family wraps it in the value-tree record
-                # (plist/projection.py:800-807), so the object is read from
+                # (plist/projection.py), so the object is read from
                 # the record's root member when the wrapper is present.
                 object_value = result.complete.value
                 if compare.string_field(object_value, "record") is not None:
@@ -2252,4 +2252,4 @@ def _edit_conflicts(vector: runner.Case, samples) -> str | None:
     return None
 
 
-runner.register_suite("plist-v1.json", "consema.plist.conformance@1", "", 49, run)
+runner.register_suite("plist-v1.json", "consema.plist.conformance@1", "core.semantic-model@6", 49, run)

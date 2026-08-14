@@ -366,4 +366,4 @@ def _syntax_cursor_case(vector: runner.Case) -> str | None:
     return compare.require_equal(terminal, expected_terminal, "terminal")
 
 
-runner.register_suite("syntax-query-v1.json", "consema.syntax-query.conformance@1", "", 19, run)
+runner.register_suite("syntax-query-v1.json", "consema.syntax-query.conformance@1", "core.semantic-model@2", 19, run)

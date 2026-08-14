@@ -1569,4 +1569,4 @@ def _convert_transformed_report(vector: runner.Case) -> str | None:
     return None
 
 
-runner.register_suite("operations-v1.json", "consema.operations.conformance@1", "", 35, run)
+runner.register_suite("operations-v1.json", "consema.operations.conformance@1", "core.semantic-model@3", 35, run)

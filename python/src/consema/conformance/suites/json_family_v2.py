@@ -107,7 +107,7 @@ def _materialization_request(
     profile: json_kinds.JsonProfile, style: str
 ) -> MaterializationRequest:
     """Strict request with the frozen style id and no trailing newline
-    (materialization.rs; json_family_v2.go:470)."""
+    (materialization.rs; json_family_v2.go)."""
     return MaterializationRequest.new(
         profile.id(), MaterializationStyleId.new(style, 1)
     ).with_newline(NewlinePolicy.NONE)
@@ -407,7 +407,7 @@ def _project_case(vector: runner.Case) -> str | None:
 
 def _materialization_value(value: PortableValue) -> PortableValue | None:
     """One vector value descriptor {bits|string|null}
-    (json_family_v2.go:833-848)."""
+    (json_family_v2.go)."""
     bits = compare.string_field(value, "bits")
     if bits is not None:
         return PortableValue.binary_float64(int(bits, 16))
@@ -535,7 +535,7 @@ def _ordinal_path(value, name: str) -> list[int] | None:
 def _resolve_member(
     document: json_document.JsonDocument, path: list[int]
 ) -> json_document.JsonObjectMember | None:
-    """Ordinal member-path resolution (json_family_v2.go:906-926)."""
+    """Ordinal member-path resolution (json_family_v2.go)."""
     if not path:
         return None
     value = document.root()
@@ -632,7 +632,7 @@ def _move_member_case(vector: runner.Case) -> str | None:
 
 def _scalar_replacement(value: PortableValue) -> PortableValue | None:
     """One vector scalar replacement descriptor
-    (json_family_v2.go:850-884)."""
+    (json_family_v2.go)."""
     integer_text = compare.string_field(value, "integer")
     if integer_text is not None:
         return PortableValue.integer(int(integer_text))
@@ -744,4 +744,4 @@ def _parse_limit_case(vector: runner.Case) -> str | None:
     return None
 
 
-runner.register_suite("json-family-v2.json", "consema.json-family.conformance@2", "", 33, run)
+runner.register_suite("json-family-v2.json", "consema.json-family.conformance@2", "core.semantic-model@4", 33, run)

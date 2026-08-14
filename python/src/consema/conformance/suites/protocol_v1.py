@@ -115,7 +115,7 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
 
 
 def _expect_error_code(vector: runner.Case, error: Exception | None) -> str | None:
-    """Mirrors expectErrorCode (https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go:104-124)."""
+    """Mirrors expectErrorCode (https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go)."""
     if error is None:
         return f"case {vector.id}: expected rejection"
     if not isinstance(error, ProtocolError):
@@ -139,7 +139,7 @@ def _rejection_message(vector: runner.Case, failure: ProtocolError) -> str | Non
 
 def _all_kinds_sample() -> PortableValue:
     """The closed fifteen-kind sample value
-    (protocolV1AllKinds, https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go:145-193)."""
+    (protocolV1AllKinds, https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go)."""
     date = PortableValue.date(2026, 8, 4)
     time = PortableValue.time(1, 2, 3, Decimal(4, -1))
     local = PortableValue.local_date_time(date, time)
@@ -493,7 +493,7 @@ def _capability_contradiction(vector: runner.Case) -> str | None:
 def _diagnostic_source_binding(vector: runner.Case) -> str | None:
     # A core diagnostic whose primary location still references a
     # process-local snapshot handle cannot be externalized; the boundary is
-    # the fixed process-local rejection (protocol_v1.go:636-642).
+    # the fixed process-local rejection (protocol_v1.go).
     return _expect_error_code(
         vector, protocol_records.process_local_error("$.location.snapshot")
     )
@@ -605,7 +605,7 @@ def _query_portable_result(vector: runner.Case) -> str | None:
 
 def _query_reject_native_handle(vector: runner.Case) -> str | None:
     # A process-local NodeRef cannot be externalized into a native match
-    # locator (records_query_result.go:40-43).
+    # locator (records_query_result.go).
     return _expect_error_code(
         vector, protocol_records.process_local_error("$.native_match.node")
     )
@@ -722,7 +722,7 @@ def _provenance_roundtrip(vector: runner.Case) -> str | None:
 def _raw_node_ref_in_value(value: PortableValue) -> bool:
     """Reports whether the value tree contains a raw process-local
     node-reference marker ("node" integer fields), mirroring
-    rawNodeRefInValue (https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go:874-897)."""
+    rawNodeRefInValue (https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go)."""
     if value.kind is Kind.OBJECT:
         for key, item in value.as_object():
             if key == "node" and item.kind is Kind.INTEGER:
@@ -743,7 +743,7 @@ def _raw_node_ref_in_value(value: PortableValue) -> bool:
 
 class _SourceEditMessage:
     """One exact source edit of the ``core.change-set@1`` record
-    (records_change_set.go:13-39)."""
+    (records_change_set.go)."""
 
     __slots__ = ("old_start", "old_end", "new_start", "new_end", "replacement")
 
@@ -791,7 +791,7 @@ class _SourceEditMessage:
 
 class _NodeMappingMessage:
     """One portable node-mapping fact with caller-defined stable locators
-    (records_change_set.go:41-122)."""
+    (records_change_set.go)."""
 
     __slots__ = ("old_locators", "new_locators", "status", "reason")
 
@@ -874,7 +874,7 @@ class _NodeMappingMessage:
 
 class _ChangeSetMessage:
     """The complete ``core.change-set@1`` record with external source and
-    node identities (records_change_set.go:124-343)."""
+    node identities (records_change_set.go)."""
 
     __slots__ = ("old_source_id", "new_source_id", "source_edits", "node_mappings", "diagnostics")
 
@@ -1101,4 +1101,4 @@ def _query_codes_registered(vector: runner.Case) -> str | None:
     return None
 
 
-runner.register_suite("protocol-v1.json", "consema.protocol.conformance@1", "", 32, run)
+runner.register_suite("protocol-v1.json", "consema.protocol.conformance@1", "core.semantic-model@1", 32, run)

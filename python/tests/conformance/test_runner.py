@@ -1,5 +1,6 @@
-"""Conformance runner test: pins the milestone gate (https://github.com/consema/consema/blob/main/docs/go-implementation
-plan §4.2; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2 — the five-runner shared
+"""Conformance runner test: pins the milestone gate
+(https://github.com/consema/consema/blob/main/docs/go-implementation-plan.md §4.2;
+https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2 — the five-runner shared
 pin): the aggregate vector digest matches the Feature-Complete Manifest and
 the frozen constant, the inventory is exactly 18 suites / 519 cases, every
 suite is conformant with zero skips (any skip is a failure — the (N, 0, 0)
@@ -21,14 +22,15 @@ from consema.conformance.runner import (
     Runner,
     default_manifest_path,
     repository_paths,
+    run_argv,
 )
 
 # The five-runner shared aggregate pin (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
-# §4.2; fc-manifest-0.13.0.json:39).
+# §4.2; fc-manifest-0.13.0.json).
 RECORDED_AGGREGATE = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 
 # Per-suite applicable surface {passed, skipped, failed} — the current L5
-# surface executes every case (https://github.com/consema/consema-go/blob/main/go/conformance/conformance_test.go:60-97).
+# surface executes every case (https://github.com/consema/consema-go/blob/main/go/conformance/conformance_test.go).
 EXPECTED_SUITE_COUNTS = {
     "consema.conformance@1": (30, 0, 0),
     "consema.toml.conformance@1": (18, 0, 0),
@@ -88,6 +90,34 @@ def test_applicable_suite_counts():
         actual = (len(suite.passed), len(suite.skipped), len(suite.failed))
         assert actual == expected, f"suite {suite.suite}: {actual} != {expected}"
     assert seen == set(EXPECTED_SUITE_COUNTS)
+
+
+def _run_argv_with_manifest(manifest_text: str) -> int:
+    import tempfile
+
+    vectors, fixtures = repository_paths()
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as handle:
+        handle.write(manifest_text)
+        path = handle.name
+    try:
+        return run_argv(["--manifest", path, "--vectors", vectors, "--fixtures", fixtures, "--quiet"])
+    finally:
+        import os
+
+        os.unlink(path)
+
+
+def test_cli_corrupt_manifest_is_data_error_exit_2():
+    """Wave-4 R18: a manifest that fails strict JSON decode is corrupted
+    input data (RFC 0015 §5.1 request/plan files failing strict decode),
+    classified exit 2 — never the internal exit 5."""
+    assert _run_argv_with_manifest("{not json") == 2
+
+
+def test_cli_manifest_missing_key_is_data_error_exit_2():
+    """Wave-4 R18: a manifest missing the frozen digests.conformance_suite
+    key is a strict-decode failure of the input file, classified exit 2."""
+    assert _run_argv_with_manifest('{"digests": {}}') == 2
 
 
 def main() -> None:

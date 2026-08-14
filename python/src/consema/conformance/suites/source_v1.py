@@ -466,4 +466,4 @@ def _expect_code(vector: runner.Case, actual: str) -> str | None:
     return compare.require_equal(actual, expected, "error code")
 
 
-runner.register_suite("source-v1.json", "consema.source.conformance@1", "", 28, run)
+runner.register_suite("source-v1.json", "consema.source.conformance@1", "core.semantic-model@2", 28, run)

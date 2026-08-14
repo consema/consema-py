@@ -6,19 +6,20 @@ each test cites the vector case id. Materialization consumes the
 ``plist.value-tree@1`` record shape; the golden records are transcribed
 from the vector JSON spellings.
 
-Cases covered here:
+Cases covered here (case ids anchor the provisioned vectors — the vector
+file is copied in by CI provision, so its line numbers are not stable):
 
-- plist-v1.json: plist.materialization.xml-canonical-text (lines 1222-
-  1254), plist.materialization.binary-canonical-hex (1255-1287),
-  plist.materialization.fractional-date-policy (1313-1355),
-  plist.materialization.old-record-shape-rejected (1356-1378).
+- plist-v1.json: plist.materialization.xml-canonical-text,
+  plist.materialization.binary-canonical-hex,
+  plist.materialization.fractional-date-policy,
+  plist.materialization.old-record-shape-rejected.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from consema.core.value import PortableValue
+from consema.core.value import Decimal, PortableValue
 from consema.document.ids import MaterializationStyleId, ProfileId
 from consema.document.materialization import (
     CompleteMaterialization,
@@ -87,12 +88,12 @@ def _f64_bits(value: float) -> int:
 
 
 # ---------------------------------------------------------------------------
-# plist.materialization.xml-canonical-text (plist-v1.json:1222-1254)
+# plist.materialization.xml-canonical-text
 # ---------------------------------------------------------------------------
 
 
 def test_xml_canonical_text_golden():
-    # Case plist.materialization.xml-canonical-text (plist-v1.json:1223-1253).
+    # Case plist.materialization.xml-canonical-text.
     root = PortableValue.object(
         (
             ("name", PortableValue.string("value")),
@@ -145,12 +146,12 @@ def test_xml_canonical_text_golden():
 
 
 # ---------------------------------------------------------------------------
-# plist.materialization.binary-canonical-hex (plist-v1.json:1255-1287)
+# plist.materialization.binary-canonical-hex (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_binary_canonical_hex_golden():
-    # Case plist.materialization.binary-canonical-hex (plist-v1.json:1256-1286).
+    # Case plist.materialization.binary-canonical-hex (plist-v1.json).
     root = PortableValue.object(
         (
             ("name", PortableValue.string("value")),
@@ -180,13 +181,12 @@ def test_binary_canonical_hex_golden():
 
 
 # ---------------------------------------------------------------------------
-# plist.materialization.fractional-date-policy (plist-v1.json:1313-1355)
+# plist.materialization.fractional-date-policy (plist-v1.json)
 # ---------------------------------------------------------------------------
 
 
 def test_fractional_date_policy():
-    # Case plist.materialization.fractional-date-policy (plist-v1.json:1314-
-    # 1354).
+    # Case plist.materialization.fractional-date-policy.
     root = PortableValue.object((("t", date_leaf(1.5)),))
     truncated = materialize(
         value_tree_record(root, "TruncateWithReport"), xml_request()
@@ -209,21 +209,20 @@ def test_fractional_date_policy():
     refused = materialize(value_tree_record(root), xml_request())
     assert isinstance(refused, FailedMaterializationAttempt)
     # The plist family surfaces the plist-owned code directly
-    # (https://github.com/consema/consema-go/blob/main/go/plist/materialization.go:125-140; RFC 0013 §12).
+    # (https://github.com/consema/consema-go/blob/main/go/plist/materialization.go; RFC 0013 §12).
     assert refused.failure.kind.value == "unrepresentable"
     assert refused.failure.name == "date"
     assert refused.failure.code == "plist.materialization.fractional-date@1"
 
 
 # ---------------------------------------------------------------------------
-# plist.materialization.old-record-shape-rejected (plist-v1.json:1356-1378)
+# plist.materialization.old-record-shape-rejected
 # ---------------------------------------------------------------------------
 
 
 def test_old_record_shape_rejected():
-    # Case plist.materialization.old-record-shape-rejected (plist-v1.json:
-    # (record 定义区间): an Object carrying a `kind` member is not the
-    # plist.value-tree@1 record.
+    # Case plist.materialization.old-record-shape-rejected: an Object
+    # carrying a `kind` member is not the plist.value-tree@1 record.
     old_shape = PortableValue.object(
         (
             ("record", PortableValue.string("plist.value-tree@1")),
@@ -238,7 +237,8 @@ def test_old_record_shape_rejected():
 def test_binary_materialization_deduplicates_scalars():
     # RFC 0013 §10.2: identical scalar objects are deduplicated at first
     # occurrence; the vector normalization-and-conversion case pins
-    # deduplicated_scalars: 2 (plist-v1.json:1289-1312).
+    # deduplicated_scalars: 2 (plist-v1.json case
+    # plist.materialization.normalization-and-conversion).
     root = PortableValue.object(
         (
             ("a", PortableValue.integer(5)),
@@ -251,3 +251,47 @@ def test_binary_materialization_deduplicates_scalars():
     facts = result.document.binary_facts()
     # 1 dict + 3 keys + 2 unique scalars (the duplicated integer collapses).
     assert facts.trailer.num_objects == 6
+
+
+# ---------------------------------------------------------------------------
+# wave-4 R42 regression: decimal real conversion is single-pass correctly
+# rounded and out-of-range decimals fail atomically (materialization.py
+# _decimal_to_f64)
+# ---------------------------------------------------------------------------
+
+
+def _decimal_real(value: Decimal) -> PortableValue:
+    return PortableValue.object((("t", PortableValue.decimal(value)),))
+
+
+def test_decimal_real_correctly_rounded_single_pass():
+    """7.038531e-26 (coefficient 7038531, exponent -32) must materialize as
+    the correctly rounded double 7.038531e-26 — the old two-step
+    ``float(coefficient) * 10.0 ** exponent`` form double-rounds decimals
+    (e.g. 3e-40 → 2.9999999999999998e-40)."""
+    for decimal, expected in (
+        (Decimal(7038531, -32), b"<real>7.038531e-26</real>"),
+        (Decimal(3, -40), b"<real>3e-40</real>"),
+    ):
+        result = materialize(value_tree_record(_decimal_real(decimal)), xml_request())
+        assert isinstance(result, CompleteMaterialization)
+        assert b"<real>" in result.document.render()
+        assert expected in result.document.render()
+
+
+def test_decimal_real_out_of_range_fails_atomically():
+    """1e1000, 1e-1000 and 5e308 are outside the double range — the
+    materialization must fail atomically as unrepresentable, never clamp
+    or wrap to a wrong finite double (wave-4 R42)."""
+    for decimal in (Decimal(1, 1000), Decimal(1, -1000), Decimal(5, 308)):
+        result = materialize(value_tree_record(_decimal_real(decimal)), xml_request())
+        assert isinstance(result, FailedMaterializationAttempt), f"{decimal} must fail"
+        assert result.failure.kind.value == "unrepresentable"
+        assert result.failure.code == "plist.materialization.unrepresentable@1"
+
+
+def test_decimal_real_boundary_still_materializes():
+    """1e308 and 1e-308 are representable doubles and must still pass."""
+    for decimal in (Decimal(1, 308), Decimal(1, -308)):
+        result = materialize(value_tree_record(_decimal_real(decimal)), xml_request())
+        assert isinstance(result, CompleteMaterialization), f"{decimal} must materialize"

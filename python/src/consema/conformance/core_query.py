@@ -8,7 +8,7 @@ surface is exercised here so the shared vectors drive it. The operator
 semantics follow the frozen validation table of
 consema.protocol.query._OPERATOR_TABLE and the match-role model of RFC 0016
 §5.4. Failure names follow the vector spellings (queryFailureName,
-https://github.com/consema/consema-go/blob/main/go/conformance/g43_faces.go:368-394).
+https://github.com/consema/consema-go/blob/main/go/conformance/g43_faces.go).
 """
 
 from __future__ import annotations
@@ -74,28 +74,44 @@ class CoreCursor:
     ``Cancelled`` when cancellation was requested before the next advance,
     ``Failed`` when a resource limit is hit while advancing. ``max_results``
     bounds the yielded results; the advance that would exceed the bound
-    fails with ResourceLimitExceeded.
+    fails with ResourceLimitExceeded. ``max_steps`` bounds the pulls (the
+    Rust lazy step counter, query.rs ``LazyContext::step``): every advance
+    accounts one step — Python ints cannot overflow, so ``+= 1`` is the
+    saturating-add equivalent — and the pull that would exceed the bound
+    fails with ResourceLimitExceeded (wave-4 R12).
     """
 
-    __slots__ = ("_matches", "_index", "max_results", "cancelled", "mode")
+    __slots__ = ("_matches", "_index", "max_results", "max_steps", "_steps", "cancelled", "mode")
 
     def __init__(
         self,
         matches: list[CoreMatch],
         max_results: int | None = None,
+        max_steps: int | None = None,
         cancelled: bool = False,
         mode: str = "Completed",
     ):
         self._matches = matches
         self._index = 0
         self.max_results = max_results
+        self.max_steps = max_steps
+        self._steps = 0
         self.cancelled = cancelled
         self.mode = mode
 
     def next(self) -> CoreMatch | None:
-        """Yields the next result, or None at a terminal state."""
+        """Yields the next result, or None at a terminal state.
+
+        Each pull accounts one step before producing; the pull that would
+        exceed ``max_steps`` raises ResourceLimitExceeded (the Rust lazy
+        step counter).
+        """
         if self.cancelled:
             return None
+        if self.max_steps is not None:
+            self._steps += 1
+            if self._steps > self.max_steps:
+                raise QueryFailure(QueryFailureKind.RESOURCE_LIMIT)
         if self.max_results is not None and self._index >= self.max_results:
             return None
         if self._index >= len(self._matches):

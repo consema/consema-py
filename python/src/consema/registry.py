@@ -9,7 +9,7 @@ https://github.com/consema/consema-go/blob/main/go/document.go are
 cross-references only, never a template.
 
 The capability inventory is the declared Feature-Complete Manifest
-capability set (fc-manifest-0.13.0.json:30-34: 8 families / 16 profiles /
+capability set (fc-manifest-0.13.0.json: 8 families / 16 profiles /
 21 query domains / 16 operation registries / 187 error codes). Everything
 this module can derive from the backend packages is derived from them:
 
@@ -110,7 +110,7 @@ class FormatProfile:
     (the inline ``registry`` module of
     https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs —
     ``FormatProfile``; the Go mirror is
-    https://github.com/consema/consema-go/blob/main/go/registry.go:50-69)."""
+    https://github.com/consema/consema-go/blob/main/go/registry.go)."""
 
     __slots__ = ("family", "profile")
 
@@ -655,8 +655,17 @@ class ProfileError(Exception):
     unknown or its family is not implemented.
 
     The text is human presentation only (RFC 0016 §6); the frozen code
-    mirrors the Rust facade's unknown-profile failure diagnostic
-    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs).
+    follows the wave-4 R1 ruling (五仓统一, 2026-08-15): an unknown profile
+    is not an encoding conflict, so the failure reports
+    ``core.materialization.unsupported-profile@1`` — the semantically
+    closest code of the frozen v1-v7 187-code registry (no new code is
+    added; a dedicated code is v8, post-1.0.0). Candidate sweep of the v7
+    registry (python/src/consema/protocol/error_registry.py): the only
+    frozen code whose name is literally "unsupported-profile" is
+    ``core.materialization.unsupported-profile@1`` (Materialization, 0.5.0,
+    "Requested materialization profile is unavailable"); the alternative
+    ``core.protocol.unknown-contract@1`` (Encoding, 0.3.0) names contracts,
+    not profiles. Same choice as consema-ts registry.ts (W4-15).
     """
 
     def __init__(self, profile: ProfileId):
@@ -665,7 +674,7 @@ class ProfileError(Exception):
 
     def code(self) -> str:
         """The frozen registered code of the unknown-profile failure."""
-        return "core.source.encoding-conflict@1"
+        return "core.materialization.unsupported-profile@1"
 
 
 # ---------------------------------------------------------------------------
@@ -682,8 +691,8 @@ def parse_document(source: bytes, profile: ProfileId) -> Document:
     The per-format encoding selection and limits use the frozen profile
     defaults; the java-properties reader profile uses an explicit UTF-8
     selection because its contract has no profile default. Unknown profile
-    ids raise :class:`ProfileError` with the same frozen code as the Rust
-    facade's unknown-profile failure.
+    ids raise :class:`ProfileError` with the frozen
+    ``core.materialization.unsupported-profile@1`` code (wave-4 R1).
     """
     profile_id = profile.id
     if profile_id in ("json.strict", "jsonc.bounded", "json5.standard"):

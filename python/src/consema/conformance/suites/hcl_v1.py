@@ -961,7 +961,7 @@ def _assert_projected_value(actual, expected) -> str | None:
         if expected_expression is None:
             return "missing expected expression record"
         # The family emits the value as a {kind, expression} wrapper
-        # (hcl/projection.py:403-407) while the Go runner projects the
+        # (hcl/projection.py) while the Go runner projects the
         # expression record directly; both carry the same record facts.
         expression_record = compare.object_field(actual, "expression")
         if expression_record is None:
@@ -1544,4 +1544,4 @@ def _edit_conflicts(vector: runner.Case, samples) -> str | None:
     return None
 
 
-runner.register_suite("hcl-v1.json", "consema.hcl.conformance@1", "", 57, run)
+runner.register_suite("hcl-v1.json", "consema.hcl.conformance@1", "core.semantic-model@6", 57, run)
