@@ -17,6 +17,14 @@ tag 推送后 `.github/workflows/release.yml` 自动构建 wheel + sdist 并发�
    consema 仓库 `https://github.com/consema/consema/blob/main/CHANGELOG.md`。
 3. **质量门禁全绿**：main 分支 CI `check (all gates green)` 全绿
    （清单见各仓 ci 配置）。
+
+   > **披露（wave-4 R15，2026-08-15）**：跨语言差分三腿（byte parity /
+   > normalized differential / protocol exchange）不随发布运行——release
+   > workflow 不包含多仓 checkout 与 Rust emitter 构建，发布路径上的
+   > pytest 按 documented skip 静默跳过差分测试。差分三腿不随发布运行；
+   > 发布前按 rc-candidate 检查单本机执行（`scripts/python-verify-*.ps1`，
+   > 见 [python/README.md](python/README.md) Verify）。把差分腿纳入
+   > release workflow 本身列为 post-1.0.0 事项。
 4. **打 tag 并推送**（发布动作的唯一触发点）：
    ```bash
    git tag vX.Y.Z

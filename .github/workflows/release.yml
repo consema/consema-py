@@ -42,20 +42,23 @@ jobs:
         with:
           python-version: '3.12.x'
       # Release guard (G106 extension, 2026-08-13; G71 race fix,
-      # 2026-08-14): the tag must point at a commit on origin/main — a tag
-      # pushed from a stale or divergent commit must not publish old code.
-      # The workflow runs after the push, when origin/main may already have
-      # advanced past the tag's commit, so a realtime HEAD comparison would
-      # fail a legitimately pushed tag; the push-time snapshot is not
-      # available, and ancestry is used instead: the tag commit must lie on
-      # origin/main's history (same gate shape as the consema-go/consema-rs
-      # release.yml verify steps).
+      # 2026-08-14; wave-4 R7 peel, 2026-08-15): the tag must point at a
+      # commit on origin/main — a tag pushed from a stale or divergent
+      # commit must not publish old code. The workflow runs after the push,
+      # when origin/main may already have advanced past the tag's commit, so
+      # a realtime HEAD comparison would fail a legitimately pushed tag; the
+      # push-time snapshot is not available, and ancestry is used instead:
+      # the tag commit must lie on origin/main's history (same gate shape
+      # as the consema-go/consema-rs release.yml verify steps). GITHUB_SHA
+      # for an annotated tag push is the tag object, so the ^{commit} peel
+      # makes the check work for both lightweight and annotated tags.
       - name: verify tag points at a commit on main
         shell: bash
         run: |
           set -euo pipefail
           git fetch origin main --quiet
-          if ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
+          tag_commit="$(git rev-parse "${GITHUB_SHA}^{commit}")"
+          if ! git merge-base --is-ancestor "$tag_commit" FETCH_HEAD; then
             echo "::error::tag $GITHUB_REF_NAME does not point at a commit on origin/main"
             exit 1
           fi
@@ -84,6 +87,11 @@ jobs:
       # repository, same pin as ci-python.yml), followed by the compileall
       # syntax gate, the zero-dependency assertion and the SDK chain
       # example.
+      # Wave-4 R15 disclosure: the four cross-language differential legs
+      # (byte parity / normalized differential / protocol exchange) do NOT
+      # run with the release — they need the Rust emitter multi-repo
+      # checkout and are only exercised by the python-differential CI job.
+      # 差分三腿不随发布运行；发布前按 rc-candidate 检查单本机执行.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
@@ -106,7 +114,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if ! grep -q '^dependencies = \[\]$' python/pyproject.toml; then
+          # Wave-4 R53: same permissive regex as the CI copy of the gate
+          # (ci-python.yml zero-dependency step — whitespace-insensitive), so
+          # a formatting-normalized `dependencies=[]` cannot pass CI and fail
+          # the release path.
+          if ! grep -qE '^dependencies[[:space:]]*=[[:space:]]*\[[[:space:]]*\]$' python/pyproject.toml; then
             echo "::error::pyproject.toml must declare dependencies = [] (zero runtime dependencies policy)"
             exit 1
           fi
@@ -156,6 +168,19 @@ jobs:
           }
           if (-not ($tarList -match 'LICENSE')) {
             throw 'sdist must carry the LICENSE text'
+          }
+          # Wave-4 GW4-18: the sdist must not carry stray files — the
+          # hatchling sdist include config (pyproject.toml
+          # [tool.hatch.build.targets.sdist]) ships only src/consema + the
+          # license/readme/metadata files; tests/, examples/ and local
+          # dotfiles (.coverage from a local coverage run) must never leak
+          # into the published artifact. (.gitignore is NOT asserted here:
+          # hatchling force-includes VCS exclusion files in sdists by
+          # design.)
+          foreach ($stray in @('/tests/', '/examples/', '/.coverage', '/__pycache__/', '/.pytest_cache/')) {
+            if ($tarList -match [regex]::Escape($stray)) {
+              throw "sdist must not contain stray path $stray"
+            }
           }
           Write-Output "release artifacts verified: $($wheel.Name) ($($wheel.Length) bytes) + $($sdist.Name)"
       - name: publish to PyPI (trusted publishing, OIDC)

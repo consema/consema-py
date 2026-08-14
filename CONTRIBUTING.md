@@ -56,9 +56,11 @@ integrity 测试与差分 case 文件完整性测试按 documented skip 跳过�
 coverage（pytest-cov 全量，总覆盖 >= 60%）、python-conformance（runner
 18 suites / 519 cases）、python-differential（Python-Rust 差分：byte parity /
 normalized differential / protocol exchange，windows-latest 多仓 checkout）、
-pip-audit（OSV advisory 每日 + push/PR 审计）、python-package
-（pip wheel --no-deps 打包门禁）、check-version-consistency（README 版本行与
-pyproject.toml 一致）、examples（SDK 链示例实跑）；
+pip-audit（OSV advisory 声明面审计，push/PR 触发；每日 cron 在独立
+audit.yml）、python-package（pip wheel --no-deps 打包门禁）、
+check-version-consistency（四处一致：README `Version:` 行 /
+pyproject.toml version / `__init__.__version__` / bug_report.yml 版本
+字面量）、examples（SDK 链示例实跑）；
 aggregate `check (all gates green)` 是唯一 required check。push 到 main 或
 PR 均触发；PR 另受 pr-labels.yml 的 kind 标签门禁约束（标签见规范仓
 .github/LABELS.md）。

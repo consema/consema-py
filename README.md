@@ -87,9 +87,11 @@ if __name__ == "__main__":
   coverage（pytest-cov 全量，总覆盖 >= 60%）、python-conformance（runner
   18 suites / 519 cases）、python-differential（Python-Rust 差分：byte parity /
   normalized differential / protocol exchange，windows-latest 多仓 checkout）、
-  pip-audit（OSV advisory 每日 + push/PR 审计）、python-package
-  （pip wheel --no-deps 打包门禁）、check-version-consistency（README 版本行与
-  pyproject.toml 一致）、examples（SDK 链示例实跑）；另有
+  pip-audit（OSV advisory 声明面审计，push/PR 触发；每日 cron 在独立
+  audit.yml）、python-package（pip wheel --no-deps 打包门禁）、
+  check-version-consistency（四处一致：README `Version:` 行 /
+  pyproject.toml version / `__init__.__version__` / bug_report.yml 版本
+  字面量）、examples（SDK 链示例实跑）；另有
   aggregate `check (all gates green)` 门禁。
 
 ## 构建与测试
@@ -129,8 +131,10 @@ mkdir -p docs
 cp ../consema/docs/fc-manifest-0.13.0.json ./docs/
 ```
 
-数据在场后 703 passed / 4 skipped（CI 同款 `--import-mode=importlib` +
-`PYTHONPATH=tests/xml`；能力 parity 4 个测试亦全绿）。
+数据在场后全量 pytest 通过（CI 同款 `--import-mode=importlib` +
+`PYTHONPATH=tests/xml`；能力 parity 4 个测试亦全绿）。现行计数以最近
+CI run 为准（2026-08-15 实测 729 passed / 4 skipped，见 GitHub Actions；
+本 README 不硬编码测试数量——wave-4 R16）。
 
 ## FAQ
 

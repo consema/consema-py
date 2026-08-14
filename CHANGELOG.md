@@ -9,7 +9,7 @@ Consema 遵循 Semantic Versioning。本仓变更记录以规范仓 CHANGELOG �
 
 六仓拆分落地：本仓自规范仓（github.com/consema/consema）拆分独立（2026-08-12），承载 Python 实现（Python 3.12，运行时零依赖 `dependencies = []`，version 0.14.0（拆分时版本））。
 
-- L0-L4 落地（2026-08-12 · 5cf680b 携带实现；a0c318b 为 .gitignore 排除提交）：core / graph / protocol / document + 8 格式家族 + root facade + conformance runner；
+- L0-L4 落地（2026-08-12 · 母仓 consema commit 5cf680b 携带实现；a0c318b 为 .gitignore 排除提交——两个 SHA 均只存在于母仓历史，本仓读者请用 `git show 5cf680b` 前先在 consema 母仓检出）：core / graph / protocol / document + 8 格式家族 + root facade + conformance runner；
 - L5 差分 harness（2026-08-12 · 2f981df，母仓 consema commit）：byte-parity / normalized differential / protocol-exchange 跨语言差分 + 五语言 CI workflow；差分发现的 wire-codec 缺陷随本 commit 修复；
 - 首跑缺陷修复（2026-08-12 · dbba9a4，母仓 consema commit）：python 测试夹具路径仓库相对化；
 - conformance 519/519（18 套 / 聚合 digest cfd6e296 共钉）+ capability parity；
