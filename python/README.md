@@ -37,7 +37,7 @@ cp ../consema/docs/fc-manifest-0.13.0.json ./docs/
 cd python
 python -m pip install -e '.[dev]'  # editable install；tests/ 树无 __init__.py，未安装时 collection ERROR
 # CI 同款旗标：--import-mode=importlib + PYTHONPATH=tests/xml
-PYTHONPATH=tests/xml python -m pytest --import-mode=importlib   # testpaths = tests (pyproject.toml:47-48)
+PYTHONPATH=tests/xml python -m pytest --import-mode=importlib   # testpaths = tests（pyproject.toml [tool.pytest.ini_options] testpaths；wheel 打包由同文件 [tool.hatch.build.targets.wheel] packages 定义）
 # PowerShell 等价：$env:PYTHONPATH='tests/xml'; python -m pytest --import-mode=importlib
 python -m consema.conformance     # runner CLI (18 suites / 519 cases; __main__ at python/src/consema/conformance/__main__.py) — 仅仓库 checkout 可执行（wheel 安装后找不到 conformance/vectors）
 # CI runs `python -m pytest tests/conformance/` (ci-python.yml, python-conformance job);
