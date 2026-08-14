@@ -13,7 +13,7 @@
 ## 来源与同步
 
 - source: consema@9aa6597（母仓 HEAD，2026-08-15 波 4 R5 统一 provision 钉；内容 sha256 `3fdf9a77…`）
-- synced: 2026-08-14（波 3 W3-04 修复，agent F3；W3-12/F7 重同步：母仓 f58dc1f 删注记字符串行号后副本逐字节重随）；2026-08-15 波 4 R5 source 重锚 9aa6597（内容 sha256 未变，副本无需重随）
+- synced: 2026-08-14（波 3 W3-04 修复，agent F3；W3-12/F7 重同步：母仓 f58dc1f 删注记字符串行号后副本逐字节重随）；2026-08-15 波 4 R5：source 重锚 9aa6597（母仓 70e8884 R27/R40/R38 修订 manifest：锚点、C-2 freeze、审计计数 76→83 —— 源 sha256 变为 3fdf9a77；本仓 gitignore 副本为旧内容 21141047，已按下方命令重随）
 - 同步范围：`feature_complete_judgment.open_items[].evidence`（C-2 条）残留行号区间 `docs/fuzz-evidence-0.13.0.md` → 母仓现行节锚 `docs/fuzz-evidence-0.13.0.md §7（完成路径）`；W3-12/F7 重同步随母仓注记字符串行号删除。
 - 同步后 sha256：`3fdf9a77323705dfaf24e8f3a822b9217da20dd243e668165f4d06a9ea64676d`（与 consema@9aa6597 的 `docs/fc-manifest-0.13.0.json` 逐字节一致）。
 
