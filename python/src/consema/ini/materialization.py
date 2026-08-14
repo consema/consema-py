@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact bytes):
 
-- Entry and completion algebra: consema-rs/consema-ini/src/materialization.rs:
+- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-ini/src/materialization.rs:
   27-75 — profile/style resolution (materialization.rs:77-127: the exact
   style ids ini.portable-canonical@1 / ini.windows-canonical@1 /
   ini.python-configparser-canonical@1; Windows requires CRLF, Portable and
@@ -32,7 +32,7 @@ Authority (Rust arbitration for exact bytes):
 
 Closure: canonical output reparses under the exact target profile as a
 Complete document and reprojects to the identical PortableValue before
-completion (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:432-435).
+completion (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:432-435).
 """
 
 from __future__ import annotations
@@ -172,7 +172,7 @@ def requested_profile(request: MaterializationRequest) -> IniProfile:
 
 def validate_request(request: MaterializationRequest, profile: IniProfile) -> None:
     """Style, newline, and encoding closure (materialization.rs:91-127;
-    RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:399-406)."""
+    RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:399-406)."""
     style_matches = (
         (profile is IniProfile.PORTABLE_V1 and request.style.id == "ini.portable-canonical" and request.style.version == 1)
         or (profile is IniProfile.WINDOWS_V1 and request.style.id == "ini.windows-canonical" and request.style.version == 1)
@@ -544,7 +544,7 @@ def validate_python_value_line(line: str) -> None:
 
 def _reject_case_equivalent_object_names(items: list[_MappingItem]) -> None:
     """Object input cannot fabricate Windows case-equivalent collisions
-    (materialization.rs:473-487; RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:409-411)."""
+    (materialization.rs:473-487; RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:409-411)."""
     seen = set()
     for item in items:
         lowered = item.key.lower()
@@ -617,7 +617,7 @@ def encode_fragment(text: str, encoding: SourceEncoding, max_output_bytes: int) 
     """Strict encoding of one decoded fragment (materialization.rs:770-829).
 
     Encoding is strict: an unrepresentable scalar fails the whole operation
-    (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:404-406).
+    (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:404-406).
     """
     kind = encoding.kind
     if kind is SourceEncodingKind.UTF8:

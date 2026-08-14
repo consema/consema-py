@@ -1,5 +1,5 @@
 """consema.convert — the audited projection-to-materialization composition
-(crates/consema/src/conversion.rs; RFC 0016 §3.2: convert lives in the root
+(https://github.com/consema/consema-rs/blob/main/consema/src/conversion.rs; RFC 0016 §3.2: convert lives in the root
 package only; RFC 0004).
 
 Every ``convert_*`` function composes one format-owned projection and the
@@ -28,8 +28,8 @@ whenever the record's owning family is not the target profile's family.
 Same-family directions pass the gate and the owning materializer consumes
 the record under its own validation and closure.
 
-Authority: crates/consema/src/conversion.rs (composition algebra); RFC 0004
-(materialization/convert); consema-go/go/conversion.go as a cross-reference only.
+Authority: https://github.com/consema/consema-rs/blob/main/consema/src/conversion.rs (composition algebra); RFC 0004
+(materialization/convert); https://github.com/consema/consema-go/blob/main/go/conversion.go as a cross-reference only.
 """
 
 from __future__ import annotations

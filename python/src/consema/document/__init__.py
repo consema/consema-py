@@ -14,8 +14,8 @@ Authority (language-neutral first; Rust only for byte/registry arbitration):
   location, binary coverage, patch, limits capabilities);
 - RFC 0003 (source facts / snapshot / patch), RFC 0004 (materialization /
   edit / proof / plan), RFC 0016 §5-§6 (API shapes, error classification);
-- consema-rs/consema-document/src/*.rs for byte/registry arbitration only;
-- consema-go/go/document as a cross-reference only (never a template).
+- https://github.com/consema/consema-rs/blob/main/consema-document/src/*.rs for byte/registry arbitration only;
+- https://github.com/consema/consema-go/blob/main/go/document as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and

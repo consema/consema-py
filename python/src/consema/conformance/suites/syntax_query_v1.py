@@ -1,7 +1,7 @@
 """Suite ``consema.syntax-query.conformance@1`` (syntax-query-v1.json, 19
 cases): JSON and TOML lossless-syntax queries plus the ordered-cursor
 terminal semantics. Dispatch is by case id, mirroring
-consema-go/go/conformance/syntax_query_v1.go, the JSON face v1_json_face.go
+https://github.com/consema/consema-go/blob/main/go/conformance/syntax_query_v1.go, the JSON face v1_json_face.go
 (runSyntaxQueryJSONCase / syntaxQueryDefinition), the TOML face
 v1_toml_face.go (RunSyntaxQueryTomlFace), and the cursor face g43_faces.go
 (RunSyntaxCursorFace).
@@ -59,7 +59,7 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
 
 def _syntax_expression(vector: runner.Case, format: str) -> QueryExpression:
     """Builds the branch expression from the vector filters
-    (consema-go/go/conformance/v1_json_face.go syntaxQueryDefinition)."""
+    (https://github.com/consema/consema-go/blob/main/go/conformance/v1_json_face.go syntaxQueryDefinition)."""
     filter_values = compare.sequence_field(vector.input, "filters")
     if filter_values is None:
         raise QueryFailure(
@@ -309,7 +309,7 @@ def _compare_one_match(match, expected_value, raw: bytes, index: int, role: str)
 
 def _syntax_cursor_case(vector: runner.Case) -> str | None:
     """The ordered cursor terminal semantics over the vector values
-    (consema-go/go/conformance/g43_faces.go RunSyntaxCursorFace): Completed after
+    (https://github.com/consema/consema-go/blob/main/go/conformance/g43_faces.go RunSyntaxCursorFace): Completed after
     exhaustion, Cancelled when cancellation pre-empts the stream, Failed for
     a declared failing stream."""
     values = compare.integer_sequence(vector.input, "values")

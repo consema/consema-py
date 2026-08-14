@@ -3,10 +3,10 @@
 records (encoding, snapshot, patch), the materialization v2 records, the Java
 UTF-16 string record, the INI/Properties query-result records, and the v6
 protocol envelope facts. Dispatch is by case id, mirroring
-consema-go/go/conformance/semantic_model_v6.go.
+https://github.com/consema/consema-go/blob/main/go/conformance/semantic_model_v6.go.
 
 The v6 record codecs that the Python protocol package does not implement are
-transcribed locally from consema-go/go/protocol/records_source.go,
+transcribed locally from https://github.com/consema/consema-go/blob/main/go/protocol/records_source.go,
 records_materialization.go, records_java_utf16.go, and records_line_query.go;
 the source snapshot/patch machinery reuses ``consema.document.source`` and
 ``consema.document.source_patch``.

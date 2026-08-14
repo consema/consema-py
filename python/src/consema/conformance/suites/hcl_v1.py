@@ -3,7 +3,7 @@ and tfvars formation with recovery and fatal limits, native and lossless
 syntax query, body projection with the ProjectExpression policy, canonical
 materialization with the reparse closure, and the six structural edits.
 Dispatch is by the ``capability`` field, mirroring
-consema-go/go/conformance/hcl_v1.go.
+https://github.com/consema/consema-go/blob/main/go/conformance/hcl_v1.go.
 """
 
 from __future__ import annotations
@@ -219,8 +219,21 @@ def _decimal_to_f64(text: str) -> float | None:
         coefficient = int(digits)
     except ValueError:
         return None
-    value = float(coefficient) * (10.0 ** exponent)
+    value = _decimal_coefficient_to_f64(coefficient, exponent)
     return -value if negative else value
+
+
+def _decimal_coefficient_to_f64(coefficient: int, exponent: int) -> float:
+    """Coefficient x 10^exponent to f64: single-rounding conversion from
+    the exact decimal spelling (no intermediate float arithmetic), with
+    |exponent| clamped to 308 like the Rust reference (hcl_v1.rs
+    decimal_to_f64, G88 2026-08-14) so a huge exponent never raises
+    OverflowError."""
+    if exponent > 308:
+        exponent = 308
+    elif exponent < -308:
+        exponent = -308
+    return float(f"{coefficient}e{exponent}")
 
 
 def _expected_f64(value) -> float | None:
@@ -231,7 +244,7 @@ def _expected_f64(value) -> float | None:
         return float(struct.unpack(">f", struct.pack(">I", value.as_binary_float32()))[0])
     if kind is Kind.DECIMAL:
         decimal = value.as_decimal()
-        return float(decimal.coefficient) * (10.0 ** decimal.exponent)
+        return _decimal_coefficient_to_f64(decimal.coefficient, decimal.exponent)
     if kind is Kind.INTEGER:
         return float(value.as_integer())
     return None

@@ -21,17 +21,17 @@ Authority (language-neutral first; Rust only for arbitration):
 - RFC 0016 §5.2 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:178-182): the
   conservative default policy is core.projection.exact-or-reject@1 (never
   invented).
-- consema-rs/consema-document/src/materialization.rs — arbitration:
+- https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs — arbitration:
   MaterializationLimits defaults materialization.rs:95-105;
   MaterializationRequest defaults materialization.rs:122-132;
   failure code mapping materialization.rs:379-390.
-- Error codes: consema-rs/consema-protocol/src/error_registry.rs
+- Error codes: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
   (core.materialization.formation-failed@1:556, invalid-request@1:562,
   resource-limit@1:574, unrepresentable@1:580, unsupported-encoding@1:586,
   unsupported-newline@1:592, unsupported-profile@1:598,
   unsupported-style@1:604).
 
-consema-go/go/document is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ from consema.document.ids import MaterializationStyleId, ProfileId
 from consema.document.source import SourceEncoding
 from consema.document.structural import NodeRef, SnapshotIdentity, Span
 
-# Frozen defaults, consema-rs/consema-document/src/materialization.rs:95-105
+# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs:95-105
 _DEFAULT_MAX_INPUT_NODES = 1_000_000
 _DEFAULT_MAX_OUTPUT_BYTES = 64 * 1024 * 1024
 _DEFAULT_MAX_DEPTH = 256
@@ -179,8 +179,9 @@ class MaterializationInputLocation:
 
     The location payload is the protocol/core value-path or association-
     location record (ValuePath / AssociationLocation of the semantic model,
-    RFC 0004 §8); it is typed opaquely here because consema.protocol lands in
-    the same milestone under another agent.
+    RFC 0004 §8); it is typed opaquely here — consema.protocol is a sibling
+    package in this implementation, and the opaque typing keeps this
+    module's import graph acyclic.
     """
 
     kind: MaterializationInputLocationKind
@@ -297,7 +298,7 @@ class MaterializationFailure(Exception):
     """Stable materialization failure with a frozen registered code.
 
     Code mapping authority: materialization.rs:379-390 and
-    consema-rs/consema-protocol/src/error_registry.rs:556-604. Error text is
+    https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:556-604. Error text is
     human presentation only (RFC 0016 §6).
     """
 

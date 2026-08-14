@@ -1,7 +1,7 @@
 """PGCE/1 — Portable Graph Canonical Encoding / 1.
 
 Wire format frozen by the Rust reference codec
-(consema-rs/consema-graph/src/pgce.rs), the byte arbitration source:
+(https://github.com/consema/consema-rs/blob/main/consema-graph/src/pgce.rs), the byte arbitration source:
 
 - stream magic is the ASCII octets ``PGCE`` (pgce.rs:12);
 - wire version is minimal unsigned LEB128 ``1`` (pgce.rs:14);

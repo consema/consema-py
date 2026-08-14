@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: consema-rs/consema-ini/src/lib.rs:490-661 —
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:490-661 —
   snapshot identity (lib.rs:511-514), source (lib.rs:517-520), render()
   (byte-for-byte source identity, lib.rs:523-525), format family "ini@1"
   (lib.rs:529-531), profile (lib.rs:535-538), root document identity
@@ -30,7 +30,7 @@ Authority (Rust arbitration for the public surface):
 The document is logically immutable; every NodeRef and Span is bound to
 one snapshot identity. Recovered documents retain exact bytes and explicit
 recovery structure but never fabricate native semantics (RFC 0009 §4,
-https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:132-137).
+https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:132-137).
 """
 
 from __future__ import annotations

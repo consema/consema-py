@@ -13,7 +13,7 @@ commits the frozen seven-operation TOML edit surface atomically with
 ChangeSet, SourcePatch, and untouched-byte evidence.
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration; consema-go/go/toml as a cross-reference only, never a template):
+arbitration; https://github.com/consema/consema-go/blob/main/go/toml as a cross-reference only, never a template):
 
 - conformance/vectors/toml-v1.json — the machine-readable suite
   "consema.toml.conformance@1" (18 cases; formation, native items, query,
@@ -21,9 +21,9 @@ arbitration; consema-go/go/toml as a cross-reference only, never a template):
 - RFC 0001 (https://github.com/consema/consema/blob/main/docs/rfcs/0001-toml-1.0-profile.md) — the language-neutral
   TOML contract; RFC 0004 (materialization/structural edit); RFC 0016
   §5-§6 (API shapes, error classification, frozen spellings);
-- consema-rs/consema-toml/src/*.rs — byte/registry arbitration
+- https://github.com/consema/consema-rs/blob/main/consema-toml/src/*.rs — byte/registry arbitration
   (operation_registry.rs:16-74; projection.rs; materialization.rs;
-  edit.rs:1280-1332; parser.rs) and consema-rs/consema-protocol/src/
+  edit.rs:1280-1332; parser.rs) and https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
   error_registry.rs:339-361 for the toml-family codes.
 
 This package is an independent, Python-idiomatic implementation with zero

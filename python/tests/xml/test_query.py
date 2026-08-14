@@ -1,12 +1,11 @@
 """Query intent tests: native and lossless syntax domains (RFC 0012 §8).
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
-test); consema-rs/consema-xml/src/query.rs (byte/registry arbitration);
+test); https://github.com/consema/consema-rs/blob/main/consema-xml/src/query.rs (byte/registry arbitration);
 RFC 0012 §8 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:285-311).
 
-These tests are intent documents written before the Python toolchain
-verification gate (https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §3/§7); no
-gate is claimed to have passed.
+These tests are delivered: the full suite runs in CI (ci-python.yml
+python-gates job) against the provisioned conformance data.
 """
 
 from __future__ import annotations
@@ -94,7 +93,7 @@ def test_vector_syntax_kind_and_text_filter(xml_vectors):
     (xml-1-0-safe-v1.json:174-202): the lossless domain filters by the
     frozen kind ``local-name`` in exact source order. (The vector ordinals
     are informational — both shared runners compare kind and text only,
-    consema-go/go/conformance/xml_1_0_safe_v1.go:189-191.)"""
+    https://github.com/consema/consema-go/blob/main/go/conformance/xml_1_0_safe_v1.go:189-191.)"""
     case = find_case(xml_vectors, "xml.syntax-query.kind-and-text-filter")
     doc = form_document(case)
     assert doc.status.value == "Complete"

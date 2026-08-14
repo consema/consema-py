@@ -1,7 +1,7 @@
 """Protocol transport resource limits.
 
-Authority: consema-rs/consema-protocol/src/limits.rs (the frozen defaults,
-limits.rs:20-31). Go (consema-go/go/protocol/limits.go) is a cross-reference only.
+Authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/limits.rs (the frozen defaults,
+limits.rs:20-31). Go (https://github.com/consema/consema-go/blob/main/go/protocol/limits.go) is a cross-reference only.
 """
 
 from __future__ import annotations

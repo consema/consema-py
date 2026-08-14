@@ -1,14 +1,14 @@
 """Portable-value query execution for the conformance runner.
 
 The ``core.portable-value-query@1`` domain executor and the ordered-result
-cursor semantics (RFC 0003; consema-rs/consema-core/src/query.rs) are
+cursor semantics (RFC 0003; https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs) are
 runner-side capability implementations: the Python core package validates
 query definitions (consema.protocol.query) but the value-domain execution
 surface is exercised here so the shared vectors drive it. The operator
 semantics follow the frozen validation table of
 consema.protocol.query._OPERATOR_TABLE and the match-role model of RFC 0016
 §5.4. Failure names follow the vector spellings (queryFailureName,
-consema-go/go/conformance/g43_faces.go:368-394).
+https://github.com/consema/consema-go/blob/main/go/conformance/g43_faces.go:368-394).
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
 """The frozen TOML operation registry (seven operations).
 
 The exact ids, target roles, argument kinds, and support classification
-are transcribed from consema-rs/consema-toml/src/operation_registry.rs:16-74;
+are transcribed from https://github.com/consema/consema-rs/blob/main/consema-toml/src/operation_registry.rs:16-74;
 the structural surface (five Supported operations) and the total count
 are pinned by the Rust registry test operation_registry.rs:94-119.
 """

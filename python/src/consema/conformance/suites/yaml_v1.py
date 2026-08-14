@@ -1,9 +1,9 @@
-"""Suite ``consema.yaml.conformance@1`` (yaml-v1.json, 27 cases): YAML
+"""Suite ``consema.yaml.conformance@1`` (yaml-v1.json, 31 cases): YAML
 profile scalar resolution, source encoding, stream facts, lossless syntax,
 native mapping facts, formation rejection, graph projection/PGCE, native and
 syntax queries, value/graph projection policies, materialization, structural
 edits, resource limits, and the plain-property regression. Dispatch is by
-case id, mirroring consema-go/go/conformance/yaml_v1.go.
+case id, mirroring https://github.com/consema/consema-go/blob/main/go/conformance/yaml_v1.go.
 """
 
 from __future__ import annotations

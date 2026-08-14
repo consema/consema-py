@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact semantics):
 
-- Targets, comparison, and collision policy: consema-rs/consema-ini/src/
+- Targets, comparison, and collision policy: https://github.com/consema/consema-rs/blob/main/consema-ini/src/
   projection.rs:9-36 — ProjectionTarget::BestExactEntryMappingV1 /
   RequireObjectV1 (projection.rs:10-16), NameComparison OriginalExact /
   ProfileEquivalent (projection.rs:19-25), CollisionPolicy Reject / First /
@@ -16,7 +16,7 @@ Authority (Rust arbitration for exact semantics):
   fail with ini.projection.incomplete-document@1; failure code mapping
   projection.rs:886-893 and the failed-attempt arguments projection.rs:
   852-884 (reason, limit, profile); failed attempts never contain a
-  partial value (RFC 0004 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:170-191).
+  partial value (RFC 0004 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:170-191).
 - Exact mapping: projection.rs:428-537 — every section occurrence maps to
   an outer EntryMapping entry, every entry occurrence to an inner
   EntryMapping entry, in source order; duplicate spellings remain
@@ -27,7 +27,7 @@ Authority (Rust arbitration for exact semantics):
   (projection.rs:197-223), lifts fidelity to Transformed
   (projection.rs:372-379), and keeps a Collapsed provenance origin
   (projection.rs:148-159); First and Last retain source occurrence
-  spelling and retained-source order (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:
+  spelling and retained-source order (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:
   377-381).
 - Provenance: add_origin projection.rs:325-370 (new locations count two
   units, existing one; Direct origins insert at position 0, others
@@ -37,7 +37,7 @@ Authority (Rust arbitration for exact semantics):
   Derived over the whole source.
 - The Python default section is an ordinary association whose provenance
   carries the DefaultSection role; it is not expanded into every section
-  (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:355-358).
+  (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:355-358).
 
 The value-path and association-location records are the semantic model's
 portable input locations (RFC 0004 §8); the protocol layer externalizes
@@ -68,7 +68,7 @@ class ProjectionTarget(enum.Enum):
     """Versioned INI projection target contract (projection.rs:10-16).
 
     The request target names are exactly ``BestExactEntryMappingV1`` and
-    ``RequireObjectV1`` (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:375-376).
+    ``RequireObjectV1`` (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:375-376).
     """
 
     BEST_EXACT_ENTRY_MAPPING_V1 = "ini.projection.best-exact-entry-mapping@1"
@@ -385,7 +385,7 @@ class _Context:
         self, projected: ProjectedLocation, entry_index: int
     ) -> None:
         """Value span plus every continuation fragment origin
-        (projection.rs:381-425; RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:383-385)."""
+        (projection.rs:381-425; RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:383-385)."""
         entry = self.document.entries[entry_index]
         self.add_origin(
             projected,

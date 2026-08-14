@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and transaction model: consema-rs/consema-properties/src/edit.rs:
+- Operation and transaction model: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs:
   16-56 (EditOperation), 70-163 (EditTransaction/Builder).
 - Failure algebra and codes: edit.rs:178-253 (EditFailure; StableFailure
   code mapping edit.rs:237-252).
@@ -27,9 +27,9 @@ Authority (Rust arbitration for exact byte semantics):
   LF, default LF); the line-boundary test edit.rs:685-692.
 - Literal ownership: edit.rs:872-892 (one exact value ownership
   interval, no delimiter/comment/newline consumption; RFC 0010 section 13,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:397-399).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:397-399).
 - The five frozen operation ids (RFC 0010 section 13,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:385-393; operation_registry.rs:16-48):
+  https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:385-393; operation_registry.rs:16-48):
   java-properties.edit.replace-semantic-value@1,
   replace-literal-value@1, insert-property@1, remove-property@1,
   rename-property@1.

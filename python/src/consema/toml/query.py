@@ -9,12 +9,12 @@ Authority:
   toml.try-array-elements, toml.array-element-item; toml.syntax-kind-is,
   toml.syntax-text-equals) plus the generic core.take and
   core.distinct-by-identity; validation happens before execution.
-- The match shapes transcribe consema-rs/consema-toml/src/query.rs:9-86
+- The match shapes transcribe https://github.com/consema/consema-rs/blob/main/consema-toml/src/query.rs:9-86
   (TomlMatch Item/Entry/ArrayElement; TomlSyntaxMatch node/span/kind/
   ordinal).
 - The execution semantics transcribe query.rs:88-488: domain check, step
   counting against QueryLimits (max_steps/max_results default 100_000,
-  consema-rs/consema-core/src/query.rs:2967-2978), expression evaluation
+  https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs:2967-2978), expression evaluation
   (Input/Apply/Concat/StructureOrderMerge sorted by source span),
   operator application, and selection (All/First/Last/ZeroOrOne/
   RequireOne with cardinality enforcement).
@@ -22,9 +22,8 @@ Authority:
   (query.py:523-529 and 597-602 freeze the toml operator rows;
   query.py:1075-1079 the syntax-kind vocabulary). The executor below
   consumes a validated ``ExecutableQuery``.
-- QueryLimits and CancellationToken are owned here until the protocol
-  agent publishes the shared records (RFC 0016 §5.4); the frozen fields
-  and defaults are the core query.rs ones.
+- QueryLimits and CancellationToken are owned here (RFC 0016 §5.4); the
+  frozen fields and defaults are the core query.rs ones.
 """
 
 from __future__ import annotations
@@ -47,7 +46,7 @@ from consema.toml.syntax import TomlSyntaxKind
 
 
 class QueryLimits:
-    """Execution resource limits (consema-rs/consema-core/src/query.rs:2967-2978)."""
+    """Execution resource limits (https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs:2967-2978)."""
 
     __slots__ = ("max_steps", "max_results")
 

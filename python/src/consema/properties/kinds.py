@@ -7,28 +7,28 @@ Rust only for registry/byte arbitration):
 - ``PropertiesProfile``: the two profile identities —
   java-properties.reader@1 / java-properties.latin1@1 — and their source
   contracts — RFC 0010 §1/§3 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-
-  v1.md:14-31, 65-106) and consema-rs/consema-properties/src/lib.rs:33-50
+  v1.md:14-31, 65-106) and https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs:33-50
   (enum + id()).
 - ``PropertiesSyntaxKind``: the closed 12-kind lossless classification
   ("Bom", "Whitespace", "LineBreak", "CommentMarker", "CommentText",
   "Key", "Separator", "Value", "EscapeMarker", "EscapeBody",
   "ContinuationMarker", "ErrorRegion") — RFC 0010 §10
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:296-308) and lib.rs:208-274 (enum, as_str,
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:296-308) and lib.rs:208-274 (enum, as_str,
   from_name).
 - ``PropertiesValueState``: ImplicitEmpty | ExplicitEmpty | Present —
-  RFC 0010 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:174-181) and lib.rs:276-285.
+  RFC 0010 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:174-181) and lib.rs:276-285.
 - ``PropertiesLogicalLineKind``: Property | Error — lib.rs:287-294.
 - ``PropertiesEscapeKind``: Named | Backslash | Unicode |
-  DroppedBackslash — RFC 0010 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:183-197) and
+  DroppedBackslash — RFC 0010 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:183-197) and
   lib.rs:296-307.
 - The query domains ``java-properties.native-semantic-query@1`` and
   ``java-properties.lossless-syntax-query@1`` with their eight + four
-  operators — RFC 0010 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:269-308) and
-  consema-rs/consema-properties/src/query.rs:124-150, 167-211.
+  operators — RFC 0010 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:269-308) and
+  https://github.com/consema/consema-rs/blob/main/consema-properties/src/query.rs:124-150, 167-211.
 
 The profile ids are the frozen language-neutral spellings also pinned by
 the vector suite ``consema.java-properties.conformance@1``
-(conformance/vectors/java-properties-v1.json:2-3). consema-go/go/properties is a
+(conformance/vectors/java-properties-v1.json:2-3). https://github.com/consema/consema-go/blob/main/go/properties is a
 cross-reference only.
 """
 

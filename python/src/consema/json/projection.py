@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact semantics):
 
-- Targets, policies, and request building: consema-rs/consema-json/src/
+- Targets, policies, and request building: https://github.com/consema/consema-rs/blob/main/consema-json/src/
   projection.rs:13-144 — ProjectAsObjectV1 / ProjectAsEntryMappingV1 /
   BestExactCoreV1 / Json5BestExactCoreV1 (projection.rs:15-24),
   DuplicateKeyPolicy Reject/FirstWins/LastWins (projection.rs:28-35),
@@ -16,7 +16,7 @@ Authority (Rust arbitration for exact semantics):
   756), the JSON5/profile target binding (projection.rs:367-376),
   ProjectAs* root-object requirement (projection.rs:400-410); failure code
   mapping projection.rs:754-765; failed attempts never contain a partial
-  value (RFC 0004 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:170-191).
+  value (RFC 0004 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:170-191).
 - Value mapping: projection.rs:443-499 (null/bool/integer/decimal/
   BinaryFloat64/string/array; unavailable regions fail semantic-
   unavailable).
@@ -35,7 +35,7 @@ Authority (Rust arbitration for exact semantics):
   (projection.rs:576-578).
 - Target contract ids: json.projection.best-exact-core@1 and
   json5.projection.best-exact-core@1 are the frozen target spellings
-  (RFC 0005 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:174-193); the v1 vectors reference the
+  (RFC 0005 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:174-193); the v1 vectors reference the
   target by the alias "BestExactCore@1" (conformance/vectors/v1.json:91).
 
 Design: the value-path and association-location records are the semantic

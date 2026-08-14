@@ -10,7 +10,7 @@ Authority (language-neutral first; Rust only for arbitration):
   (RequireExactlyOneDocument, Reject sharing, Reject cycles,
   RequireKnownPortableTag, BestExactObjectOrEntryMapping, alias expansion
   disabled) freeze SharingPolicy/TagPolicy/MappingPolicy.
-- Policies and limits: consema-rs/consema-yaml/src/projection.rs:18-62 (graph
+- Policies and limits: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/projection.rs:18-62 (graph
   request/limits), 204-258 (SharingPolicy, TagPolicy, MappingPolicy,
   ValueProjectionLimits), 260-332 (ValueProjectionRequest), 334-420
   (Fidelity, events, report), 436-529 (failures and codes).

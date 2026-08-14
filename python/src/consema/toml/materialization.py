@@ -11,7 +11,7 @@ Authority:
   OffsetDateTime/Sequence/Object recursively, requires signed 64-bit
   integers, rejects non-canonical NaN payloads, and never interprets
   duplicate keys.
-- The writer transcribes consema-rs/consema-toml/src/materialization.rs:
+- The writer transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/materialization.rs:
   request validation 81-99; canonical string/key escaping 353-380 (same
   escape set as the canonical literal, edit.rs:1516-1537); float
   canonicalization 382-407 (canonical NaN payloads ``nan``/``-nan``,

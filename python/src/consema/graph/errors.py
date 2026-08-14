@@ -1,8 +1,8 @@
 """Typed PortableGraph construction and PGCE/1 codec failures.
 
 Stable diagnostic codes (semantic-model v5 registry arbitration,
-consema-rs/consema-protocol/src/error_registry.rs:692-705 and the StableFailure
-mappings in consema-rs/consema-graph/src/lib.rs:230-242 and pgce.rs:96-216):
+https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:692-705 and the StableFailure
+mappings in https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs:230-242 and pgce.rs:96-216):
 
 - construction: `core.graph.resource-limit@1` (ResourceLimit, SizeOverflow)
   and `core.graph.invalid@1` (all structural failures);
@@ -11,7 +11,7 @@ mappings in consema-rs/consema-graph/src/lib.rs:230-242 and pgce.rs:96-216):
   `core.pgce.non-canonical@1` (NonMinimalVarint, NonCanonicalNodeOrder,
   NonCanonicalEncoding), and `core.pgce.invalid@1` (everything else).
 
-Go (consema-go/go/graph/errors.go) is a cross-reference only.
+Go (https://github.com/consema/consema-go/blob/main/go/graph/errors.go) is a cross-reference only.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ class GraphBuildErrorKind(enum.Enum):
 
 
 class GraphBuildError(Exception):
-    """A stable graph construction failure (consema-rs/consema-graph/src/lib.rs:194-218).
+    """A stable graph construction failure (https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs:194-218).
 
     ``name``/``observed``/``limit`` carry the resource-limit facts;
     ``node_id`` carries the offending graph-local ID when relevant.

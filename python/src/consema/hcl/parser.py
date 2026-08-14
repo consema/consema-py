@@ -23,7 +23,7 @@ the native body tree with the §3 recovery semantics:
   failure never masquerades as a partial document (hard gate 4).
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration): consema-rs/consema-hcl/src/parser.rs — codes parser.rs:77-98,
+arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/parser.rs — codes parser.rs:77-98,
 formation entry parser.rs:200-218, the parser body parser.rs:313-726,
 attributes/blocks parser.rs:729-978, the expression grammar parser.rs:980-
 2016, templates and heredocs parser.rs:2018-2366, literal decoding

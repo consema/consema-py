@@ -1,8 +1,8 @@
 """Typed protocol failures shared by the JSON/PVCE transports and records.
 
-Authority: consema-rs/consema-protocol/src/error.rs (ProtocolErrorKind and its
+Authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error.rs (ProtocolErrorKind and its
 code mapping); RFC 0016 §6 (typed errors carrying the registered code).
-Go (consema-go/go/protocol/errors.go) is a cross-reference only.
+Go (https://github.com/consema/consema-go/blob/main/go/protocol/errors.go) is a cross-reference only.
 
 The exception text is human presentation only and never participates in
 conformance comparison.

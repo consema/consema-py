@@ -140,7 +140,7 @@ def test_query_anchor_definition_and_node():
     # query.rs:524-549: yaml.anchor-definition exposes the exact &name span
     # and yaml.anchor-node returns the anchored representation node. The
     # anchored node must be reachable by the pipeline: as in the Go twin
-    # (consema-go/go/yaml/query_test.go:69-89) the anchor sits on the document root —
+    # (https://github.com/consema/consema-go/blob/main/go/yaml/query_test.go:69-89) the anchor sits on the document root —
     # a value anchor ("first: &x [one]") is never entered by the
     # documents/document-root pipeline (0 matches in Python, Rust, and Go).
     document = parse_source("&a [one]\n", YamlProfile.YAML12_CORE_V1)

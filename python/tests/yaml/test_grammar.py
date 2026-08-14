@@ -10,7 +10,7 @@ block collections, the merge key as an ordinary association (RFC 0007 s5),
 bounded deep nesting, real-world-shaped documents, and the 1.1 binary /
 timestamp value projections (formerly tests/yaml/_verify_extended.py).
 
-Authority: consema-rs/consema-yaml backend behavior; every assertion is a
+Authority: https://github.com/consema/consema-rs/blob/main/consema-yaml backend behavior; every assertion is a
 byte-exact or decoded-exact pin of the Python parser.
 """
 

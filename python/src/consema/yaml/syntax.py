@@ -1,7 +1,7 @@
 """The lossless YAML syntax tokenizer: exhaustive byte coverage plus the
 closed YamlSyntaxKind classification, and the named anchor/alias occurrences.
 
-Authority: consema-rs/consema-yaml/src/syntax.rs --the Scanner dispatch order
+Authority: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/syntax.rs --the Scanner dispatch order
 (syntax.rs:111-217), the plain-scalar continuation rule (syntax.rs:120-134,
 257-282), quoted scanning (syntax.rs:284-317), block-content scanning
 (syntax.rs:335-364), the indicator dispatch (syntax.rs:366-379), and the
@@ -10,7 +10,7 @@ conformance/vectors/yaml-v1.json case ``syntax.styles-and-trivia``
 (piece_count 48, required kinds) and ``regression.plain-property-characters``
 (no Anchor/Tag pieces inside plain scalars).
 
-consema-go/go/yaml/syntax.go is a cross-reference only (it documents itself as a
+https://github.com/consema/consema-go/blob/main/go/yaml/syntax.go is a cross-reference only (it documents itself as a
 faithful replicate of syntax.rs:86-421).
 """
 

@@ -1,10 +1,10 @@
 """Suite ``consema.java-properties.conformance@1`` (java-properties-v1.json,
-22 cases): Java Properties formation facts, exact Java UTF-16 strings with
+25 cases): Java Properties formation facts, exact Java UTF-16 strings with
 unpaired-surrogate recovery, native and lossless-syntax queries, exact
 EntryMapping and explicit Object projections, canonical Reader/Latin-1
 materialization, the five frozen edits with audit artifacts, resource limit
 matrices, and the frozen operation registry. Dispatch is by case id,
-mirroring consema-go/go/conformance/java_properties_v1.go.
+mirroring https://github.com/consema/consema-go/blob/main/go/conformance/java_properties_v1.go.
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
 """Dry-run EditPlan tests.
 
 Contract: RFC 0004 §14 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
-structural-edit-v1.md:338-356); arbitration consema-rs/consema-document/
+structural-edit-v1.md:338-356); arbitration https://github.com/consema/consema-rs/blob/main/consema-document/
 src/edit_plan.rs:13-31, 34-70, 84-121, 200-211. A dry-run plan is not
 authority to write a file and is never applied without rechecking base
 digest and every original-byte precondition.

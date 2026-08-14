@@ -12,7 +12,7 @@ Golden cases transcribed from conformance/vectors/source-v1.json:
   ``reject-utf16-surrogate`` (77-82) -> core.source.invalid-sequence@1.
 
 Contract: RFC 0003 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
-64-122). Code registry: consema-rs/consema-protocol/src/error_registry.rs
+64-122). Code registry: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
 (encoding-conflict@1:366, invalid-sequence@1:372, unsupported-bom@1:405).
 """
 

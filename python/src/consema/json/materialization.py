@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for exact bytes):
 
-- Entry and completion algebra: consema-rs/consema-json/src/materialization.rs:
+- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-json/src/materialization.rs:
   19-32 (materialize), 54-93 (materialize_complete) — profile/style
   resolution (materialization.rs:113-142), UTF-8-only encoding
   (materialization.rs:61-63), pretty requires an explicit newline
@@ -12,8 +12,8 @@ Authority (Rust arbitration for exact bytes):
   report (materialization.rs:87-92), provenance covers every emitted
   value/association (materialization.rs:80-86, 507-747).
 - Style ids: json.canonical-compact@1 / json.canonical-pretty@1 (RFC 0004
-  §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:98-105) and json5.canonical-compact@1 /
-  json5.canonical-pretty@1 (RFC 0005 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:195-212).
+  §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:98-105) and json5.canonical-compact@1 /
+  json5.canonical-pretty@1 (RFC 0005 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:195-212).
 - Literal spellings: write_integer (materialization.rs:249-255), the
   canonical decimal "CeE" form (materialization.rs:257-268), string
   escaping with lowercase \\uXXXX (materialization.rs:270-297; U+2028/
@@ -29,13 +29,13 @@ Authority (Rust arbitration for exact bytes):
   to target origins with relation Direct/Generated (materialization.rs:
   507-747); every emitted value and supported association is covered.
 - Mapping policy: an exactly representable EntryMapping is not collapsed;
-  mapping_policy is irrelevant to it (RFC 0004 §5, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:
+  mapping_policy is irrelevant to it (RFC 0004 §5, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:
   131-143; the v1 JSON materializer never converts under
   UniqueStringEntriesToObject — materialization.rs:379-416).
 
 Closure: canonical output reparses under the exact requested profile and
 reprojects to the identical PortableValue before completion (RFC 0005 §9,
-https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:210-213).
+https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:210-213).
 """
 
 from __future__ import annotations

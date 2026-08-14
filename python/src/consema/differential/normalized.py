@@ -1,14 +1,14 @@
 """Normalized-result differential of the Python pipeline against the Rust
 authority (roadmap §11.2 language-neutral behavior surface;
 https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.3; the Go twin is
-consema-go/go/conformance/differential/normalized/).
+https://github.com/consema/consema-go/blob/main/go/conformance/differential/normalized/).
 
 The Python implementation runs the same data-driven input set
 (conformance/differential/normalized/cases.json, the shared single-authority
 case directory of the consema repository) through its own
 parse -> query/project/materialize/edit -> source pipeline and emits the
 same line-oriented ``key=value`` fact vocabulary the Rust example
-(consema-rs/consema-conformance/examples/emit_normalized_results.rs) emits, so
+(https://github.com/consema/consema-rs/blob/main/consema-conformance/examples/emit_normalized_results.rs) emits, so
 the two sides can be compared field by field (case id + field + both values
 on divergence; error text never participates).
 
@@ -173,7 +173,7 @@ class NormalizedResult:
 
 
 def load_case_file() -> list[dict]:
-    """Loads and validates the checked-in case set: manifest id, exact count,
+    """Loads and validates the provisioned case set: manifest id, exact count,
     unique ids, and per-kind schema validity."""
     cases = case_files.load_case_file(CASE_FILE, MANIFEST, case_files.NORMALIZED_EXACT)
     for case in cases:
@@ -1525,19 +1525,19 @@ def _edit_value(value_desc: dict) -> tuple[PortableValue | None, bool]:
         return PortableValue.null(), True
     if "boolean" in value_desc and value_desc["boolean"] is not None:
         return PortableValue.boolean(value_desc["boolean"]), True
-    if value_desc.get("integer"):
+    if "integer" in value_desc and value_desc["integer"] is not None:
         try:
             return PortableValue.integer(int(value_desc["integer"])), True
         except ValueError:
             return None, False
-    if value_desc.get("decimal"):
+    if "decimal" in value_desc and value_desc["decimal"] is not None:
         decimal = parse_decimal_number(value_desc["decimal"])
         if decimal is None:
             return None, False
         return PortableValue.decimal(decimal), True
-    if value_desc.get("string"):
+    if "string" in value_desc and value_desc["string"] is not None:
         return PortableValue.string(value_desc["string"]), True
-    if value_desc.get("binary64"):
+    if "binary64" in value_desc and value_desc["binary64"] is not None:
         try:
             bits = int(value_desc["binary64"].removeprefix("0x"), 16)
         except ValueError:
@@ -1547,7 +1547,7 @@ def _edit_value(value_desc: dict) -> tuple[PortableValue | None, bool]:
 
 
 def _edit_string(value_desc: dict) -> tuple[str | None, bool]:
-    if value_desc is None or not value_desc.get("string"):
+    if value_desc is None or "string" not in value_desc or value_desc["string"] is None:
         return None, False
     return value_desc["string"], True
 

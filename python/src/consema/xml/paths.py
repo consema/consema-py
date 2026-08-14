@@ -7,13 +7,13 @@ Authority:
   ``Association(AssociationLocation)``; the process-local map is complete
   for every emitted value and supported association.
 - The ValuePath/AssociationLocation shapes are the semantic-model records
-  of consema-core (consema-rs/consema-core/src/value_path.rs and
+  of consema-core (https://github.com/consema/consema-rs/blob/main/consema-core/src/value_path.rs and
   association_location.rs); the segment vocabulary is frozen:
   ``ObjectValue(String)``, ``SequenceElement(u64)``, ``EntryKey(u64)``,
-  ``EntryValue(u64)`` (consema-rs/consema-xml/src/projection.rs:594-598 and
+  ``EntryValue(u64)`` (https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs:594-598 and
   materialization.rs:215-255 use exactly these segments).
 - AssociationRole is closed at ObjectEntry / ObjectKey / EntryMappingEntry
-  (consema-rs/consema-core/src/association_location.rs); the XML family uses
+  (https://github.com/consema/consema-rs/blob/main/consema-core/src/association_location.rs); the XML family uses
   EntryMappingEntry for simple-entry-mapping associations and ObjectEntry
   for materialization-generated namespace bindings
   (materialization.rs:558-562).

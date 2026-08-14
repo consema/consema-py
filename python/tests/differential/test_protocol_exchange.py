@@ -48,12 +48,13 @@ def test_protocol_exchange() -> None:
     codec gaps are closed — protocol_exchange.py module docstring, measured
     status 83/83)."""
     rust_dir = os.environ.get(protocol_exchange.RUST_DIR_ENV)
-    if not rust_dir:
+    python_out_dir = os.environ.get(protocol_exchange.PYTHON_DIR_ENV)
+    if not rust_dir or not python_out_dir:
         pytest.skip(
-            f"{protocol_exchange.RUST_DIR_ENV} is not set: "
-            "run scripts/python-verify-protocol-exchange.ps1 to provision the Rust files"
+            f"{protocol_exchange.RUST_DIR_ENV} and {protocol_exchange.PYTHON_DIR_ENV} must both be set: "
+            "run scripts/python-verify-protocol-exchange.ps1 to provision the Rust files and the Python output directory"
         )
-    result = protocol_exchange.run_exchange(rust_dir)
+    result = protocol_exchange.run_exchange(rust_dir, python_out_dir)
     for failure in result.failures:
         print(failure)
     accept_total = result.accept_passed + result.accept_failed

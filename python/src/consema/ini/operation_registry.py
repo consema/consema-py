@@ -1,6 +1,6 @@
 """The INI-family format operation registry (8 frozen records per profile).
 
-Authority: consema-rs/consema-ini/src/operation_registry.rs:16-80 — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-ini/src/operation_registry.rs:16-80 — the exact
 operation ids, target roles, argument schemas, and support classifications;
 the surface is frozen by the registry test
 (operation_registry.rs:105-137: exactly six Supported structural operations
@@ -23,7 +23,7 @@ Frozen records (operation_registry.rs:18-79):
 
 Sharing an operation name does not share delimiter, quote, continuation,
 comment ownership, case-collision, or encoding behavior between profiles
-(RFC 0009 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:453-455).
+(RFC 0009 §12, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:453-455).
 
 Operation ids/versions and the ``id@version`` display form are frozen by
 consema-document (FormatOperationId); the EditPlan operation-metadata

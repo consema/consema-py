@@ -2,15 +2,14 @@
 §11, RFC 0004 §13-§16).
 
 Authority: conformance/vectors/xml-1-0-safe-v1.json (case ids cited per
-test); consema-rs/consema-xml/src/edit.rs (byte/registry arbitration);
+test); https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs (byte/registry arbitration);
 RFC 0012 §11 (https://github.com/consema/consema/blob/main/docs/rfcs/0012-xml-1.0-safe-profile-v1.md:374-404): each
 operation targets one exact NodeRef; commit preserves every byte outside
 operation-owned spans, reparses the target, produces a complete ChangeSet,
 derives an UntouchedByteProof, and emits a replayable SourcePatch.
 
-These tests are intent documents written before the Python toolchain
-verification gate (https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md §3/§7); no
-gate is claimed to have passed.
+These tests are delivered: the full suite runs in CI (ci-python.yml
+python-gates job) against the provisioned conformance data.
 """
 
 from __future__ import annotations

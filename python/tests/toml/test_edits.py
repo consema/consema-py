@@ -1,8 +1,8 @@
-"""Edit intent documents: atomic scalar and structural transactions.
+"""Edit tests: atomic scalar and structural transactions.
 
 Vector cases transcribed: toml.edit.literal-minimal,
 toml.edit.reject-unrepresentable (conformance/vectors/toml-v1.json);
-the Rust transaction tests of consema-rs/consema-toml/src/edit.rs are the
+the Rust transaction tests of https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs are the
 semantic arbitration (byte-exact expected renders), RFC 0004 §12/§13 the
 contract, and the operation ids the registry
 (operation_registry.rs:16-74).

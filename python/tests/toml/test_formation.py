@@ -1,4 +1,4 @@
-"""Formation intent documents for the toml family.
+"""Formation tests for the toml family.
 
 Golden transcriptions of the toml-v1.json formation/native/resource cases
 (conformance/vectors/toml-v1.json), plus formation closure (parse -> render

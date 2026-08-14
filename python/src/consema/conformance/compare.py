@@ -1,7 +1,7 @@
 """Runner-side comparison helpers.
 
 These helpers mirror the Go runner's comparison conventions
-(consema-go/go/conformance/*): byte equality is lowercase-hex string equality, ordered
+(https://github.com/consema/consema-go/blob/main/go/conformance/*): byte equality is lowercase-hex string equality, ordered
 sequences compare element-wise in order, membership facts are unordered set
 membership, and error codes compare by string equality. No expectation
 literal lives here; every comparison is driven by the vector's expected

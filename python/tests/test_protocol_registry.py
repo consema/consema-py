@@ -1,7 +1,7 @@
 """Intent documents for the contract and error-code registries.
 
 Frozen facts: contract registry counts 16/18/25/25/30/38/41 across v1-v7
-(consema-rs/consema-protocol/src/contract.rs:696-702) and error-code counts
+(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs:696-702) and error-code counts
 55/62/90/92/132/166/187 (error_registry.rs:1717-1723); every version is
 sorted; later versions are supersets of earlier ones (contract.rs:703-716,
 error_registry.rs:1726-1774).
@@ -133,7 +133,7 @@ def test_protocol_and_graph_codes_are_registered():
 
 def test_pvce_codes_are_codec_emitted_but_not_registry_registered():
     # The `core.pvce.*@1` codes are the codec's StableFailure diagnostic
-    # codes (consema-rs/consema-pvce/src/lib.rs:1062-1087); the error-code
+    # codes (https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs:1062-1087); the error-code
     # registry does NOT register them (error_registry.rs has no core.pvce.*
     # entry), so Diagnostic construction cannot use them.
     registry = ErrorCodeRegistry(7)

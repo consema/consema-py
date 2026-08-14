@@ -2,14 +2,14 @@
 
 Authority:
 
-- The closed twelve-kind vocabulary is frozen by consema-rs/consema-toml/src/
+- The closed twelve-kind vocabulary is frozen by https://github.com/consema/consema-rs/blob/main/consema-toml/src/
   lib.rs:41-109 (TomlSyntaxKind and its stable query/protocol names
   "Whitespace", "Newline", "Comment", "String", "Bare", "Equals",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Comma", "Dot").
   The Python query validation table already freezes the same spellings
   (consema.protocol query.py:1075-1079 _is_toml_syntax_kind).
 - The tokenizer transcribes the byte classification of
-  consema-rs/consema-toml/src/parser.rs:360-501 (tokenize / is_punctuation /
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs:360-501 (tokenize / is_punctuation /
   punctuation_kind / string_end): space and tab are Whitespace trivia; LF,
   CRLF, and a bare CR are Newline trivia; ``#`` to end of line is Comment
   trivia; ``'``/``"`` start a String token scanned to its closing quote
@@ -45,7 +45,7 @@ from consema.toml.errors import TomlFormationFailure
 
 class TomlSyntaxKind(enum.Enum):
     """One format-specific lossless classification of a source piece
-    (consema-rs/consema-toml/src/lib.rs:41-68)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/lib.rs:41-68)."""
 
     WHITESPACE = "Whitespace"
     NEWLINE = "Newline"

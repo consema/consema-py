@@ -2,8 +2,9 @@
 
 Golden facts pinned here come from conformance/vectors/v1.json (the
 `value.decimal-normalization` and `value.float-signed-zero` cases) and the
-kind registry of consema-rs/consema-core/src/value.rs:622-653. These tests run
-once the Python toolchain is ready (multi-language-implementation-plan §3/§7).
+kind registry of https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs:622-653. These tests run
+in CI (ci-python.yml python-gates job) against the provisioned conformance
+data.
 """
 
 import pytest

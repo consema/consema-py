@@ -1,11 +1,11 @@
 """The JSON-family format operation registry (8 frozen records).
 
-Authority: consema-rs/consema-json/src/operation_registry.rs:16-98 — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-json/src/operation_registry.rs:16-98 — the exact
 operation ids, target roles, argument schemas, and support classifications;
 the structural surface is frozen by the registry test
 (operation_registry.rs:105-129: exactly six Supported structural operations
 for every profile and eight total records) and RFC 0005 §10
-(https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:220-241: move-member@1 raises the registry to eight).
+(https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:220-241: move-member@1 raises the registry to eight).
 
 Frozen records (operation_registry.rs:18-79):
 

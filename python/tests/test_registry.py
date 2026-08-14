@@ -1,5 +1,5 @@
-"""Root facade registry surface tests (crates/consema/src/lib.rs registry
-module; consema-go/go/registry.go cross-reference).
+"""Root facade registry surface tests (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs registry
+module; https://github.com/consema/consema-go/blob/main/go/registry.go cross-reference).
 
 Covers the additive enumeration (8 families / 16 profiles / 21 query
 domains), the per-profile operation registries (16/16 resolvable), the

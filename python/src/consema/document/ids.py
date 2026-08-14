@@ -6,17 +6,17 @@ Frozen names/numbers with authority citations:
   hexadecimal characters, digest of the complete original byte sequence with
   no decoding/BOM removal/newline normalization mixed in — RFC 0003 §3
   (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:45-58);
-  consema-rs/consema-document/src/source.rs:16-54 (arbitration).
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:16-54 (arbitration).
   Golden values: conformance/vectors/source-v1.json cases
   ``source.digest.sha256-empty`` (lines 4-10) and ``source.digest.sha256-abc``
   (lines 11-16).
 - ``ProfileId`` / ``FormatFamilyId``: namespaced ID + immutable version —
-  consema-rs/consema-document/src/lib.rs:345-402.
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:345-402.
 - ``FormatOperationId``: namespaced operation identifier; its Display form
   ``id@version`` is frozen by the edit-plan metadata matching rule —
-  consema-rs/consema-document/src/operation_registry.rs:10-42, edit_plan.rs:91-98.
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/operation_registry.rs:10-42, edit_plan.rs:91-98.
 - ``MaterializationStyleId``: versioned format-owned style identifier —
-  consema-rs/consema-document/src/materialization.rs:13-39.
+  https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs:13-39.
 
 The vector suite name ``consema.source.conformance@1`` and the capability ids
 of its cases (``core.source.snapshot@1``, ``core.source.encoding@1``,
@@ -24,7 +24,7 @@ of its cases (``core.source.snapshot@1``, ``core.source.encoding@1``,
 ``core.source.patch@1``, ``core.source.limits@1``) are the machine-readable
 capability inventory (conformance/vectors/source-v1.json:2,7,13,19,25,...).
 
-consema-go/go/document is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ class ContentDigest:
     """Stable SHA-256 identity of exact raw source bytes.
 
     Frozen by RFC 0003 §3 (algorithm "sha256", 64 lowercase hex characters);
-    arbitration: consema-rs/consema-document/src/source.rs:16-54. Equal raw bytes
+    arbitration: https://github.com/consema/consema-rs/blob/main/consema-document/src/source.rs:16-54. Equal raw bytes
     always produce equal content digests across processes and languages; a
     digest mismatch proves different bytes. Digest equality is not a claim
     about Profile, encoding, native meaning, or document identity.
@@ -87,7 +87,7 @@ class ProfileId:
     """Immutable named language profile (lib.rs:375-402).
 
     Example: ``ProfileId.new("json.strict", 1)`` — supported target profiles
-    are frozen by RFC 0004 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:106-113).
+    are frozen by RFC 0004 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:106-113).
     """
 
     id: str
@@ -138,7 +138,7 @@ class MaterializationStyleId:
 
     Frozen style IDs for 0.5.0: ``json.canonical-compact@1``,
     ``json.canonical-pretty@1``, ``toml.canonical-document@1``
-    (RFC 0004 §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:98-105).
+    (RFC 0004 §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:98-105).
     """
 
     id: str

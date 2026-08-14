@@ -4,7 +4,7 @@
 The differential case sets are language-neutral (kind/format/profile/source/
 steps) and live at ``conformance/differential/`` of the consema repository —
 the shared single-authority directory (migrated from
-``consema-go/go/conformance/differential/`` on 2026-08-12, five-language-ci-design.md
+``https://github.com/consema/consema-go/blob/main/go/conformance/differential/`` on 2026-08-12, five-language-ci-design.md
 §3.5 executed). This module reads them read-only, exactly as the Go tests
 read them at runtime, and applies the integrity guards (manifest id,
 case-count floor, unique ids) that every language harness pins.
@@ -16,7 +16,7 @@ import json
 import os
 
 # The frozen case-count pins (five-language-ci-design.md §3.5: "单文件、五处
-# 共钉，任何一侧漂移即红"): the checked-in files must carry exactly these
+# 共钉，任何一侧漂移即红"): the provisioned files must carry exactly these
 # counts today and never drop below the shared floor.
 BYTE_PARITY_EXACT = 68
 NORMALIZED_EXACT = 108
@@ -25,7 +25,7 @@ MIN_CASE_COUNT = 40
 
 
 class CaseFileError(ValueError):
-    """One integrity violation of a checked-in differential case file."""
+    """One integrity violation of a provisioned differential case file."""
 
 
 def repository_root() -> str:
@@ -38,7 +38,7 @@ def repository_root() -> str:
 
 
 def differential_dir() -> str:
-    """The checked-in differential case directory (conformance/differential
+    """The provisioned differential case directory (conformance/differential
     of the consema repository; single authority, five-language-ci-design.md
     §3.5)."""
     return os.path.join(repository_root(), "conformance", "differential")
@@ -66,7 +66,7 @@ def missing_data_reason() -> str | None:
 
 
 def case_file_path(name: str) -> str:
-    """One checked-in case file path."""
+    """One provisioned case file path."""
     return os.path.join(differential_dir(), name)
 
 

@@ -7,10 +7,10 @@ Authority:
   ``Association(AssociationLocation)``; the process-local Rust map is
   complete for every emitted value and supported association.
 - The ValuePath/AssociationLocation shapes are the semantic-model records
-  of consema-core (consema-rs/consema-core/src/value_path.rs and
+  of consema-core (https://github.com/consema/consema-rs/blob/main/consema-core/src/value_path.rs and
   association_location.rs); the segment vocabulary is frozen:
   ``ObjectValue(String)``, ``SequenceElement(u64)``, ``EntryKey(u64)``,
-  ``EntryValue(u64)`` (consema-rs/consema-toml/src/projection.rs:265-319 and
+  ``EntryValue(u64)`` (https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:265-319 and
   materialization.rs:215-255 use exactly these segments).
 - AssociationRole is closed at ObjectEntry / ObjectKey / EntryMappingEntry
   (projection.rs:299-319; materialization.rs:720-741).

@@ -10,7 +10,7 @@ Authority:
   replace-scalar-literal@1) through the registry as
   ExistingTypedCapability.
 - The exact seven descriptors transcribe
-  consema-rs/consema-toml/src/operation_registry.rs:16-74 (ids, target roles
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/operation_registry.rs:16-74 (ids, target roles
   toml.table-item@1 / toml.entry@1 / toml.array-item@1 /
   toml.array-element@1 / toml.scalar-item@1, argument kinds String /
   PortableValue / Placement / RepresentationPolicy / ExactBytes, and the
@@ -18,7 +18,7 @@ Authority:
   structural surface test operation_registry.rs:94-119 pins the five
   Supported operations and the total count of seven.
 - The argument-kind spellings follow consema-document operation_registry.rs
-  (OperationArgumentKind) and are cross-checked by consema-go/go/toml
+  (OperationArgumentKind) and are cross-checked by https://github.com/consema/consema-go/blob/main/go/toml
   operation_registry.go:24-37.
 """
 
@@ -125,7 +125,7 @@ def _descriptor(
 
 # The frozen seven descriptors, operation_registry.rs:16-74, in the
 # canonical emission order: FormatOperationRegistry sorts by operation id
-# (consema-rs/consema-document/src/operation_registry.rs:234), so the
+# (https://github.com/consema/consema-rs/blob/main/consema-document/src/operation_registry.rs:234), so the
 # published surface is alphabetical (insert-array-element, insert-entry,
 # remove-array-element, remove-entry, rename-entry, replace-scalar-literal,
 # replace-scalar-semantic).

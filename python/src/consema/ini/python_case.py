@@ -1,7 +1,7 @@
 """Pinned Python 3.14 / Unicode 16.0 default ``optionxform`` semantics.
 
 The data is transcribed verbatim from
-consema-rs/consema-ini/src/python_case.rs:9-199 — the ordered unconditional
+https://github.com/consema/consema-rs/blob/main/consema-ini/src/python_case.rs:9-199 — the ordered unconditional
 simple-lowercase ranges and single mappings of Rust 1.85's Unicode 16.0
 tables, plus the U+0130 (LATIN CAPITAL LETTER I WITH DOT ABOVE) special case
 expanding to two scalars (python_case.rs:205-207). Keeping the tables in

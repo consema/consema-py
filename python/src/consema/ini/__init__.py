@@ -16,10 +16,10 @@ arbitration):
   "consema.ini.conformance@1") — the machine-readable golden surface;
 - RFC 0009 (INI family profiles v1, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-
   v1.md), RFC 0004 (materialization/conversion/structural edit,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0004-...), RFC 0016 §5-§6 (API shapes and error
-  classification, https://github.com/consema/consema/blob/main/docs/rfcs/0016-...);
-- consema-rs/consema-ini/src/*.rs for byte/registry arbitration only;
-- consema-go/go/ini as a cross-reference only (never a template).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md), RFC 0016 §5-§6 (API shapes and error
+  classification, https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md);
+- https://github.com/consema/consema-rs/blob/main/consema-ini/src/*.rs for byte/registry arbitration only;
+- https://github.com/consema/consema-go/blob/main/go/ini as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and
@@ -135,12 +135,12 @@ INI_PYTHON_CONFIGPARSER_PROFILE = "ini.python-configparser@1"
 NATIVE_QUERY_DOMAIN_V1 = "ini.native-semantic-query@1"
 LOSSLESS_SYNTAX_QUERY_DOMAIN_V1 = "ini.lossless-syntax-query@1"
 
-# Frozen materialization styles (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:393-399).
+# Frozen materialization styles (RFC 0009 §11, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:393-399).
 INI_PORTABLE_CANONICAL_STYLE = "ini.portable-canonical@1"
 INI_WINDOWS_CANONICAL_STYLE = "ini.windows-canonical@1"
 INI_PYTHON_CONFIGPARSER_CANONICAL_STYLE = "ini.python-configparser-canonical@1"
 
-# Frozen projection targets (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:375-376).
+# Frozen projection targets (RFC 0009 §10, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:375-376).
 INI_PROJECTION_BEST_EXACT_ENTRY_MAPPING = "ini.projection.best-exact-entry-mapping@1"
 INI_PROJECTION_REQUIRE_OBJECT = "ini.projection.require-object@1"
 

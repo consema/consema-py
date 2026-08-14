@@ -1,14 +1,14 @@
 """The closed fifteen-kind PortableValue model.
 
 Authority: RFC 0016 §4.1 and the kind registry of
-consema-rs/consema-core/src/value.rs:622-653 (PortableValueKind) — the
+https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs:622-653 (PortableValueKind) — the
 language-neutral list is: Null, Boolean, Integer, Decimal, BinaryFloat32,
 BinaryFloat64, String, Bytes, Date, Time, LocalDateTime, OffsetDateTime,
 Sequence, Object, EntryMapping. The kind *names* are the language-neutral
 spellings used by the tagged JSON transport
-(consema-rs/consema-protocol/src/value_transport.rs). Decimal normalization and
-temporal validation follow consema-rs/consema-core/src/value.rs:277-292,
-337-352, 420-576; consema-go/go/core is a cross-reference.
+(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/value_transport.rs). Decimal normalization and
+temporal validation follow https://github.com/consema/consema-rs/blob/main/consema-core/src/value.rs:277-292,
+337-352, 420-576; https://github.com/consema/consema-go/blob/main/go/core is a cross-reference.
 
 Design: a single immutable class (Python has no closed interface types; a
 closed *kind* is enforced by the enum and the private constructor), with

@@ -3,7 +3,7 @@
 
 Authority (Rust arbitration for exact byte semantics):
 
-- Operation and path model: consema-rs/consema-plist/src/edit.rs:76-186
+- Operation and path model: https://github.com/consema/consema-rs/blob/main/consema-plist/src/edit.rs:76-186
   (EditPathStep DictKey{key, occurrence} | ArrayIndex, EditPath,
   DictPlacement End | Before | After, EditValue), 187-374 (EditOperation,
   EditTransaction, EditTransactionBuilder).
@@ -32,7 +32,7 @@ Authority (Rust arbitration for exact byte semantics):
   add_length_delta).
 - Commit artifacts: edit.rs:1935+ (ChangeSet, SourcePatch derivation,
   UntouchedByteProof; RFC 0004 §13-§16). Frozen operation ids:
-  consema-rs/consema-plist/src/operation_registry.rs:20-83.
+  https://github.com/consema/consema-rs/blob/main/consema-plist/src/operation_registry.rs:20-83.
 
 Values are supplied as typed native facts (integer, real, boolean, date,
 data, string, UID), never as raw markup or raw bytes (RFC 0013 §11). No

@@ -10,7 +10,7 @@ HclSyntaxKind set — there is no ``Bom`` kind because a BOM is excluded at
 formation (RFC 0014 §7.2).
 
 The scanner is a faithful Python-idiomatic port of the lexical contract,
-arbitrated by consema-rs/consema-hcl/src/lexer.rs:
+arbitrated by https://github.com/consema/consema-rs/blob/main/consema-hcl/src/lexer.rs:
 
 - Token kinds and piece mapping: lexer.rs:137-314.
 - Scan dispatch (root / template interior absorb / quoted / heredoc):

@@ -1,9 +1,9 @@
 """Immutable PortableGraph values and the reservation/definition lifecycle.
 
-Authority: RFC 0006; consema-rs/consema-graph/src/lib.rs (the construction
+Authority: RFC 0006; https://github.com/consema/consema-rs/blob/main/consema-graph/src/lib.rs (the construction
 invariants: reserved-then-defined nodes, reachability from the ordered
 roots, first-visit traversal depth bound, canonical first-discovery order
-for equality/encoding). Go (consema-go/go/graph/graph.go, equal.go) is a cross-reference.
+for equality/encoding). Go (https://github.com/consema/consema-go/blob/main/go/graph/graph.go, equal.go) is a cross-reference.
 
 PortableGraph is independent from PortableValue: it preserves graph-local
 identity, sharing, cycles, arbitrary mapping keys, duplicate associations,

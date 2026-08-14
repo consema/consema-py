@@ -20,16 +20,19 @@ Consema 六仓拆分的 Python 仓：本仓承载 Python 实现（`python/` 包�
 ```text
 cd python
 python -m pip install -e '.[dev]'
-python -m pytest tests/
+PYTHONPATH=tests/xml python -m pytest --import-mode=importlib tests/
+# PowerShell 等价：$env:PYTHONPATH='tests/xml'; python -m pytest --import-mode=importlib tests/
 ```
 
-**前置：** conformance 数据（`conformance/` 与 `docs/fc-manifest-0.13.0.json`）
-不随本仓提供，权威在规范仓；全新 clone 直接跑全量 pytest 会失败。本地运行
-前先并排检出规范仓并把数据 provision 到工作区根（与 CI 的
-`.github/actions/provision-conformance` 复合 action 相同，步骤见
-[python/README.md](python/README.md) Verify；规范仓钉在 `ad667021`，即
-cfd6e296 519-case 清单对应 commit）。缺数据时差分 integrity 测试按
-documented skip 跳过。
+与 CI 同款旗标：`--import-mode=importlib`（多个测试目录共享 basename，
+prepend 模式会 import file mismatch）+ `PYTHONPATH=tests/xml`（xml 测试把
+conftest 作为模块导入：`from conftest import …`）。**前置：** conformance
+数据（`conformance/` 与 `docs/fc-manifest-0.13.0.json`）不随本仓提供，权威在
+规范仓；全新 clone 直接跑全量 pytest 会失败。本地运行前先并排检出规范仓并
+把数据 provision 到工作区根（与 CI 的 `.github/actions/provision-conformance`
+复合 action 相同，步骤见 [python/README.md](python/README.md) Verify；规范仓
+钉在 `096e5f8`（2026-08-14 波 2 统一升级），即 cfd6e296 519-case 清单对应 commit）。缺数据时差分
+integrity 测试与 fixture 测试按 documented skip 跳过。
 
 ## 贡献点
 
@@ -46,13 +49,14 @@ documented skip 跳过。
 
 ## CI 门禁
 
-`.github/workflows/ci-python.yml`：7 个门禁 job —— python-gates（compileall
+`.github/workflows/ci-python.yml`：8 个门禁 job —— python-gates（compileall
 语法门禁 + editable install + pytest + 零依赖断言，3.12/3.13/3.14 矩阵）、
 coverage（pytest-cov 全量，总覆盖 >= 60%）、python-conformance（runner
 18 suites / 519 cases）、python-differential（Python-Rust 差分：byte parity /
 normalized differential / protocol exchange，windows-latest 多仓 checkout）、
-python-package（pip wheel --no-deps 打包门禁）、check-version-consistency
-（README 版本行与 pyproject.toml 一致）、examples（SDK 链示例实跑）；
+pip-audit（OSV advisory 每日 + push/PR 审计）、python-package
+（pip wheel --no-deps 打包门禁）、check-version-consistency（README 版本行与
+pyproject.toml 一致）、examples（SDK 链示例实跑）；
 aggregate `check (all gates green)` 是唯一 required check。push 到 main 或
 PR 均触发；PR 另受 pr-labels.yml 的 kind 标签门禁约束（标签见规范仓
 .github/LABELS.md）。

@@ -8,7 +8,8 @@ param(
 # ---------------------------------------------------------------------------
 # Cross-language protocol exchange verification for Python (L5
 # differential harness, multi-language-implementation-plan L5;
-# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4; roadmap §22.2 line 1883
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4; roadmap §22.2
+# (line numbers may drift, the section heading is the anchor);
 # "protocol cross-encode/decode 100%" extended to Python; the Go twin:
 # go-verify-protocol-exchange.ps1).
 #
@@ -78,8 +79,11 @@ if (-not (Test-Path $CaseFile)) {
 # UTF8 explicit: PowerShell 5.1 Get-Content defaults to the ANSI codepage.
 $cases = Get-Content $CaseFile -Raw -Encoding UTF8 | ConvertFrom-Json
 $caseCount = @($cases.cases).Count
-if ($caseCount -lt 40) {
-    Write-Error "protocol-exchange case file has $caseCount cases, want >= 40"
+# Exact frozen count (G66, 2026-08-14): the shared protocol-exchange
+# case set is pinned at 83 — any drift (fewer OR more) fails, not a loose
+# >= floor.
+if ($caseCount -ne 83) {
+    Write-Error "protocol-exchange case file has $caseCount cases, want exactly 83"
     exit 1
 }
 
@@ -128,7 +132,11 @@ if (Test-Path $pythonEvidenceDir) { Remove-Item $pythonEvidenceDir -Recurse -For
 Write-Host "[3/4] running the Python exchange test (test_protocol_exchange.py) + emitting the Python encoder files -> $pythonEvidenceDir"
 $env:CONSEMA_EXCHANGE_RUST_DIR = $OutDir
 $env:CONSEMA_EXCHANGE_PYTHON_DIR = $pythonEvidenceDir
-$logDir = Join-Path $env:TEMP 'consema-python-exchange'
+# Per-invocation unique capture directory (G44, 2026-08-14): a fixed
+# shared path would let two concurrent runs truncate/interleave each
+# other's capture files and flip the SKIPPED/PASSED verdicts.
+$nonce = [Guid]::NewGuid().ToString('N')
+$logDir = Join-Path $env:TEMP "consema-python-exchange-$nonce"
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
 $stderrFile = Join-Path $logDir 'python-test.stderr.txt'

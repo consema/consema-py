@@ -2,7 +2,7 @@
 Rust authority (L5 differential harness, multi-language-implementation-plan
 L5; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.4;
 roadmap §16.6 line 1555; the Go twin:
-consema-go/go/conformance/differential/protocol-exchange/exchange_test.go).
+https://github.com/consema/consema-go/blob/main/go/conformance/differential/protocol-exchange/exchange_test.go).
 
 The provisioned case set (conformance/differential/protocol-exchange/
 cases.json, the shared single-authority case directory of the consema
@@ -10,7 +10,7 @@ repository) carries one RFC 0015 machine record per case as canonical
 transport JSON plus the expected outcome (empty error code = accept,
 registered ``core.protocol.*@1`` code = reject). Both sides decode and
 re-encode every case; the Rust example
-(consema-rs/consema-conformance/examples/emit_protocol_exchange.rs) emits one
+(https://github.com/consema/consema-rs/blob/main/consema-conformance/examples/emit_protocol_exchange.rs) emits one
 ``<case-id>.json.hex`` / ``<case-id>.pvce.hex`` / ``<case-id>.error.txt``
 file per case, and this module:
 
@@ -33,7 +33,7 @@ python/README.md Verify) on a fresh clone without it.
 Measured status (2026-08-12): 83/83 cases verified (40/40 accept, 43/43
 reject) after the envelope.py record codec fixes: the value-path wire
 record is the schema-less ``object[("segments", ...)]`` shape
-(consema-rs/consema-protocol/src/query.rs:441-464) and the
+(https://github.com/consema/consema-rs/blob/main/consema-protocol/src/query.rs:441-464) and the
 materialization-request style reference rejects ``version: 0`` exactly
 like the authority (Rust ``ContractId::new`` version validation,
 materialization.rs:1357-1363).
@@ -114,7 +114,7 @@ class ExchangeResult:
 
 
 def load_case_file() -> list[dict]:
-    """Loads and validates the checked-in case set at the file level:
+    """Loads and validates the provisioned case set at the file level:
     manifest id, exact count, unique ids, known records, per-record positive
     and negative coverage, canonical transport JSON, and registered expected
     codes.

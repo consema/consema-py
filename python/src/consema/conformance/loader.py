@@ -3,7 +3,7 @@
 The vector files are plain strict JSON documents (never
 ``core.portable-value-json@1`` transport envelopes; conformance/README.md
 rule 3); the loader converts them into the core value model with the Go
-runner's exact conventions (consema-go/go/conformance/conformance.go:490-577):
+runner's exact conventions (https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go:490-577):
 
 - object member keys are sorted lexicographically at load time;
 - exact-integer number spellings become ``Integer``; non-integral
@@ -12,11 +12,13 @@ runner's exact conventions (consema-go/go/conformance/conformance.go:490-577):
   encoding/json behavior (the ini-v1 vector relies on this);
 - trailing content and non-finite constants are rejected.
 
-The aggregate digest algorithm is frozen at
-fc-manifest-0.13.0.json:41 (and mirrored by the Go runner at
-conformance.go:437-484): file-name byte-order sort, per-file sha256
-lowercase hex, lines ``{basename}:{digest}`` joined with ``\\n`` and no
-trailing newline, then sha256 of that UTF-8 string.
+The aggregate digest algorithm is frozen at the
+fc-manifest-0.13.0.json ``digests.conformance_suite`` note (key-name
+anchor; mirrored by the Go runner at
+https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go:437-484):
+file-name byte-order sort, per-file sha256 lowercase hex, lines
+``{basename}:{digest}`` joined with ``\\n`` and no trailing newline, then
+sha256 of that UTF-8 string.
 """
 
 from __future__ import annotations
@@ -144,18 +146,19 @@ def _object_field(value: PortableValue, name: str) -> PortableValue | None:
 
 
 def read_vector_file(vectors_dir: str, name: str) -> bytes:
-    """Reads one vector file as its canonical LF bytes.
+    """Reads one vector file as its raw bytes.
 
-    The frozen aggregate digest is defined over the canonical checkout
-    bytes (``.gitattributes`` eol=lf, fc-manifest-0.13.0.json:40); a CRLF
-    working tree (core.autocrlf=true) produces different per-file digests
-    for the affected files, which the manifest documents as expected. The
-    runner therefore normalizes CRLF line endings to LF before both hashing
-    and parsing (the affected vectors carry the CR bytes only as formatting
-    whitespace, never inside string content).
+    The frozen aggregate digest is defined over the raw checkout bytes:
+    the vectors are LF in the canonical checkout (``.gitattributes``
+    eol=lf), and a CRLF working tree (core.autocrlf=true) produces
+    different per-file digests, which the fc-manifest-0.13.0.json
+    ``digests.conformance_suite`` note documents as expected. The other
+    four runners hash the raw bytes, so this runner must too — no newline
+    normalization (G43, 2026-08-14: normalization was the Python-only
+    divergence from the shared five-runner digest).
     """
     with open(os.path.join(vectors_dir, name), "rb") as handle:
-        return handle.read().replace(b"\r\n", b"\n")
+        return handle.read()
 
 
 def compute_vectors_digest(vectors_dir: str) -> tuple[str, int, int]:

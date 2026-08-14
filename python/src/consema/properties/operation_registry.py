@@ -1,6 +1,6 @@
 """The Java Properties format operation registry (5 frozen records).
 
-Authority: consema-rs/consema-properties/src/operation_registry.rs:16-48 — the
+Authority: https://github.com/consema/consema-rs/blob/main/consema-properties/src/operation_registry.rs:16-48 — the
 exact operation ids, target roles, argument schemas, and support
 classifications; the surface is frozen by the registry test
 (operation_registry.rs:67-95: exactly five Supported structural operations

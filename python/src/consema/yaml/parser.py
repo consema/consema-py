@@ -10,13 +10,13 @@ Authority (language-neutral first; Rust only for arbitration):
   anchor before descending, most-recent-preceding rule, backward cycles,
   no expansion), and the security rules s13 (400-429: no evaluation, no
   network, no alias expansion).
-- The scalar resolution grammar is frozen by consema-rs/consema-yaml/src/
+- The scalar resolution grammar is frozen by https://github.com/consema/consema-rs/blob/main/consema-yaml/src/
   native.rs:565-716 (resolve_scalar/resolve_explicit/resolve_implicit),
   746-766 (null/bool), 768-801 (integer), 803-846 (float), 848-912
   (sexagesimal), 969-1075 (timestamp), 1077-1111 (binary).
 - The event grammar mirrors the saphyr event model through
-  consema-rs/consema-yaml/src/backend.rs:24-57 (event kinds) and the native
-  composition order consema-rs/consema-yaml/src/native.rs:224-508.
+  https://github.com/consema/consema-rs/blob/main/consema-yaml/src/backend.rs:24-57 (event kinds) and the native
+  composition order https://github.com/consema/consema-rs/blob/main/consema-yaml/src/native.rs:224-508.
 - The profile version directive gate is lib.rs:789-831; fatal limit mapping
   is backend.rs:147-156 and lib.rs:833-858.
 - Scalar resolution surface: conformance/vectors/yaml-v1.json cases
@@ -26,7 +26,7 @@ Authority (language-neutral first; Rust only for arbitration):
   native.arbitrary-duplicate-mapping (entry order and duplicate keys),
   regression.plain-property-characters (plain scalar content).
 
-consema-go/go/yaml/parser.go is a cross-reference only (never a template).
+https://github.com/consema/consema-go/blob/main/go/yaml/parser.go is a cross-reference only (never a template).
 
 The parser is intentionally private: Consema owns profile decisions, source
 identity, diagnostics, resource limits, native semantics, and graph

@@ -15,11 +15,11 @@ arbitration):
   "consema.json-family.conformance@2") and v1.json json cases (lines
   41-183) — the machine-readable golden surface;
 - RFC 0004 (materialization/conversion/structural edit,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0004-...), RFC 0005 (JSON family production and JSON5 v1,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0005-...), RFC 0016 §5-§6 (API shapes and error
-  classification, https://github.com/consema/consema/blob/main/docs/rfcs/0016-...);
-- consema-rs/consema-json/src/*.rs for byte/registry arbitration only;
-- consema-go/go/json as a cross-reference only (never a template).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md), RFC 0005 (JSON family production and JSON5 v1,
+  https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md), RFC 0016 §5-§6 (API shapes and error
+  classification, https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md);
+- https://github.com/consema/consema-rs/blob/main/consema-json/src/*.rs for byte/registry arbitration only;
+- https://github.com/consema/consema-go/blob/main/go/json as a cross-reference only (never a template).
 
 This package is an independent, Python-idiomatic implementation with zero
 third-party runtime dependencies. Error text is human presentation only and

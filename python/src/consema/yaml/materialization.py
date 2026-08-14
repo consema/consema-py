@@ -10,7 +10,7 @@ Authority (language-neutral first; Rust only for byte arbitration):
   every retained standard repository tag explicitly; newline and
   UTF-8/UTF-16 target encoding policies; output is reparsed under the target
   profile before a Complete result.
-- The writer grammar is consema-rs/consema-yaml/src/materialization.rs:207-238
+- The writer grammar is https://github.com/consema/consema-rs/blob/main/consema-yaml/src/materialization.rs:207-238
   (analyze/write/reparse/provenance), 292-401 (GraphLayout: anchor names for
   nodes with more than one occurrence), 430-717 (GraphWriter block/flow
   rendering), 719-728 (scalar presentation: float canonical ``e0``), and

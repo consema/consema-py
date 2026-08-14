@@ -14,7 +14,7 @@ Authority:
   AncestorDescendantConflict, PlacementAnchorRemoved, DuplicateKey,
   UnsupportedOperation, UnrepresentableValue, ResourceLimit,
   NewDocumentFormationFailed).
-- The transaction algebra transcribes consema-rs/consema-toml/src/edit.rs:
+- The transaction algebra transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs:
   RepresentationPolicy 16-26; ScalarReplacement/EditOperation 28-99;
   the atomic commit pipeline 281-430; dry-run 432-447; every prepare_*
   function 449-1062 (including delimiter-adjacent comma ownership,

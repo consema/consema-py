@@ -1,7 +1,7 @@
 """Fixed-field record helpers over PortableValue.
 
-Authority: consema-rs/consema-protocol/src/schema.rs (exact_fields /
-schema_fields / the typed field readers); Go (consema-go/go/protocol/schema.go) is a
+Authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/schema.rs (exact_fields /
+schema_fields / the typed field readers); Go (https://github.com/consema/consema-go/blob/main/go/protocol/schema.go) is a
 cross-reference only. Every helper reports :class:`ProtocolError` with the
 matching kind and path, so the shared vectors' error_path facts match.
 """

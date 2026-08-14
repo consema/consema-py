@@ -1,10 +1,10 @@
 """Contract identifiers, registry, and the common protocol envelope.
 
 The registry records are transcribed VERBATIM from
-consema-rs/consema-protocol/src/contract.rs (CONTRACTS_V1..CONTRACTS_V7,
+https://github.com/consema/consema-rs/blob/main/consema-protocol/src/contract.rs (CONTRACTS_V1..CONTRACTS_V7,
 contract.rs:71-273), the registry arbitration source; the v1-v7 counts are
 16/18/25/25/30/38/41 (contract.rs:696-702). Note that v4 shares the v3 set
-(contract.rs:381). Go (consema-go/go/protocol/contract.go) is a cross-reference only.
+(contract.rs:381). Go (https://github.com/consema/consema-go/blob/main/go/protocol/contract.go) is a cross-reference only.
 
 RFC 0016 §3.2 defines the envelope shape (`core.protocol-message@1` with
 schema / contract_id / contract_version / payload); the envelope itself is

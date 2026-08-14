@@ -1,9 +1,9 @@
 """Test bootstrap: make the src/ layout importable without installation.
 
 Same pattern as tests/document/conftest.py and tests/json/conftest.py; lets
-pytest import ``consema`` from a checkout before the toolchain/install gate
-(https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md section 3, section 7) is
-closed. It touches no project files.
+pytest import ``consema`` from a checkout; the editable install
+(pip install -e '.[dev]') makes this bootstrap redundant, but it keeps
+plain pytest workable too. It touches no project files.
 """
 
 from __future__ import annotations

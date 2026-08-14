@@ -13,8 +13,8 @@ Golden case transcribed from conformance/vectors/source-v1.json:
   (167-172) -> core.source.resource-limit@1.
 
 Contract: RFC 0003 §10 (https://github.com/consema/consema/blob/main/docs/rfcs/0003-source-syntax-query-and-patch-v1.md:
-250-291); arbitration consema-rs/consema-document/src/source_patch.rs:143-280,
-469-554; codes consema-rs/consema-protocol/src/error_registry.rs:381,387,393,399,
+250-291); arbitration https://github.com/consema/consema-rs/blob/main/consema-document/src/source_patch.rs:143-280,
+469-554; codes https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:381,387,393,399,
 366,87.
 """
 

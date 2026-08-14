@@ -1,8 +1,8 @@
 """The frozen CLI exit classes and the pure error classification.
 
 Authority: RFC 0015 §5 (the six exit classes, their codes 0-5, and the
-stable family mapping of §5.1/§5.2); consema-rs/consema-protocol/src/exit_class.rs.
-Go (consema-go/go/protocol/exit_class.go) is a cross-reference only. ``classify_error_code``
+stable family mapping of §5.1/§5.2); https://github.com/consema/consema-rs/blob/main/consema-protocol/src/exit_class.rs.
+Go (https://github.com/consema/consema-go/blob/main/go/protocol/exit_class.go) is a cross-reference only. ``classify_error_code``
 is a pure function implemented once in the protocol layer (RFC 0016 §6: "the
 SDK itself never classifies"); the CLI applies the mapped code only.
 """

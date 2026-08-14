@@ -2,7 +2,7 @@
 SDK-internal diagnostic record.
 
 Frozen code names with authority citations (all registry spellings are
-transcribed from consema-rs/consema-protocol/src/error_registry.rs:1098-1169;
+transcribed from https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1098-1169;
 the failure enums and their code mappings follow the Rust family's
 StableFailure impls):
 
@@ -15,13 +15,13 @@ StableFailure impls):
   (error_registry.rs:39) for every PropertiesParseLimits bound
   (lib.rs:61-122); source snapshot failures surface the typed
   SourceError codes (core.source.*@1) unchanged.
-- Projection failure code mapping: consema-rs/consema-properties/src/
+- Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
   projection.rs:741-752 — RecoveredDocument ->
   java-properties.projection.incomplete-document@1, UnpairedSurrogate ->
   java-properties.projection.unpaired-surrogate@1 (:745), DuplicateKey /
   CoreInvariant -> core.projection.target-not-applicable@1 (:748),
   ResourceLimit -> core.projection.resource-limit@1 (:750).
-- Edit failure code mapping: consema-rs/consema-properties/src/edit.rs:237-252
+- Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs:237-252
   — RecoveredDocument -> core.edit.incomplete-target@1, WrongSnapshot ->
   core.edit.wrong-snapshot@1, WrongRole -> core.edit.wrong-role@1,
   DuplicateTarget/OverlappingOwnership/PlacementAnchorRemoved ->
@@ -35,7 +35,7 @@ StableFailure impls):
   (error_registry.rs:108-118) through consema.protocol.query.QueryFailure
   — no new type is needed.
 - Diagnostic ordering: Diagnostic::sort_deterministically,
-  consema-rs/consema-core/src/diagnostic.rs:107-123 (primary start, category,
+  https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs:107-123 (primary start, category,
   code, occurrence; missing primary sorts last).
 
 Design: the Properties family raises typed exceptions whose stable

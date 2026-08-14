@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: consema-rs/consema-ini/src/query.rs:117-143
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-ini/src/query.rs:117-143
   (native domain ini.native-semantic-query@1) and 160-204 (syntax domain
   ini.lossless-syntax-query@1); the ten native operators and the two
   syntax operators are the exact RFC 0009 §9 surface (https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-
@@ -23,12 +23,12 @@ Authority (Rust arbitration for the executor semantics):
   query.rs:228-240; cursor cancellation query.rs:146-157.
 - Syntax text comparison uses the decoded Unicode scalar text of the exact
   piece span, not its raw encoding bytes (RFC 0009 §9,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:337-341; query.rs:661-676) — UTF-8, UTF-16LE, and
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:337-341; query.rs:661-676) — UTF-8, UTF-16LE, and
   explicit Windows-code-page queries are semantically identical.
 - Name filters require OriginalExact | ProfileEquivalent explicitly; a
   query never silently uses case folding (RFC 0009 §9,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:301-304; query.rs:470-525).
-- Failure codes: core.query.*@1 (consema-rs/consema-protocol/src/
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:301-304; query.rs:470-525).
+- Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/
   error_registry.rs:108-118) via consema.protocol.query.QueryFailure.
 
 The transferable query model (QueryDomain, QueryExpression, OperatorCall,
@@ -473,7 +473,7 @@ def _source_ordinal(item: IniMatch) -> int:
 
 def _decoded_span_text(document: IniDocument, span: Span) -> str:
     """Decoded Unicode scalar text of one exact raw piece span
-    (query.rs:661-676; RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:337-341).
+    (query.rs:661-676; RFC 0009 §9, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:337-341).
 
     The decoded coordinates are UTF-8 byte offsets into the decoded text
     (Rust &str byte slicing), so the slice happens on the UTF-8 encoding,

@@ -6,7 +6,7 @@ protocol-message envelope and its registered payloads, the profile /
 capability / registry descriptors, diagnostics, completion, execution
 control, query definitions and results, projection records, provenance,
 change sets, and the error-code registries. Dispatch is by case id,
-mirroring consema-go/go/conformance/protocol_v1.go (consema-rs/consema-conformance/src/
+mirroring https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go (https://github.com/consema/consema-rs/blob/main/consema-conformance/src/
 protocol_v1.rs is the arbitration source).
 
 Every handler is data-driven: the vector ``expected`` facts drive the
@@ -115,7 +115,7 @@ def run(conformance_runner: runner.Runner, data: runner.SuiteData) -> runner.Sui
 
 
 def _expect_error_code(vector: runner.Case, error: Exception | None) -> str | None:
-    """Mirrors expectErrorCode (consema-go/go/conformance/protocol_v1.go:104-124)."""
+    """Mirrors expectErrorCode (https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go:104-124)."""
     if error is None:
         return f"case {vector.id}: expected rejection"
     if not isinstance(error, ProtocolError):
@@ -139,7 +139,7 @@ def _rejection_message(vector: runner.Case, failure: ProtocolError) -> str | Non
 
 def _all_kinds_sample() -> PortableValue:
     """The closed fifteen-kind sample value
-    (protocolV1AllKinds, consema-go/go/conformance/protocol_v1.go:145-193)."""
+    (protocolV1AllKinds, https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go:145-193)."""
     date = PortableValue.date(2026, 8, 4)
     time = PortableValue.time(1, 2, 3, Decimal(4, -1))
     local = PortableValue.local_date_time(date, time)
@@ -722,7 +722,7 @@ def _provenance_roundtrip(vector: runner.Case) -> str | None:
 def _raw_node_ref_in_value(value: PortableValue) -> bool:
     """Reports whether the value tree contains a raw process-local
     node-reference marker ("node" integer fields), mirroring
-    rawNodeRefInValue (consema-go/go/conformance/protocol_v1.go:874-897)."""
+    rawNodeRefInValue (https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v1.go:874-897)."""
     if value.kind is Kind.OBJECT:
         for key, item in value.as_object():
             if key == "node" and item.kind is Kind.INTEGER:

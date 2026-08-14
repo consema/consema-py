@@ -1,4 +1,4 @@
-"""Root conversion composition tests (crates/consema/src/conversion.rs;
+"""Root conversion composition tests (https://github.com/consema/consema-rs/blob/main/consema/src/conversion.rs;
 RFC 0004; the operations-v1.json convert cases as the machine-readable
 authority).
 

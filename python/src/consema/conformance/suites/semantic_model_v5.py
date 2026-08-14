@@ -2,12 +2,12 @@
 22 cases): the v5 registry facts, the portable-graph record and its PGCE/1
 bytes, the graph query/provenance/projection records, the YAML query-result
 record, and the v5 protocol envelope rejections. Dispatch is by case id,
-mirroring consema-go/go/conformance/semantic_model_v5.go.
+mirroring https://github.com/consema/consema-go/blob/main/go/conformance/semantic_model_v5.go.
 
 The v5 record codecs that the Python protocol package does not implement
 (portable-graph, graph-query-result, graph-provenance-map,
 graph-projection-result, yaml-query-result) are transcribed locally from
-consema-go/go/protocol/records_graph.go and records_line_query.go, with the graph
+https://github.com/consema/consema-go/blob/main/go/protocol/records_graph.go and records_line_query.go, with the graph
 value/byte machinery from the Python ``consema.graph`` package.
 """
 
@@ -877,7 +877,8 @@ def _graph_projection_result_value(
     completion_value: PortableValue, graph, has_graph: bool, provenance: PortableValue
 ) -> PortableValue:
     """Validates and encodes ``core.graph-projection-result@1``
-    (graph_projection.rs:245-...)."""
+    (graph_projection.rs GraphProjectionResultMessage::new, :245-254; line
+    numbers may drift, the symbol name is the anchor)."""
     success = _completion_status(completion_value) == "Success"
     if success != has_graph:
         raise invalid("$", "only a successful graph projection carries a graph")

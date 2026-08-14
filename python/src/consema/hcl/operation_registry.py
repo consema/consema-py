@@ -1,6 +1,6 @@
 """The HCL-family format operation registry (RFC 0014 §10).
 
-Authority: consema-rs/consema-hcl/src/operation_registry.rs — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/operation_registry.rs — the exact
 operation ids, target roles, argument schemas, and support classifications.
 `hcl.native@1` publishes all six structural operations; `hcl.tfvars@1`
 publishes the four attribute operations only, because the tfvars

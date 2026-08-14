@@ -1,7 +1,7 @@
 """One immutable document transition: ordered source edits and node mappings.
 
 Authority:
-- consema-rs/consema-document/src/lib.rs:800-900 — SourceEdit (old_span,
+- https://github.com/consema/consema-rs/blob/main/consema-document/src/lib.rs:800-900 — SourceEdit (old_span,
   new_span, replacement), NodeMappingStatus (closed six-value vocabulary),
   NodeMapping (old, new, status, reason), ChangeSet (old_snapshot,
   new_snapshot, source_edits, node_mappings, diagnostics).
@@ -16,9 +16,9 @@ Authority:
   (RFC 0004 §16).
 
 The diagnostics field carries ordered diagnostic records of the protocol
-layer (consema.protocol Diagnostic, RFC 0015); it is typed opaquely here
-because the protocol package is owned by another agent and lands in the same
-milestone.
+layer (consema.protocol Diagnostic, RFC 0015); it is typed opaquely here —
+the protocol package is a sibling package in this implementation, and the
+opaque typing keeps this module's import graph acyclic.
 """
 
 from __future__ import annotations

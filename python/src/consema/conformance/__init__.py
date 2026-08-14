@@ -2,8 +2,10 @@
 language-neutral vectors (RFC 0016 §7; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §2).
 
 Imports the runner machinery and registers the frozen 18-suite inventory.
-The vector files in ``conformance/vectors`` are the authority; this package
-embeds no vector copy and holds no expectation literals
+The vector files in ``conformance/vectors`` are the authority; the suite
+count (18), the case count (519) and the aggregate digest are hard pins in
+this module (runner.py), while the vector content itself is never copied —
+the pins guard the inventory, the vector files stay authoritative
 (conformance/README.md rules 3-4).
 """
 

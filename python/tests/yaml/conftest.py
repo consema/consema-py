@@ -1,9 +1,8 @@
 """Shared YAML test fixtures: parse helpers and query builders.
 
-The tests are intent documents: every golden value is transcribed from
+The tests transcribe every golden value directly from
 conformance/vectors/yaml-v1.json with the case id cited in the test
-docstring. The toolchain runs pytest after the L0/L1 skeleton gates
-(https://github.com/consema/consema/blob/main/docs/multi-language-implementation-plan.md s3/s7).
+docstring; the suite runs in CI (ci-python.yml python-gates job).
 """
 
 from __future__ import annotations

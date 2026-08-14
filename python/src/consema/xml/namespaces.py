@@ -10,16 +10,16 @@ Authority:
   standard URI; ``xmlns`` is reserved and cannot be rebound; namespace-name
   comparison is exact string comparison with no URI fetch or normalization;
   namespace scope is immutable ancestry-derived data.
-- The resolution rules transcribe consema-rs/consema-xml/src/namespace.rs:9-219
+- The resolution rules transcribe https://github.com/consema/consema-rs/blob/main/consema-xml/src/namespace.rs:9-219
   (XML_NAMESPACE_URI:10, XMLNS_NAMESPACE_URI:12, QName:16-39,
   ExpandedName:41-57, Binding:59-66, NamespaceError:68-89,
   NamespaceScope:91-218) — byte/registry arbitration only; this module is a
   Python-idiomatic reimplementation.
 - The four namespace error codes are frozen by the parser
-  (consema-rs/consema-xml/src/parser.rs:130-137): unbound-prefix@1,
+  (https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs:130-137): unbound-prefix@1,
   reserved-prefix@1, xml-rebinding@1, default-xmlns@1.
 
-consema-go/go/xml is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

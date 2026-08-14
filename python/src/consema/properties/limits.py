@@ -2,7 +2,7 @@
 
 Authority:
 
-- ``PropertiesParseLimits``: consema-rs/consema-properties/src/lib.rs:61-98
+- ``PropertiesParseLimits``: https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs:61-98
   (field vocabulary) and lib.rs:100-122 (frozen defaults) — the common
   ParseLimits plus the sixteen format-owned bounds; RFC 0010 §14
   (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:415-432) requires them
@@ -12,12 +12,12 @@ Authority:
 - ``PropertiesEncodingSelection``: lib.rs:52-59 — Reader input decoded
   through one exact published text encoding versus the InputStream-
   compatible one-byte ISO-8859-1 mapping with BOM bytes as content;
-  RFC 0010 §3 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:65-106).
+  RFC 0010 §3 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:65-106).
 
 The profile is always selected by the caller; a ``.properties`` extension
 does not choose between a character Reader and a Latin-1 byte stream, and
 UTF-8 is not silently assumed for the InputStream profile (RFC 0010 §1,
-https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:28-31).
+https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:28-31).
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ from dataclasses import dataclass, field
 from consema.document.limits import ParseLimits
 from consema.document.source import SourceEncoding
 
-# Frozen defaults, consema-rs/consema-properties/src/lib.rs:104-120
+# Frozen defaults, https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs:104-120
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
 _DEFAULT_MAX_DECODED_SCALARS = 64 * 1024 * 1024
 _DEFAULT_MAX_NATURAL_LINES = 2_000_000

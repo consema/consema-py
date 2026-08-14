@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: consema-rs/consema-yaml/src/lib.rs:322-461 —
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/lib.rs:322-461 —
   snapshot identity, exact source, render() (byte-for-byte identical to the
   input, lib.rs:363-367), format family (lib.rs:369-373), profile
   (lib.rs:375-379), formation status (lib.rs:381-385: Complete streams

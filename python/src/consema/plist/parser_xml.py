@@ -3,7 +3,7 @@
 
 Authority (Rust arbitration for exact byte semantics and recovery):
 
-- Source contract: consema-rs/consema-plist/src/parser_xml.rs:396-460 — the
+- Source contract: https://github.com/consema/consema-rs/blob/main/consema-plist/src/parser_xml.rs:396-460 — the
   RFC 0013 §2.1 document-entity table (no-BOM defaults to UTF-8; only
   UTF-8 / UTF-16LE-with-BOM / UTF-16BE-with-BOM are admitted; an
   incompatible selection is a fatal ``plist.xml.encoding@1`` failure).

@@ -6,14 +6,14 @@ Authority:
   the eight operation ids (xml.edit.replace-text@1, insert-attribute@1,
   remove-attribute@1, rename-attribute@1, set-attribute-value@1,
   insert-element@1, remove-element@1, rename-element@1).
-- The exact descriptors transcribe consema-rs/consema-xml/src/
+- The exact descriptors transcribe https://github.com/consema/consema-rs/blob/main/consema-xml/src/
   operation_registry.rs:16-89 (ids, target roles xml.text@1 /
   xml.element@1 / xml.attribute@1, argument kinds String and Placement,
   and the Support classification); the structural surface test
   operation_registry.rs:100-124 pins the frozen eight-operation surface.
 - The argument-kind spellings follow consema-document
   operation_registry.rs (OperationArgumentKind) and are cross-checked by
-  consema-go/go/xml operation_test.go.
+  https://github.com/consema/consema-go/blob/main/go/xml operation_test.go.
 """
 
 from __future__ import annotations

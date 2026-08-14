@@ -14,7 +14,7 @@ Authority:
   ProcessingInstructionClose, ErrorRegion — with the rule that format kinds
   align one-to-one with the common LosslessStructuralIndex pieces.
 - The stable kind names transcribe
-  consema-rs/consema-xml/src/document.rs:801-889 (XmlSyntaxKind::as_str /
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/document.rs:801-889 (XmlSyntaxKind::as_str /
   from_name); the lossless-syntax query protocol validates the same
   vocabulary (consema.protocol query.py:1109-1121).
 - consema.document LosslessStructuralIndex (document/structural.py) owns

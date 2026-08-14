@@ -11,7 +11,7 @@ Authority:
   rechecking base digest and every original-byte precondition.
 - RFC 0016 §5.3 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:184-187): dry-run
   semantics identical; nothing authorizes file writes.
-- consema-rs/consema-document/src/edit_plan.rs — arbitration: EditPlanSourceId
+- https://github.com/consema/consema-rs/blob/main/consema-document/src/edit_plan.rs — arbitration: EditPlanSourceId
   bound edit_plan.rs:13-31 (non-empty, <= 1024); EditOperationSummary bounds
   edit_plan.rs:34-70 (<= 64 arguments, names match
   [a-z0-9_]*, values non-empty <= 1024); EditPlan::new operation-metadata
@@ -19,7 +19,7 @@ Authority:
   must equal the operation's canonical "id@version" form, and no extra
   operation.* keys); EditPlanError edit_plan.rs:200-211.
 
-consema-go/go/document is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

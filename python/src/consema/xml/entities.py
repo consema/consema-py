@@ -9,14 +9,14 @@ Authority:
   predefined entities are always available with their XML meanings; internal
   general entity names are unique; expansion is guarded before and during
   allocation across the whole document, not independently per reference.
-- The vocabulary transcribes consema-rs/consema-xml/src/entity.rs:9-208
+- The vocabulary transcribes https://github.com/consema/consema-rs/blob/main/consema-xml/src/entity.rs:9-208
   (PREDEFINED_ENTITIES:19-40, predefined_value:42-49, is_xml_char:51-59,
   ReplacementError:61-72, validate_replacement_text:74-89, ExpansionBreach:
   91-106, EntityExpansionLimits:108-123, EntityExpansionState:125-208) —
   byte/registry arbitration only; this module is a Python-idiomatic
   reimplementation.
 - The entity diagnostic codes are frozen by the parser
-  (consema-rs/consema-xml/src/parser.rs): markup@1:789, illegal-character@1:794,
+  (https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs): markup@1:789, illegal-character@1:794,
   parameter-entity@1:765/806, reserved-name@1:817, duplicate@1:828,
   unknown@1:1612, cyclic@1:1638, amplification@1:1753, limit@1:1754.
 """

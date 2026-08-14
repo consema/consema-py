@@ -1,11 +1,11 @@
 """Suite ``consema.protocol.conformance@2`` (protocol-v2.json, 11 cases):
 registry manifests, error-code manifest, and the transferable source
 snapshot / source patch dual transports plus their rejections. Dispatch is
-by case id, mirroring consema-go/go/conformance/protocol_v2.go exactly.
+by case id, mirroring https://github.com/consema/consema-go/blob/main/go/conformance/protocol_v2.go exactly.
 
 The transferable snapshot/patch records are the ``core.source-snapshot@1``
 and ``core.source-patch@1`` wire codecs (the Go v2 runner externalizes
-through the v1 message codecs; consema-go/go/protocol/records_source.go
+through the v1 message codecs; https://github.com/consema/consema-go/blob/main/go/protocol/records_source.go
 sourceSnapshotValue / encodingValueV1 / sourcePatchRecordValue), transcribed
 here as :class:`_SourceSnapshotMessage` and :class:`_SourcePatchMessage`
 because the Python protocol package owns the envelope and registries but

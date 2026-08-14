@@ -2,8 +2,8 @@
 
 Contract: RFC 0004 §3/§7/§8 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
 structural-edit-v1.md:56-94, 170-217); arbitration
-consema-rs/consema-document/src/materialization.rs:95-203, 282-391; codes
-consema-rs/consema-protocol/src/error_registry.rs:556-604.
+https://github.com/consema/consema-rs/blob/main/consema-document/src/materialization.rs:95-203, 282-391; codes
+https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:556-604.
 """
 
 from __future__ import annotations

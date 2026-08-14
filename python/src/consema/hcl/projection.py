@@ -24,7 +24,7 @@ with `hcl.projection.unrepresentable@1` (object-key), never silently
 rendered.
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration): consema-rs/consema-hcl/src/projection.rs — the record contract
+arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/projection.rs — the record contract
 projection.rs:24-65, the target and policy projection.rs:155-239, limits
 projection.rs:241-268, failure algebra projection.rs:432-477, the
 `hcl.expression@1` contract projection.rs:479-592, kind-family mapping
@@ -401,7 +401,7 @@ class _Context:
             self.event(self.document.node_ref(expression), path)
             # Under the ProjectExpression policy each derived expression is
             # the authorized `hcl.expression@1` record itself, not a
-            # {kind, expression} wrapper (consema-go/go/hcl/projection.go:559-573;
+            # {kind, expression} wrapper (https://github.com/consema/consema-go/blob/main/go/hcl/projection.go:559-573;
             # hcl-v1.json hcl.projection.project-expression-policy).
             return self.expression_record(expression)
         literal = literal_value(expression)

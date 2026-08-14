@@ -9,7 +9,8 @@ param(
 # Cross-language normalized-result differential verification for Python
 # (L5 differential harness, multi-language-implementation-plan L5;
 # https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §3.3; roadmap
-# §11.2 lines 849-861; the Go twin: go-verify-normalized-differential.ps1).
+# §11.2 (line numbers may drift, the section heading is the anchor); the Go
+# twin: go-verify-normalized-differential.ps1).
 #
 # Bidirectional pipeline (Python never imports or calls Rust, RFC 0016
 # §1.1):
@@ -82,8 +83,10 @@ if (-not (Test-Path $CaseFile)) {
 # UTF8 explicit: PowerShell 5.1 Get-Content defaults to the ANSI codepage.
 $cases = Get-Content $CaseFile -Raw -Encoding UTF8 | ConvertFrom-Json
 $caseCount = @($cases.cases).Count
-if ($caseCount -lt 40) {
-    Write-Error "normalized differential case file has $caseCount cases, want >= 40"
+# Exact frozen count (G66, 2026-08-14): the shared normalized case set
+# is pinned at 108 — any drift (fewer OR more) fails, not a loose >= floor.
+if ($caseCount -ne 108) {
+    Write-Error "normalized differential case file has $caseCount cases, want exactly 108"
     exit 1
 }
 
@@ -132,7 +135,11 @@ if (Test-Path $pythonEvidenceDir) { Remove-Item $pythonEvidenceDir -Recurse -For
 Write-Host "[3/4] running the Python differential test (test_normalized.py) + emitting the Python evidence files -> $pythonEvidenceDir"
 $env:CONSEMA_DIFFERENTIAL_NORMALIZED_RUST_DIR = $OutDir
 $env:CONSEMA_DIFFERENTIAL_NORMALIZED_PYTHON_DIR = $pythonEvidenceDir
-$logDir = Join-Path $env:TEMP 'consema-python-normalized'
+# Per-invocation unique capture directory (G44, 2026-08-14): a fixed
+# shared path would let two concurrent runs truncate/interleave each
+# other's capture files and flip the SKIPPED/PASSED verdicts.
+$nonce = [Guid]::NewGuid().ToString('N')
+$logDir = Join-Path $env:TEMP "consema-python-normalized-$nonce"
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
 $stderrFile = Join-Path $logDir 'python-test.stderr.txt'

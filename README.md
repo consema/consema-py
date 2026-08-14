@@ -1,7 +1,6 @@
 # Consema Python（consema-py）
 
 ![CI](https://img.shields.io/github/actions/workflow/status/consema/consema-py/ci-python.yml?branch=main)
-![Version](https://img.shields.io/github/v/tag/consema/consema-py)
 ![License](https://img.shields.io/github/license/consema/consema-py)
 
 Consema 语言中立契约（RFC 0016）的 **Python 实现**仓库。本仓库是 Consema 六仓
@@ -15,7 +14,7 @@ check-version-consistency job 断言 README `Version:` 行与 pyproject 一致�
 ## 快速开始（30 秒跑通）
 
 ```text
-pip install consema（1.0.0-rc.1 发布后可用）
+pip install consema（当前版本见上方 Version: 行；发布后可用）
 ```
 
 把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python quickstart.py`）（一个 JSON 文档走完 parse → query → edit → render 四条链）：
@@ -82,13 +81,14 @@ if __name__ == "__main__":
 - `scripts/`：跨语言差分验证脚本（byte parity / normalized differential /
   protocol exchange）。脚本构建 consema-rs 的 Rust emitter 并对拍 Python 实现；
   Rust 侧来自 consema-rs 仓 checkout（CI 多仓模式），conformance 数据来自规范仓 checkout。
-- `.github/workflows/ci-python.yml`：7 个门禁 job —— python-gates（compileall
+- `.github/workflows/ci-python.yml`：8 个门禁 job —— python-gates（compileall
   语法门禁 + editable install + pytest + 零依赖断言，3.12/3.13/3.14 矩阵）、
   coverage（pytest-cov 全量，总覆盖 >= 60%）、python-conformance（runner
   18 suites / 519 cases）、python-differential（Python-Rust 差分：byte parity /
   normalized differential / protocol exchange，windows-latest 多仓 checkout）、
-  python-package（pip wheel --no-deps 打包门禁）、check-version-consistency
-  （README 版本行与 pyproject.toml 一致）、examples（SDK 链示例实跑）；另有
+  pip-audit（OSV advisory 每日 + push/PR 审计）、python-package
+  （pip wheel --no-deps 打包门禁）、check-version-consistency（README 版本行与
+  pyproject.toml 一致）、examples（SDK 链示例实跑）；另有
   aggregate `check (all gates green)` 门禁。
 
 ## 构建与测试
@@ -113,14 +113,14 @@ runner 测试（tests/conformance/）与 capability parity 测试读取仓库相
 skip 跳过（见 python/README.md Verify）。本地运行前先把规范仓并排检出并把
 conformance 数据 provision 到工作区根（与 CI 的
 `.github/actions/provision-conformance` 复合 action 相同；CI 把规范仓钉在
-`ad667021`——cfd6e296 519-case 清单对应的 commit）：
+`096e5f8`——cfd6e296 519-case 清单对应的 commit、2026-08-14 波 2 统一升级）：
 
 ```text
 # 规范仓并排检出到 ../consema；本地 checkout 必须与 CI 钉在同一个 commit
-# （CI 用 ad667021——cfd6e296 519-case 清单对应的 commit），否则 provision
+# （CI 用 096e5f8——cfd6e296 519-case 清单对应的 commit、2026-08-14 波 2 统一升级），否则 provision
 # 的数据与 CI 不同：
 #   git clone https://github.com/consema/consema ../consema
-#   cd ../consema && git checkout ad667021f0fd7c611dd0deb670eba7658e1ea575
+#   cd ../consema && git checkout 096e5f840ecc714912db779706fd881405b92308
 # PowerShell 等价：Copy-Item -Recurse ../consema/conformance ./conformance
 # 与 Copy-Item ../consema/docs/fc-manifest-0.13.0.json ./docs/
 cp -r ../consema/conformance ./conformance
@@ -129,7 +129,7 @@ cp ../consema/docs/fc-manifest-0.13.0.json ./docs/
 ```
 
 数据在场后 703 passed / 4 skipped（CI 同款 `--import-mode=importlib` +
-`PYTHONPATH=tests/xml`；能力 parity 2 个断言亦全绿）。
+`PYTHONPATH=tests/xml`；能力 parity 4 个测试亦全绿）。
 
 ## FAQ
 

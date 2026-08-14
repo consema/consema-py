@@ -14,10 +14,10 @@ the transport facts:
 - ``latin1-resource.properties.hex`` — non-UTF-8 Latin-1 resource bytes
   under the Latin-1 profile.
 
-Facts (property counts, scalar-projectable) mirror consema-rs/consema-
+Facts (property counts, scalar-projectable) mirror https://github.com/consema/consema-rs/blob/main/consema-
 conformance/tests/line_format_fixtures.rs:115-179. When the shared tree
-is not reachable the tests skip — the same pattern as
-tests/toml/conftest.py. Fixtures are read-only; tests never modify them.
+is not reachable the tests FAIL (G68 guard, same as tests/toml/conftest.py)
+— a partially provisioned checkout must not go green. Fixtures are read-only; tests never modify them.
 """
 
 from __future__ import annotations
@@ -48,8 +48,10 @@ def _fixture_bytes(name: str) -> bytes:
     """The canonical byte container: ``.hex`` files are lowercase-hex text
     (fixtures/properties/README.md); other fixtures are raw bytes."""
     path = _FIXTURES / name
+    # G68 guard: a missing fixture FAILS the gate instead of skipping
+    # silently (partially provisioned checkouts must not go green).
     if not path.exists():
-        pytest.skip(f"shared fixture not available: {name}")
+        raise FileNotFoundError(f"shared fixture not available: {name}")
     raw = path.read_bytes()
     if name.endswith(".hex"):
         return bytes.fromhex(raw.decode("ascii"))

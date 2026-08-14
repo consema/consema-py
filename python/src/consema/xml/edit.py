@@ -20,7 +20,7 @@ Authority:
   emits a replayable ``SourcePatch``; dry-run and commit have identical
   replacement sets and target digest.
 - The transaction, validation, preparation, and commit logic transcribe
-  consema-rs/consema-xml/src/edit.rs:44-1435 (PreparedEdit:44-56, NameFacts:
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/edit.rs:44-1435 (PreparedEdit:44-56, NameFacts:
   58-89, AttributePlacement:91-101, ContentPlacement:102-111,
   EditOperation:113-176, EditTransaction/Builder:178-304, EditCommit:
   306-317, EditFailure:319-408, commit:410-570, dry_run:572-588,
@@ -28,11 +28,11 @@ Authority:
   745-1307, find_node_by_span:1309-1336, source_patch_limits:1346-1356,
   operation metadata:1358-1435) — byte/registry arbitration only.
 - The failure codes are the registered core.edit.*@1 codes
-  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:387-423; consema.xml.errors).
+  (RFC 0004 §17, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:387-423; consema.xml.errors).
 - Vector coverage: conformance/vectors/xml-1-0-safe-v1.json cases
   ``xml.edit.*`` (lines 437-566).
 
-consema-go/go/xml is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

@@ -66,8 +66,10 @@ if (-not (Test-Path $CaseFile)) {
 # UTF8 explicit: PowerShell 5.1 Get-Content defaults to the ANSI codepage.
 $cases = Get-Content $CaseFile -Raw -Encoding UTF8 | ConvertFrom-Json
 $caseCount = @($cases.cases).Count
-if ($caseCount -lt 40) {
-    Write-Error "differential case file has $caseCount cases, want >= 40"
+# Exact frozen count (G66, 2026-08-14): the shared byte-parity case set
+# is pinned at 68 — any drift (fewer OR more) fails, not a loose >= floor.
+if ($caseCount -ne 68) {
+    Write-Error "differential case file has $caseCount cases, want exactly 68"
     exit 1
 }
 
@@ -111,7 +113,11 @@ if ($LASTEXITCODE -ne 0) {
 # --- Python side --------------------------------------------------------------
 Write-Host "[3/3] running the Python byte-parity test (test_byte_parity.py)..."
 $env:CONSEMA_DIFFERENTIAL_RUST_DIR = $OutDir
-$logDir = Join-Path $env:TEMP 'consema-python-parity'
+# Per-invocation unique capture directory (G44, 2026-08-14): a fixed
+# shared path would let two concurrent runs truncate/interleave each
+# other's capture files and flip the SKIPPED/PASSED verdicts.
+$nonce = [Guid]::NewGuid().ToString('N')
+$logDir = Join-Path $env:TEMP "consema-python-parity-$nonce"
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
 $stderrFile = Join-Path $logDir 'python-test.stderr.txt'

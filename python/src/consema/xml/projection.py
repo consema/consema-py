@@ -18,7 +18,7 @@ Authority:
   There is no ``xml-to-json-default``, automatic attribute ``@`` prefix,
   automatic text ``#text`` key, or child grouping.
 - The record shapes and every policy transcribe
-  consema-rs/consema-xml/src/projection.rs:20-469 (ProjectionTarget:21-29,
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/projection.rs:20-469 (ProjectionTarget:21-29,
   TextContentInclude:31-38, AttributePolicy:39-49, TextKeyPolicy:51-58,
   RepeatedChildPolicy:60-69, ExpandedNameKeyPolicy:71-81, CollisionPolicy:
   116-124, ProjectionRequest:126-213, ProjectionLimits:215-237,
@@ -36,7 +36,7 @@ Authority:
   ``xml.projection.namespace-record`` (327-339),
   ``xml.projection.recovered-never-projects`` (341-350).
 
-consema-go/go/xml is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

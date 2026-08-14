@@ -1,7 +1,7 @@
 """UntouchedByteProof tests.
 
 Intended behavior mirrors the Rust arbitration tests
-(consema-rs/consema-document/src/untouched_proof.rs:319-402) against the
+(https://github.com/consema/consema-rs/blob/main/consema-document/src/untouched_proof.rs:319-402) against the
 contract of RFC 0004 §15 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-
 structural-edit-v1.md:358-371): the proof is an ordered cover of all
 old-source intervals outside replacements mapped to target intervals;

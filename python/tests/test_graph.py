@@ -1,7 +1,7 @@
 """Intent documents for PortableGraph and the PGCE/1 byte codec.
 
 Golden byte vectors are frozen by the Rust tests
-(consema-rs/consema-graph/src/pgce.rs:664-686): a scalar graph with tag
+(https://github.com/consema/consema-rs/blob/main/consema-graph/src/pgce.rs:664-686): a scalar graph with tag
 `tag:yaml.org,2002:str` and content "x", and the empty graph.
 """
 

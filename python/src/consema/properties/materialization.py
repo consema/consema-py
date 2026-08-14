@@ -3,7 +3,7 @@ profiles.
 
 Authority (Rust arbitration for exact bytes):
 
-- Entry and completion algebra: consema-rs/consema-properties/src/
+- Entry and completion algebra: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
   materialization.rs:26-77 - profile resolution (materialization.rs:79-90),
   request validation (materialization.rs:92-122: style/newline/encoding
   contracts), bounded text output, reparse under the exact target profile,
@@ -23,14 +23,14 @@ Authority (Rust arbitration for exact bytes):
   / Latin-1 / Windows code pages), 633-652 (the frozen code-page
   registry).
 - Failure names and codes: consema-document/src/materialization.rs:328-351,
-  379-390 and RFC 0004 section 17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:386-423) -
+  379-390 and RFC 0004 section 17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:386-423) -
   UnsupportedProfile, UnsupportedStyle, UnsupportedEncoding,
   UnsupportedNewline, Unrepresentable, ResourceLimit, FormationFailed.
-- Closure (RFC 0010 section 12, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:377-381): every result
+- Closure (RFC 0010 section 12, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:377-381): every result
   reparses under the exact target profile and reprojects under the
   request's policy; output bytes, fidelity/report, and provenance are
   atomic and bounded. No source BOM is generated for Latin-1
-  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:375).
+  (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:375).
 
 Golden transcription targets: conformance/vectors/java-properties-v1.json
 cases materialization.* (lines 91-104).

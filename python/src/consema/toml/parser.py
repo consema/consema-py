@@ -8,9 +8,9 @@ Authority:
   is a fatal ``core.parse.resource-limit@1``; syntax failure is
   ``toml.parse.syntax@1`` with the backend-provable minimal span and stable
   arguments; no truncated success documents.
-- The parse pipeline order transcribes consema-rs/consema-toml/src/parser.rs:17-63.
+- The parse pipeline order transcribes https://github.com/consema/consema-rs/blob/main/consema-toml/src/parser.rs:17-63.
 - The value grammar transcribes the pinned backend toml_edit 0.22.27
-  (consema-rs/consema-toml/src/lib.rs:104 pins toml_edit 0.22.27; the backend
+  (https://github.com/consema/consema-rs/blob/main/consema-toml/src/lib.rs:104 pins toml_edit 0.22.27; the backend
   is not the spec, RFC 0001 §1, but the arbiter for byte facts). All
   edge-case behaviors below were verified empirically against toml_edit
   0.22.27 before transcription:

@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: consema-rs/consema-json/src/lib.rs:170-286 —
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:170-286 —
   snapshot identity, exact source, render() (exact current source bytes,
   lib.rs:198-202), format family (lib.rs:204-208), profile (lib.rs:210-214),
   formation status (lib.rs:216-220), diagnostics (lib.rs:222-226), lossless
@@ -20,7 +20,7 @@ Authority (Rust arbitration for the public surface):
 The document is logically immutable; every NodeRef and Span is bound to one
 snapshot identity. Recovered documents retain exact bytes and explicit
 recovery structure but never fabricate native semantics
-(RFC 0005 §2, https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:34-48).
+(RFC 0005 §2, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:34-48).
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ from consema.json.parser import (
 @dataclass(frozen=True, slots=True)
 class JsonDocument:
     """Complete immutable JSON/JSONC/JSON5 document snapshot
-    (consema-rs/consema-json/src/lib.rs:170-183)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:170-183)."""
 
     authority: DocumentAuthority
     source: SourceSnapshot
@@ -141,7 +141,8 @@ class JsonDocument:
 
 
 class JsonAccessErrorKind:
-    """Stable node-resolution failures (lib.rs:614-...; JsonAccessError)."""
+    """Stable node-resolution failures (consema-json lib.rs ``JsonAccessError``,
+    :614-621; line numbers may drift, the symbol name is the anchor)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"
@@ -149,7 +150,8 @@ class JsonAccessErrorKind:
 
 
 class JsonAccessError(Exception):
-    """Node resolution failure (lib.rs:614-...)."""
+    """Node resolution failure (consema-json lib.rs ``JsonAccessError``,
+    :614-621; line numbers may drift, the symbol name is the anchor)."""
 
     def __init__(self, kind: str) -> None:
         super().__init__(kind)

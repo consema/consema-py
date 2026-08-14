@@ -8,7 +8,7 @@ tree.
 
 Authority (language-neutral first; Rust for arbitration):
 
-- Value types and semantics: consema-rs/consema-plist/src/native.rs:31-100
+- Value types and semantics: https://github.com/consema/consema-rs/blob/main/consema-plist/src/native.rs:31-100
   (PLIST_EPOCH_OFFSET_UNIX / PlistStringStatus / PlistString), 135-195
   (PlistKey), 196-215 (PlistInteger), 219-293 (RealWidth / PlistReal),
   296-311 (PlistBoolean), 322-366 (PlistDate), 369-392 (PlistData),

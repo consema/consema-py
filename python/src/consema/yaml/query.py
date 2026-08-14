@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the executor semantics):
 
-- Domain binding and versioning: consema-rs/consema-yaml/src/query.rs:167-197
+- Domain binding and versioning: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/query.rs:167-197
   (native) and 213-255 (syntax) — domains yaml.native-semantic-query@1 and
   yaml.lossless-syntax-query@1 (RFC 0007 s9, lines 229-251).
 - Native operators: query.rs:394-596 (yaml.documents, yaml.document-root,
@@ -16,7 +16,7 @@ Authority (Rust arbitration for the executor semantics):
   encoded-text comparison query.rs:651-660.
 - Expression evaluation and StructureOrderMerge: query.rs:313-392; selection
   algebra query.rs:690-707; limits and cancellation query.rs:278-288.
-- Failure codes: core.query.*@1 (consema-rs/consema-protocol/src/error_registry.rs:108-118)
+- Failure codes: core.query.*@1 (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:108-118)
   via consema.protocol.query.QueryFailure.
 - Vector surface: conformance/vectors/yaml-v1.json cases query.mapping-entries
   (roles), query.alias-target (roles), query.syntax-comments (ordinals),

@@ -1,7 +1,7 @@
 """The HCL format operation registry (RFC 0014 §10).
 
 The frozen surface is pinned by the Rust registry tests
-(consema-rs/consema-hcl/src/operation_registry.rs:100-157): `hcl.native@1`
+(https://github.com/consema/consema-rs/blob/main/consema-hcl/src/operation_registry.rs:100-157): `hcl.native@1`
 publishes exactly the six frozen operations in the frozen order;
 `hcl.tfvars@1` publishes the four attribute operations only.
 """

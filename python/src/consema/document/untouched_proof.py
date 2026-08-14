@@ -9,13 +9,13 @@ Authority:
   new byte once, each mapped region has equal length and equal bytes, region
   order is monotonic, and base and target digests match the proof. The proof
   says only that bytes outside planned replacements are identical.
-- consema-rs/consema-document/src/untouched_proof.rs — arbitration:
+- https://github.com/consema/consema-rs/blob/main/consema-document/src/untouched_proof.rs — arbitration:
   UntouchedByteRegion untouched_proof.rs:8-59; UntouchedByteProof::create /
   from_facts / verify untouched_proof.rs:71-132; canonical region computation
   (maximal, adjacent regions merged) untouched_proof.rs:182-295; region
   validation untouched_proof.rs:297-317.
 
-consema-go/go/document is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/document is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

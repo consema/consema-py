@@ -27,12 +27,12 @@ facts.
 Authority (language-neutral first; Rust only for byte/registry
 arbitration):
 
-- Kind model and equality: consema-rs/consema-hcl/src/expression.rs:192-559.
+- Kind model and equality: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/expression.rs:192-559.
 - canonical_decimal: expression.rs:719-851 (pure decimal string
   arithmetic; the exponent folding is bounded by the frozen
   max_number_digits budget of HclParseLimits, expression.rs:736-851).
 - Literal boundary and typed projection: expression.rs:1506-1786.
-- Structural fingerprint serialization: consema-rs/consema-hcl/src/
+- Structural fingerprint serialization: https://github.com/consema/consema-rs/blob/main/consema-hcl/src/
   materialization.rs:1496-1768 (FNV-1a 64-bit over the canonical
   structural serialization; the shared M6/M7 adaptation point of the
   `hcl.expression@1` codec).

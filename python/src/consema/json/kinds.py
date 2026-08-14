@@ -4,30 +4,30 @@ Frozen names/numbers with authority citations (language-neutral first; Rust
 only for registry/byte arbitration):
 
 - ``JsonProfile``: the three profile identities and their extension surface —
-  consema-rs/consema-json/src/lib.rs:38-45 (enum), lib.rs:137-159 (id() and
+  https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:38-45 (enum), lib.rs:137-159 (id() and
   permits_jsonc_extensions()/is_json5()); the profile ids json.strict@1 /
   jsonc.bounded@1 / json5.standard@1 are the frozen language-neutral
   spellings (RFC 0005 §1, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:15-20;
-  RFC 0004 §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-...:106-113).
+  RFC 0004 §4, https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:106-113).
 - ``JsonSyntaxKind``: the closed 17-kind lossless classification with the
   exact stable names ("Bom", "Whitespace", "LineComment", "BlockComment",
   "LeftBrace", "RightBrace", "LeftBracket", "RightBracket", "Colon",
   "Comma", "String", "Identifier", "Number", "True", "False", "Null",
-  "ErrorRegion") — consema-rs/consema-json/src/lib.rs:49-108 (enum + as_str),
+  "ErrorRegion") — https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:49-108 (enum + as_str),
   lib.rs:113-134 (from_name). ``Identifier`` is a v2-domain kind added by
-  RFC 0005 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:161-172).
+  RFC 0005 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:161-172).
 - ``JsonValueKind``: the native semantic categories (Null, Boolean,
   Integer, Decimal, BinaryFloat64, String, Array, Object) — lib.rs:323 and
   the kind mapping lib.rs:364-388; BinaryFloat64 is the JSON5 extension
-  (RFC 0005 §6, https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:142-145).
+  (RFC 0005 §6, https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:142-145).
 - ``SemanticUnavailable`` reasons (Missing, InvalidLiteral, ErrorRegion) —
   lib.rs:310-321; ``SemanticAvailability`` mirror of lib.rs:290-307.
 - JSON5 whitespace / line-terminator / IdentifierName character rules —
-  RFC 0005 §3/§4 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:51-88) and the explicit character
-  tables consema-rs/consema-json/src/parser.rs:590-623.
+  RFC 0005 §3/§4 (https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:51-88) and the explicit character
+  tables https://github.com/consema/consema-rs/blob/main/consema-json/src/parser.rs:590-623.
 
 Unicode note (blind-write disclosure): RFC 0005 §4 pins Unicode 17.0.0
-identifier tables (https://github.com/consema/consema/blob/main/docs/rfcs/0005-...:82-85). This implementation classifies
+identifier tables (https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md:82-85). This implementation classifies
 via the host ``str.isidentifier`` semantics (CPython 3.12, Unicode 15.0),
 which matches JSON5's ID_Start/ID_Continue + ``$``/``_`` + U+200C/U+200D
 rule for all codepoints whose classification is stable across 15.0..17.0;
@@ -49,7 +49,7 @@ T = TypeVar("T")
 
 
 class JsonProfile(enum.Enum):
-    """Frozen JSON language profile (consema-rs/consema-json/src/lib.rs:38-45)."""
+    """Frozen JSON language profile (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:38-45)."""
 
     STRICT_V1 = "json.strict"
     JSONC_BOUNDED_V1 = "jsonc.bounded"
@@ -74,7 +74,7 @@ class JsonProfile(enum.Enum):
 
 class JsonSyntaxKind(enum.Enum):
     """Closed JSON/JSONC lossless syntax-piece classification
-    (consema-rs/consema-json/src/lib.rs:49-84; the v1 kind set; Identifier is
+    (https://github.com/consema/consema-rs/blob/main/consema-json/src/lib.rs:49-84; the v1 kind set; Identifier is
     the v2 addition per RFC 0005 §7)."""
 
     BOM = "Bom"

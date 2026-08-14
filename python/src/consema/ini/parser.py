@@ -3,7 +3,7 @@
 Authority (Rust arbitration for exact byte semantics):
 
 - Parse entry, encoding selection, and profile encoding gates:
-  consema-rs/consema-ini/src/parser.rs:16-104 — encoding_request
+  https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs:16-104 — encoding_request
   (parser.rs:37-59; ProfileDefault defaults to UTF-8, explicit caller
   overrides, code pages force BomPolicy::TreatAsContent, Portable accepts
   only UTF-8, Binary is rejected with ini.profile.encoding@1) and
@@ -34,11 +34,11 @@ Authority (Rust arbitration for exact byte semantics):
   and every profile invariant and configured limit holds; Recovered
   retains the complete source with exhaustive syntax/error-region
   coverage and every independently proven section or entry (RFC 0009 §4,
-  https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:118-147).
+  https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:118-147).
 
 The parser indexes the decoded text by UTF-8 byte offsets and maps every
 decoded boundary back to exact raw bytes via SourceSnapshot.raw_byte_at
-(RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:70-73).
+(RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:70-73).
 """
 
 from __future__ import annotations
@@ -91,7 +91,7 @@ _FEFF_UTF8_LEN = len("﻿".encode("utf-8"))
 
 
 # ---------------------------------------------------------------------------
-# Snapshot-bound INI records (RFC 0009 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:273-283)
+# Snapshot-bound INI records (RFC 0009 §8, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:273-283)
 # ---------------------------------------------------------------------------
 # The immutable records below are the native model handles
 # (IniDocument / IniPhysicalLine / IniLogicalLine / IniSection /
@@ -1087,11 +1087,11 @@ def parse(
     limits: IniParseLimits,
 ) -> object:
     """Parses one immutable INI snapshot under exactly one selected profile
-    (consema-rs/consema-ini/src/lib.rs:664-671, parser.rs:16-35).
+    (https://github.com/consema/consema-rs/blob/main/consema-ini/src/lib.rs:664-671, parser.rs:16-35).
 
     Returns the ``IniDocument`` from :mod:`consema.ini.document`; raises
     :class:`IniFormationFailure` for fatal encoding, source, or limit
-    failures — no Document exists then (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-...:70-
+    failures — no Document exists then (RFC 0009 §3, https://github.com/consema/consema/blob/main/docs/rfcs/0009-ini-family-profiles-v1.md:70-
     73).
     """
     request = _encoding_request(profile, selection)

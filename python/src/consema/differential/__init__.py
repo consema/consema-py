@@ -5,7 +5,7 @@ The Python side of the differential harnesses that the Go implementation
 already runs (shared case set at conformance/differential/): byte parity of
 the PVCE/PGCE
 encoders, normalized-result differential (bidirectional), and protocol
-exchange. The Rust examples in consema-rs/consema-conformance emit the golden
+exchange. The Rust examples in https://github.com/consema/consema-rs/blob/main/consema-conformance emit the golden
 bytes/evidence files; this package computes the Python side and compares.
 Orchestration: scripts/python-verify-*.ps1.
 """

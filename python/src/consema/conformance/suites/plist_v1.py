@@ -3,7 +3,7 @@ and binary formation with recovery, the three query domains, value-tree and
 require-object projection, both canonical materializations, cross-
 representation conversion, the six structural edits, and the declared
 binary-limit matrix. Dispatch is by the ``capability`` field, mirroring
-consema-go/go/conformance/plist_v1.go.
+https://github.com/consema/consema-go/blob/main/go/conformance/plist_v1.go.
 """
 
 from __future__ import annotations
@@ -201,6 +201,19 @@ def _bits_equal(left: float, right: float) -> bool:
     return struct.pack(">d", left).hex() == struct.pack(">d", right).hex()
 
 
+def _decimal_coefficient_to_f64(coefficient: int, exponent: int) -> float:
+    """Coefficient x 10^exponent to f64: single-rounding conversion from
+    the exact decimal spelling (no intermediate float arithmetic), with
+    |exponent| clamped to 308 like the Rust reference (plist_v1.rs
+    decimal_to_f64, G88 2026-08-14) so a huge exponent never raises
+    OverflowError."""
+    if exponent > 308:
+        exponent = 308
+    elif exponent < -308:
+        exponent = -308
+    return float(f"{coefficient}e{exponent}")
+
+
 def _expected_f64(value) -> float | None:
     kind = value.kind
     if kind is Kind.BINARY_FLOAT64:
@@ -209,7 +222,7 @@ def _expected_f64(value) -> float | None:
         return float(struct.unpack(">f", struct.pack(">I", value.as_binary_float32()))[0])
     if kind is Kind.DECIMAL:
         decimal = value.as_decimal()
-        return float(decimal.coefficient) * (10.0 ** decimal.exponent)
+        return _decimal_coefficient_to_f64(decimal.coefficient, decimal.exponent)
     if kind is Kind.INTEGER:
         return float(value.as_integer())
     return None
@@ -1652,7 +1665,7 @@ def _newline_none():
 
 def _materialization_failure_code(failure) -> str:
     """The stable vector spelling of one materialization failure (mirrors
-    consema-go/go/plist/materialization.go Code(): the plist family failure codes are
+    https://github.com/consema/consema-go/blob/main/go/plist/materialization.go Code(): the plist family failure codes are
     plist.materialization.*@1; the shared document layer maps them onto the
     core.materialization.*@1 codes, so the runner re-derives the plist
     spellings)."""

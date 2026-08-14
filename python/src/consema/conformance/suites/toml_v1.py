@@ -1,7 +1,14 @@
 """Suite ``consema.toml.conformance@1`` (toml-v1.json, 18 cases): TOML 1.0
 document formation, native items, query, projection, edit, resource limits,
 and real-world corpora. Dispatch is by case id, mirroring
-consema-go/go/conformance/toml_v1.go.
+https://github.com/consema/consema-go/blob/main/go/conformance/toml_v1.go.
+
+Note (G81, 2026-08-14): most handlers are hard-coded fixtures — they read
+their input from conformance/fixtures/toml/*.toml instead of consuming the
+vector ``input``/``expected`` fields (the case ids still drive dispatch and
+the frozen 18-case count). Recorded as a known gap shared with the
+protocol-v1 suite; the vector-driven claim in the vendored
+conformance/README applies to the other 16 suites.
 """
 
 from __future__ import annotations
@@ -123,11 +130,13 @@ def _dotted_segments(conformance_runner: runner.Runner, vector: runner.Case) -> 
         return "missing input.source"
     document = _parse_toml(source)
     alpha = _direct_item(document, "alpha")
+    if alpha is None:
+        return "alpha/beta items missing"
     beta = None
     for entry in alpha.table_entries() or []:
         if entry.name() == "beta":
             beta = entry.item()
-    if alpha is None or beta is None:
+    if beta is None:
         return "alpha/beta items missing"
     if alpha.kind() is not toml_document.TomlItemKind.DOTTED_TABLE:
         return f"alpha kind: expected DottedTable, got {alpha.kind().value}"

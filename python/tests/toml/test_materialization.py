@@ -1,9 +1,9 @@
-"""Materialization intent documents: PortableValue -> toml.1.0@1 in the
+"""Materialization tests: PortableValue -> toml.1.0@1 in the
 toml.canonical-document@1 style (RFC 0004 §4/§6).
 
 The materialized bytes reparses and projects back to the required portable
 value (RFC 0004 §20); fidelity, the explicit mapping conversion, and
-unrepresentable-value failures follow consema-rs/consema-toml/src/
+unrepresentable-value failures follow https://github.com/consema/consema-rs/blob/main/consema-toml/src/
 materialization.rs.
 """
 

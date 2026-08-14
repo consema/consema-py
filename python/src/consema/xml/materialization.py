@@ -16,7 +16,7 @@ Authority:
   promised input semantics; failure returns no target Document or partial
   output.
 - The writer, encoding, closure verification, and failure mapping transcribe
-  consema-rs/consema-xml/src/materialization.rs:34-1366 (request validation
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/materialization.rs:34-1366 (request validation
   90-107; parse limits 109-140; encode_text 143-172; Record validation
   238-500; PrefixTable 502-526; Writer 565-900; verify_closure 912-1210) —
   byte/registry arbitration only.
@@ -29,7 +29,7 @@ Authority:
   ``xml.materialization.escapes-content`` (390-417),
   ``xml.materialization.invalid-record-rejected`` (419-435).
 
-consema-go/go/xml is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations

@@ -8,19 +8,19 @@ valid parse or replacing it with U+FFFD would be silent corruption
 
 Authority:
 
-- RFC 0010 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:108-131) — immutable code-unit sequence,
+- RFC 0010 §4 (https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:108-131) — immutable code-unit sequence,
   strict equality/hash over exact code units, bounded validation result
   ``WellFormedUnicode | UnpairedSurrogate``, conversion to a Unicode String
   only when well formed, and canonical BOM-free big-endian ``UTF16BE/1``
   bytes (an even-length byte sequence containing each code unit in
   big-endian order; no BOM, no normalization).
-- consema-rs/consema-properties/src/lib.rs:124-206 — arbitration:
+- https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs:124-206 — arbitration:
   ``JavaStringStatus`` (lib.rs:125-131), ``JavaString`` (lib.rs:134-194,
   equality lib.rs:182-194), ``JavaStringConversionError`` (lib.rs:197-206),
   and the surrogate-pair walk ``classify_java_string`` (lib.rs:814-830).
 - Error codes: ``java-properties.java-string.invalid-wire@1`` and
   ``java-properties.java-string.non-canonical-wire@1``
-  (consema-rs/consema-protocol/src/error_registry.rs:1111,1117) belong to the
+  (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1111,1117) belong to the
   protocol-layer wire payloads, not to this in-SDK value type.
 
 Design: the value stores an immutable tuple of code units (Python ints in
@@ -77,7 +77,7 @@ class JavaString:
     Instances are immutable and hashable; equality is over exact code
     units. An unpaired surrogate is valid native content; it blocks
     ``to_unicode`` and ordinary PortableValue String projection
-    (RFC 0010 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0010-...:199-206).
+    (RFC 0010 §7, https://github.com/consema/consema/blob/main/docs/rfcs/0010-java-properties-profiles-v1.md:199-206).
     """
 
     __slots__ = ("_units", "_status")

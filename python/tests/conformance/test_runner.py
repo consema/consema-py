@@ -2,8 +2,8 @@
 plan §4.2; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2 — the five-runner shared
 pin): the aggregate vector digest matches the Feature-Complete Manifest and
 the frozen constant, the inventory is exactly 18 suites / 519 cases, every
-suite is conformant (documented skips count as success), and each suite
-matches its frozen per-suite applicable surface.
+suite is conformant with zero skips (any skip is a failure — the (N, 0, 0)
+hard pin), and each suite matches its frozen per-suite applicable surface.
 
 Runs under pytest or directly (python tests/conformance/test_runner.py).
 The runner reads the repository vectors by repo-relative path; pytest is
@@ -28,7 +28,7 @@ from consema.conformance.runner import (
 RECORDED_AGGREGATE = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 
 # Per-suite applicable surface {passed, skipped, failed} — the current L5
-# surface executes every case (consema-go/go/conformance/conformance_test.go:60-97).
+# surface executes every case (https://github.com/consema/consema-go/blob/main/go/conformance/conformance_test.go:60-97).
 EXPECTED_SUITE_COUNTS = {
     "consema.conformance@1": (30, 0, 0),
     "consema.toml.conformance@1": (18, 0, 0),

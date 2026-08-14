@@ -16,7 +16,7 @@ Authority:
   the whole projection with ``toml.projection.unrepresentable-datetime@1``
   — no truncation, normalization, or silent substitution.
 - The completion algebra and failure mapping transcribe
-  consema-rs/consema-toml/src/projection.rs:9-227 and 410-435:
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:9-227 and 410-435:
   CompleteProjection{value, fidelity, report, provenance} or
   FailedProjectionAttempt{diagnostics, report, partial_analysis};
   fidelity Exact/Transformed/Lossy; failure codes

@@ -8,7 +8,7 @@ Cases covered:
   json5.convert.finite-to-strict (156-160), json5.convert.nonfinite-to-
   strict-fails (162-166), json5.convert.strict-to-json5 (168-172).
 - Pretty layout and request failures follow the Rust arbitration tests
-  (consema-rs/consema-json/src/materialization.rs:855-927).
+  (https://github.com/consema/consema-rs/blob/main/consema-json/src/materialization.rs:855-927).
 
 Conversion is the audited Projection-to-Materialization composition with
 explicit source/target profile ids (RFC 0004 §9); the report always

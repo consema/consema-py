@@ -1,5 +1,5 @@
 """Python capability parity assertion against the Feature-Complete
-Manifest (docs/fc-manifest-0.13.0.json; consema-go/go/capability_parity_test.go
+Manifest (docs/fc-manifest-0.13.0.json; https://github.com/consema/consema-go/blob/main/go/capability_parity_test.go
 cross-reference; https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §5.3: the L4
 L-conformance job asserts capability parity).
 

@@ -1,6 +1,6 @@
 """The YAML-family format operation registry (8 frozen records).
 
-Authority: consema-rs/consema-yaml/src/operation_registry.rs:16-83 — the exact
+Authority: https://github.com/consema/consema-rs/blob/main/consema-yaml/src/operation_registry.rs:16-83 — the exact
 operation ids, target roles, argument schemas, and support classifications;
 the structural surface is frozen by the registry test
 (operation_registry.rs:107-135: exactly six Supported structural operations

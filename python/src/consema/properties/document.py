@@ -2,7 +2,7 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document fields and accessors: consema-rs/consema-properties/src/lib.rs:
+- Document fields and accessors: https://github.com/consema/consema-rs/blob/main/consema-properties/src/lib.rs:
   590-775 - snapshot identity (lib.rs:613-615), exact source
   (lib.rs:618-621), render() (byte-for-byte source identity, lib.rs:624-628),
   format family java-properties@1 (lib.rs:631-633), profile (lib.rs:636-639),

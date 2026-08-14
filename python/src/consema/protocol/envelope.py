@@ -1,11 +1,11 @@
 """Registered-payload validation dispatch for the protocol envelope.
 
-Authority: consema-rs/consema-protocol/src/payload.rs (validate_registered_payload).
+Authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/payload.rs (validate_registered_payload).
 The record codecs are transcribed from the Rust protocol records modules
 (execution.rs, projection.rs, query.rs, change.rs, source.rs,
 materialization.rs, conversion.rs, operation.rs, portable_graph.rs,
 graph_projection.rs, graph_query.rs, line_query.rs, java_utf16.rs,
-yaml_query.rs); Go (consema-go/go/protocol/payload.go and the records_*.go files) is a
+yaml_query.rs); Go (https://github.com/consema/consema-go/blob/main/go/protocol/payload.go and the records_*.go files) is a
 cross-reference only.
 
 Every registered contract of the semantic-model v1-v7 surface is validated
@@ -2533,7 +2533,8 @@ def _graph_projection_result_from_value(
     value: PortableValue, registry: ErrorCodeRegistry
 ) -> None:
     """Strictly decodes ``core.graph-projection-result@1``
-    (graph_projection.rs:245-...)."""
+    (graph_projection.rs GraphProjectionResultMessage::new, :245-254; line
+    numbers may drift, the symbol name is the anchor)."""
     fields = schema_fields(
         value,
         "core.graph-projection-result@1",

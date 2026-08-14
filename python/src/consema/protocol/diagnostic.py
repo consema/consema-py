@@ -1,9 +1,9 @@
 """The transferable `core.diagnostic@1` record.
 
-Authority: consema-rs/consema-protocol/src/diagnostic.rs (the record shape and
+Authority: https://github.com/consema/consema-rs/blob/main/consema-protocol/src/diagnostic.rs (the record shape and
 the code/category registry binding, diagnostic.rs:336-351); RFC 0016 §6:
 "unknown code or category contradiction is a protocol error". Go
-(consema-go/go/protocol/diagnostic.go) is a cross-reference only.
+(https://github.com/consema/consema-go/blob/main/go/protocol/diagnostic.go) is a cross-reference only.
 
 The record fields in canonical order: schema, code, category, severity,
 primary, related, arguments, notes, fixes, occurrence. Fix replacements are

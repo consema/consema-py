@@ -11,7 +11,7 @@ pins inside this module (conformance/README.md rules 3-4; the pins live
 here, the vector content is authoritative).
 
 Suite-level fixed validations (mirroring the Go runner,
-consema-go/go/conformance/conformance.go:225-269): the suite and semantic-model
+https://github.com/consema/consema-go/blob/main/go/conformance/conformance.go:225-269): the suite and semantic-model
 identifiers, case-ID uniqueness, the frozen case-count assertion, and
 unknown-case rejection.
 """
@@ -24,6 +24,7 @@ import sys
 from dataclasses import dataclass, field
 
 from consema.conformance import loader
+from consema.core.value import PortableValue
 
 # The frozen aggregate digest and inventory pins (five-runner shared pin;
 # https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json:35-41).
@@ -35,7 +36,13 @@ EXPECTED_CASES = 519
 @dataclass
 class SkipRecord:
     """One documented skip: the case was not executed because its
-    capability is not implemented."""
+    capability is not implemented.
+
+    Note (G67, 2026-08-14): no SkipRecord is ever constructed in this
+    codebase — every frozen (N, 0, 0) suite surface executes all of its
+    cases, and any skip is a failure by the hard pin. The type is kept for
+    API shape only (it is exported by consema.conformance.__init__).
+    """
 
     id: str
     capability: str
@@ -94,8 +101,16 @@ class RunReport:
 
     def conformant(self) -> bool:
         """Whether every applicable case passed, every count assertion held,
-        and the aggregate digest matched the manifest."""
+        and the aggregate digest matched the manifest.
+
+        The hard execution floor (G67, 2026-08-14): the registered suite
+        inventory must actually cover the frozen 18 suites / 519 cases — an
+        empty registration (a lost suite import) must fail, not pass
+        silently.
+        """
         if not self.digest.ok:
+            return False
+        if len(self.suites) != EXPECTED_SUITES or self.total != EXPECTED_CASES:
             return False
         for suite in self.suites:
             if not suite.conformant():
@@ -257,15 +272,12 @@ class Runner:
         with open(os.path.join(self.fixtures_dir, *parts), "rb") as handle:
             return handle.read()
 
-    def repo_root_bytes(self, name: str) -> bytes:
-        """Reads one file from the repository root (two levels above the
-        vectors directory)."""
-        root = os.path.dirname(os.path.dirname(self.vectors_dir))
-        with open(os.path.join(root, name), "rb") as handle:
-            return handle.read().replace(b"\r\n", b"\n")
 
-
-_EMPTY_OBJECT = None
+# The empty PortableValue object used when a vector case carries no
+# input/expected field (G41, 2026-08-14): a real empty object instead of
+# None, so handler code never hits a None where a PortableValue is
+# expected.
+_EMPTY_OBJECT = PortableValue.object(())
 
 
 def _string_member(value, name: str, required: bool) -> str:
@@ -394,9 +406,9 @@ def suite_definitions() -> list[SuiteDefinition]:
     holds the inventory. The ``python -m consema.conformance.runner`` form
     still works but triggers a CPython RuntimeWarning (double import: the
     module is re-executed as ``__main__`` after the package import already
-    registered every suite into the canonical module object) and double
-    suite inventory; the warning-free entry is ``python -m
-    consema.conformance``. Always read the canonical module object's list.
+    registered every suite into the canonical module object); the
+    warning-free entry is ``python -m consema.conformance``. Always read
+    the canonical module object's list.
     """
     canonical = sys.modules.get("consema.conformance.runner")
     if canonical is not None and canonical is not sys.modules.get("__main__"):

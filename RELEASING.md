@@ -7,8 +7,12 @@ tag 推送后 `.github/workflows/release.yml` 自动构建 wheel + sdist 并发�
 
 ## 1. 发布步骤（人执行的部分）
 
-1. **版本 bump**：改 `python/pyproject.toml` 的 `version`，同时改仓根
-   `README.md` 的 `Version:` 行（`check-version-consistency` 门禁强制一致）。
+1. **版本 bump**：改 `python/pyproject.toml` 的 `version`，同步改以下全部
+   位置（`check-version-consistency` 门禁强制一致，漏改即红）：
+   - 仓根 `README.md` 的 `Version:` 行；
+   - `python/src/consema/__init__.py` 的 `__version__`；
+   - `.github/ISSUE_TEMPLATE/bug_report.yml` 环境信息节的版本字面量
+     （`version（当前 <version>）`）。
 2. **CHANGELOG 策展**：记录本版本变更；跨语言变更同步到
    consema 仓库 `https://github.com/consema/consema/blob/main/CHANGELOG.md`。
 3. **质量门禁全绿**：main 分支 CI `check (all gates green)` 全绿
@@ -18,9 +22,12 @@ tag 推送后 `.github/workflows/release.yml` 自动构建 wheel + sdist 并发�
    git tag vX.Y.Z
    git push origin vX.Y.Z
    ```
-   发布 workflow 会先校验 tag↔版本一致（tag 去掉 `v` 前缀必须等于
-   `python/pyproject.toml` 的 version，不一致即 exit 1 中止），校验通过
-   后构建 wheel + sdist 并发布到 PyPI。
+   发布 workflow 会先校验两道前置守卫，任一不满足即 exit 1 中止：
+   - **tag 必须指向 main HEAD**（tag 指向的 commit 必须在 origin/main 历史
+     内，防止从陈旧/分叉 commit 发布旧代码）；
+   - **tag↔版本一致**（tag 去掉 `v` 前缀必须等于 `python/pyproject.toml`
+     的 version）。
+   校验通过后构建 wheel + sdist 并发布到 PyPI。
 
 ## 2. 凭证配置（用户侧一次性动作）—— trusted publishing
 

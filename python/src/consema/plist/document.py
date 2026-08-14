@@ -3,7 +3,7 @@
 
 Authority (Rust arbitration for the public surface):
 
-- Document shape and accessors: consema-rs/consema-plist/src/document.rs:38-222
+- Document shape and accessors: https://github.com/consema/consema-rs/blob/main/consema-plist/src/document.rs:38-222
   — PlistRepresentation (document.rs:38-49), the unified Document with
   representation-specific accessors (lossless index and syntax kinds only
   for Xml; binary facts and structural regions only for Binary; hard gate

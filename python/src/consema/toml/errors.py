@@ -3,7 +3,7 @@
 Authority (language-neutral first; Rust only for registry arbitration):
 
 - The four toml-family codes are frozen by
-  consema-rs/consema-protocol/src/error_registry.rs:
+  https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:
   ``toml.edit.representation-fallback@1`` :339,
   ``toml.parse.syntax@1`` :345,
   ``toml.projection.core-invariant@1`` :351,
@@ -14,13 +14,13 @@ Authority (language-neutral first; Rust only for registry arbitration):
   :466-550 (core.edit.*@1) — the edit codes were introduced by RFC 0004
   §17 (https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md:
   387-423).
-- The edit failure vocabulary follows consema-rs/consema-toml/src/edit.rs:244-279
+- The edit failure vocabulary follows https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs:244-279
   and its code mapping edit.rs:1280-1332 (StableFailure impl).
 - The projection failure vocabulary follows
-  consema-rs/consema-toml/src/projection.rs:191-200 and the diagnostic mapping
+  https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:191-200 and the diagnostic mapping
   projection.rs:410-435.
 - Diagnostic categories follow the eleven frozen semantic categories
-  (consema-rs/consema-protocol/src/error_registry.rs:1657-1671; Python
+  (https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs:1657-1671; Python
   consema.protocol DiagnosticCategory). Severity follows the three frozen
   presentation severities (protocol diagnostic.rs).
 - RFC 0016 §6 (https://github.com/consema/consema/blob/main/docs/rfcs/0016-go-api-mapping-v1.md:195-200): SDK operations
@@ -31,7 +31,7 @@ Authority (language-neutral first; Rust only for registry arbitration):
 Design note: formation and projection/edit failures are snapshot-bound, so
 they carry a ``TomlDiagnostic`` record whose primary location is a
 snapshot-bound ``Span`` (the Rust ``DiagnosticLocation`` with a snapshot
-identity; consema-rs/consema-core/src/diagnostic.rs). The wire record
+identity; https://github.com/consema/consema-rs/blob/main/consema-core/src/diagnostic.rs). The wire record
 ``core.diagnostic@1`` (consema.protocol Diagnostic) instead requires a
 caller-stable source id, so the two surfaces stay distinct here. If the
 protocol agent later publishes a snapshot-bound location variant, this
@@ -49,7 +49,7 @@ from consema.protocol.diagnostic import Severity
 
 
 class TomlFormationFailureKind(enum.Enum):
-    """Closed formation failure category (consema-rs/consema-toml parser.rs:65-82
+    """Closed formation failure category (https://github.com/consema/consema-rs/blob/main/consema-toml parser.rs:65-82
     and consema-document FatalFormationFailure)."""
 
     SYNTAX = "syntax"
@@ -64,7 +64,7 @@ class TomlDiagnostic:
     Mirrors the frozen code/category/severity/primary/arguments/occurrence
     record shape of ``core.diagnostic@1`` (RFC 0015; protocol diagnostic.py)
     with a snapshot-bound primary location (Rust DiagnosticLocation carries
-    ``snapshot: Option<SnapshotIdentity>``; consema-rs/consema-core
+    ``snapshot: Option<SnapshotIdentity>``; https://github.com/consema/consema-rs/blob/main/consema-core
     diagnostic.rs). The vector suite references only the code
     (conformance/vectors/toml-v1.json:87 ``"toml.parse.syntax@1"``) and the
     argument names used by the resource-limit records ("name", "observed",
@@ -143,7 +143,7 @@ class TomlFormationFailure(Exception):
 
 class TomlProjectionFailureKind(enum.Enum):
     """Stable projection failure category
-    (consema-rs/consema-toml/src/projection.rs:191-200)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/projection.rs:191-200)."""
 
     UNREPRESENTABLE_DATETIME = "unrepresentable-datetime"
     RESOURCE_LIMIT = "resource-limit"
@@ -208,7 +208,7 @@ class TomlProjectionFailure(Exception):
 
 class TomlEditFailureKind(enum.Enum):
     """Stable TOML edit validation or commit failure
-    (consema-rs/consema-toml/src/edit.rs:244-279, transcribed verbatim)."""
+    (https://github.com/consema/consema-rs/blob/main/consema-toml/src/edit.rs:244-279, transcribed verbatim)."""
 
     WRONG_SNAPSHOT = "WrongSnapshot"
     WRONG_ROLE = "WrongRole"

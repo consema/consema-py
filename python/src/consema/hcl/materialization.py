@@ -33,12 +33,12 @@ fingerprint equality (RFC 0014 §6, §9). Failure returns no target
 Document, partial bytes, or partial provenance.
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration): consema-rs/consema-hcl/src/materialization.rs — the record
+arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/materialization.rs — the record
 contract materialization.rs:9-103, request validation
 materialization.rs:266-285, the canonical layout materialization.rs:105-121
 and writer materialization.rs:1133-1333, decimal rendering
 materialization.rs:1341-1494, the expression promise
-materialization.rs:1084-1120, the closure walk materialization.rs:1770-...,
+materialization.rs:1084-1120, the closure walk materialization.rs verify_closure (:1772-1799; line numbers may drift, the symbol name is the anchor),
 and the failure mapping materialization.rs:124-137.
 """
 
@@ -157,7 +157,7 @@ def _shared_failure(failure: HclMaterializationFailure):
 
 def materialization_failure_code(failure) -> str:
     """The suite-published failure code of one shared MaterializationFailure
-    (RFC 0014 §9; consema-rs/consema-conformance/src/hcl_v1.rs:1611-1616):
+    (RFC 0014 §9; https://github.com/consema/consema-rs/blob/main/consema-conformance/src/hcl_v1.rs:1611-1616):
     Unrepresentable maps to hcl.materialization.unrepresentable@1,
     ResourceLimit to hcl.materialization.resource-limit@1, InvalidRequest
     to the published spelling "invalid-record"."""
@@ -963,7 +963,7 @@ def _place_decimal_point(digits: str, fraction: int) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Closure verification and provenance (materialization.rs:1770-...)
+# Closure verification and provenance (materialization.rs verify_closure, :1772-1799; line numbers may drift, the symbol name is the anchor)
 # ---------------------------------------------------------------------------
 
 

@@ -3,7 +3,7 @@
 Golden byte vectors are copied verbatim from conformance/vectors/v1.json
 (`pvce.null-vector`, `pvce.negative-integer-vector`, `pvce.object-vector`,
 `pvce.reject-nonminimal-varint`) and re-pinned by the Rust tests
-(consema-rs/consema-pvce/src/lib.rs:1191-1342).
+(https://github.com/consema/consema-rs/blob/main/consema-pvce/src/lib.rs:1191-1342).
 """
 
 import pytest

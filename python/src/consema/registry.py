@@ -1,10 +1,12 @@
 """consema.registry — the additive facade registry surface and the opaque
 Document union.
 
-Authority: crates/consema/src/lib.rs ``registry`` module and ``Document``
-(RFC 0015 §6.2; the Rust crate is the registry/byte arbitration source);
-consema-go/go/registry.go and consema-go/go/document.go are cross-references only, never a
-template.
+Authority: the inline ``registry`` module and ``Document`` of
+https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs (RFC
+0015 §6.2; the Rust crate is the registry/byte arbitration source);
+https://github.com/consema/consema-go/blob/main/go/registry.go and
+https://github.com/consema/consema-go/blob/main/go/document.go are
+cross-references only, never a template.
 
 The capability inventory is the declared Feature-Complete Manifest
 capability set (fc-manifest-0.13.0.json:30-34: 8 families / 16 profiles /
@@ -22,9 +24,10 @@ this module can derive from the backend packages is derived from them:
 
 The module also implements the single parse entry by profile id
 (``parse_document``) over the opaque :class:`Document` union
-(crates/consema/src/lib.rs:512-820): the concrete representation is
-private and format access is only possible through the typed adapters.
-All returned facts are immutable snapshot facts.
+(https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs:512-820):
+the concrete representation is private and format access is only possible
+through the typed adapters. All returned facts are immutable snapshot
+facts.
 """
 
 from __future__ import annotations
@@ -104,7 +107,10 @@ __all__ = [
 
 class FormatProfile:
     """One profile together with the format family that publishes it
-    (lib.rs registry FormatProfile; registry.rs:50-69)."""
+    (the inline ``registry`` module of
+    https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs —
+    ``FormatProfile``; the Go mirror is
+    https://github.com/consema/consema-go/blob/main/go/registry.go:50-69)."""
 
     __slots__ = ("family", "profile")
 
@@ -379,8 +385,8 @@ def _kind_name(kind) -> str:
 
 
 # ---------------------------------------------------------------------------
-# profile-id resolution tables (frozen profile inventory; lib.rs
-# registry::profiles)
+# profile-id resolution tables (frozen profile inventory; the inline
+# ``registry::profiles`` of https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs)
 # ---------------------------------------------------------------------------
 
 _FAMILY_BY_PROFILE = {
@@ -466,7 +472,7 @@ class FormatMismatch(Exception):
 
 class Document:
     """Common opaque snapshot over the supported format documents
-    (crates/consema/src/lib.rs:512-820).
+    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs:512-820).
 
     The concrete representation is private; format access is only possible
     through the typed adapters (``as_json``, ``as_toml``, ...). All returned
@@ -646,7 +652,7 @@ class ProfileError(Exception):
 
     The text is human presentation only (RFC 0016 §6); the frozen code
     mirrors the Rust facade's unknown-profile failure diagnostic
-    (crates/consema/src/lib.rs:298-307).
+    (https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs:298-307).
     """
 
     def __init__(self, profile: ProfileId):
@@ -665,7 +671,8 @@ class ProfileError(Exception):
 
 def parse_document(source: bytes, profile: ProfileId) -> Document:
     """Parses one snapshot under an exact profile id through the single
-    facade parse entry (crates/consema/src/lib.rs registry::parse_document;
+    facade parse entry (the inline ``registry::parse_document`` of
+    https://github.com/consema/consema-rs/blob/main/consema/src/lib.rs;
     RFC 0015 §7.1 ``cli.parse-facts@1``).
 
     The per-format encoding selection and limits use the frozen profile

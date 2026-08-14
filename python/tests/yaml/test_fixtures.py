@@ -6,14 +6,14 @@ The production-shaped fixtures under conformance/fixtures/yaml (the
 single-authority tree provisioned from the consema spec repository in CI)
 must close byte-exactly: parse -> render == source bytes, complete
 formation, exhaustive lossless coverage, graph PGCE round trip, and the
-anchor-heavy fixture's explicit sharing semantics (the consema-go/go/yaml
+anchor-heavy fixture's explicit sharing semantics (the https://github.com/consema/consema-go/blob/main/go/yaml
 fixture_test.go surface: kubernetes-workload.yaml, github-actions-ci.yaml,
 compose-services.yaml, anchor-heavy.yaml).
 
 When the shared conformance tree is not reachable (a plain checkout
-without provision), the tests report a documented skip — the same pattern
-as tests/toml/conftest.py. The fixtures are read-only; tests never modify
-them.
+without provision), the tests FAIL (G68 guard, same as
+tests/toml/conftest.py) — a partially provisioned checkout must not go
+green. Fixtures are read-only; tests never modify them.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ from consema.yaml.projection import ValueProjectionRequest
 _ROOT = pathlib.Path(__file__).resolve().parents[3]
 _FIXTURES = _ROOT / "conformance" / "fixtures" / "yaml"
 
-# Rust consema-rs/consema-conformance/tests/yaml_fixtures.rs:22-51 fixture
+# Rust https://github.com/consema/consema-rs/blob/main/consema-conformance/tests/yaml_fixtures.rs:22-51 fixture
 # facts (document_count / alias_count).
 FIXTURE_FACTS = {
     "kubernetes-workload.yaml": (2, 0),
@@ -48,8 +48,10 @@ FIXTURE_FACTS = {
 
 def _fixture_bytes(name: str) -> bytes:
     path = _FIXTURES / name
+    # G68 guard: a missing fixture FAILS the gate instead of skipping
+    # silently (partially provisioned checkouts must not go green).
     if not path.exists():
-        pytest.skip(f"shared fixture not available: {name}")
+        raise FileNotFoundError(f"shared fixture not available: {name}")
     return path.read_bytes()
 
 
@@ -86,7 +88,7 @@ def test_real_project_yaml_fixtures_graph_pgce_round_trip():
 
 def test_anchor_heavy_fixture_is_explicit_about_sharing():
     # The anchor-heavy fixture must reject implicit sharing and complete
-    # under explicit acyclic duplication (consema-go/go/yaml fixture_test.go:147-166).
+    # under explicit acyclic duplication (https://github.com/consema/consema-go/blob/main/go/yaml fixture_test.go:147-166).
     document, _raw = _form("anchor-heavy.yaml")
     default = project_value(document, ValueProjectionRequest.best_exact_v1())
     assert getattr(default, "code", None) == "yaml.projection.sharing@1"

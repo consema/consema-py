@@ -13,7 +13,7 @@ Authority:
   core.take@1, core.distinct-by-identity@1, limits, cancellation, and
   explicit Completed/Cancelled/Failed terminal states.
 - The match shapes and every operator transcribe
-  consema-rs/consema-xml/src/query.rs:22-220 (XmlMatch), 187-220
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/query.rs:22-220 (XmlMatch), 187-220
   (XmlSyntaxMatch), 223-249 (execute_xml_query), 286-335
   (execute_xml_syntax_query), 578-622 (operator dispatch), 624-1376
   (operator implementations) — byte/registry arbitration only.
@@ -25,7 +25,7 @@ Authority:
   consema.protocol.query (RFC 0016 §5.4); the frozen defaults are the core
   query.rs ones (max_steps/max_results 100_000).
 
-consema-go/go/xml is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ from consema.xml.kinds import XmlSyntaxKind
 
 
 class QueryLimits:
-    """Execution resource limits (consema-rs/consema-core/src/query.rs)."""
+    """Execution resource limits (https://github.com/consema/consema-rs/blob/main/consema-core/src/query.rs)."""
 
     __slots__ = ("max_steps", "max_results")
 

@@ -24,7 +24,7 @@ Authority:
 - RFC 0012 §7 (lines 258-283) — the v1 kind set with exhaustive raw-byte
   coverage; decoded tokenizer spans convert back to exact raw-byte spans.
 - The formation pipeline and every recovery code transcribe
-  consema-rs/consema-xml/src/parser.rs (encoding request 56-80; profile
+  https://github.com/consema/consema-rs/blob/main/consema-xml/src/parser.rs (encoding request 56-80; profile
   validation 82-108; declaration 334-503; PI 505-579; comment 581-644;
   DOCTYPE 646-911; element/attribute 913-1305; text/CDATA 1307-1422;
   fragments and reference resolution 1460-1729; recovery 1731-1790;
@@ -34,7 +34,7 @@ Authority:
   (lines 428-434: they are RFC-registered and do not enter the
   consema-protocol core error registry).
 
-consema-go/go/xml is a cross-reference only; no code structure is copied.
+https://github.com/consema/consema-go/blob/main/go/xml is a cross-reference only; no code structure is copied.
 """
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ from consema.xml.kinds import XmlSyntaxKind
 from consema.xml.namespaces import NamespaceError, NamespaceScope
 
 # ---------------------------------------------------------------------------
-# Encoding selection (consema-rs/consema-xml/src/lib.rs:69-79)
+# Encoding selection (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs:69-79)
 # ---------------------------------------------------------------------------
 
 
@@ -135,7 +135,7 @@ class XmlEncodingSelection:
 
 
 # ---------------------------------------------------------------------------
-# Parse limits (consema-rs/consema-xml/src/lib.rs:81-157)
+# Parse limits (https://github.com/consema/consema-rs/blob/main/consema-xml/src/lib.rs:81-157)
 # ---------------------------------------------------------------------------
 
 _DEFAULT_MAX_DECODED_UTF8_BYTES = 128 * 1024 * 1024
