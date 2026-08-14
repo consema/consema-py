@@ -1,7 +1,8 @@
 param(
     [string]$CaseFile = '',
     [string]$OutDir = '',
-    # consema-rs checkout directory (multi-repo mode); default: <repo root>\consema-rs
+    # consema-rs checkout directory (multi-repo mode); default: <repo
+    # root>\consema-rs (CI layout) or a sibling consema-rs checkout (G109)
     [string]$RustWorkspace = ''
 )
 
@@ -35,12 +36,32 @@ param(
 # ---------------------------------------------------------------------------
 
 $ErrorActionPreference = 'Stop'
+# Per-invocation unique directory suffix (G44, 2026-08-14): a fixed shared
+# capture/evidence/output/workDir path would let two concurrent runs
+# truncate or interleave each other's files and flip the SKIPPED/PASSED
+# verdicts; every default TEMP/target path below carries this nonce.
+$nonce = [Guid]::NewGuid().ToString('N')
 $workspaceRoot = Split-Path -Parent $PSScriptRoot
 $pythonDir = Join-Path $workspaceRoot 'python'
 # The Rust emitter workspace lives in the consema-rs repository checkout
 # (multi-repo mode): this repository carries the Python implementation only.
-# -RustWorkspace overrides the default sibling checkout <repo root>\consema-rs.
-if (-not $RustWorkspace) { $RustWorkspace = Join-Path $workspaceRoot 'consema-rs' }
+# Default resolution (G109, adversarial audit 2026-08-13 — the old default
+# only matched the CI nested layout): <repo root>\consema-rs (CI) first,
+# then a sibling consema-rs checkout; -RustWorkspace overrides either.
+if (-not $RustWorkspace) {
+    $nested = Join-Path $workspaceRoot 'consema-rs'
+    $sibling = Join-Path (Split-Path -Parent $workspaceRoot) 'consema-rs'
+    if (Test-Path (Join-Path $nested 'Cargo.toml')) {
+        $RustWorkspace = $nested
+    }
+    elseif (Test-Path (Join-Path $sibling 'Cargo.toml')) {
+        $RustWorkspace = $sibling
+    }
+    else {
+        Write-Error "consema-rs checkout not found: tried $nested (CI multi-repo mode) and $sibling (side-by-side layout); pass -RustWorkspace explicitly"
+        exit 1
+    }
+}
 $RustWorkspace = [IO.Path]::GetFullPath($RustWorkspace)
 
 # --- repo layout sanity ------------------------------------------------------
@@ -97,7 +118,7 @@ if (-not (Test-Path $example)) {
     exit 1
 }
 if ($OutDir -eq '') {
-    $OutDir = Join-Path $targetDir 'python-differential-parity'
+    $OutDir = Join-Path $targetDir "python-differential-parity-$nonce"
 }
 $OutDir = [System.IO.Path]::GetFullPath($OutDir)
 if (Test-Path $OutDir) { Remove-Item $OutDir -Recurse -Force }
@@ -113,10 +134,6 @@ if ($LASTEXITCODE -ne 0) {
 # --- Python side --------------------------------------------------------------
 Write-Host "[3/3] running the Python byte-parity test (test_byte_parity.py)..."
 $env:CONSEMA_DIFFERENTIAL_RUST_DIR = $OutDir
-# Per-invocation unique capture directory (G44, 2026-08-14): a fixed
-# shared path would let two concurrent runs truncate/interleave each
-# other's capture files and flip the SKIPPED/PASSED verdicts.
-$nonce = [Guid]::NewGuid().ToString('N')
 $logDir = Join-Path $env:TEMP "consema-python-parity-$nonce"
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $stdoutFile = Join-Path $logDir 'python-test.stdout.txt'
