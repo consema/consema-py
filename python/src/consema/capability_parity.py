@@ -102,7 +102,7 @@ def assert_python_capability_parity(manifest_path: str | None = None) -> dict[st
 
     Returns the actual inventory. Raises :class:`CapabilityParityError` on
     any mismatch, including a manifest record that disagrees with the
-    frozen five-runner pins.
+    frozen shared pins (wave-5: not five runners — see the module header).
     """
     actual = actual_capability_counts()
     manifest = manifest_capability_counts(manifest_path)

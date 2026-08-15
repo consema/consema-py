@@ -155,7 +155,7 @@ def read_vector_file(vectors_dir: str, name: str) -> bytes:
     ``digests.conformance_suite`` note documents as expected. The other
     four runners hash the raw bytes, so this runner must too — no newline
     normalization (G43, 2026-08-14: normalization was the Python-only
-    divergence from the shared five-runner digest).
+    divergence from the shared aggregate digest).
     """
     with open(os.path.join(vectors_dir, name), "rb") as handle:
         return handle.read()

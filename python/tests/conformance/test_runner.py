@@ -1,10 +1,16 @@
 """Conformance runner test: pins the milestone gate
 (https://github.com/consema/consema/blob/main/docs/go-implementation-plan.md §4.2;
-https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2 — the five-runner shared
+https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2 — the shared aggregate
 pin): the aggregate vector digest matches the Feature-Complete Manifest and
 the frozen constant, the inventory is exactly 18 suites / 519 cases, every
 suite is conformant with zero skips (any skip is a failure — the (N, 0, 0)
 hard pin), and each suite matches its frozen per-suite applicable surface.
+The executing surface is NOT five runners (wave-5, correcting the previous
+"five-runner shared pin" wording): this test executes the assertion against
+the provisioned manifest, together with the go/kt runners, the rs vendored
+conformance/DIGEST and the mother-repo shared-conformance-digest job;
+consema-ts does not execute it — its runner skips without a provisioned
+manifest.
 
 Runs under pytest or directly (python tests/conformance/test_runner.py).
 The runner reads the repository vectors by repo-relative path; pytest is
@@ -25,8 +31,11 @@ from consema.conformance.runner import (
     run_argv,
 )
 
-# The five-runner shared aggregate pin (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
-# §4.2; fc-manifest-0.13.0.json).
+# The shared aggregate pin (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
+# §4.2; fc-manifest-0.13.0.json; wave-5: the executing surface is the
+# go/py/kt runners + the rs vendored conformance/DIGEST + the mother-repo
+# shared-conformance-digest job — consema-ts's assertion is a permanent
+# documented skip without a provisioned manifest).
 RECORDED_AGGREGATE = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 
 # Per-suite applicable surface {passed, skipped, failed} — the current L5

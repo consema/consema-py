@@ -18,7 +18,7 @@ check-version-consistency job 断言 README `Version:` 行与 pyproject 一致�
 pip install consema（当前版本见上方 Version: 行；发布后可用）
 ```
 
-把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python quickstart.py`）（一个 JSON 文档走完 parse → query → edit → render 四条链；该示例已入库为 [`python/examples/quickstart.py`](python/examples/quickstart.py)，由 CI `examples` job 与下方 README 栅栏**逐字节比对**——R6，波 4 裁决 2026-08-15：补齐 kt 式 fence 比对门禁；入库前该栅栏无仓库副本、纯手工维护，无任何 CI 步骤执行或比对该栅栏）：
+把下面内容保存为 `python/quickstart.py` 后执行 `cd python && PYTHONPATH=src python quickstart.py`（PowerShell：`cd python; $env:PYTHONPATH='src'; python quickstart.py`）（一个 JSON 文档走完 parse → query → edit → render 四条链；该示例已入库为 [`python/examples/quickstart.py`](python/examples/quickstart.py)，由 CI `examples` job 与下方 README 栅栏**逐字比对**（CRLF 归一化后逐字节一致，仅容忍文件尾换行；波 5 起门禁为 byte-exact，栅栏内任何空白/空行漂移都会失败）——R6，波 4 裁决 2026-08-15：补齐 kt 式 fence 比对门禁；入库前该栅栏无仓库副本、纯手工维护，无任何 CI 步骤执行或比对该栅栏）：
 
 ```python
 from consema.core import PortableValue
@@ -116,15 +116,16 @@ runner 测试（tests/conformance/）与 capability parity 测试读取仓库相
 skip 跳过（见 python/README.md Verify）。本地运行前先把规范仓并排检出并把
 conformance 数据 provision 到工作区根（与 CI 的
 `.github/actions/provision-conformance` 复合 action 相同；CI 把规范仓钉在
-`ccc9943`——波 4 R5 统一 provision 钉、F2 再锚到母仓收口时点 HEAD；该 commit 的
-`docs/fc-manifest-0.13.0.json` sha256 为 `5cb4ab51…`，与 CI provision 断言一致）：
+`4ede284`——母仓波 4 收口记录 HEAD（波 5 从 F2 钉 `ccc9943` 再锚；两 commit
+的 conformance 树与 manifest sha256 `5cb4ab51…` 逐字节一致，provision 数据
+不变，与 CI provision 断言一致））：
 
 ```text
 # 规范仓并排检出到 ../consema；本地 checkout 必须与 CI 钉在同一个 commit
-# （CI 用 ccc9943——波 4 R5 统一 provision 钉、F2 再锚；manifest sha256 5cb4ab51，
+# （CI 用 4ede284——波 4 收口 HEAD；manifest sha256 5cb4ab51，
 # 与 CI 断言一致），否则 provision 的数据与 CI 不同：
 #   git clone https://github.com/consema/consema ../consema
-#   cd ../consema && git checkout ccc99430a6e3003bc1b0830d81cbad245323f0a4
+#   cd ../consema && git checkout 4ede2844e179ca30e44c62062636c6996f25ea39
 # PowerShell 等价：Copy-Item -Recurse ../consema/conformance ./conformance
 # 与 Copy-Item ../consema/docs/fc-manifest-0.13.0.json ./docs/
 cp -r ../consema/conformance ./conformance
@@ -134,8 +135,8 @@ cp ../consema/docs/fc-manifest-0.13.0.json ./docs/
 
 数据在场后全量 pytest 通过（CI 同款 `--import-mode=importlib` +
 `PYTHONPATH=tests/xml`；能力 parity 4 个测试亦全绿）。现行计数以最近
-CI run 为准（2026-08-15 实测 729 passed / 4 skipped，见 GitHub Actions；
-本 README 不硬编码测试数量——wave-4 R16）。
+CI run 为准（见 GitHub Actions；本 README 不硬编码测试数量——wave-4
+R16）。
 
 ## FAQ
 
@@ -143,7 +144,7 @@ CI run 为准（2026-08-15 实测 729 passed / 4 skipped，见 GitHub Actions；
 - **与 pydantic / jsonschema 的关系？** 互补而非竞争：pydantic 做运行时 schema 校验/类型转换，Consema 做格式内容处理（无损文档、查询、投影、原子编辑、跨格式转换）；Consema 明确不做业务 schema 校验（平台接入指南）。
 - **性能如何？** 行为一致性由 18 suites / 519 cases conformance 门禁与跨语言差分门禁保证；解析/渲染基准基线见规范仓 `https://github.com/consema/consema/blob/main/docs/BENCHMARKS-0.13.0.md` 与 Go 仓 [consema-go/go/README.md](https://github.com/consema/consema-go/blob/main/go/README.md)。
 - **零依赖吗？** 是——`dependencies = []`（pytest 仅 dev extra）。
-- **跨语言一致性如何保证？** 18 套语言无关 conformance suite 共 519/519 cases（聚合 digest `cfd6e296…`）由规范仓维护、五仓共享；CI 多仓 checkout 跑 conformance runner 与 Python-Rust 差分门禁（byte parity / normalized differential / protocol-exchange）。
+- **跨语言一致性如何保证？** 18 套语言无关 conformance suite 共 519/519 cases（聚合 digest `cfd6e296…`）由规范仓维护；聚合 digest 断言由 rs（vendored `conformance/DIGEST`）、go/py/kt 三仓 runner 与母仓 shared-conformance-digest 作业执行（ts runner 的断言在不 provision manifest 时为永久 documented skip，不参与执行面）；CI 多仓 checkout 跑 conformance runner 与 Python-Rust 差分门禁（byte parity / normalized differential / protocol-exchange）。
 - **兼容承诺？** 语义化版本；`check-version-consistency` 门禁断言 README 版本行与 `pyproject.toml` 一致；兼容与支持政策见 RFC 0020。
 - **如何贡献？** 见本仓 [CONTRIBUTING.md](CONTRIBUTING.md)（规范仓为权威版）；conformance 向量/夹具/oracle/差分数据权威在规范仓——向量变更是五仓同步事件，必须先回规范仓提交再同步五个语言仓。
 - **"默认拒绝信息损失"是什么意思？** 投影/转换/编辑中的任何 loss（如 YAML 共享结构展开、Properties 重复键折叠、数值舍入）必须显式授权；未授权时操作原子失败（`convert_*` 返回 `ConversionFailure`；fidelity 三档：Exact / Transformed / Lossy）。

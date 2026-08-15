@@ -28,8 +28,11 @@ from dataclasses import dataclass, field
 from consema.conformance import loader
 from consema.core.value import PortableValue
 
-# The frozen aggregate digest and inventory pins (five-runner shared pin;
-# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json).
+# The frozen aggregate digest and inventory pins (the shared aggregate pin;
+# https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md §4.2; fc-manifest-0.13.0.json;
+# wave-5: the executing surface is the go/py/kt runners + the rs vendored conformance/DIGEST + the
+# mother-repo shared-conformance-digest job — consema-ts's assertion is a permanent documented skip
+# without a provisioned manifest).
 AGGREGATE_SHA256 = "cfd6e296da5b22b62d37b076d35bf6bbf58b0678ceddb37eea51a8b47200ab6a"
 EXPECTED_SUITES = 18
 EXPECTED_CASES = 519
