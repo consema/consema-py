@@ -221,6 +221,36 @@ def test_integer_above_magnitude_bound_is_resource_limit():
     assert caught.value.diagnostics[0].arguments["name"] == "number-digits"
 
 
+def test_float_above_magnitude_bound_is_resource_limit():
+    """A float token whose coefficient plus exponent digits exceed
+    100_000 is a fatal number-digits resource-limit failure — the
+    integer-path bound extended to the float path, checked before the
+    float conversion (a pathological exponent is a resource limit, never
+    silent overflow drift or a bare ValueError)."""
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = 1e" + "9" * 100_001 + "\n").encode("utf-8"))
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.diagnostics[0].arguments == {
+        "name": "number-digits",
+        "observed": "100002",  # coefficient 1 plus 100_001 exponent digits
+        "limit": "100000",
+    }
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = 1.5e" + "9" * 100_001 + "\n").encode("utf-8"))
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.diagnostics[0].arguments["name"] == "number-digits"
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = 1." + "9" * 100_001 + "\n").encode("utf-8"))
+    assert caught.value.code == "core.parse.resource-limit@1"
+    assert caught.value.diagnostics[0].arguments["name"] == "number-digits"
+    # At the inclusive boundary the digit check does not fire; the
+    # within-bound overflow still follows the existing numbers.rs rule
+    # (decimal overflow to +inf is a syntax failure, not a limit).
+    with pytest.raises(TomlFormationFailure) as caught:
+        _parse(("a = 1e" + "9" * 99_999 + "\n").encode("utf-8"))
+    assert caught.value.code == "toml.parse.syntax@1"
+
+
 def test_resource_token_limit():
     """toml.resource.token-limit: max_token_count=3 fails fatally with
     core.parse.resource-limit@1 and no truncated success."""

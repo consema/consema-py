@@ -519,6 +519,7 @@ class Parser:
             return _InternalItemKind.float_bits(_FLOAT_INF_BITS)
         if not _float_grammar_ok(token):
             return None
+        self._check_float_number_digits(token)
         try:
             value = float(token.replace("_", ""))
         except ValueError:
@@ -573,14 +574,29 @@ class Parser:
         return _InternalItemKind.integer(value)
 
     def _check_number_digits(self, digits: str, radix: int) -> None:
-        """Fatal number-digits resource-limit failure when one integer
+        """Fatal number-digits resource-limit failure when one number
         token's magnitude digits exceed ``limits.max_number_digits``
-        (the same-wave cross-language bound; checked before int())."""
+        (the same-wave cross-language bound; the integer path passes its
+        radix digits, the float path the coefficient plus exponent
+        digits; checked before int()/float() conversion)."""
         observed = _count_number_digits(digits, radix)
         if observed > self.limits.max_number_digits:
             raise TomlFormationFailure.resource_limit(
                 "number-digits", observed, self.limits.max_number_digits
             )
+
+    def _check_float_number_digits(self, token: str) -> None:
+        """Fatal number-digits resource-limit failure when one float
+        token's magnitude digits (coefficient plus exponent) exceed
+        ``limits.max_number_digits`` — the integer-path bound extended to
+        the float path, checked before the float conversion so a
+        pathological exponent is a resource limit, never silent overflow
+        drift."""
+        unsigned = token[1:] if token[0] in "+-" else token
+        mantissa, _, exponent_text = unsigned.partition("e")
+        if not exponent_text:
+            mantissa, _, exponent_text = unsigned.partition("E")
+        self._check_number_digits(mantissa + exponent_text, 10)
 
     # -- strings ----------------------------------------------------------
 
