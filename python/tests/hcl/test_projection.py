@@ -38,6 +38,37 @@ def projected_value(item: dict):
     return item["value"]
 
 
+def _huge_int(digits: str) -> int:
+    """One huge decimal int built in 4-digit chunks (the interpreter's
+    int() conversion limit applies to int(string), not to chunked
+    accumulation); the leading chunk carries the length remainder so
+    every digit keeps its exact place value."""
+    start = len(digits) % 4
+    value = int(digits[:start]) if start else 0
+    for index in range(start, len(digits), 4):
+        value = value * 10_000 + int(digits[index : index + 4])
+    return value
+
+
+def test_literals_above_interpreter_int_limit_project_exactly():
+    """Integer and real literals with more than 4300 digits (within the
+    100_000-digit formation magnitude bound) project exactly — the
+    interpreter's int() conversion limit never surfaces as a crash."""
+    huge = "9" * 5000
+    document = parse(("a = " + huge + "\n").encode("utf-8"), NATIVE)
+    result = project(document, ProjectionRequest.body())
+    assert result.__class__.__name__ == "CompleteProjection"
+    member = projected_value(projected_items(result.value)[0])
+    assert member.kind is Kind.INTEGER and member.as_integer() == _huge_int(huge)
+    real = "1." + huge
+    document = parse(("b = " + real + "\n").encode("utf-8"), NATIVE)
+    result = project(document, ProjectionRequest.body())
+    assert result.__class__.__name__ == "CompleteProjection"
+    member = projected_value(projected_items(result.value)[0])
+    assert member.kind is Kind.DECIMAL
+    assert member.as_decimal() == Decimal(_huge_int("1" + huge), -5000)
+
+
 def test_literal_complete_record():
     # Case hcl.projection.literal-complete-record (hcl-v1.json).
     source = (
