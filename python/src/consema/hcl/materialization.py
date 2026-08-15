@@ -110,6 +110,24 @@ _KIND_FAMILY_NAMES = frozenset(
 )
 
 
+def _int_to_decimal_str(value: int) -> str:
+    """Exact int to decimal string, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits; a validated
+    input may legitimately hold larger integers within the formation
+    magnitude bound)."""
+    try:
+        return str(value)
+    except ValueError:
+        negative = value < 0
+        remaining = -value if negative else value
+        chunks: list[str] = []
+        while remaining:
+            remaining, part = divmod(remaining, 1_000_000_000)
+            chunks.append(f"{part:09d}")
+        text = "".join(reversed(chunks)).lstrip("0") or "0"
+        return "-" + text if negative else text
+
+
 class _Target(enum.Enum):
     """The canonical materialization target (materialization.rs)."""
 
@@ -492,7 +510,7 @@ def _validate_value(
                     HclMaterializationFailureKind.UNREPRESENTABLE,
                     detail="integer value is not an integer",
                 )
-            return _ValueNode(kind="integer", text=str(int_value.as_integer()))
+            return _ValueNode(kind="integer", text=_int_to_decimal_str(int_value.as_integer()))
         if kind == "real":
             real_value = _field(value, "value", "real value is missing the value member")
             return _ValueNode(kind="real", text=_real_spelling(real_value))
@@ -557,7 +575,7 @@ def _validate_value(
     if value.kind is Kind.STRING:
         return _ValueNode(kind="string", text=value.as_string())
     if value.kind is Kind.INTEGER:
-        return _ValueNode(kind="integer", text=str(value.as_integer()))
+        return _ValueNode(kind="integer", text=_int_to_decimal_str(value.as_integer()))
     if value.kind in (Kind.DECIMAL, Kind.BINARY_FLOAT64, Kind.BINARY_FLOAT32):
         return _ValueNode(kind="real", text=_real_spelling(value))
     if value.kind is Kind.BOOLEAN:
@@ -901,7 +919,7 @@ def render_decimal(decimal: Decimal) -> str:
     coefficient = decimal.coefficient
     if coefficient == 0:
         return "0"
-    digits = str(coefficient)
+    digits = _int_to_decimal_str(coefficient)
     exponent = decimal.exponent
     if exponent == 0:
         return digits

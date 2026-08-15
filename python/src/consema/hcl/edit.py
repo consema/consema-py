@@ -754,11 +754,29 @@ def _canonical_real(value: float) -> str | None:
     return canonical_decimal(text)
 
 
+def _int_to_decimal_str(value: int) -> str:
+    """Exact int to decimal string, immune to the interpreter's int()
+    string-conversion limit (CPython default 4300 digits; a supplied
+    value may legitimately hold larger integers within the formation
+    magnitude bound)."""
+    try:
+        return str(value)
+    except ValueError:
+        negative = value < 0
+        remaining = -value if negative else value
+        chunks: list[str] = []
+        while remaining:
+            remaining, part = divmod(remaining, 1_000_000_000)
+            chunks.append(f"{part:09d}")
+        text = "".join(reversed(chunks)).lstrip("0") or "0"
+        return "-" + text if negative else text
+
+
 def _render_value(value: EditValue, indent: str) -> str:
     """Canonical expression text of one typed literal value at one base
     indentation (RFC 0014 §9; edit.rs)."""
     if value.kind == "integer":
-        return str(value.payload)
+        return _int_to_decimal_str(value.payload)
     if value.kind == "real":
         canonical = _canonical_real(value.payload)
         if canonical is None:
@@ -811,7 +829,7 @@ def _render_key(key: EditKey) -> str:
     if key.kind == "identifier":
         return key.payload
     if key.kind == "number":
-        return str(key.payload)
+        return _int_to_decimal_str(key.payload)
     return _quote_escape(key.payload)
 
 
@@ -1167,7 +1185,7 @@ def _edit_value_matches_literal(value: EditValue, literal: HclLiteralValue) -> b
     compare by canonical-decimal value equality across the integer/real
     kind boundary (RFC 0014 §6; edit.rs)."""
     if value.kind == "integer" and literal.kind == "integer":
-        return str(value.payload) == literal.text
+        return _int_to_decimal_str(value.payload) == literal.text
     if value.kind == "real" and literal.kind in ("integer", "real"):
         return _canonical_real(value.payload) == literal.text
     if value.kind == "string" and literal.kind == "string":
@@ -1194,7 +1212,7 @@ def _edit_key_matches_literal(key: EditKey, literal) -> bool:
     if key.kind == "identifier" and literal.kind == "identifier":
         return key.payload == literal.text
     if key.kind == "number" and literal.kind == "number":
-        return str(key.payload) == literal.text
+        return _int_to_decimal_str(key.payload) == literal.text
     if key.kind == "string" and literal.kind == "string":
         return key.payload == literal.text
     return False

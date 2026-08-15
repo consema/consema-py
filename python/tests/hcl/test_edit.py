@@ -40,6 +40,31 @@ from consema.hcl import (
 )
 
 
+def _huge_int(digits: str) -> int:
+    """One huge decimal int built in 4-digit chunks (the interpreter's
+    int() conversion limit applies to int(string), not to chunked
+    accumulation); the leading chunk carries the length remainder so
+    every digit keeps its exact place value."""
+    start = len(digits) % 4
+    value = int(digits[:start]) if start else 0
+    for index in range(start, len(digits), 4):
+        value = value * 10_000 + int(digits[index : index + 4])
+    return value
+
+
+def test_huge_integer_values_are_exact():
+    """Integer values with more than 4300 digits (within the formation
+    magnitude bound) render and compare exactly — the interpreter's
+    int()-to-str conversion limit never surfaces as a crash."""
+    digits = "9" * 5000
+    document = parse(b"a = 1\n", HclProfile.NATIVE_V1)
+    builder = EditTransactionBuilder(document)
+    builder.set_attribute_value(BodyPath.root(), "a", EditValue.integer(_huge_int(digits)))
+    result = commit(document, builder.build())
+    rendered = result.document.render().decode("utf-8")
+    assert rendered == "a = " + digits + "\n"
+
+
 def test_attribute_operations_golden():
     # Case hcl.edit.attribute-operations (hcl-v1.json).
     document = parse(b"region = \"us-east-1\"\ncount = 2\nenabled = true\n", HclProfile.NATIVE_V1)

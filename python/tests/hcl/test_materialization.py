@@ -179,6 +179,57 @@ def test_reparse_closure_with_expression():
     assert result.document.formation_status().value == "Complete"
 
 
+def _huge_int(digits: str) -> int:
+    """One huge decimal int built in 4-digit chunks (the interpreter's
+    int() conversion limit applies to int(string), not to chunked
+    accumulation); the leading chunk carries the length remainder so
+    every digit keeps its exact place value."""
+    start = len(digits) % 4
+    value = int(digits[:start]) if start else 0
+    for index in range(start, len(digits), 4):
+        value = value * 10_000 + int(digits[index : index + 4])
+    return value
+
+
+def test_huge_integer_and_real_values_are_exact():
+    """>4300-digit integer and real values (within the formation
+    magnitude bound) materialize exactly — the interpreter's int()-to-str
+    conversion limit never surfaces as a crash, and the reparse closure
+    still holds."""
+    digits = "9" * 5000
+    huge = _huge_int(digits)
+    record = PortableValue.object(
+        (
+            ("record", PortableValue.string("hcl.body@1")),
+            (
+                "items",
+                PortableValue.sequence(
+                    (
+                        attribute(
+                            "count", value_record("integer", value=PortableValue.integer(huge))
+                        ),
+                        attribute("raw", PortableValue.integer(huge)),
+                        attribute(
+                            "ratio",
+                            value_record(
+                                "real",
+                                value=PortableValue.decimal(Decimal(_huge_int("1" + digits), -5000)),
+                            ),
+                        ),
+                    )
+                ),
+            ),
+        )
+    )
+    result = materialize(record, request("hcl.native"))
+    assert result.__class__.__name__ == "CompleteMaterialization"
+    rendered = result.document.render().decode("utf-8")
+    assert "count = " + digits in rendered
+    assert "raw = " + digits in rendered
+    assert "ratio = 1." + digits in rendered
+    assert result.document.formation_status().value == "Complete"
+
+
 def test_unrepresentable_cases():
     # Case hcl.materialization.unrepresentable (hcl-v1.json).
     block_record = PortableValue.object(
