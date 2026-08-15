@@ -95,7 +95,9 @@ if (-not (Get-Command $python -ErrorAction SilentlyContinue)) {
 
 # --- case set ----------------------------------------------------------------
 if ($CaseFile -eq '') {
-    $CaseFile = Join-Path $workspaceRoot 'conformance\differential\normalized\cases.json'
+    # Forward-slash separators: Join-Path normalizes per-host (wave-5:
+    # the backslash form was Windows-only).
+    $CaseFile = Join-Path $workspaceRoot 'conformance/differential/normalized/cases.json'
 }
 if (-not (Test-Path $CaseFile)) {
     Write-Error "normalized differential case file not found: $CaseFile"
@@ -129,9 +131,15 @@ finally {
 if ($buildExit -ne 0) { exit $buildExit }
 
 $targetDir = if ($env:CARGO_TARGET_DIR) { $env:CARGO_TARGET_DIR } else { Join-Path $RustWorkspace 'target' }
-$example = Join-Path $targetDir 'debug\examples\emit_normalized_results.exe'
+# The built example binary is `debug/examples/emit_normalized_results` on
+# POSIX hosts and `debug\examples\emit_normalized_results.exe` on Windows;
+# probe both spellings (wave-5: the previous hardcoded .exe form was
+# Windows-only and failed on POSIX + pwsh hosts that satisfy every stated
+# requirement).
+$example = Join-Path $targetDir 'debug/examples/emit_normalized_results'
+if (Test-Path "$example.exe") { $example = "$example.exe" }
 if (-not (Test-Path $example)) {
-    Write-Error "Rust example binary not found: $example"
+    Write-Error "Rust example binary not found: $example (.exe probed on Windows)"
     exit 1
 }
 if ($OutDir -eq '') {
@@ -168,7 +176,7 @@ $EAP = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 Push-Location $pythonDir
 try {
-    & $python -m pytest tests\differential\test_normalized.py -v 1> $stdoutFile 2> $stderrFile
+    & $python -m pytest tests/differential/test_normalized.py -v 1> $stdoutFile 2> $stderrFile
     $testCode = $LASTEXITCODE
 }
 finally {
@@ -182,8 +190,14 @@ if (Test-Path $stderrFile) {
 
 # The differential test must have RUN (not skipped) and passed.
 $output = Get-Content $stdoutFile -Raw
-if ($output -match 'SKIPPED') {
-    Write-Error 'the normalized differential test skipped: the Rust evidence directory was not provisioned'
+# The guard matches only the env-gated tests' OWN skip markers (wave-5:
+# the old `-match 'SKIPPED'` matched ANY skip in the file — a
+# data-missing skip of test_case_file_integrity or a future legitimate
+# skip of an unrelated test was mis-attributed to the differential tests
+# and killed the verification even when they passed).
+if ($output -match 'test_forward_differential SKIPPED' -or
+    $output -match 'test_emit_python_normalized_results_env SKIPPED') {
+    Write-Error 'the normalized differential tests skipped: the Rust evidence directory was not provisioned (CONSEMA_DIFFERENTIAL_NORMALIZED_*)'
     exit 1
 }
 if ($output -notmatch 'test_forward_differential PASSED' -or

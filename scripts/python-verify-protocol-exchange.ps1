@@ -91,7 +91,9 @@ if (-not (Get-Command $python -ErrorAction SilentlyContinue)) {
 
 # --- case set ----------------------------------------------------------------
 if ($CaseFile -eq '') {
-    $CaseFile = Join-Path $workspaceRoot 'conformance\differential\protocol-exchange\cases.json'
+    # Forward-slash separators: Join-Path normalizes per-host (wave-5:
+    # the backslash form was Windows-only).
+    $CaseFile = Join-Path $workspaceRoot 'conformance/differential/protocol-exchange/cases.json'
 }
 if (-not (Test-Path $CaseFile)) {
     Write-Error "protocol-exchange case file not found: $CaseFile"
@@ -126,9 +128,15 @@ finally {
 if ($buildExit -ne 0) { exit $buildExit }
 
 $targetDir = if ($env:CARGO_TARGET_DIR) { $env:CARGO_TARGET_DIR } else { Join-Path $RustWorkspace 'target' }
-$example = Join-Path $targetDir 'debug\examples\emit_protocol_exchange.exe'
+# The built example binary is `debug/examples/emit_protocol_exchange` on
+# POSIX hosts and `debug\examples\emit_protocol_exchange.exe` on Windows;
+# probe both spellings (wave-5: the previous hardcoded .exe form was
+# Windows-only and failed on POSIX + pwsh hosts that satisfy every stated
+# requirement).
+$example = Join-Path $targetDir 'debug/examples/emit_protocol_exchange'
+if (Test-Path "$example.exe") { $example = "$example.exe" }
 if (-not (Test-Path $example)) {
-    Write-Error "Rust example binary not found: $example"
+    Write-Error "Rust example binary not found: $example (.exe probed on Windows)"
     exit 1
 }
 if ($OutDir -eq '') {
@@ -165,7 +173,7 @@ $EAP = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 Push-Location $pythonDir
 try {
-    & $python -m pytest tests\differential\test_protocol_exchange.py -v 1> $stdoutFile 2> $stderrFile
+    & $python -m pytest tests/differential/test_protocol_exchange.py -v 1> $stdoutFile 2> $stderrFile
     $testCode = $LASTEXITCODE
 }
 finally {
@@ -179,8 +187,13 @@ if (Test-Path $stderrFile) {
 
 # The exchange test must have RUN (not skipped) and passed.
 $output = Get-Content $stdoutFile -Raw
-if ($output -match 'SKIPPED') {
-    Write-Error 'the protocol-exchange test skipped: the Rust exchange directory was not provisioned'
+# The guard matches only the env-gated test's OWN skip marker (wave-5:
+# the old `-match 'SKIPPED'` matched ANY skip in the file — a
+# data-missing skip of test_case_file_integrity or a future legitimate
+# skip of an unrelated test was mis-attributed to the exchange test and
+# killed the verification even when it passed).
+if ($output -match 'test_protocol_exchange SKIPPED') {
+    Write-Error 'the protocol-exchange test skipped: the Rust exchange directory was not provisioned (CONSEMA_EXCHANGE_*)'
     exit 1
 }
 if ($output -notmatch 'test_protocol_exchange PASSED') {
@@ -209,7 +222,7 @@ if (Test-Path $verifyErr) {
     Get-Content $verifyErr | ForEach-Object { Write-Host $_ }
 }
 if ($verifyCode -ne 0) {
-    Write-Error "the Rust verify pass found divergences or failed (exit $verifyCode): a divergence here is a real Python encoder/decoder bug (the record codec gaps are closed — measured status in the header above)"
+    Write-Error "the Rust verify pass found divergences or failed (exit $verifyCode): a divergence here is a real Python encoder/decoder bug (the record codec gaps are closed; measured status in the header above)"
     exit $verifyCode
 }
 # Wave-4 (D5-02 family): the reverse leg must prove the verify mode
