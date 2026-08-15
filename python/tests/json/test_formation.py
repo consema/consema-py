@@ -285,6 +285,18 @@ def test_strict_integer_above_cpython_int_digits_parses_exactly():
     assert value.value == 10**5000 - 1
 
 
+def test_strict_integer_any_digit_count_parses_exactly():
+    """The chunked conversion fallback is exact for every digit count,
+    not only multiples of four: a 5001-digit integer (5001 % 4 = 1)
+    parses to the exact value."""
+    source = ("[" + "9" * 5001 + "]").encode("utf-8")
+    document = parse(source, JsonProfile.STRICT_V1, DEFAULT_LIMITS)
+    assert document.formation_status().value == "Complete"
+    value = document.root().array_elements().value[0].value().as_integer()
+    assert value.is_available
+    assert value.value == 10**5001 - 1
+
+
 def test_strict_integer_above_magnitude_limit_is_resource_limit():
     """A >100_000-digit integer is rejected before any conversion with the
     frozen number-digits resource-limit failure (never a bare ValueError)."""

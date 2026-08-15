@@ -768,14 +768,19 @@ def _count_number_digits(text: str) -> int:
 def _int_decimal(text: str) -> int:
     """Exact decimal-string to int, immune to the interpreter's int()
     string-conversion limit (CPython default 4300 digits; the magnitude
-    bound above it already passed, so digits are 0-9)."""
+    bound above it already passed, so digits are 0-9).
+
+    The fallback chunks 4 digits at a time; the leading chunk carries the
+    ``len % 4`` remainder so every digit keeps its exact place value for
+    any length, not only multiples of four."""
     negative = text.startswith("-")
     digits = text[1:] if text[:1] in ("+", "-") else text
     try:
         value = int(digits)
     except ValueError:
-        value = 0
-        for index in range(0, len(digits), 4):
+        start = len(digits) % 4
+        value = int(digits[:start]) if start else 0
+        for index in range(start, len(digits), 4):
             value = value * 10_000 + int(digits[index : index + 4])
     return -value if negative else value
 
