@@ -33,8 +33,8 @@ conformance comparison (RFC 0016 §6).
 
 Verified status: the Python toolchain verification gate has landed; the
 formation/query/projection/edit test suites under python/tests/toml/ run
-in CI (python-gates job) and locally (703 passed / 4 skipped, python/README.md
-Verify).
+in CI (python-gates job) and locally (test count per the latest CI run on
+GitHub Actions; python/README.md Verify).
 """
 
 from consema.toml.document import (
