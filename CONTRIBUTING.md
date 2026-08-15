@@ -31,8 +31,8 @@ conftest 作为模块导入：`from conftest import …`）。**前置：** conf
 规范仓；全新 clone 直接跑全量 pytest 会失败。本地运行前先并排检出规范仓并
 把数据 provision 到工作区根（与 CI 的 `.github/actions/provision-conformance`
 复合 action 相同，步骤见 [python/README.md](python/README.md) Verify；规范仓
-钉在 `4ede284`（母仓波 4 收口记录 HEAD；波 5 从 F2 钉 `ccc9943` 再锚，两 commit
-conformance 树与 manifest sha256 `5cb4ab51…` 逐字节一致），cfd6e296 519-case 清单对应（manifest sha256 `5cb4ab51…`，与 CI 断言一致）。缺数据时差分
+钉在 `db821cd`（母仓波 5 收口 HEAD，统一 provision 钉；conformance 树与
+manifest sha256 `af27d599…` 逐字节一致），cfd6e296 519-case 清单对应（manifest sha256 `af27d599…`，与 CI 断言一致）。缺数据时差分
 integrity 测试与差分 case 文件完整性测试按 documented skip 跳过；fixture
 测试与 runner/capability parity 测试缺失即失败（G68 守卫：缺失即失败，
 不做静默 skip；与 python/README.md Verify 口径一致）。

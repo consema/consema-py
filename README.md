@@ -116,16 +116,15 @@ runner 测试（tests/conformance/）与 capability parity 测试读取仓库相
 skip 跳过（见 python/README.md Verify）。本地运行前先把规范仓并排检出并把
 conformance 数据 provision 到工作区根（与 CI 的
 `.github/actions/provision-conformance` 复合 action 相同；CI 把规范仓钉在
-`4ede284`——母仓波 4 收口记录 HEAD（波 5 从 F2 钉 `ccc9943` 再锚；两 commit
-的 conformance 树与 manifest sha256 `5cb4ab51…` 逐字节一致，provision 数据
-不变，与 CI provision 断言一致））：
+`db821cd`——母仓波 5 收口 HEAD（统一 provision 钉；manifest sha256
+`af27d599…` 与 CI provision 断言一致））：
 
 ```text
 # 规范仓并排检出到 ../consema；本地 checkout 必须与 CI 钉在同一个 commit
-# （CI 用 4ede284——波 4 收口 HEAD；manifest sha256 5cb4ab51，
+# （CI 用 db821cd——波 5 收口 HEAD；manifest sha256 af27d599，
 # 与 CI 断言一致），否则 provision 的数据与 CI 不同：
 #   git clone https://github.com/consema/consema ../consema
-#   cd ../consema && git checkout 4ede2844e179ca30e44c62062636c6996f25ea39
+#   cd ../consema && git checkout db821cdf463d0542fa166d61d7e28cec46812bbc
 # PowerShell 等价：Copy-Item -Recurse ../consema/conformance ./conformance
 # 与 Copy-Item ../consema/docs/fc-manifest-0.13.0.json ./docs/
 cp -r ../consema/conformance ./conformance

@@ -29,12 +29,10 @@ runs:
         }
         Copy-Item -LiteralPath $manifest -Destination (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json') -Force
         # Wave-4 R5 manifest sha256 assertion (unified provision pin
-        # 4ede284 — the mother-repo wave-4 closing-record HEAD; wave-5
-        # re-anchor from the F2 pin ccc9943, conformance tree and digest
-        # identical between the two commits): the pinned checkout must
+        # db821cd, wave-5 close re-pin): the pinned checkout must
         # carry exactly the digest recorded at the pin — silent manifest
         # drift fails the job.
-        $expectedDigest = '5cb4ab518cc3b3e1754a07f21953693b4b9ec113443d44c6ed8a6d4fa8faa6f8'
+        $expectedDigest = 'af27d599f5c4903d1757c89940911e250a392c7777568907d1c7049cf9977004'
         $actualDigest = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'docs\fc-manifest-0.13.0.json')).Hash.ToLowerInvariant()
         if ($actualDigest -ne $expectedDigest) {
           throw "fc-manifest sha256 mismatch after provision: expected $expectedDigest, got $actualDigest"

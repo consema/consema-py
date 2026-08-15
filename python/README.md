@@ -13,20 +13,20 @@ imports or calls the other implementations.
 **前置：** 全量 pytest 与 conformance runner 需要规范仓的 conformance 数据
 （`conformance/vectors`、`conformance/differential`、`conformance/fixtures`
 与 `docs/fc-manifest-0.13.0.json`），它们不随本仓提供（权威在
-github.com/consema/consema，CI 钉在 `4ede284`（母仓波 4 收口记录 HEAD；波 5
-从 F2 钉 `ccc9943` 再锚——cfd6e296 519-case 清单对应
+github.com/consema/consema，CI 钉在 `db821cd`（母仓波 5 收口 HEAD，统一
+provision 钉——cfd6e296 519-case 清单对应
 commit）。全新 clone 直接跑 `python -m pytest` 会失败：runner 测试与
 capability parity 测试读取缺失的向量/清单数据而报错，各格式家族的 fixture
 测试在 fixture 缺失时失败（G68 守卫：缺失即失败，不做静默 skip）；只有差分
 integrity 测试与差分 case 文件完整性测试在缺数据时按 documented skip 跳过。
 本地运行前把规范仓并排检出并把数据 provision 到本仓根（与 CI 的
 `.github/actions/provision-conformance` 复合 action 相同；本地 checkout
-必须与 CI 钉在同一个 commit `4ede284`（母仓波 4 收口记录 HEAD，波 5 再锚；该 commit 的
-`docs/fc-manifest-0.13.0.json` sha256 为 `5cb4ab51…`，与 CI 断言一致），否则 provision 的数据与 CI 不同）：
+必须与 CI 钉在同一个 commit `db821cd`（母仓波 5 收口 HEAD，统一 provision 钉；该 commit 的
+`docs/fc-manifest-0.13.0.json` sha256 为 `af27d599…`，与 CI 断言一致），否则 provision 的数据与 CI 不同）：
 
 ```
 # 规范仓并排检出到 ../consema（git clone https://github.com/consema/consema ../consema
-# && cd ../consema && git checkout 4ede2844e179ca30e44c62062636c6996f25ea39）后：
+# && cd ../consema && git checkout db821cdf463d0542fa166d61d7e28cec46812bbc）后：
 cp -r ../consema/conformance ./conformance
 mkdir -p docs
 cp ../consema/docs/fc-manifest-0.13.0.json ./docs/

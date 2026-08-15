@@ -36,13 +36,11 @@
 # beside this repository and copy the conformance data into the workspace
 # root (the runner and the differential harnesses resolve conformance/* by
 # repository-relative path). The consema checkout is pinned by commit (ref)
-# to 4ede284 — the mother-repo wave-4 closing-record HEAD (2026-08-15
-# 03:01; wave-5 re-anchor from the F2 pin ccc9943 — the conformance tree
-# and the fc-manifest sha256 5cb4ab51 are identical between the two
-# commits, so the provisioned data is unchanged) that carries the cfd6e296
-# 519-case inventory (the digest hard-pin lives in
+# to db821cd — the mother-repo wave-5 close HEAD (2026-08-15;
+# the pin carries the cfd6e296 519-case inventory and the fc-manifest
+# sha256 af27d599 (the digest hard-pin lives in
 # python/src/consema/conformance/runner.py — asserted by
-# python/tests/conformance/test_runner.py; the fc-manifest sha256 5cb4ab51
+# python/tests/conformance/test_runner.py; the fc-manifest sha256 af27d599
 # is asserted inside the provision action) — so the provisioned data cannot
 # drift with the spec repository's default branch. The differential job
 # additionally checks out consema/consema-rs (the Rust emitter workspace;
@@ -99,7 +97,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
+          ref: db821cdf463d0542fa166d61d7e28cec46812bbc # wave-5 close unified provision pin (db821cd = mother-repo HEAD at the wave-5 close carrying fc-manifest sha256 af27d599)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: ${{ matrix.python-version }}
@@ -189,7 +187,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
+          ref: db821cdf463d0542fa166d61d7e28cec46812bbc # wave-5 close unified provision pin (db821cd = mother-repo HEAD at the wave-5 close carrying fc-manifest sha256 af27d599)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
@@ -216,7 +214,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
+          ref: db821cdf463d0542fa166d61d7e28cec46812bbc # wave-5 close unified provision pin (db821cd = mother-repo HEAD at the wave-5 close carrying fc-manifest sha256 af27d599)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
@@ -269,7 +267,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
+          ref: db821cdf463d0542fa166d61d7e28cec46812bbc # wave-5 close unified provision pin (db821cd = mother-repo HEAD at the wave-5 close carrying fc-manifest sha256 af27d599)
       # G70 (adversarial audit, 2026-08-14): the Rust emitter toolchain is
       # pinned to 1.97.1 — the version this harness was locally verified
       # with (钉定本机实测版本), so the differential goldens are

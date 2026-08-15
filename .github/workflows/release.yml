@@ -107,7 +107,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
+          ref: db821cdf463d0542fa166d61d7e28cec46812bbc # wave-5 close unified provision pin (db821cd = mother-repo HEAD at the wave-5 close carrying fc-manifest sha256 af27d599)
       - uses: ./.github/actions/provision-conformance
       - name: pip install -e '.[dev]' (pytest for the release-path gates)
         working-directory: python
