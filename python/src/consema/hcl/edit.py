@@ -21,7 +21,7 @@ replacement sets and target digest. No operation writes a filesystem path,
 and none evaluates anything (hard gate 1).
 
 Authority (language-neutral first; Rust only for byte/registry
-arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/edit.rs �� the address model
+arbitration): https://github.com/consema/consema-rs/blob/main/consema-hcl/src/edit.rs — the address model
 edit.rs, the value model edit.rs, the operations
 edit.rs, failure algebra edit.rs, the sequential commit
 edit.rs, byte-level layout edit.rs, operation preparation
