@@ -177,8 +177,8 @@ def test_text_content_is_always_transformed():
 
 def test_simple_entry_mapping_rejects_ambiguity():
     """Simple-entry-mapping is admitted only without ambiguity; the default
-    for any omitted policy is failure, not LastWins (RFC 0012 §9, lines
-). A repeated expanded child under Reject is a collision
+    for any omitted policy is failure, not LastWins (RFC 0012 §9). A
+    repeated expanded child under Reject is a collision
     (projection.rs -> xml.projection.collision@1)."""
     doc = _doc(b"<root><a>1</a><a>2</a></root>")
     result = project_document(doc, ProjectionRequest.simple_entry_mapping(

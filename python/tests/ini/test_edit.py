@@ -17,8 +17,8 @@ are validated before any patch exists (https://github.com/consema/consema/blob/m
 v1.md: Rename validates portable character rules, Windows ASCII
 case equivalence, or Python optionxform collisions); removing a section
 removes its owned entries atomically without reparenting;
-Windows keeps ordered case-equivalent occurrences (RFC 0009 §6, lines
-); Python multiline entries own their continuations only
+Windows keeps ordered case-equivalent occurrences (RFC 0009 §6);
+Python multiline entries own their continuations only
 (edit.rs); comments are never moved or deleted without explicit
 ownership (RFC 0009 §12).
 """
