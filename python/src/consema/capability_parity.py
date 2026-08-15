@@ -29,8 +29,14 @@ from consema.protocol.error_registry import ErrorCodeRegistry
 from consema.registry import format_families, operation_registry, profiles, query_domains
 
 # The frozen manifest inventory (fc-manifest-0.13.0.json). These pins are
-# the five-runner shared capability assertion (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
-# §4.2); the runtime check still recomputes the actual inventory.
+# the shared capability assertion (https://github.com/consema/consema/blob/main/docs/five-language-ci-design.md
+# §4.2); the runtime check still recomputes the actual inventory. The
+# executing surface is NOT five runners (wave-5, correcting the previous
+# "five-runner shared" wording): this repo runs the assertion against the
+# provisioned manifest, together with the go/kt runners and the
+# mother-repo shared-conformance-digest job; consema-rs has no
+# capability-parity assertion and consema-ts's is a permanent documented
+# skip without a provisioned manifest.
 EXPECTED_FAMILIES = 8
 EXPECTED_PROFILES = 16
 EXPECTED_QUERY_DOMAINS = 21

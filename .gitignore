@@ -12,11 +12,17 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Python packaging / coverage artifacts
-venv/
-dist/
+# Python packaging / coverage artifacts (root-anchored, wave-5: a nested
+# dist/ or htmlcov/ inside the source tree must stay trackable — the same
+# discipline as the conformance entries below; the real build outputs live
+# under python/ and are ignored explicitly).
+/venv/
+python/venv/
+/dist/
+python/dist/
 .coverage
-htmlcov/
+/htmlcov/
+python/htmlcov/
 
 # Provisioned conformance data — owned by the consema repository, copied in
 # by the CI provision step / local provision (python/README.md "Verify");

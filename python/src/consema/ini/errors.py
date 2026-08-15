@@ -7,25 +7,23 @@ the format failure enums and their code mappings are the Rust family's
 StableFailure impls):
 
 - INI diagnostic codes: error_registry.rs (ini.edit.canonical-fallback
-  @1), :985 (ini.edit.case-collision@1), :991 (ini.edit.invalid-name@1),
-  :997 (ini.edit.invalid-placement@1), :1003 (ini.formation.case-collision
-  @1), :1009 (ini.formation.duplicate-entry@1), :1015
-  (ini.formation.duplicate-section@1), :1021 (ini.materialization.round-
-  trip-mismatch@1), :1027 (ini.parse.invalid-character@1), :1033
-  (ini.parse.invalid-continuation@1), :1039 (ini.parse.malformed-line@1),
-  :1045 (ini.parse.malformed-section@1), :1051 (ini.parse.missing-
-  delimiter@1), :1057 (ini.parse.missing-section@1), :1063
-  (ini.profile.encoding@1), :1069 (ini.profile.mismatch@1), :1075
-  (ini.projection.collision@1), :1081 (ini.projection.duplicate-collapsed
-  @1), :1087 (ini.projection.incomplete-document@1), :1093
+  @1), (ini.edit.case-collision@1), (ini.edit.invalid-name@1),
+  (ini.edit.invalid-placement@1), (ini.formation.case-collision
+  @1), (ini.formation.duplicate-entry@1),
+  (ini.formation.duplicate-section@1), (ini.materialization.round-
+  trip-mismatch@1), (ini.parse.invalid-character@1),
+  (ini.parse.invalid-continuation@1), (ini.parse.malformed-line@1),
+  (ini.parse.malformed-section@1), (ini.parse.missing-
+  delimiter@1), (ini.parse.missing-section@1),
+  (ini.profile.encoding@1), (ini.profile.mismatch@1),
+  (ini.projection.collision@1), (ini.projection.duplicate-collapsed
+  @1), (ini.projection.incomplete-document@1),
   (ini.query.invalid-name-mode@1).
 - Fatal formation codes: core.parse.resource-limit@1 error_registry.rs;
   ini.profile.encoding@1 error_registry.rs (parser.rs);
   the source-layer codes core.source.invalid-utf8@1 error_registry.rs,
-  core.source.encoding-conflict@1 :366, core.source.invalid-sequence@1
-  :372, core.source.unsupported-bom@1 :405, core.source.resource-limit@1
-  :399, core.source.code-page-required@1 :967, core.source.unsupported-
-  code-page@1 :973.
+  core.source.encoding-conflict@1, core.source.invalid-sequence@1, core.source.unsupported-bom@1, core.source.resource-limit@1, core.source.code-page-required@1, core.source.unsupported-
+  code-page@1.
 - Formation diagnostic emission: https://github.com/consema/consema-rs/blob/main/consema-ini/src/parser.rs
   (category per code, severity Error when recovered, occurrence ordinal)
   and the deterministic sort (Diagnostic::sort_deterministically,

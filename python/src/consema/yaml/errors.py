@@ -9,25 +9,25 @@ transcribed verbatim from https://github.com/consema/consema-rs/blob/main/consem
 - yaml.anchor.unknown@1 error_registry.rs; yaml.alias.name-mismatch@1
   error_registry.rs; yaml.alias.name-unavailable@1 error_registry.rs;
   yaml.anchor.name-unavailable@1 error_registry.rs;
-- yaml.native.invalid-source-span@1 :820; yaml.native.trailing-events@1 :826;
-  yaml.native.trailing-named-occurrence@1 :832; yaml.native.unexpected-end@1
-  :838; yaml.native.unexpected-event@1 :844;
-- yaml.mapping.missing-value@1 :790; yaml.scalar.invalid-explicit-tag@1 :922;
-  yaml.tag.kind-mismatch@1 :928;
-- yaml.projection.cycle@1 :862; yaml.projection.document-cardinality@1 :868;
-  yaml.projection.graph-invalid@1 :874; yaml.projection.invalid-canonical-
-  scalar@1 :880; yaml.projection.mapping-not-object@1 :886;
-  yaml.projection.provenance-limit@1 :892; yaml.projection.resource-limit@1
-  :898; yaml.projection.sharing@1 :904; yaml.projection.unrepresentable-
-  timestamp@1 :910; yaml.projection.unsupported-tag@1 :916;
-- yaml.materialization.cross-document-sharing@1 :796;
-  yaml.materialization.round-trip-mismatch@1 :802;
-  yaml.materialization.tag-kind-mismatch@1 :808;
-  yaml.materialization.unsupported-tag@1 :814;
-- yaml.edit.anchor-dependency@1 :754; yaml.edit.anchor-not-visible@1 :760;
-  yaml.edit.canonical-fallback@1 :766; yaml.edit.invalid-anchor-name@1 :772;
-  yaml.edit.invalid-placement@1 :778; yaml.edit.structural-container-
-  conflict@1 :784.
+- yaml.native.invalid-source-span@1; yaml.native.trailing-events@1;
+  yaml.native.trailing-named-occurrence@1; yaml.native.unexpected-end@1
+ ; yaml.native.unexpected-event@1;
+- yaml.mapping.missing-value@1; yaml.scalar.invalid-explicit-tag@1;
+  yaml.tag.kind-mismatch@1;
+- yaml.projection.cycle@1; yaml.projection.document-cardinality@1;
+  yaml.projection.graph-invalid@1; yaml.projection.invalid-canonical-
+  scalar@1; yaml.projection.mapping-not-object@1;
+  yaml.projection.provenance-limit@1; yaml.projection.resource-limit@1
+ ; yaml.projection.sharing@1; yaml.projection.unrepresentable-
+  timestamp@1; yaml.projection.unsupported-tag@1;
+- yaml.materialization.cross-document-sharing@1;
+  yaml.materialization.round-trip-mismatch@1;
+  yaml.materialization.tag-kind-mismatch@1;
+  yaml.materialization.unsupported-tag@1;
+- yaml.edit.anchor-dependency@1; yaml.edit.anchor-not-visible@1;
+  yaml.edit.canonical-fallback@1; yaml.edit.invalid-anchor-name@1;
+  yaml.edit.invalid-placement@1; yaml.edit.structural-container-
+  conflict@1.
 
 The common edit/materialization/query failures reuse the core codes:
 core.edit.*@1 (RFC 0004 §17, error_registry.rs), the fatal formation
@@ -35,8 +35,8 @@ code core.parse.resource-limit@1 (error_registry.rs), and core.query.*@1
 (error_registry.rs, raised through consema.protocol.query.QueryFailure).
 
 Failure-code mappings for the YAML operations are the Rust StableFailure
-impls: edit.rs, projection.rs and 480-497,
-materialization.rs, lib.rs backend_failure 833-858.
+impls: edit.rs (StableFailure), projection.rs (StableFailure), and the
+backend_failure mapping in lib.rs.
 
 Design: the family raises typed exceptions whose stable ``code`` is the
 registered code (RFC 0016 §6). Error text is human presentation only and
@@ -124,8 +124,8 @@ class YamlFormationFailure(Exception):
 
     Exceeding a configured limit is fatal with no truncation-then-success
     (RFC 0016 §6). The frozen codes are core.parse.resource-limit@1
-    (error_registry.rs), core.source.invalid-utf8@1 (:207),
-    yaml.parse.syntax@1 (:850), yaml.profile.version-directive@1 (:856),
+    (error_registry.rs), core.source.invalid-utf8@1 (),
+    yaml.parse.syntax@1 (), yaml.profile.version-directive@1 (),
     and the semantic formation codes of lib.rs/native.rs.
     """
 

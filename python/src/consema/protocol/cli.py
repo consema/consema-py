@@ -1148,9 +1148,17 @@ def _parse_source_patch_value(
 
 
 def _encoding_facts_value(facts: EncodingFacts) -> PortableValue:
-    profile_default = PortableValue.null()
-    if facts.profile_default is not None:
-        profile_default = _source_encoding_value(facts.profile_default)
+    # profile_default and selected are REQUIRED core.source-encoding@1
+    # records at the value level — the decode side (and the tree codec,
+    # _parse_encoding_facts_node) rejects Null for them, so the encode
+    # side must never emit Null: a None here is a structurally invalid
+    # facts record and fails cleanly instead of producing a record the
+    # codec's own decoder cannot read back (wave-5 round-trip symmetry).
+    if facts.profile_default is None or facts.selected is None:
+        raise invalid(
+            "$.encoding", "profile_default and selected are required core.source-encoding@1 records"
+        )
+    profile_default = _source_encoding_value(facts.profile_default)
     bom = PortableValue.null()
     if facts.bom is not None:
         bom = PortableValue.string(facts.bom)
@@ -1160,9 +1168,7 @@ def _encoding_facts_value(facts: EncodingFacts) -> PortableValue:
     caller_override = PortableValue.null()
     if facts.caller_override is not None:
         caller_override = _source_encoding_value(facts.caller_override)
-    selected = PortableValue.null()
-    if facts.selected is not None:
-        selected = _source_encoding_value(facts.selected)
+    selected = _source_encoding_value(facts.selected)
     return PortableValue.object(
         [
             ("profile_default", profile_default),
@@ -1521,9 +1527,15 @@ def _parse_source_patch_node(
 
 
 def _encoding_facts_node(facts: EncodingFacts) -> tuple:
-    profile_default = tagged_null()
-    if facts.profile_default is not None:
-        profile_default = _source_encoding_node(facts.profile_default)
+    # Same required-field symmetry as _encoding_facts_value: the tree
+    # decode side rejects Null for profile_default/selected, so encoding
+    # a None here would produce a node the codec cannot read back
+    # (wave-5 round-trip symmetry).
+    if facts.profile_default is None or facts.selected is None:
+        raise invalid(
+            "$.encoding", "profile_default and selected are required core.source-encoding@1 records"
+        )
+    profile_default = _source_encoding_node(facts.profile_default)
     bom = tagged_null()
     if facts.bom is not None:
         bom = tagged_string(facts.bom)
@@ -1533,9 +1545,7 @@ def _encoding_facts_node(facts: EncodingFacts) -> tuple:
     caller_override = tagged_null()
     if facts.caller_override is not None:
         caller_override = _source_encoding_node(facts.caller_override)
-    selected = tagged_null()
-    if facts.selected is not None:
-        selected = _source_encoding_node(facts.selected)
+    selected = _source_encoding_node(facts.selected)
     return tagged_object(
         [
             ("profile_default", profile_default),

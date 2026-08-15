@@ -21,8 +21,8 @@ only for registry/byte arbitration):
   ``core.java-utf16-string@1`` wire pattern).
 - ``RealWidth``: Float64 | Float32 — native.rs (the binary-only
   ``0x22`` width fact, RFC 0013 §5.5).
-- ``PlistParseLimits`` defaults — lib.rs (RFC 0013 §12, lines
-); every limit failure is fatal and never masquerades as an empty
+- ``PlistParseLimits`` defaults — lib.rs (RFC 0013 §12); every limit
+  failure is fatal and never masquerades as an empty
   tree or truncated data (hard gate 4).
 """
 

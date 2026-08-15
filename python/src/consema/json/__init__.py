@@ -12,8 +12,8 @@ Authority (language-neutral first; Rust only for byte/registry
 arbitration):
 
 - conformance/vectors/json-family-v2.json (33 cases, suite
-  "consema.json-family.conformance@2") and v1.json json cases (lines
-) — the machine-readable golden surface;
+  "consema.json-family.conformance@2") and v1.json json cases — the
+  machine-readable golden surface;
 - RFC 0004 (materialization/conversion/structural edit,
   https://github.com/consema/consema/blob/main/docs/rfcs/0004-materialization-conversion-and-structural-edit-v1.md), RFC 0005 (JSON family production and JSON5 v1,
   https://github.com/consema/consema/blob/main/docs/rfcs/0005-json-family-production-v1.md), RFC 0016 §5-§6 (API shapes and error

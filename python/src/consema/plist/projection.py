@@ -18,8 +18,8 @@ Authority (Rust arbitration for exact semantics):
   core-invariant@1).
 - Value-tree emission: projection.rs — the versioned
   ``plist.value-tree@1`` record (one root value, ordered dictionary
-  associations, ordered array elements, typed leaves; RFC 0013 §9, lines
-); UIDs project only under IncludeUid into a typed UID member and
+  associations, ordered array elements, typed leaves; RFC 0013 §9);
+  UIDs project only under IncludeUid into a typed UID member and
   are never disguised as integers; unpaired-surrogate strings fail
   ordinary projection atomically.
 - Require-object collapse: projection.rs — only when every key

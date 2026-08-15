@@ -12,7 +12,8 @@ Contract: RFC 0003 §7 (https://github.com/consema/consema/blob/main/docs/rfcs/0
 ) — binary coverage obeys the no-gap/no-overlap/final-length
 invariant; empty source has an empty valid index; non-empty source requires
 at least one non-empty region. Arbitration: https://github.com/consema/consema-rs/blob/main/consema-document/
-src/lib.rs (BinaryStructuralIndex) and 582-604 (LocationError).
+src/lib.rs (BinaryStructuralIndex, LocationError — symbol anchors; line
+numbers may drift).
 """
 
 from __future__ import annotations

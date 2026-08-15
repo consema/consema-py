@@ -17,11 +17,11 @@ Authority (Rust arbitration for exact semantics):
 - Gates and failure algebra: projection.rs — Recovered documents
   fail with java-properties.projection.incomplete-document@1
   (projection.rs); unpaired surrogates fail atomically with
-  java-properties.projection.unpaired-surrogate@1 (:745) and no partial
+  java-properties.projection.unpaired-surrogate@1 and no partial
   mapping (RFC 0010 section 11); the failure code mapping
   projection.rs.
 - Duplicate collapse: projection.rs — RequireUnique rejects with
-  core.projection.target-not-applicable@1 (:748); First/Last collapse is
+  core.projection.target-not-applicable@1; First/Last collapse is
   explicitly authorized Lossy, emits one java-properties.projection.
   duplicate-collapsed@1 event per discarded association
   (projection.rs), and records both retained and discarded

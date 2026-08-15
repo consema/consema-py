@@ -160,7 +160,8 @@ def test_literal_accessors():
 
 
 def test_boolean_accessor_is_complete():
-    # Case hcl.query.literal-accessors sample 4 (hcl-v1.json, 804-810).
+    # Case hcl.query.literal-accessors sample 4 (hcl-v1.json; provisioned
+    # file — case-id anchor, line numbers may drift).
     execution = native(
         [
             OperatorCall("hcl.document-body", 1),

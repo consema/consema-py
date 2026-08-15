@@ -8,26 +8,26 @@ the Rust family's StableFailure impls and parser emission sites are the
 arbitration for the exact spellings):
 
 - XML grammar diagnostics ``plist.parse.*@1``: https://github.com/consema/consema-rs/blob/main/consema-plist/src/
-  parser_xml.rs — declaration-version@1 (823), declaration-conflict@1 (856),
-  pi-target@1 (936), doctype-subset@1 (1014), doctype@1 (1079),
-  dict-missing-value@1 (1163), key-outside-dict@1 (1172), dict-key@1 (1192),
-  scalar-content@1 (1209), element-name@1 (1221), root-version@1 (1303),
-  root-attribute@1 (1318), element-attribute@1 (1320), mismatched-end-tag@1
-  (1458), extra-end-tag@1 (1482), empty-value@1 (1656), integer@1 (1667),
-  real@1 (1692), date@1 (1720), data@1 (1757), text-outside-value@1 (1808),
-  boolean-content@1 (1826), reference@1 (1960), entity@1 (2052),
-  well-formedness@1 (2141), unclosed-element@1 (2158), missing-root@1
-  (2178), root-value-count@1 (2188).
-- XML fatal/encoding codes: plist.xml.encoding@1 (454), plist.xml.overflow@1
-  (2777), plist.xml.internal@1 (2787), plist.xml.coverage@1 (2798),
-  plist.xml.coordinates@1 (2808).
+  parser_xml.rs — declaration-version@1, declaration-conflict@1,
+  pi-target@1, doctype-subset@1, doctype@1,
+  dict-missing-value@1, key-outside-dict@1, dict-key@1,
+  scalar-content@1, element-name@1, root-version@1,
+  root-attribute@1, element-attribute@1, mismatched-end-tag@1,
+  extra-end-tag@1, empty-value@1, integer@1,
+  real@1, date@1, data@1, text-outside-value@1,
+  boolean-content@1, reference@1, entity@1,
+  well-formedness@1, unclosed-element@1, missing-root@1,
+  root-value-count@1.
+- XML fatal/encoding codes: plist.xml.encoding@1, plist.xml.overflow@1,
+  plist.xml.internal@1, plist.xml.coverage@1,
+  plist.xml.coordinates@1.
 - Binary structure diagnostics ``plist.binary.*@1``: parser_binary.rs —
-  minimum-size@1 (531), header@1 (548), unproven-top-object@1 (620),
-  unproven-reference@1 (634), cycle@1 (660), coverage@1 (753), trailer@1
-  (785+), offset-table@1 (942), marker@1 (1110), extent@1 (1137),
-  string@1 (1156), date@1 (1170), uid@1 (1181), reference@1 (1218),
-  extended-size@1 (1296), non-string-key@1 (1342), overflow@1 (1604),
-  internal@1 (1614); plus the fatal plist.binary.encoding@1 (lib.rs).
+  minimum-size@1, header@1, unproven-top-object@1,
+  unproven-reference@1, cycle@1, coverage@1, trailer@1,
+  offset-table@1, marker@1, extent@1,
+  string@1, date@1, uid@1, reference@1,
+  extended-size@1, non-string-key@1, overflow@1,
+  internal@1; plus the fatal plist.binary.encoding@1 (lib.rs).
 - Limit failures ``plist.limit.*@1``: parser_xml.rs and
   parser_binary.rs — string-code-units, data-bytes, array-elements,
   dict-entries, duplicate-key-group, nesting-depth, container-depth,
@@ -42,15 +42,13 @@ arbitration for the exact spellings):
   target-not-found@1 / incomplete-target@1 / conflicting-edits@1 /
   resource-limit@1 / formation-failed@1, plist.edit.uid-in-xml@1,
   plist.edit.unrepresentable@1).
-- Conversion codes: document.rs (same-representation@1), 270-276
-  (formation@1), 718 (inexpressible@1), 1297 (internal@1), 1303
-  (reparse@1).
+- Conversion codes: document.rs (same-representation@1, formation@1,
+  inexpressible@1, internal@1, reparse@1).
 - Materialization: materialization.rs (fractional-date@1); the shared
   core.materialization.*@1 codes of consema.document (RFC 0004 §17).
 - Conformance vector spellings: https://github.com/consema/consema-rs/blob/main/consema-conformance/src/plist_v1.rs
-  — query failures map to plist.query.*@1 (1143-1154, type-mismatch@1 at
-  1149) and materialization failures to plist.materialization.*@1
-  (1800-1816).
+  — query failures map to plist.query.*@1 (type-mismatch@1) and
+  materialization failures to plist.materialization.*@1.
 
 Design: the plist family raises typed exceptions whose stable ``code`` is
 the registered code (RFC 0016 §6). Error text is human presentation only

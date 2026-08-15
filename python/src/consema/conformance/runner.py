@@ -339,8 +339,10 @@ def repository_paths() -> tuple[str, str]:
 
 def run_argv(argv: list[str] | None = None) -> int:
     """Runs the conformance runner CLI; returns the process exit code
-    (0 success, 1 usage, 2 data, 3 limit, 4 precondition, 5 internal;
-    RFC 0015 §5.1)."""
+    (0 success, 1 usage, 2 data, 5 internal; RFC 0015 §5.1 — exit classes
+    3 (limit) and 4 (precondition) are never returned by this CLI: a
+    suite-internal resource-limit failure is recorded as a case failure
+    (exit 2) and an unexpected exception is exit 5)."""
     parser = argparse.ArgumentParser(
         prog="python -m consema.conformance",
         description="Consema conformance runner (18 suites / 519 shared vectors)",
@@ -428,10 +430,13 @@ def suite_definitions() -> list[SuiteDefinition]:
     (consema/conformance/__main__.py), which imports this module once and
     calls :func:`run_argv` directly, so the canonical module object always
     holds the inventory. The ``python -m consema.conformance.runner`` form
-    still works but triggers a CPython RuntimeWarning (double import: the
-    module is re-executed as ``__main__`` after the package import already
-    registered every suite into the canonical module object); the
-    warning-free entry is ``python -m consema.conformance``. Always read
+    still works under the default warning filters but triggers a CPython
+    RuntimeWarning (double import: the module is re-executed as ``__main__``
+    after the package import already registered every suite into the
+    canonical module object); under ``-W error::RuntimeWarning`` /
+    ``PYTHONWARNINGS=error`` the warning becomes a hard failure and the CLI
+    aborts before running anything — the warning-free entry is
+    ``python -m consema.conformance``. Always read
     the canonical module object's list.
     """
     canonical = sys.modules.get("consema.conformance.runner")

@@ -119,6 +119,11 @@ def load_case_file() -> list[ByteCase]:
     for kind in ALL_KIND_NAMES:
         if kind not in kinds:
             raise case_files.CaseFileError(f"case set does not cover kind {kind!r} (kinds metadata)")
+    for kind in kinds:
+        if kind not in ALL_KIND_NAMES:
+            raise case_files.CaseFileError(
+                f"case set declares unknown kind {kind!r} (the fifteen-kind vocabulary is closed)"
+            )
     return parsed
 
 

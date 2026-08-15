@@ -4,10 +4,10 @@ Authority (language-neutral first; Rust only for registry arbitration):
 
 - The four toml-family codes are frozen by
   https://github.com/consema/consema-rs/blob/main/consema-protocol/src/error_registry.rs
-  ``toml.edit.representation-fallback@1`` :339,
-  ``toml.parse.syntax@1`` :345,
-  ``toml.projection.core-invariant@1`` :351,
-  ``toml.projection.unrepresentable-datetime@1`` :357.
+  ``toml.edit.representation-fallback@1``,
+  ``toml.parse.syntax@1``,
+  ``toml.projection.core-invariant@1``,
+  ``toml.projection.unrepresentable-datetime@1``.
 - The core codes consumed by the TOML family are registered at
   error_registry.rs — core.parse.resource-limit@1,
   core.projection.resource-limit@1, the core.query.*@1 family and the

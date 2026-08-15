@@ -209,7 +209,8 @@ def test_recovery_matrix_boundaries():
 
 def test_recovery_keeps_proven_attributes():
     # Case hcl.native-formation.recovery-matrix sample 5
-    # (hcl-v1.json, 480-485): "a" and "b" stay proven attributes.
+    # (hcl-v1.json; provisioned file — case-id anchor, line numbers may
+    # drift): "a" and "b" stay proven attributes.
     document = parse(b"a = 1 @ 2\nb = 3\n", HclProfile.NATIVE_V1)
     assert document.formation_status().value == "Recovered"
     names = [item.as_attribute().name for item in document.body.items]

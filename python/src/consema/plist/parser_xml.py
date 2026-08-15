@@ -59,6 +59,7 @@ from consema.document.structural import (
     StructuralPiece,
     StructuralPieceKind,
 )
+from consema.document.limits import ParseLimits
 from consema.plist.errors import (
     PlistDiagnostic,
     PlistFormationFailure,
@@ -1573,7 +1574,7 @@ class _Parser:
                     {"element": "integer"},
                 )
                 return None
-            value = parse_integer(frame.content)
+            value = parse_integer(frame.content, limits.common.max_number_digits)
             if value is not None:
                 return self._arena_add(PlistValue.integer(PlistInteger(value)))
             self.recover("plist.parse.integer@1", DiagnosticCategory.SYNTAX, close_span)
@@ -2022,9 +2023,23 @@ class _Parser:
 # ---------------------------------------------------------------------------
 
 
-def parse_integer(content: str) -> int | None:
+def parse_integer(
+    content: str, max_number_digits: int = ParseLimits().max_number_digits
+) -> int | None:
     """Signed 64-bit integer grammar (RFC 0013 §4.5): ``S*(-|+)?S*[0-9]+``
-    and ``S*(-|+)?S*0[xX][0-9a-fA-F]+`` (parser_xml.rs)."""
+    and ``S*(-|+)?S*0[xX][0-9a-fA-F]+`` (parser_xml.rs).
+
+    ``max_number_digits`` is the cross-language per-number magnitude bound
+    (ParseLimits.max_number_digits, 100_000 — the same-wave bound the
+    json/toml/hcl number paths enforce; wave-5: the plist integer path
+    previously had no explicit digit bound and leaned on the
+    interpreter's int() string-conversion limit, which is
+    implementation-dependent and rejects via ValueError instead of the
+    grammar/range semantics). The guard runs before any arbitrary-precision
+    conversion: a value beyond the bound is necessarily outside the signed
+    64-bit range this grammar accepts, so returning None is exactly the
+    rejection the range check below would give — the bound just makes it
+    explicit and CPU-bounded."""
     bytes_ = content.strip(" \t\n\r").encode("utf-8")
     index = 0
     negative = False
@@ -2052,6 +2067,8 @@ def parse_integer(content: str) -> int | None:
     if index != len(bytes_):
         return None
     digits = bytes_[start:index].decode("ascii")
+    if len(digits) > max_number_digits:
+        return None
     try:
         magnitude = int(digits, 16 if hex_mode else 10)
     except ValueError:

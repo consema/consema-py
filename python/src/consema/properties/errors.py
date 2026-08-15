@@ -8,8 +8,8 @@ StableFailure impls):
 
 - Properties diagnostics: java-properties.parse.malformed-unicode-escape@1
   (error_registry.rs), java-properties.edit.canonical-fallback@1
-  (:1099, a Warning), java-properties.profile.mismatch@1 (:1135, query
-  role validation), java-properties.source.profile-encoding@1 (:1165,
+  (, a Warning), java-properties.profile.mismatch@1 (, query
+  role validation), java-properties.source.profile-encoding@1 (,
   fatal profile/source contract mismatch, parser.rs).
 - Fatal formation resource limits: core.parse.resource-limit@1
   (error_registry.rs) for every PropertiesParseLimits bound
@@ -18,17 +18,17 @@ StableFailure impls):
 - Projection failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/
   projection.rs — RecoveredDocument ->
   java-properties.projection.incomplete-document@1, UnpairedSurrogate ->
-  java-properties.projection.unpaired-surrogate@1 (:745), DuplicateKey /
-  CoreInvariant -> core.projection.target-not-applicable@1 (:748),
-  ResourceLimit -> core.projection.resource-limit@1 (:750).
+  java-properties.projection.unpaired-surrogate@1 (), DuplicateKey /
+  CoreInvariant -> core.projection.target-not-applicable@1 (),
+  ResourceLimit -> core.projection.resource-limit@1 ().
 - Edit failure code mapping: https://github.com/consema/consema-rs/blob/main/consema-properties/src/edit.rs
   — RecoveredDocument -> core.edit.incomplete-target@1, WrongSnapshot ->
   core.edit.wrong-snapshot@1, WrongRole -> core.edit.wrong-role@1,
   DuplicateTarget/OverlappingOwnership/PlacementAnchorRemoved ->
   core.edit.conflicting-edits@1, InvalidPlacement ->
-  java-properties.edit.invalid-placement@1 (:245), TargetNotFound ->
+  java-properties.edit.invalid-placement@1 (), TargetNotFound ->
   core.edit.target-not-found@1, EncodingUnrepresentable ->
-  core.edit.representation-incompatible@1 (:247), InvalidLiteral ->
+  core.edit.representation-incompatible@1 (), InvalidLiteral ->
   core.edit.invalid-literal@1, ResourceLimit -> core.edit.resource-limit@1,
   NewDocumentFormationFailed -> core.edit.formation-failed@1.
 - Query failures reuse the common core.query.*@1 codes
@@ -44,7 +44,7 @@ presentation only and never participates in conformance comparison. The
 vector-facing failure *names* ("RecoveredDocument", "UnpairedSurrogate",
 "InvalidLiteral", ...) are exposed as ``name`` properties using the exact
 Rust variant spellings the conformance vectors reference
-(conformance/vectors/java-properties-v1.json, :83, :88).
+(conformance/vectors/java-properties-v1.json).
 """
 
 from __future__ import annotations

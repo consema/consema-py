@@ -7,13 +7,13 @@ failure enums and their code mappings are the Rust family's StableFailure
 impls):
 
 - JSON syntax/conformance/semantic diagnostic codes: error_registry.rs
-  (json.edit.representation-fallback@1), :219 (json.object.duplicate-
-  member@1), :225 (json.projection.duplicate-keys@1), :231
-  (json.projection.semantic-unavailable@1), :237 (json.strict.comment-not-
-  allowed@1), :243 (json.strict.leading-bom@1), :249 (json.strict.trailing-
-  comma@1), :255-333 (the json.syntax.*@1 family), :610
-  (json.projection.structure-reencoded@1), :649 (json5.string.unescaped-
-  line-separator@1), :655 (json5.syntax.invalid-identifier@1), :1332
+  (json.edit.representation-fallback@1), (json.object.duplicate-
+  member@1), (json.projection.duplicate-keys@1),
+  (json.projection.semantic-unavailable@1), (json.strict.comment-not-
+  allowed@1), (json.strict.leading-bom@1), (json.strict.trailing-
+  comma@1), (the json.syntax.*@1 family),
+  (json.projection.structure-reencoded@1), (json5.string.unescaped-
+  line-separator@1), (json5.syntax.invalid-identifier@1),
   (json.projection.incomplete-document@1).
 - Fatal formation codes: core.parse.resource-limit@1 error_registry.rs;
   core.source.invalid-utf8@1 error_registry.rs.
@@ -31,8 +31,7 @@ registered code (RFC 0016 §6). Error text is human presentation only and
 never participates in conformance comparison. The vector-facing failure
 *names* ("TargetNotFound", "Unrepresentable", ...) are exposed as ``name``
 properties using the exact Rust variant spellings that the conformance
-vectors reference (conformance/vectors/json-family-v2.json,
-:147, :153).
+vectors reference (conformance/vectors/json-family-v2.json).
 """
 
 from __future__ import annotations
