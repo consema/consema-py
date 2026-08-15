@@ -48,8 +48,12 @@ jobs:
       # when origin/main may already have advanced past the tag's commit, so
       # a realtime HEAD comparison would fail a legitimately pushed tag; the
       # push-time snapshot is not available, and ancestry is used instead:
-      # the tag commit must lie on origin/main's history (same gate shape
-      # as the consema-go/consema-rs release.yml verify steps). GITHUB_SHA
+      # the tag commit must lie on origin/main's history (the merge-base
+      # ancestry shape mirrors the consema-go/consema-rs release guards; the
+      # go/rs guards additionally enforce a 24 h tag-recency window — go
+      # release.yml / rs release.yml — which this guard deliberately omits;
+      # wave-5 2026-08-15: the previous "same gate shape" comment was
+      # stronger than the implementations). GITHUB_SHA
       # for an annotated tag push is the tag object, so the ^{commit} peel
       # makes the check work for both lightweight and annotated tags.
       - name: verify tag points at a commit on main
@@ -87,47 +91,92 @@ jobs:
       # repository, same pin as ci-python.yml), followed by the compileall
       # syntax gate, the zero-dependency assertion and the SDK chain
       # example.
-      # Wave-4 R15 disclosure: the four cross-language differential legs
+      # Wave-4 R15 disclosure: the three cross-language differential legs
       # (byte parity / normalized differential / protocol exchange) do NOT
-      # run with the release — they need the Rust emitter multi-repo
-      # checkout and are only exercised by the python-differential CI job.
+      # run with the release — they need the consema-rs (Rust emitter)
+      # checkout, which the release workflow does not include, and are only
+      # exercised by the python-differential CI job. With the conformance
+      # data provisioned below, 5 of the 9 differential tests still run for
+      # real on the release path (the three test_case_file_integrity guards
+      # plus test_emit_python_normalized_results / test_emit_format_consistency);
+      # the 4 env-gated tests skip (documented — the pytest step below
+      # asserts the skip upper bound).
       # 差分三腿不随发布运行；发布前按 rc-candidate 检查单本机执行.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
+          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
       - uses: ./.github/actions/provision-conformance
       - name: pip install -e '.[dev]' (pytest for the release-path gates)
         working-directory: python
         run: python -m pip install -e '.[dev]'
-      - name: pytest (full test suite, CI importlib mode)
+      - name: pytest (full test suite, CI importlib mode, documented-skip upper bound)
         working-directory: python
         env:
           PYTHONPATH: tests/xml
-        run: python -m pytest --import-mode=importlib
-      - name: compileall syntax gate (python -m compileall -q src)
-        working-directory: python
-        run: python -m compileall -q src
-      - name: zero-dependency assertion (dependencies = [] + pip check)
         shell: bash
         run: |
           set -euo pipefail
-          # Wave-4 R53: same permissive regex as the CI copy of the gate
-          # (ci-python.yml zero-dependency step — whitespace-insensitive), so
-          # a formatting-normalized `dependencies=[]` cannot pass CI and fail
-          # the release path.
-          if ! grep -qE '^dependencies[[:space:]]*=[[:space:]]*\[[[:space:]]*\]$' python/pyproject.toml; then
-            echo "::error::pyproject.toml must declare dependencies = [] (zero runtime dependencies policy)"
+          output="$(python -m pytest --import-mode=importlib)"
+          printf '%s\n' "$output"
+          # Documented-skip upper bound (wave-5, same assertion as the
+          # ci-python.yml python-gates step): with the provisioned data and
+          # no CONSEMA_DIFFERENTIAL_* env vars, exactly the four env-gated
+          # differential tests skip (test_differential_byte_parity /
+          # test_forward_differential / test_emit_python_normalized_results_env /
+          # test_protocol_exchange); the other five differential tests run.
+          # A new silent skip must not grow the skip set — on the release
+          # path a silent skip would ship with the published artifact.
+          skipped="$(printf '%s\n' "$output" | grep -oE '[0-9]+ skipped' | tail -1 | awk '{print $1}')"
+          if [ -z "$skipped" ]; then
+            echo "::error::pytest summary line not found — cannot assert the skipped count"
             exit 1
           fi
+          if [ "$skipped" -gt 4 ]; then
+            echo "::error::pytest skipped count $skipped exceeds the documented upper bound (4 env-gated differential tests) — a new silent skip must be reviewed, not shipped"
+            exit 1
+          fi
+      - name: compileall syntax gate (python -m compileall -q src)
+        working-directory: python
+        run: python -m compileall -q src
+      - name: zero-dependency assertion ([project].dependencies = [] + pip check)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Same check as the CI copy (ci-python.yml zero-dependency step),
+          # byte-for-byte identical semantics: tomllib reads the declared
+          # [project].dependencies table, so a table-unscoped `dependencies
+          # = []` elsewhere in the file or a formatting-normalized spelling
+          # cannot pass one copy and fail the other (wave-5: the previous
+          # grep -E / .NET-regex pair differed in cross-line matching — the
+          # CI copy's \s could match newlines, the grep copy could not).
+          python - <<'PYEOF'
+          import pathlib, sys, tomllib
+          project = tomllib.loads(pathlib.Path('python/pyproject.toml').read_text(encoding='utf-8'))['project']
+          if project.get('dependencies') != []:
+              sys.exit('pyproject.toml [project].dependencies must be declared and empty (zero runtime dependencies policy)')
+          PYEOF
           python -m pip check
-      - name: SDK chain example (python examples/sdk_chain.py must exit 0)
+      # Wave-5: the release path re-runs the shared version-consistency
+      # gate (scripts/check-version-consistency.sh — README Version line /
+      # pyproject.toml / __init__.__version__ / bug_report.yml literal /
+      # python/LICENSE byte parity). The tag↔pyproject step above alone
+      # could publish a bump that forgot the other sync points.
+      - name: version consistency gate (scripts/check-version-consistency.sh)
+        shell: bash
+        run: bash scripts/check-version-consistency.sh
+      - name: SDK chain example (python examples/sdk_chain.py must exit 0, output asserted)
         working-directory: python
         env:
           PYTHONPATH: src
-        run: python examples/sdk_chain.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(python examples/sdk_chain.py)"
+          grep -q "parse: profile=json.strict status=Complete" <<<"$output"
+          grep -q "convert to toml.canonical-document" <<<"$output"
       - name: build wheel + sdist (python -m build, hatchling backend)
         working-directory: python
         run: |
@@ -150,7 +199,7 @@ jobs:
           if (-not $sdist) { throw 'no sdist produced by python -m build' }
           $listing = python -m zipfile -l $wheel.FullName
           if ($LASTEXITCODE -ne 0) { throw "zipfile listing failed (exit $LASTEXITCODE)" }
-          foreach ($entry in @('consema/__init__', 'consema/core/value.py', 'consema/conformance/runner.py', 'consema/conformance/__main__.py', 'consema/conformance/suites/toml_v1.py')) {
+          foreach ($entry in @('consema/__init__', 'consema/core/value.py', 'consema/document/limits.py', 'consema/json/parser.py', 'consema/conformance/runner.py', 'consema/conformance/__main__.py', 'consema/conformance/suites/toml_v1.py', 'consema/conformance/suites/yaml_v1.py')) {
             if (-not ($listing -match [regex]::Escape($entry))) {
               throw "wheel must contain $entry (src/consema → consema/)"
             }

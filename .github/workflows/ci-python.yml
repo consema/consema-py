@@ -10,7 +10,8 @@
 # matrix (3.12.x / 3.13.x / 3.14.x, fail-fast: false); python-conformance
 # runs the Python runner over the 18 shared suites / 519 cases (the
 # aggregate digest cfd6e296…, the 18/519 inventory and the per-suite counts
-# are pinned inside python/tests/conformance/test_runner.py, §2.2/§4.2) and
+# are pinned inside python/src/consema/conformance/runner.py and asserted by
+# python/tests/conformance/test_runner.py, §2.2/§4.2) and
 # the runner CLI smoke (python -m consema.conformance, a4dac2d) runs
 # with python-conformance; the §3.6/§7.2 shared-conformance step — the
 # fourth differential leg (scripts/python-verify-shared-conformance.ps1)
@@ -35,10 +36,12 @@
 # beside this repository and copy the conformance data into the workspace
 # root (the runner and the differential harnesses resolve conformance/* by
 # repository-relative path). The consema checkout is pinned by commit (ref)
-# to ccc9943 — the 2026-08-15 wave-4 R5 unified provision pin re-anchored
-# by F2 to the mother-repo HEAD (after b8bf4cb's R40 field-anchor evidence
-# rework, manifest digest 3fdf9a77 → 5cb4ab51) that carries the cfd6e296
+# to 4ede284 — the mother-repo wave-4 closing-record HEAD (2026-08-15
+# 03:01; wave-5 re-anchor from the F2 pin ccc9943 — the conformance tree
+# and the fc-manifest sha256 5cb4ab51 are identical between the two
+# commits, so the provisioned data is unchanged) that carries the cfd6e296
 # 519-case inventory (the digest hard-pin lives in
+# python/src/consema/conformance/runner.py — asserted by
 # python/tests/conformance/test_runner.py; the fc-manifest sha256 5cb4ab51
 # is asserted inside the provision action) — so the provisioned data cannot
 # drift with the spec repository's default branch. The differential job
@@ -48,7 +51,9 @@
 # conformance snapshot — and the scripts build the pinned emitter examples
 # (cargo build --locked -p consema-conformance --example …) there. The
 # provision step is shared as the ./.github/actions/provision-conformance
-# composite action (four call sites; one copy). The four jobs that do not
+# composite action (five call sites — python-gates, coverage,
+# python-conformance, python-differential and the release path; one copy).
+# The four jobs that do not
 # need the conformance data (check-version-consistency, examples,
 # python-package, pip-audit) use a single-repo checkout only — no multi-repo
 # checkout or provision step is needed there.
@@ -94,7 +99,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
+          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: ${{ matrix.python-version }}
@@ -116,27 +121,51 @@ jobs:
       # so tests/xml is put on PYTHONPATH (the only directory using that
       # pattern). Differential tests without their golden env vars report
       # documented skips.
-      - name: pytest (full test suite, importlib mode)
+      - name: pytest (full test suite, importlib mode, documented-skip upper bound)
         working-directory: python
         env:
           PYTHONPATH: tests/xml
-        run: python -m pytest --import-mode=importlib
-      # Zero-runtime-dependency policy (§1.3): pyproject.toml declares the
-      # dependencies = [] field (field-name anchor) and pip check must be
-      # clean.
-      - name: zero-dependency assertion (dependencies = [] + pip check)
-        shell: pwsh
+        shell: bash
         run: |
-          $ErrorActionPreference = 'Stop'
-          $pyproject = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'python\pyproject.toml') -Raw
-          if ($pyproject -notmatch '(?m)^dependencies\s*=\s*\[\s*\]\s*$') {
-            throw 'pyproject.toml must declare dependencies = [] (zero runtime dependencies policy)'
-          }
+          set -euo pipefail
+          output="$(python -m pytest --import-mode=importlib)"
+          printf '%s\n' "$output"
+          # Documented-skip upper bound (wave-5, ts/kt precedent — "a new
+          # silent skip must be reviewed, not shipped"): with the provisioned
+          # data and no CONSEMA_DIFFERENTIAL_* env vars, exactly the four
+          # env-gated differential tests skip (test_differential_byte_parity /
+          # test_forward_differential / test_emit_python_normalized_results_env /
+          # test_protocol_exchange); the other five differential tests run
+          # against the provisioned data. A new silent skip (fixture-missing
+          # skipIf, a new unconditionally skipped test) must not grow the
+          # skip set.
+          skipped="$(printf '%s\n' "$output" | grep -oE '[0-9]+ skipped' | tail -1 | awk '{print $1}')"
+          if [ -z "$skipped" ]; then
+            echo "::error::pytest summary line not found — cannot assert the skipped count"
+            exit 1
+          fi
+          if [ "$skipped" -gt 4 ]; then
+            echo "::error::pytest skipped count $skipped exceeds the documented upper bound (4 env-gated differential tests) — a new silent skip must be reviewed, not shipped"
+            exit 1
+          fi
+      # Zero-runtime-dependency policy (§1.3): the [project].dependencies
+      # table must be declared and empty; pip check must be clean. tomllib
+      # reads the declared [project] table — a `dependencies = []` key in
+      # any other TOML table cannot satisfy the gate (wave-5: the old
+      # table-unscoped regex matched any line in the file), and a missing
+      # key fails.
+      - name: zero-dependency assertion ([project].dependencies = [] + pip check)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PYEOF'
+          import pathlib, sys, tomllib
+          project = tomllib.loads(pathlib.Path('python/pyproject.toml').read_text(encoding='utf-8'))['project']
+          if project.get('dependencies') != []:
+              sys.exit('pyproject.toml [project].dependencies must be declared and empty (zero runtime dependencies policy)')
+          PYEOF
           python -m pip check
-          if ($LASTEXITCODE -ne 0) {
-            throw "pip check failed (exit $LASTEXITCODE)"
-          }
-          Write-Output 'zero runtime dependencies: pyproject.toml dependencies = [] and pip check clean'
+          echo 'zero runtime dependencies: [project].dependencies = [] and pip check clean'
 
   # Coverage gate (gate plan §4 M3 standing toolchain; roadmap §18.3
   # "Coverage 不替代语义证明"): pytest-cov (dev extra, pyproject.toml) measures
@@ -160,7 +189,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
+          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
@@ -187,7 +216,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
+          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12.x'
@@ -240,7 +269,7 @@ jobs:
           persist-credentials: false
           repository: consema/consema
           path: consema-repo
-          ref: ccc99430a6e3003bc1b0830d81cbad245323f0a4 # wave-4 R5 unified provision pin, F2 re-anchored to mother-repo HEAD (fc-manifest sha256 5cb4ab51)
+          ref: 4ede2844e179ca30e44c62062636c6996f25ea39 # wave-4 R5 unified provision pin, wave-5 re-anchor to mother-repo wave-4 closing-record HEAD (fc-manifest sha256 5cb4ab51)
       # G70 (adversarial audit, 2026-08-14): the Rust emitter toolchain is
       # pinned to 1.97.1 — the version this harness was locally verified
       # with (钉定本机实测版本), so the differential goldens are
@@ -297,7 +326,13 @@ jobs:
   # `dependencies` + `dev` extra declarations and runs `pip-audit -r`, so
   # the audit covers exactly what the repository declares (the direct pins
   # and their transitive closure) against the live OSV advisory database,
-  # never the runner-image preinstalls or the pip-audit toolchain. The job
+  # never the runner-image preinstalls or the pip-audit toolchain. The
+  # pip-audit scanner itself is installed at a version-tag pin
+  # (pip-audit==2.10.1) fetched from PyPI at run time WITHOUT an in-repo
+  # sha256 checksum (wave-5 disclosure, mirroring the consema-go
+  # govulncheck@v1.6.0 disclosure in audit.yml: the scanner bytes are
+  # outside the declared-surface audit; their integrity relies on the PyPI
+  # distribution chain — SECURITY.md 依赖门禁段如实披露). The job
   # is unconditional (no `if:`) so it can never be skipped — a skipped job
   # in the aggregate would fail the alls-green gate (the ts allowed-skips
   # disposition: unconditional jobs need no skip allowance).
@@ -341,59 +376,23 @@ jobs:
   # (G95), so python/LICENSE must stay byte-identical to the
   # repository-root LICENSE. A version bump that forgets any of them fails
   # CI (wave-4 GW4-09: the job name/header previously described only the
-  # README line).
+  # README line). The assertions live in ONE shared script
+  # (scripts/check-version-consistency.sh) executed here and on the release
+  # path (release.yml, wave-5) — the release previously never re-ran the
+  # gate's non-pyproject sync points. The version source is read with
+  # tomllib from the [project] table (wave-5: scope-anchored, replacing the
+  # table-unscoped `grep -m1 '^version'` first-match extraction).
   check-version-consistency:
-    name: check version consistency (README Version / pyproject.toml / __init__.__version__ / bug_report.yml)
+    name: check version consistency (README Version / pyproject.toml / __init__.__version__ / bug_report.yml / LICENSE)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
-      - name: assert pyproject.toml version == README Version line == __init__ __version__
+      - name: run the shared version-consistency gate (scripts/check-version-consistency.sh)
         shell: bash
-        run: |
-          set -euo pipefail
-          version=$(grep -m1 '^version' python/pyproject.toml | sed -E 's/^version[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')
-          if [ -z "$version" ]; then
-            echo "::error::no 'version' found in python/pyproject.toml"
-            exit 1
-          fi
-          # Line-anchored match (not substring): a version bump from
-          # 1.0.0-rc.1 to 1.0.0 must not silently pass because the old
-          # string is a prefix of the new one — the version must be
-          # followed by end-of-line, whitespace or a full-width paren.
-          grep -qE "^Version: ${version//./\.}(\s|（|$)" README.md || {
-            echo "::error::README.md does not declare the Version line 'Version: $version'"
-            exit 1
-          }
-          grep -qF "__version__ = \"$version\"" python/src/consema/__init__.py || {
-            echo "::error::python/src/consema/__init__.py does not declare __version__ = \"$version\""
-            exit 1
-          }
-          # bug_report.yml version literal (G73, 2026-08-14): the template's
-          # environment-info line "version（当前 $version）" is a fourth
-          # sync location. The closing full-width paren anchors the match,
-          # so a bump from 1.0.0-rc.1 to 1.0.0 cannot pass on the old
-          # string being a prefix of the new one.
-          grep -qF "version（当前 $version）" .github/ISSUE_TEMPLATE/bug_report.yml || {
-            echo "::error::.github/ISSUE_TEMPLATE/bug_report.yml does not declare the current version ($version)"
-            exit 1
-          }
-          echo "README and __init__ versions consistent with pyproject.toml: $version"
-      # License parity gate (P0, 2026-08-14): python/LICENSE is the file
-      # hatchling ships into the sdist and wheel (pyproject.toml
-      # [tool.hatch.metadata] license-files); it must never drift from the
-      # repository-root LICENSE.
-      - name: assert python/LICENSE is byte-identical to the repository-root LICENSE
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! cmp -s LICENSE python/LICENSE; then
-            echo "::error::python/LICENSE must be byte-identical to the repository-root LICENSE (the hatchling build ships python/LICENSE into the sdist and wheel)"
-            exit 1
-          fi
-          echo "python/LICENSE byte-identical to the repository-root LICENSE"
+        run: bash scripts/check-version-consistency.sh
 
   # SDK examples gate: python/examples/sdk_chain.py is the committed
   # five-language SDK chain example (parse -> native query -> best-exact
@@ -425,40 +424,62 @@ jobs:
       # Knit-style doc-example gate (wave-4 R6, 2026-08-15; mirrors the
       # consema-kt ci-kotlin.yml fence step): the README ```python
       # quick-start fence must equal the committed
-      # python/examples/quickstart.py body (both sides normalized for CRLF
-      # and trimmed), so the README snippet can never drift from what CI
-      # actually runs. The fence is located by content, not by position —
-      # every ```python fence in the README is compared against the file
-      # body and exactly one must match, so a new fence inserted earlier
-      # can never silently switch the comparison target.
+      # python/examples/quickstart.py body — byte-for-byte content equality
+      # after CRLF normalization, with exactly ONE tolerated difference:
+      # the file's final newline (the fence body never carries it — the
+      # regex consumes the newline before the closing ```). Wave-5: the
+      # previous gate .Trim()ed both sides, so interior leading/trailing
+      # blank-line drift of the fence body (e.g. an extra blank line before
+      # the closing ```) passed undetected and the "byte-for-byte" claim
+      # was stronger than the gate; now any interior whitespace or
+      # blank-line drift fails. The fence is located by content, not by
+      # position — every ```python fence in the README is compared against
+      # the file body and exactly one must match, so a new fence inserted
+      # earlier can never silently switch the comparison target.
       - name: README quick-start fence must match python/examples/quickstart.py
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $readme = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'README.md') -Raw
           $file = Get-Content (Join-Path $env:GITHUB_WORKSPACE 'python/examples/quickstart.py') -Raw
-          $body = ($file -replace "`r", '').Trim()
+          $fileN = $file -replace "`r", ''
+          if ($fileN -match "`n$") {
+            $fileN = $fileN.Substring(0, $fileN.Length - 1) # strip exactly one final LF
+          }
           $matches = @()
           foreach ($m in [regex]::Matches($readme, '(?s)```python\r?\n(.*?)\r?\n```')) {
-            $fence = ($m.Groups[1].Value -replace "`r", '').Trim()
-            if ($fence -eq $body) {
+            $fence = $m.Groups[1].Value -replace "`r", ''
+            if ($fence -eq $fileN) {
               $matches += $fence
             }
           }
           if ($matches.Count -ne 1) {
-            throw "README.md must contain exactly one ```python fence equal to python/examples/quickstart.py (after CRLF normalization and trim) — found $($matches.Count) matching fence(s)"
+            throw "README.md must contain exactly one ```python fence equal to python/examples/quickstart.py (CRLF-normalized, file final newline excepted) — found $($matches.Count) matching fence(s)"
           }
-          Write-Output 'README quick-start fence matches python/examples/quickstart.py (located by content)'
-      - name: python examples/sdk_chain.py (must exit 0)
+          Write-Output 'README quick-start fence matches python/examples/quickstart.py byte-for-byte (CRLF-normalized, located by content)'
+      # SDK chain and quickstart must actually run AND produce their
+      # expected output (wave-5: exit-code-only assertions could pass a
+      # silently shortened example — the same discipline as the
+      # python-conformance summary assertion, R54).
+      - name: python examples/sdk_chain.py (must exit 0, output asserted)
         working-directory: python
         env:
           PYTHONPATH: src
-        run: python examples/sdk_chain.py
-      - name: python examples/quickstart.py (committed quick-start, must exit 0)
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(python examples/sdk_chain.py)"
+          grep -q "parse: profile=json.strict status=Complete" <<<"$output"
+          grep -q "convert to toml.canonical-document" <<<"$output"
+      - name: python examples/quickstart.py (committed quick-start, must exit 0, output asserted)
         working-directory: python
         env:
           PYTHONPATH: src
-        run: python examples/quickstart.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(python examples/quickstart.py)"
+          test "$output" = '{"a":1,"b":{"c":42}}'
 
   # L5 packaging gate (five-language-ci-design.md §1.1 package row / §5.3
   # L5 row): `pip wheel --no-deps .` builds the wheel through the hatchling

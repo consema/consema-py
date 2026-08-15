@@ -1,10 +1,14 @@
 # Pull request labels
 
-Every pull request must carry **at least one** `kind:` label — enforced by
+Every pull request should carry **at least one** `kind:` label — checked by
 `.github/workflows/pr-labels.yml` (viper checks.yaml pattern;
 `mheap/github-action-required-labels`, mode: minimum / count: 1). The check
-re-evaluates on `opened`, `synchronize`, `reopened`, `labeled` and
-`unlabeled`, so adding a label flips it green without a rebase.
+is advisory for the merge path: branch protection on this repository
+requires only the `check (all gates green)` aggregate (wave-5 2026-08-15
+measured), so a missing kind label turns the check red without blocking the
+merge. The check re-evaluates on `opened`, `synchronize`, `reopened`,
+`labeled` and `unlabeled`, so adding a label flips it green without a
+rebase.
 
 The `area:` taxonomy below is applied automatically by
 `.github/workflows/labeler.yml` (actions/labeler, tokio labeler pattern;

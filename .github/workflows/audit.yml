@@ -12,7 +12,13 @@
 # file from the pyproject `dependencies` + `dev` extra declarations and
 # runs `pip-audit -r`, so the audit covers exactly what the repository
 # declares (the direct pins and their transitive closure) and never the
-# runner-image preinstalls or the pip-audit toolchain itself. The same
+# runner-image preinstalls or the pip-audit toolchain itself. The pip-audit
+# scanner is installed at a version-tag pin (pip-audit==2.10.1) fetched
+# from PyPI at run time WITHOUT an in-repo sha256 checksum (wave-5
+# 2026-08-15 disclosure, mirroring the consema-go govulncheck@v1.6.0
+# disclosure: the scanner bytes are outside the declared-surface audit;
+# their integrity relies on the PyPI distribution chain — SECURITY.md 依赖
+# 门禁段如实披露). The same
 # pip-audit job is defined inside ci-python.yml (the rs standing shape —
 # a needs entry must name a job in the same workflow), so the aggregate
 # `check` gate now includes audit and a red audit blocks merge (G135).
