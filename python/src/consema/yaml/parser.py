@@ -300,14 +300,19 @@ def _digit_value(character: str, base: int) -> int:
 def _int_decimal(text: str) -> int:
     """Exact decimal-string to int, immune to the interpreter's int()
     string-conversion limit (CPython default 4300 digits; the magnitude
-    bound above it already passed, so digits are 0-9)."""
+    bound above it already passed, so digits are 0-9).
+
+    The fallback chunks 4 digits at a time; the leading chunk carries the
+    ``len % 4`` remainder so every digit keeps its exact place value for
+    any length, not only multiples of four."""
     negative = text.startswith("-")
     digits = text[1:] if text[:1] in ("+", "-") else text
     try:
         value = int(digits)
     except ValueError:
-        value = 0
-        for index in range(0, len(digits), 4):
+        start = len(digits) % 4
+        value = int(digits[:start]) if start else 0
+        for index in range(start, len(digits), 4):
             value = value * 10_000 + int(digits[index : index + 4])
     return -value if negative else value
 
@@ -367,21 +372,28 @@ def _normalize_decimal_lexeme(value: str) -> str:
 def _parse_json_number(text: str, max_number_digits: int) -> Decimal | None:
     """Exact finite decimal parse of one normalized JSON-number lexeme
     (Decimal::parse_json_number; the same semantics as
-    consema.json.parser.parse_json_decimal)."""
+    consema.json.parser.parse_json_decimal).
+
+    An exponent marker with no exponent digits is not a number: the Rust
+    reference parses the empty exponent as an integer and fails, so
+    ``1e``/``1.5e``/``+1e``/``-1e``/``01e``/``1.e`` all resolve as plain
+    strings in every consema language."""
     sign = -1 if text.startswith("-") else 1
     unsigned = text[1:] if text[:1] in ("+", "-") else text
     if not unsigned:
         return None
     mantissa = unsigned
     exponent_text = ""
+    has_exponent = False
     for marker in ("e", "E"):
         index = unsigned.find(marker)
         if index != -1:
             mantissa, exponent_text = unsigned.split(marker, 1)
+            has_exponent = True
             break
     if not mantissa:
         return None
-    if exponent_text and not _is_signed_digits(exponent_text):
+    if has_exponent and not _is_signed_digits(exponent_text):
         return None
     scale = 0
     if "." in mantissa:

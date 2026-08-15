@@ -96,6 +96,32 @@ def test_float_exponent_magnitude_bound():
     assert caught.value.observed == 100_002  # coefficient 1 plus exponent digits
 
 
+def test_float_exponent_any_digit_count_is_exact():
+    """The chunked exponent conversion is exact for every digit count,
+    not only multiples of four: a 5001-digit exponent (5001 % 4 = 1)
+    parses exactly."""
+    source = "n: 1e" + "9" * 5001
+    document = parse_source(source, YamlProfile.YAML12_CORE_V1)
+    assert _first_value_canonical(document) == "1e" + "9" * 5001
+
+
+def test_empty_exponent_lexemes_are_strings_not_numbers():
+    """An exponent marker with no exponent digits is never a number:
+    ``1e``/``1.5e``/``+1e``/``-1e``/``01e``/``1.e`` all resolve as plain
+    strings with their exact spelling (Decimal::parse_json_number rejects
+    an empty exponent, so the five consema languages classify these
+    lexemes identically as strings)."""
+    lexemes = ["1e", "1.5e", "+1e", "-1e", "01e", "1.e"]
+    source = "[" + ", ".join(lexemes) + "]"
+    for profile in (YamlProfile.YAML12_CORE_V1, YamlProfile.YAML11_COMPAT_V1):
+        document = parse_source(source, profile)
+        root = document.document(0).root()
+        for ordinal, lexeme in enumerate(lexemes):
+            scalar = root.sequence_item(ordinal).node().scalar()
+            assert scalar.kind() is YamlScalarKind.STRING, (profile, lexeme)
+            assert scalar.canonical() == lexeme
+
+
 def test_yaml11_sexagesimal_magnitude_bound():
     """The 1.1 sexagesimal paths (integer and float) carry the same
     magnitude bound."""
