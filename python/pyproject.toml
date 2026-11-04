@@ -44,7 +44,7 @@ Repository = "https://github.com/consema/consema-py"
 # only these two direct pins are reproducible — the transitive tree floats
 # with pip resolution at install time (a lockfile is a post-1.0.0 backlog
 # item; wave-4 R17).
-dev = ["pytest==9.1.1", "pytest-cov==7.1.0"]
+dev = ["pytest==9.2.0", "pytest-cov==7.1.0"]
 
 # G95 (2026-08-14): the MIT LICENSE text must ship in both the sdist and
 # the wheel. The file lives inside the project root (python/LICENSE, kept
